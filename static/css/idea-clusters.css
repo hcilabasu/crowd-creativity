@@ -1,0 +1,17 @@
+.logo {
+    color: white;
+}
+
+textarea {
+    width: 95%;
+    height: 100px;
+}
+
+.top-buffer {
+    margin-top: 20px;
+}
+
+#clusters {
+    background: #CCC;
+    height: 400px;
+}

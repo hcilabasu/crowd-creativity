@@ -9,7 +9,8 @@
 #########################################################################
 
 def index():
-    return dict(message='Welcome to web2py!')
+    condition = 1
+    return dict(condition=condition)
 
 
 def user():
