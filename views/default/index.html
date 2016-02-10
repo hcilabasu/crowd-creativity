@@ -1,5 +1,10 @@
 {{extend 'layout.html'}}
 
+<script>
+    URL.addIdea = "{{=URL('default','add_idea')}}";
+    URL.getNewIdeas = "{{=URL('default','new_ideas')}}";
+</script>
+
 <div class="container">
 
     <div class="row top-buffer">
@@ -12,16 +17,16 @@
         </div>
         <div class="col-md-4">
             <div class="row">
-                <textarea name="ideaTextarea"></textarea>
+                <textarea id="idea-input"></textarea>
             </div>
             <div class="row top-buffer">
-                <button class="btn btn-primary">Post Idea</button>
+                <button class="btn btn-primary" id="idea-submit">Post Idea</button>
             </div>
         </div>
     </div>
     
     <div class="row top-buffer">
-        {{if condition == 3:}}
+        {{if userCondition == 3:}}
             <div class="col-md-12"> <!-- Only show when condition == c3 -->
                 <h3>Idea Clusters</h3>
                 <div id="clusters">
@@ -29,50 +34,24 @@
                 </div>
             </div>
         {{else:}}
-            <div class="{{= 'col-md-6' if condition == 2 else 'col-md-12' }}"> <!-- class="col-md-12" if condition == c1 -->
+            <div class="{{= 'col-md-6' if userCondition == 2 else 'col-md-12' }}"> <!-- class="col-md-12" if condition == c1 -->
                 <h3>Your Ideas</h3>
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <h4>Idea #3</h4>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
-                        </p>
-                    </li>
-                    <li class="list-group-item">
-                        <h4>Idea #2</h4>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                        </p>
-                    </li>
-                    <li class="list-group-item">
-                        <h4>Idea #1</h4>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
-                        </p>
+                <ul class="list-group" id="user-ideas">
+                    <!-- dynamic list -->
+                    <li class="list-group-item" id="no-user-idea">
+                        <h3>No ideas have been submitted yet!</h3>
+                        <p>Use the form above to submit an idea</p>
                     </li>
                 </ul>
             </div>
-            {{if condition == 2:}}
+            {{if userCondition == 2:}}
             <div class="col-md-6"> <!-- only visible if C == c2 -->
                 <h3>Everyone Else's Ideas</h3>
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <h4>Idea #3</h4>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
-                        </p>
-                    </li>
-                    <li class="list-group-item">
-                        <h4>Idea #2</h4>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                        </p>
-                    </li>
-                    <li class="list-group-item">
-                        <h4>Idea #1</h4>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
-                        </p>
+                <ul class="list-group"  id="group-ideas">
+                    <!-- dynamic list -->
+                    <li class="list-group-item" id="no-group-idea">
+                        <h3>No ideas have been submitted yet!</h3>
+                        <p>When someone else submits an idea, it will appear here</p>
                     </li>
                 </ul>
             </div>

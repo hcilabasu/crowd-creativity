@@ -88,5 +88,11 @@ auth.settings.reset_password_requires_verification = True
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 
+db.define_table('ideas',
+    Field('idea','string'), 
+    Field('userId','string'),
+    Field('userCondition','integer'), 
+    Field('dateAdded','datetime'))
+
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
