@@ -20,7 +20,7 @@ def index():
         print("New user: " + userId)
         session.userId = userId
         # Selecting condition
-        session.userCondition = 2 # TODO randomly select condition
+        session.userCondition = 3 # TODO randomly select condition
     userCondition = session.userCondition
         
     return dict(userCondition=userCondition)

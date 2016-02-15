@@ -24,7 +24,7 @@ $(function(){
         addIdea("", text, function(){
             // Add idea to user's view
             $("#no-user-idea").remove();
-            $("#user-ideas").prepend("<li class='list-group-item'><h3>Idea #" + userIdeaCounter + "</h3><p>" + text + "</p></li>")    
+            $("#user-ideas").prepend("<li class='list-group-item'><p>" + text + "</p></li>")    
         });
         
         
@@ -63,7 +63,7 @@ $(function(){
         for(var i = 0; i < ideas.length; i++){
             var idea = ideas[i];
             othersIndex++; // Increment global idea index
-            $("#group-ideas").prepend("<li class='list-group-item'><h3>Idea #" + othersIndex + "</h3><p>" + idea + "</p></li>");
+            $("#group-ideas").prepend("<li class='list-group-item'><p>" + idea + "</p></li>");
         }
         
         console.dir(lastUpdateTime);

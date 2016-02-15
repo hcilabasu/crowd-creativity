@@ -26,37 +26,38 @@
     </div>
     
     <div class="row top-buffer">
-        {{if userCondition == 3:}}
-            <div class="col-md-12"> <!-- Only show when condition == c3 -->
-                <h3>Idea Clusters</h3>
-                <div id="clusters">
-                    
-                </div>
+        <div class="{{= 'col-md-6' if userCondition != 1 else 'col-md-12' }}"> <!-- class="col-md-12" if condition == c1 -->
+            <h3>Your Ideas</h3>
+            <ul class="list-group" id="user-ideas">
+                <!-- dynamic list -->
+                <li class="list-group-item" id="no-user-idea">
+                    <h3>No ideas have been submitted yet!</h3>
+                    <p>Use the form above to submit an idea</p>
+                </li>
+            </ul>
+        </div>
+        {{if userCondition == 2:}}
+        <div class="col-md-6"> <!-- only visible if C == c2 -->
+            <h3>Everyone Else's Ideas</h3>
+            <ul class="list-group"  id="group-ideas">
+                <!-- dynamic list -->
+                <li class="list-group-item" id="no-group-idea">
+                    <h3>No ideas have been submitted yet!</h3>
+                    <p>When someone else submits an idea, it will appear here</p>
+                </li>
+            </ul>
+        </div>
+        {{elif userCondition == 3:}}
+        <div class="col-md-6"> <!-- Only show when condition == c3 -->
+            <h3>Idea Clusters</h3>
+            <div id="clusters">
+                
             </div>
-        {{else:}}
-            <div class="{{= 'col-md-6' if userCondition == 2 else 'col-md-12' }}"> <!-- class="col-md-12" if condition == c1 -->
-                <h3>Your Ideas</h3>
-                <ul class="list-group" id="user-ideas">
-                    <!-- dynamic list -->
-                    <li class="list-group-item" id="no-user-idea">
-                        <h3>No ideas have been submitted yet!</h3>
-                        <p>Use the form above to submit an idea</p>
-                    </li>
-                </ul>
-            </div>
-            {{if userCondition == 2:}}
-            <div class="col-md-6"> <!-- only visible if C == c2 -->
-                <h3>Everyone Else's Ideas</h3>
-                <ul class="list-group"  id="group-ideas">
-                    <!-- dynamic list -->
-                    <li class="list-group-item" id="no-group-idea">
-                        <h3>No ideas have been submitted yet!</h3>
-                        <p>When someone else submits an idea, it will appear here</p>
-                    </li>
-                </ul>
-            </div>
-            {{pass}}
+        </div>
         {{pass}}
     </div>
-
 </div>
+
+{{if userCondition == 3:}}
+<script src="{{=URL('static','js/clusters-viz.js')}}"></script>
+{{pass}}

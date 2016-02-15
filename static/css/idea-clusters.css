@@ -13,6 +13,11 @@ textarea {
 }
 
 #clusters {
-    background: #CCC;
+    background: #EEE;
     height: 400px;
+}
+
+.central {
+    fill: white !important;
+    stroke-width: 4px !important;
 }
