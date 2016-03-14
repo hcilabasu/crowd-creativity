@@ -1,11 +1,35 @@
 .logo {
     color: white;
+    font-family: 'AsimovRegular'; 
+    font-weight: normal; 
+    font-style: normal;
+}
+
+.navbar {
+    background: #62D0FF;
+    border-bottom: 0;
+    padding-bottom: 10px;
+}
+
+.footer {
+    background: white;
+    color: black;
 }
 
 textarea {
-    width: 95%;
+    width: 90%;
     height: 100px;
     border: solid 1px #CCC;
+}
+
+input[type=text] {
+    border: solid 1px #CCC;
+}
+
+.category input[type=text] {
+    width: 120px;
+    line-height: 2em;
+    padding: 5px;
 }
 
 .top-buffer {
@@ -20,4 +44,62 @@ textarea {
 .central {
     fill: white !important;
     stroke-width: 4px !important;
+}
+
+.list-group-item p {
+    margin-bottom: 0;
+}
+
+.list-group-item h3 {
+    margin-top: 0;
+}
+
+table {
+    font-size: 0.8em;
+    table-layout: fixed;
+    word-wrap:break-word;
+}
+
+table td,
+table th {
+    padding: 10px;
+    border: solid 1px black;
+    width: 20px;
+}
+
+table th {
+    border: 0;
+    font-weight: bolder;
+    overflow: visible;
+    text-align: right;
+}
+
+table tr th {
+    white-space: nowrap;
+}
+
+table th > div {
+    transform: 
+        /* 45 is really 360 - 45 */
+        rotate(315deg);
+    width: 20px;
+}
+
+#matrix {
+    margin-top: 40px;
+}
+
+#getHint {
+    margin-left: 20px;
+}
+
+.tooltip * {
+    text-align: left;
+    text-transform: none;
+    line-height: 1.2em;
+}
+
+.top-row {
+    background: #EEE; 
+    padding: 20px;
 }

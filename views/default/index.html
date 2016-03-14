@@ -1,13 +1,44 @@
 {{extend 'layout.html'}}
 
 <script>
+    var URL = {};
     URL.addIdea = "{{=URL('default','add_idea')}}";
     URL.getNewIdeas = "{{=URL('default','new_ideas')}}";
+    URL.getMatrix = "{{=URL('default','matrix')}}";
+    URL.getCategory = "{{=URL('default','get_category')}}"
+
+    var DATA = {};
+    DATA.userCategories = new Set();
+
+    var ENV = {};
+    ENV.condition = {{=userCondition}};
+
+    {{if categories:}}
+        {{for category in categories:}}
+        DATA.userCategories.add("{{=category}}");
+        {{pass}}
+    {{pass}}
 </script>
 
 <div class="container">
 
-    <div class="row top-buffer">
+    <div class="row top-buffer top-row">
+        <div class="col-md-4">
+            <div class="row">
+                <textarea id="idea-input" placeholder="Type in your idea in here..."></textarea>
+            </div>
+            <div class="row top-buffer">
+                <div class="col-md-4 category">
+                    <input type="text" class="tooltip-toggle" placeholder="Tag 1" id="category1" title="Also, please add a tag for your idea. Tags should be concise and summarize the concept behind your idea in at most 20 characters. If you're using 2 main concepts, feel free to add a second tag."></input>
+                </div>
+                <div class="col-md-4 category">
+                    <input type="text" placeholder="Tag 2 (optional)" id="category2"></input>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary" id="idea-submit">Post Idea</button>
+                </div>
+            </div>
+        </div>
         <div class="col-md-8">
             <h3>Give ideas to address the following problem</h3>
             <p>
@@ -15,29 +46,29 @@
                 directly asking them? Be as specific as possible in your descriptions.
             </p>
         </div>
-        <div class="col-md-4">
-            <div class="row">
-                <textarea id="idea-input"></textarea>
-            </div>
-            <div class="row top-buffer">
-                <button class="btn btn-primary" id="idea-submit">Post Idea</button>
-            </div>
-        </div>
     </div>
     
     <div class="row top-buffer">
-        <div class="{{= 'col-md-6' if userCondition != 1 else 'col-md-12' }}"> <!-- class="col-md-12" if condition == c1 -->
+        <div class="{{= 'col-md-4' if userCondition != 1 else 'col-md-12' }}"> <!-- class="col-md-12" if condition == c1 -->
             <h3>Your Ideas</h3>
             <ul class="list-group" id="user-ideas">
                 <!-- dynamic list -->
+                {{if ideas:}}
+                    {{for idea in ideas:}}
+                    <li class="list-group-item">
+                        <p>{{=idea.idea}}</p>
+                    </li>
+                    {{pass}}
+                {{else:}}
                 <li class="list-group-item" id="no-user-idea">
                     <h3>No ideas have been submitted yet!</h3>
                     <p>Use the form above to submit an idea</p>
                 </li>
+                {{pass}}
             </ul>
         </div>
         {{if userCondition == 2:}}
-        <div class="col-md-6"> <!-- only visible if C == c2 -->
+        <div class="col-md-8"> <!-- only visible if C == c2 -->
             <h3>Everyone Else's Ideas</h3>
             <ul class="list-group"  id="group-ideas">
                 <!-- dynamic list -->
@@ -48,16 +79,18 @@
             </ul>
         </div>
         {{elif userCondition == 3:}}
-        <div class="col-md-6"> <!-- Only show when condition == c3 -->
-            <h3>Idea Clusters</h3>
-            <div id="clusters">
-                
-            </div>
+        <div class="col-md-8 matrix-container"> <!-- Only show when condition == c3 -->
+            <h3>
+                Idea Matrix <a href="#" class="tooltip-toggle" title="Below, you will see a matrix showing how many ideas have been generated for each tag by everyone, not just you. You will only see the tags for the categories to which you contribute. The darker the color, the more ideas have been generated for that particular tag.">?</a>
+                <button class="btn btn-sm tooltip-toggle" id="getHint" title="This will reveal one tag that you haven't explored yet. Think about it and try to generate ideas based on it.">Out of ideas?</button>
+            </h3>
+            <table id="matrix">
+            </table>
         </div>
         {{pass}}
     </div>
 </div>
 
 {{if userCondition == 3:}}
-<script src="{{=URL('static','js/clusters-viz.js')}}"></script>
+    <script type="text/javascript" src="{{=URL('static/js', 'matrix.js')}}"></script>
 {{pass}}

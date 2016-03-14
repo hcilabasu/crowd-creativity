@@ -6,14 +6,18 @@ var width = 500,
     height = 500,
     padding = 20, // separation between same-color nodes
     clusterPadding = 50, // separation between different-color nodes
-    maxRadius = 4,
-    centerRadius = 20;
+    maxRadius = 6,
+    centerRadius = 10;
 
 var n = 200, // total number of nodes
     m = 10; // number of distinct clusters
 
 var color = d3.scale.category10()
     .domain(d3.range(m));
+
+var distScale = d3.scale.linear()
+            .domain([0, 1])
+            .range([-10, 30]);
 
 // Redefining width and height
 width = $(containerId).width();
@@ -25,7 +29,7 @@ var clusters = new Array(m);
 var nodes = d3.range(n).map(function() {
   var i = Math.floor(Math.random() * m),
       r = Math.sqrt((i + 1) / m * -Math.log(Math.random())) * maxRadius + 6,
-      l = Math.floor(Math.random() * padding),
+      l = Math.floor(distScale(Math.random())),
       d = {cluster: i, radius: r, dist: l, central: false};
   if (!clusters[i] || (r > clusters[i].radius)) {
       clusters[i] = d;
@@ -33,6 +37,7 @@ var nodes = d3.range(n).map(function() {
   return d;
 });
 
+// Adjust center nodes
 for(var i = 0; i < clusters.length; i++){
     clusters[i].central = true;
     clusters[i].radius = centerRadius;

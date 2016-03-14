@@ -88,11 +88,18 @@ auth.settings.reset_password_requires_verification = True
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 
-db.define_table('ideas',
+db.define_table('idea',
     Field('idea','string'), 
     Field('userId','string'),
     Field('userCondition','integer'), 
     Field('dateAdded','datetime'))
+    
+db.define_table('category',
+    Field('category', 'string', unique=True))
+    
+db.define_table('category_idea',
+    Field('category', 'reference category'),
+    Field('idea', 'reference idea'))
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
