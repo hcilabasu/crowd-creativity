@@ -178,7 +178,15 @@ def csv():
 
 
 def import_csv(table, file):
-    table.import_from_csv_file(file)
+    print("Importing from CSV")
+    # This version imports with the normal ID increments
+    # table.import_from_csv_file(file) 
+
+    #### OR ####
+    
+    # This version ignores previous IDs and uses what is in the CSV file
+    table.truncate()
+    table.import_from_csv_file(file, id_offset={}, id_map=None)
 
 
 def select():
