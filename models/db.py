@@ -88,6 +88,11 @@ auth.settings.reset_password_requires_verification = True
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 
+db.define_table('user_info',
+    Field('userId', 'string'),
+    Field('userCondition', 'integer'),
+    Field('initialLogin', 'datetime'))
+
 db.define_table('idea',
     Field('idea','string'), 
     Field('userId','string'),
@@ -100,6 +105,25 @@ db.define_table('category',
 db.define_table('category_idea',
     Field('category', 'reference category'),
     Field('idea', 'reference idea'))
+
+db.define_table('idea_rating',
+    Field('idea', 'reference idea'),
+    Field('relativeTo', 'reference idea'), # If the task is comparing the idea in terms of another
+    Field('ratingType', 'string'),
+    Field('rating', 'integer'),
+    Field('dateAdded', 'datetime'),
+    Field('userId', 'string'))
+
+db.define_table('action_log',
+    Field('actionName', 'string'),
+    Field('userId', 'string'),
+    Field('extraInfo', 'string'), # any other necessary contextual information
+    Field('dateAdded', 'datetime'))
+
+db.define_table('sessionCondition',
+    Field('conditionNumber', 'integer'),
+    Field('conditionName', 'string'),
+    Field('conditionCount', 'integer'))
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

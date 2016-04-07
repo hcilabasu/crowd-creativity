@@ -1,0 +1,138 @@
+{{extend 'layout.html'}}
+<script type="text/javascript" src="{{=URL('static','js/tasks.js')}}"></script>
+<script>
+    var URL = {};
+    URL.addIdea = "{{=URL('tasks','add_idea')}}";
+    URL.getIdea = "{{=URL('tasks','get_idea')}}";
+    URL.rateIdea = "{{=URL('tasks','rate_idea')}}";
+    URL.getFinalID = "{{=URL('tasks','final_id')}}";
+
+    var ENV = {};
+    ENV.condition = {{=userCondition}};
+    ENV.startTime = "{{=startTime}}";
+
+</script>
+
+<div class="container">
+	<div class="row top-buffer">
+		<div class="col-md-12">
+			<div class="pop-out">
+		        <div class="col-md-4">
+		            <div class="row">
+		                <textarea id="idea-input" placeholder="Type in your idea in here..."></textarea>
+		            </div>
+		            <div class="row top-buffer">
+		                <button class="btn btn-primary" id="idea-submit">Post Idea</button>
+		            </div>
+		        </div>
+		        <div class="col-md-8">
+		            <h2>Give ideas to address the following problem</h2>
+		            <p>
+		                Mechanical Turk currently lacks a dedicated mobile app for performing HITs on smartphones (iPhone, Androids, etc.) or tablets (e.g., the iPad). Brainstorm features for a mobile app to Mechanical Turk that would improve the worker’s experience when performing HITs on mobile devices. 
+		            </p>
+
+		            <p>Your task is to <strong>come up with as many ideas to address this problem as you can</strong>. Be <strong>as speciﬁc as possible</strong> in your responses.</p>
+
+		            <p>
+		            	<strong>Time left: </strong> <span id="timer">-</span>
+		            </p>  
+		            <div id="time-over">
+		            	<h2 class="attention">Congratulations, you're done!</h2>
+			            <p>Thank you for your time and help! To get paid, copy and paste the following code back into the MTurk hit:</p>
+			            <h3 class="quote" id="final-id">Loading id...</h3>
+		            </div>
+		        </div>
+		    </div>
+        </div>
+    </div>
+
+    <div class="row top-buffer">
+        <div class="{{= 'col-md-6' if userCondition != 1 else 'col-md-12' }}"> <!-- class="col-md-12" if condition == c1 -->
+            <div class="pop-out">
+	            <h2>Your Ideas</h2>
+	            <ul class="list-group" id="user-ideas">
+	                <!-- dynamic list -->
+	                {{if ideas:}}
+	                    {{for idea in ideas:}}
+	                    <li class="list-group-item">
+	                        <p>{{=idea.idea}}</p>
+	                    </li>
+	                    {{pass}}
+	                {{else:}}
+	                <li class="list-group-item" id="no-user-idea">
+	                    <h3>No ideas have been submitted yet!</h3>
+	                    <p>Use the form above to submit an idea</p>
+	                </li>
+	                {{pass}}
+	            </ul>
+            </div>
+        </div>
+
+        {{if userCondition != 1:}} 
+        <div class="col-md-6">
+        	<div class="pop-out">
+
+	        	<div class="toggle prompt">
+	        		<p>Did you run out of ideas? Click the button below to get an inspiration</p>
+
+	        		<button class="btn btn-primary" id="inspiration-request">Get inspiration</button>
+	        	</div>
+
+	        	<div class="toggle task hidden">
+		        	
+		        	<div id="ideas-container">
+		        		<h4>Idea #1</h4>
+		        		<p class="quote" id="idea-text">
+			        		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			        	</p>
+		        	</div>
+
+		        	<input type="hidden" id="idea-id"/>
+
+		        	{{if userCondition == 3:}}
+			        	<h4>How original is this idea?</h4>
+			        	<ul class="horizontal-radial">
+			        		<li> Extremely unoriginal <input type="radio" name="originality" value="1"/> </li>
+			        		<li> <input type="radio" name="originality" value="2"/> </li>
+			        		<li> <input type="radio" name="originality" value="3"/> </li>
+			        		<li> <input type="radio" name="originality" value="4"/> </li>
+			        		<li> <input type="radio" name="originality" value="5"/> </li>
+			        		<li> <input type="radio" name="originality" value="6"/> </li>
+			        		<li> <input type="radio" name="originality" value="7"/> Extremely original </li>
+			        	</ul>
+
+			        	<h4>How useful is this idea?</h4>
+			        	<ul class="horizontal-radial">
+			        		<li> Extremely useless <input type="radio" name="usefulness" value="1"/> </li>
+			        		<li> <input type="radio" name="usefulness" value="2"/> </li>
+			        		<li> <input type="radio" name="usefulness" value="3"/> </li>
+			        		<li> <input type="radio" name="usefulness" value="4"/> </li>
+			        		<li> <input type="radio" name="usefulness" value="5"/> </li>
+			        		<li> <input type="radio" name="usefulness" value="6"/> </li>
+			        		<li> <input type="radio" name="usefulness" value="7"/> Extremely useful </li>
+			        	</ul>
+
+			        	<button class="btn btn-primary" id="task-submit">Submit rating</button>
+			        {{elif userCondition == 4:}}
+			        	<h4>How similar are the two ideas?</h4>
+			        	<ul class="horizontal-radial">
+			        		<li> Extremely different <input type="radio" name="similarity" value="1"/> </li>
+			        		<li> <input type="radio" name="similarity" value="2"/> </li>
+			        		<li> <input type="radio" name="similarity" value="3"/> </li>
+			        		<li> <input type="radio" name="similarity" value="4"/> </li>
+			        		<li> <input type="radio" name="similarity" value="5"/> </li>
+			        		<li> <input type="radio" name="similarity" value="6"/> </li>
+			        		<li> <input type="radio" name="similarity" value="7"/> Extremely similar </li>
+			        	</ul>
+
+			        	<button class="btn btn-primary" id="task-submit">Submit rating</button>
+		        	{{else:}}
+		        		<button class="btn btn-primary" id="close-idea">Close idea</button>
+		        	{{pass}}
+	        	</div>
+
+        	</div>
+        </div>
+        {{pass}}
+    </div>
+</div>

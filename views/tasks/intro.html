@@ -1,0 +1,69 @@
+{{extend 'layout.html'}}
+
+<div class="container">
+	<div class="row top-buffer">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<div class="pop-out">
+				<h2>A Quick-start guide on the system</h2>
+
+				<p>Before you get started, we want to tell you a few things about the system. Please read it carefully before moving on.</p>
+
+				<h3>The interface</h3>
+
+				{{if userCondition == 1:}}
+					<img src="{{=URL('static', 'images/intro/c1.PNG')}}"/>
+					<p>The image is marked in 3 different sections:</p>
+					<ol>
+						<li><strong>Idea input:</strong> This is where you will write your ideas. </li>
+						<li><strong>Problem description:</strong> This is where the problem is described. Read it carefully before starting to generate ideas.</li>
+						<li><strong>Ideas list:</strong> Whenever you submit an idea, it will be added to this list.</li>
+					</ol>
+				{{else:}}
+					<img src="{{=URL('static', 'images/intro/c2-3-4.PNG')}}"/>
+					<p>The image is marked in 4 different sections:</p>
+					<ol>
+						<li><strong>Idea input:</strong> This is where you will write your ideas. </li>
+						<li><strong>Problem description:</strong> This is where the problem is described. Read it carefully before starting to generate ideas.</li>
+						<li><strong>Ideas list:</strong> Whenever you submit an idea, it will be added to this list.</li>
+						<li><strong>Inspiration panel:</strong> Whenever you run out of ideas, you can get inspirations here. The next section describes how this works.</li>
+					</ol>
+				{{pass}}				
+
+				{{if userCondition != 1:}}
+					<h3>Getting inspired</h3>
+
+					{{if userCondition == 2:}}
+						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong>. It will present you with the idea developed by another user. When you're done, click the <strong>Close Idea</strong> button. See the image below: </p>
+
+						<img src="{{=URL('static', 'images/intro/c2-help.PNG')}}"/>
+
+					{{elif userCondition == 3:}}
+						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong>. It will present you with the idea developed by another user along with a small task. The task asks you to rate that idea in two dimensions: originality and usefulness. When you're done, click the <strong>submit rating</strong> button. See the image below: </p>
+
+						<img src="{{=URL('static', 'images/intro/c3-help.PNG')}}"/>
+
+					{{elif userCondition == 4:}}
+						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong>. It will present you with two ideas developed by other users. The task asks you to rate how similar those two ideas are. When you're done, click the <strong>submit rating</strong> button. See the image below: </p>
+
+						<img src="{{=URL('static', 'images/intro/c4-help.PNG')}}"/>
+
+					{{pass}}
+				{{pass}}
+
+				<h3>Finishing it up</h3>
+
+				<p>When the ideation time is up, you will be presented with a prompt like the one seen below:</p>
+				<img src="{{=URL('static', 'images/intro/done.PNG')}}"/>
+				<p>To finish your task, copy and paste the code that will be shown to you back into the Mechanical Turk task. </p>
+
+				<h3>You're all set!</h3>
+				<p>That's it! When you're ready to start, click the button below. By clicking it, you agree to participate in the study.</p>
+
+				<a href="{{=URL('tasks', 'index')}}" class="btn btn-primary" id="idea-submit">Start Ideation</a>
+
+			</div>
+		</div>
+		<div class="col-md-2"></div>
+	</div>
+</div>

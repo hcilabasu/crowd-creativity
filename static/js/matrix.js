@@ -3,6 +3,7 @@ var updateMatrix = function(data){
 	// data.matrix (matrix of float numbers)
 	// data.categories (array of strings)
 
+	var showAllLabels = true;
 	var matrix = $("#matrix");
 	var numCategories = data.categories.length
 
@@ -19,11 +20,11 @@ var updateMatrix = function(data){
 					row.append("<th></th>");
 				} else {
 					var cat = data.categories[j-1];
-					row.append("<th id=\"col-" + data.ids[j-1] + "\"><div><span>" + (DATA.userCategories.has(cat) ? cat : "&nbsp;") + "</span></div></th>");
+					row.append("<th id=\"col-" + data.ids[j-1] + "\"><div><span>" + (DATA.userCategories.has(cat) || showAllLabels ? cat : "&nbsp;") + "</span></div></th>");
 				}
 			} else if(j == 0){
 				var cat = data.categories[i-1];
-				row.append("<th id=\"row-" + data.ids[i-1] + "\">" + (DATA.userCategories.has(cat) ? cat : "&nbsp;") + "</th>")
+				row.append("<th id=\"row-" + data.ids[i-1] + "\">" + (DATA.userCategories.has(cat) || showAllLabels ? cat : "&nbsp;") + "</th>")
 			} else {
 				var count = data.matrix[i-1][j-1];
 				var color = (255-(count * 15)) < 0 ? 0 : (255-(count * 15))

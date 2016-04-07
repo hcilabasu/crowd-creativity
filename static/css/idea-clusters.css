@@ -1,8 +1,37 @@
+body {
+    background: #EEE;
+}
+
+h2, h3 {
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+h4 {
+    font-weight: bolder;
+}
+
+p {
+    margin: 0 0 20px 0;
+}
+
+img {
+    width: 90%;
+    border: solid 3px #999;
+    display: block;
+    margin: 0 auto 20px auto;
+}
+
+ol {
+    margin: 0 0 20px 0;
+}
+
 .logo {
     color: white;
-    font-family: 'AsimovRegular'; 
+    font-family: 'ChunkFive'; 
     font-weight: normal; 
     font-style: normal;
+    font-size: 4em;
 }
 
 .navbar {
@@ -16,10 +45,15 @@
     color: black;
 }
 
+.main-container {
+    margin-top: 50px;
+}
+
 textarea {
-    width: 90%;
+    width: 100%;
     height: 100px;
     border: solid 1px #CCC;
+    padding: 10px;
 }
 
 input[type=text] {
@@ -37,17 +71,13 @@ input[type=text] {
 }
 
 #clusters {
-    background: #EEE;
+    background: white;
     height: 400px;
 }
 
 .central {
     fill: white !important;
     stroke-width: 4px !important;
-}
-
-.list-group-item p {
-    margin-bottom: 0;
 }
 
 .list-group-item h3 {
@@ -100,6 +130,65 @@ table th > div {
 }
 
 .top-row {
-    background: #EEE; 
+    background: white; 
     padding: 20px;
+}
+
+.pop-out {
+    background: white;
+    padding: 20px;
+}
+
+.pop-out:after {
+  content:"";
+  display:block;
+  clear:both;
+}
+
+.horizontal-radial {
+    margin: 0 0 30px 0;
+    padding: 0;
+}
+
+.horizontal-radial li {
+    display: inline-block;
+    padding: 0 5px;
+}
+
+.btn-primary {
+    width: 100%;
+}
+
+
+@font-face {
+    font-family: 'Chunkfive';
+    src: url('../fonts/ChunkFive/Chunkfive.otf'); 
+    src: 
+        local('Chunkfive'),
+        local('Chunkfive'),
+        url('../fonts/ChunkFive/Chunkfive.otf') 
+        format('opentype');
+}
+
+.quote {
+    font-style: italic;
+    margin: 0 0 30px 0;
+    padding-left: 10px;
+    border-left: solid 4px #244363;
+}
+
+.hidden {
+    display: none;
+}
+
+#time-over {
+    background: #C5E3BF;
+    padding: 20px;
+    border: dashed 2px green;
+    border-radius: 5px;
+    display:none;
+}
+
+#time-over .quote {
+    margin-bottom: 0;
 }
