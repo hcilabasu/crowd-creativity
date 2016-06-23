@@ -12,6 +12,9 @@ User Conditions
 5. Choose one task
 '''
 
+def enter():
+    return dict()
+
 def intro():
     if session.userCondition == None:
         session.userCondition = __get_condition() # randomly select session
@@ -55,10 +58,10 @@ def add_idea():
     userId = session.userId
     userCondition = session.userCondition
     if userId != None:
-        idea = request.vars['idea']
+        idea = request.vars['idea'].strip()
         dateAdded = datetime.datetime.now()
         __log_action(userId, "add_idea", idea)
-        ideaId = db.idea.insert(userId=userId, idea=idea, dateAdded=dateAdded, userCondition=userCondition)
+        ideaId = db.idea.insert(userId=userId, idea=idea, dateAdded=dateAdded, userCondition=userCondition, ratings=0)
 
 def get_idea():
     '''
@@ -67,8 +70,13 @@ def get_idea():
     userId = session.userId
     userCondition = session.userCondition
     ideas = []
+    min_ratings = __get_min_ratings(userId, userCondition)
     if userId != None:
-        ideas = db((db.idea.userId != userId) & (db.idea.userCondition == userCondition)).select(orderby='<random>')
+        ideas = db(
+            (db.idea.userId != userId) & 
+            (db.idea.userCondition == userCondition) & 
+            (db.idea.ratings == min_ratings)
+        ).select(orderby='<random>')
 
     # this dictionary specifies how many ideas each condition needs
     # Condition 1 doesn't need any ideas, so threshold is high
@@ -85,6 +93,7 @@ def get_idea():
 
         return json.dumps(clean_ideas)
 
+
 def rate_idea():
     '''
     Endpoint for rating an idea
@@ -98,8 +107,13 @@ def rate_idea():
         originality = request.vars['originality']
         usefulness = request.vars['usefulness']
         if len(ideaIds) == 1:
+            # insert ratings
             db.idea_rating.insert(userId=userId, ratingType="originality", rating=originality, dateAdded=date_time, idea=ideaIds[0])
             db.idea_rating.insert(userId=userId, ratingType="usefulness", rating=usefulness, dateAdded=date_time, idea=ideaIds[0])
+            # update ratings count
+            idea = db(db.idea.id == ideaIds[0]).select().first()
+            idea.ratings += 1
+            idea.update_record()
         else:
             # Error
             response.status = 500
@@ -151,3 +165,8 @@ def __get_condition():
             for r in results:
                 r.conditionCount = 0
                 r.update_record()
+
+def __get_min_ratings(userId, condition):
+    min_query = db.idea.ratings.min()
+    min_number = db((db.idea.userId != userId) & (db.idea.userCondition == condition)).select(min_query).first()[min_query]
+    return min_number

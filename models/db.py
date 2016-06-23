@@ -97,6 +97,7 @@ db.define_table('idea',
     Field('idea','string'), 
     Field('userId','string'),
     Field('userCondition','integer'), 
+    Field('ratings','integer'),
     Field('dateAdded','datetime'))
     
 db.define_table('category',

@@ -1,0 +1,24 @@
+{{extend 'layout.html'}}
+
+<div class="container">
+	<div class="row top-buffer">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<div class="pop-out">
+				<h2>Welcome!</h2>
+
+				
+
+				<p>This task asks you to read a very brief introduction on how to use the system and then write ideas to solve a mechanical turk related problem. The instructions should take you no more than a couple of minutes, and the ideation part will last for exactly 20 minutes.</p>
+
+				<p>The total time will be, therefore, a little over 20 minutes.</p>			
+				
+				<h4 class="attention">IMPORTANT: Please, only click the "START" button below if you are COMPLETELY sure that you will complete this task.</h4>
+
+				<a href="{{=URL('tasks', 'intro')}}" class="btn btn-primary" id="idea-submit">Start</a>
+
+			</div>
+		</div>
+		<div class="col-md-2"></div>
+	</div>
+</div>

@@ -181,14 +181,19 @@ table th > div {
     display: none;
 }
 
-#time-over {
+#time-over,
+.attention {
     background: #C5E3BF;
     padding: 20px;
     border: dashed 2px green;
     border-radius: 5px;
-    display:none;
+}
+
+#time-over {
+    display: none;
 }
 
 #time-over .quote {
     margin-bottom: 0;
 }
+
