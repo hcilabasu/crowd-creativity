@@ -19,7 +19,7 @@
 			<div class="pop-out">
 		        <div class="col-md-4">
 		            <div class="row">
-		                <textarea id="idea-input" placeholder="Type in your idea in here..."></textarea>
+		                <textarea id="idea-input" placeholder="Type in your idea in here. Only 1 idea at a time!"></textarea>
 		            </div>
 		            <div class="row top-buffer">
 		                <button class="btn btn-primary" id="idea-submit">Post Idea</button>
@@ -91,6 +91,7 @@
 
 		        	{{if userCondition == 3:}}
 			        	<h4>How original is this idea?</h4>
+			        	<p>Originality: how surprising, novel, unusual, or creative this idea is.</p>
 			        	<ul class="horizontal-radial">
 			        		<li> Extremely unoriginal <input type="radio" name="originality" value="1"/> </li>
 			        		<li> <input type="radio" name="originality" value="2"/> </li>
@@ -102,6 +103,7 @@
 			        	</ul>
 
 			        	<h4>How useful is this idea?</h4>
+			        	<p>Usefulness: how practical and feasable the idea is if it were to be implemented</p>
 			        	<ul class="horizontal-radial">
 			        		<li> Extremely useless <input type="radio" name="usefulness" value="1"/> </li>
 			        		<li> <input type="radio" name="usefulness" value="2"/> </li>
