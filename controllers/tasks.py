@@ -12,6 +12,12 @@ User Conditions
 5. Choose one task
 '''
 
+
+# CONFIG
+ADD_TO_POOL = False # if false, new ideas are not added to the pool of ideas used in the tasks.
+
+
+
 def enter():
     return dict()
 
@@ -61,7 +67,7 @@ def add_idea():
         idea = request.vars['idea'].strip()
         dateAdded = datetime.datetime.now()
         __log_action(userId, "add_idea", idea)
-        ideaId = db.idea.insert(userId=userId, idea=idea, dateAdded=dateAdded, userCondition=userCondition, ratings=0)
+        ideaId = db.idea.insert(userId=userId, idea=idea, dateAdded=dateAdded, userCondition=userCondition, ratings=0, pool=ADD_TO_POOL)
 
 def get_idea():
     '''
@@ -75,7 +81,8 @@ def get_idea():
         ideas = db(
             (db.idea.userId != userId) & 
             (db.idea.userCondition == userCondition) & 
-            (db.idea.ratings == min_ratings)
+            (db.idea.ratings == min_ratings) &
+            (db.idea.pool == True)
         ).select(orderby='<random>')
 
     # this dictionary specifies how many ideas each condition needs
@@ -168,5 +175,5 @@ def __get_condition():
 
 def __get_min_ratings(userId, condition):
     min_query = db.idea.ratings.min()
-    min_number = db((db.idea.userId != userId) & (db.idea.userCondition == condition)).select(min_query).first()[min_query]
+    min_number = db((db.idea.userId != userId) & (db.idea.userCondition == condition) & (db.idea.pool == True)).select(min_query).first()[min_query]
     return min_number
