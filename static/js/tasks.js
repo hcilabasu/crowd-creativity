@@ -15,7 +15,7 @@ $(function(){
     var lastUpdateTime = null;
     var othersIndex = 0;
 
-    var maxTime = 20;
+    var maxTime = 18;
 
     // Start timer
     var interval = window.setInterval(function(){
@@ -107,6 +107,10 @@ $(function(){
         $(".toggle").toggleClass("hidden");
     });
     
+    $("#get-code").click(function(){
+        getCodeClick();
+    });
+
     var addIdea = function(idea, callback){
         $.ajax({
             type: "POST",
@@ -153,11 +157,50 @@ $(function(){
 
     var finishSession = function(){
         $("#time-over").show();
+    };
+
+    var surveyIsValid = function(){
+        isValid = false;
+        var usefulInspiration = $("#survey input[name=useful-inspiration]:checked").val();
+        var openEnded = $("#survey textarea").val();
+
+        if(!usefulInspiration || (!openEnded || openEnded.length > 1000)){
+            isValid = false;
+        } else {
+            isValid = true;
+        }
+        return isValid;
+    };
+
+    var getCodeClick = function(){
+        if(ENV.condition == 1){
+            // Condition 1 has no survey. Get code.
+            getCode();
+        } else if(surveyIsValid()){
+            // Post survey to server
+            var usefulInspiration = $("#survey input[name=useful-inspiration]:checked").val();
+            var openEnded = $("#survey textarea").val();
+            $.ajax({
+                type: "POST",
+                url: URL.postSurvey,
+                data: {usefulInspiration:usefulInspiration, openEnded:openEnded},
+                success:function(data){
+
+                }
+            });   
+            // Get code and display it
+            getCode();
+        } else {
+            alert("Please, fill in all questions in the survey before clicking this button!");
+        }
+    };
+
+    var getCode = function(){
         $.ajax({
             type: "GET",
             url: URL.getFinalID,
             success:function(data){
-                $("#final-id").text(data);
+                $("#final-id").css("display", "block").text(data);
             }
         });
     }

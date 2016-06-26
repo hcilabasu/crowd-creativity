@@ -141,6 +141,19 @@ def rate_idea():
             response.status = 500
             return "This rating task requires exactly two ideas"
 
+def post_survey():
+    __log_action(session.userId, "post_survey", "")
+    useful_inspiration = request.vars['usefulInspiration']
+    open_ended = request.vars['openEnded']
+    print(useful_inspiration)
+    print(open_ended)
+    db.survey.insert(
+        userId=session.userId,
+        inspirationUseful=useful_inspiration,
+        openComments=open_ended
+    )
+
+
 def final_id():
     # TODO check if 20 minutes have gone by
     # Log actions

@@ -93,6 +93,11 @@ db.define_table('user_info',
     Field('userCondition', 'integer'),
     Field('initialLogin', 'datetime'))
 
+db.define_table('survey',
+    Field('userId', 'string'),
+    Field('inspirationUseful', 'string'),
+    Field('openComments', 'string'))
+
 db.define_table('idea',
     Field('idea','string'), 
     Field('userId','string'),
