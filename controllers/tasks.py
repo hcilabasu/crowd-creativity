@@ -14,8 +14,8 @@ User Conditions
 
 
 # CONFIG
-ADD_TO_POOL = False # if false, new ideas are not added to the pool of ideas used in the tasks.
-
+ADD_TO_POOL = True # if false, new ideas are not added to the pool of ideas used in the tasks.
+DEBUG = True
 
 
 def enter():
@@ -160,6 +160,16 @@ def final_id():
     __log_action(session.userId, "time_up", "")
     return session.userId
 
+def get_stats():
+    ''' Public API for retrieving the statistics for an user '''
+    return json.dumps(dict(fluency=1, breadth=1, depth=1))
+
+def reset():
+    if DEBUG:
+        session.userId = None
+    redirect(URL('tasks', 'index'))
+
+### PRIVATE FUNCTIONS ###
 
 def __log_action(user_id, action_name, extra_info):
     print("Logging " + action_name)
