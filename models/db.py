@@ -106,11 +106,11 @@ db.define_table('idea',
     Field('dateAdded','datetime'),
     Field('pool','boolean'))
     
-db.define_table('category',
-    Field('category', 'string', unique=True))
+db.define_table('concept',
+    Field('concept', 'string', unique=True))
     
-db.define_table('category_idea',
-    Field('category', 'reference category'),
+db.define_table('concept_idea',
+    Field('concept', 'reference concept'),
     Field('idea', 'reference idea'))
 
 db.define_table('idea_rating',

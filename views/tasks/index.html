@@ -18,21 +18,12 @@
 	<div class="row top-buffer">
 		<div class="col-md-12">
 			<div class="pop-out">
-		        <div class="col-md-4">
-		            <div class="row">
-		                <textarea id="idea-input" placeholder="Type in your idea in here. Only 1 idea at a time!"></textarea>
-		            </div>
-		            <div class="row top-buffer">
-		                <button class="btn btn-primary" id="idea-submit">Post Idea</button>
-		            </div>
-		        </div>
-		        <div class="col-md-8">
-		            <h2>Give ideas to address the following problem</h2>
-		            <p>
-		                Mechanical Turk currently lacks a dedicated mobile app for performing HITs on smartphones (iPhone, Androids, etc.) or tablets (e.g., the iPad). Brainstorm features for a mobile app to Mechanical Turk that would improve the worker’s experience when performing HITs on mobile devices. 
-		            </p>
+		        <div class="col-md-12">
+		            <p>Your task is to <strong>come up with as many ideas as you can to address the problem below</strong>. Be <strong>as speciﬁc as possible</strong> in your responses.</p>
 
-		            <p>Your task is to <strong>come up with as many ideas to address this problem as you can</strong>. Be <strong>as speciﬁc as possible</strong> in your responses.</p>
+		            <p>
+		                <strong>Problem description:</strong> Mechanical Turk currently lacks a dedicated mobile app for performing HITs on smartphones (iPhone, Androids, etc.) or tablets (e.g., the iPad). Brainstorm features for a mobile app to Mechanical Turk that would improve the worker’s experience when performing HITs on mobile devices. 
+		            </p>
 
 		            <p>
 		            	<strong>Time left: </strong> <span id="timer">-</span>
@@ -68,9 +59,23 @@
     </div>
 
     <div class="row top-buffer">
-        <div class="{{= 'col-md-6' if userCondition != 1 else 'col-md-12' }}"> <!-- class="col-md-12" if condition == c1 -->
+    	
+        <div class="ideation {{= 'col-md-6' if userCondition != 1 else 'col-md-12' }}"> <!-- class="col-md-12" if condition == c1 -->
             <div class="pop-out">
-	            <h2>Your Ideas</h2>
+            	<h2>Ideation</h2>
+            	<h3>Submit a new idea</h3>
+
+            	<div>
+	                <p>
+	                	<textarea id="idea-input" placeholder="Type in your idea in here. Only 1 idea at a time!"></textarea>
+	                </p>
+
+	                <p>List at least 3 main concepts related to your idea, in order of relevance (separate each by a comma):</p>
+	                <input type="text" name="concepts-input" id="concepts-input" class="bottom-buffer" placeholder="e.g.: concept 1, concept 2, concept 3"/>
+
+	                <button class="btn" id="idea-submit">Post Idea</button>
+	            </div>
+	            <h3 class="top-separator">Your previous ideas</h3>
 	            <ul class="list-group" id="user-ideas">
 	                <!-- dynamic list -->
 	                {{if ideas:}}
@@ -81,7 +86,7 @@
 	                    {{pass}}
 	                {{else:}}
 	                <li class="list-group-item" id="no-user-idea">
-	                    <h3>No ideas have been submitted yet!</h3>
+	                    <h4>No ideas have been submitted yet!</h4>
 	                    <p>Use the form above to submit an idea</p>
 	                </li>
 	                {{pass}}
@@ -90,13 +95,14 @@
         </div>
 
         {{if userCondition != 1:}} 
-        <div class="col-md-6">
+        <div class="tasks col-md-6">
         	<div class="pop-out">
-
+        		<h2>Tasks</h2>
+        		<h3>Available Tasks</h3>
 	        	<div class="toggle prompt">
 	        		<p>Did you run out of ideas? Click the button below to get an inspiration</p>
 
-	        		<button class="btn btn-primary" id="inspiration-request">Get inspiration</button>
+	        		<button class="btn" id="inspiration-request">Get inspiration</button>
 	        	</div>
 
 	        	<div class="toggle task hidden">
@@ -154,6 +160,11 @@
 		        	{{pass}}
 	        	</div>
 
+        		<h3 class="top-separator">Your previous tasks</h3>
+        		<li class="list-group-item" id="no-user-idea">
+                    <h4>You haven't done any tasks yet</h4>
+                    <p>To do a task, select one task type from the options above</p>
+                </li>
         	</div>
         </div>
         {{pass}}

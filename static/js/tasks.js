@@ -8,14 +8,14 @@
 $(function(){
 
     var maxCatCharacters = 20;
-    var maxIdeaCharacters = 20;
+    var maxIdeaCharacters = 1000;
     var validationError = false;
 
     var userIdeaCounter = 0;
     var lastUpdateTime = null;
     var othersIndex = 0;
 
-    var maxTime = 18;
+    var maxTime = 1800000000; // In minutes
 
     // Start timer
     var interval = window.setInterval(function(){
@@ -45,7 +45,7 @@ $(function(){
         if(!text){
             alert("The idea text is mandatory!");
             validationError = true;
-        } else if (text.length > 1000){
+        } else if (text.length > maxIdeaCharacters){
             alert("You can use at most " + maxIdeaCharacters + " characters in your idea");
         }
         
