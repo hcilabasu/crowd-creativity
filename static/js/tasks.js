@@ -39,25 +39,35 @@ $(function(){
     $("#idea-submit").click(function(e){
         // get inputs
         var ideaInput = $("#idea-input");
+        var conceptsInput = $("#concepts-input");
         // get their content
         var text = ideaInput.val();
+        var concepts = parseConcepts(conceptsInput.val());
 
         if(!text){
             alert("The idea text is mandatory!");
             validationError = true;
+        } else if(!concepts){
+            alert("The concepts are mandatory!");
+            validationError = true;
         } else if (text.length > maxIdeaCharacters){
             alert("You can use at most " + maxIdeaCharacters + " characters in your idea");
+            validationError = true;
+        } else if (concepts.length < 3){
+            alert("You must insert at least three concepts for your idea!");
+            validationError = true;
         }
         
         if(!validationError){
             // clear inputs
             ideaInput.val("");
+            conceptsInput.val("");
 
             // Increase idea counter
             userIdeaCounter++;
             
             // Send idea to server
-            addIdea(text, function(){
+            addIdea({text:text, concepts:concepts}, function(){
                 // Add idea to user's view
                 $("#no-user-idea").remove();
                 $("#user-ideas").prepend("<li class='list-group-item'><p>" + text + "</p></li>")    
@@ -116,10 +126,19 @@ $(function(){
             type: "POST",
             url: URL.addIdea,
             data: {
-                "idea": idea
+                "idea": idea.text,
+                "concepts": idea.concepts
             },
             success: callback
         });
+    };
+
+    var parseConcepts = function(string){
+        concepts = string.split(',');
+        for(var i = 0; i < concepts.length; i++){
+            concepts[i] = concepts[i].trim();
+        }
+        return concepts;
     };
     
     var getIdeaForTask = function(data){

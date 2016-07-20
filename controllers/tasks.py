@@ -54,7 +54,7 @@ def index():
         __log_action(userId, "refresh_page", json.dumps({'condition':session.userCondition}))
 
     # get user ideas
-    ideas = db(db.idea.userId == userId).select()
+    ideas = db(db.idea.userId == userId).select(orderby=~db.idea.id)
     return dict(userCondition=session.userCondition, ideas=ideas, startTime=session.startTimeUTC)
 
 def add_idea():
@@ -65,9 +65,16 @@ def add_idea():
     userCondition = session.userCondition
     if userId != None:
         idea = request.vars['idea'].strip()
+        concepts = request.vars['concepts[]']
         dateAdded = datetime.datetime.now()
         __log_action(userId, "add_idea", idea)
-        ideaId = db.idea.insert(userId=userId, idea=idea, dateAdded=dateAdded, userCondition=userCondition, ratings=0, pool=ADD_TO_POOL)
+        # Inserting idea
+        idea_id = db.idea.insert(userId=userId, idea=idea, dateAdded=dateAdded, userCondition=userCondition, ratings=0, pool=ADD_TO_POOL)
+        # Inserting concepts
+        for concept in concepts:
+            concept_id = __insert_or_retrieve_concept_id(concept)
+            # Inserting relationships
+            db.concept_idea.insert(concept=concept_id, idea=idea_id)
 
 def get_idea():
     '''
@@ -200,3 +207,10 @@ def __get_min_ratings(userId, condition):
     min_query = db.idea.ratings.min()
     min_number = db((db.idea.userId != userId) & (db.idea.userCondition == condition) & (db.idea.pool == True)).select(min_query).first()[min_query]
     return min_number
+
+def __insert_or_retrieve_concept_id(concept):
+    conceptResult = db(db.concept.concept == concept).select(db.concept.id)
+    if conceptResult:
+        return conceptResult[0].id
+    else:
+        return db.concept.insert(concept=concept)
