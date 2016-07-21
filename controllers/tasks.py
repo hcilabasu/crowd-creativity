@@ -69,7 +69,7 @@ def add_idea():
     userCondition = session.userCondition
     if userId != None:
         idea = request.vars['idea'].strip()
-        concepts = request.vars['concepts[]']
+        concepts = request.vars['concepts[]'] if isinstance(request.vars['concepts[]'], list) else [request.vars['concepts[]']]
         dateAdded = datetime.datetime.now()
         __log_action(userId, "add_idea", idea)
         # Inserting idea
