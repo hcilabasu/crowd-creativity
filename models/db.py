@@ -121,6 +121,14 @@ db.define_table('idea_rating',
     Field('dateAdded', 'datetime'),
     Field('userId', 'string'))
 
+db.define_table('idea_triplets',
+    Field('seed_idea', 'reference idea'),
+    Field('closer_idea', 'reference idea'),
+    Field('farther_idea', 'reference idea'),
+    Field('ratingType', 'string'),
+    Field('dateAdded', 'datetime'),
+    Field('userId', 'string'))
+
 db.define_table('action_log',
     Field('actionName', 'string'),
     Field('userId', 'string'),

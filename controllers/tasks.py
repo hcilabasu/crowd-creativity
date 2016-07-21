@@ -98,7 +98,7 @@ def get_idea():
 
     # this dictionary specifies how many ideas each condition needs
     # Condition 1 doesn't need any ideas, so threshold is high
-    threshold = {1:1000, 2:1, 3:1, 4:2, 5:3}
+    threshold = {1:1000, 2:1, 3:1, 4:3}
     if len(ideas) < threshold[userCondition]:
         __log_action(userId, "get_idea", "[]")
         return json.dumps(dict()) # there are not enough ideas
@@ -119,6 +119,7 @@ def rate_idea():
     userCondition = session.userCondition
     userId = session.userId
     ideaIds = request.vars['ideaIds[]'] if isinstance(request.vars['ideaIds[]'], list) else [request.vars['ideaIds[]']] # expected: array of ids if more than one item. Otherwise, single number
+    ideaIds = [int(x) for x in ideaIds] # Casting to integers
     date_time = datetime.datetime.now()
 
     if userCondition == 3: # rating originality and usefulness
@@ -136,21 +137,24 @@ def rate_idea():
             # Error
             response.status = 500
             return "This rating task requires exactly one idea"
-    elif userCondition == 4: # rating similarity in a 7-point scale
-        similarity = request.vars['similarity']
-        if len(ideaIds) == 2:
-            db.idea_rating.insert(
+    elif userCondition == 4: # rating similarity triplet
+        closer_index = int(request.vars['closer_index'])
+        farther_index = 1 if closer_index == 2 else 2
+        print('Seed: %d, Closer: %d, Farther: %d' % (ideaIds[0], ideaIds[closer_index], ideaIds[farther_index]))
+        if len(ideaIds) == 3:
+
+            db.idea_triplets.insert(
                 userId=userId, 
+                dateAdded=date_time,
                 ratingType="similarity", 
-                rating=similarity, 
-                dateAdded=date_time, 
-                idea=ideaIds[0], 
-                relativeTo=ideaIds[1] 
+                seed_idea=ideaIds[0], 
+                closer_idea=ideaIds[closer_index], 
+                farther_idea=ideaIds[farther_index] 
             )
         else:
             # Error
             response.status = 500
-            return "This rating task requires exactly two ideas"
+            return "This rating task requires exactly three ideas"
 
 def post_survey():
     __log_action(session.userId, "post_survey", "")

@@ -31,6 +31,12 @@ ol {
     margin: 0 0 20px 0;
 }
 
+ul {
+    margin-left: 0;
+    padding-left: 0;
+    list-style-type: none;
+}
+
 .logo {
     color: white;
     font-family: 'ChunkFive'; 
@@ -253,4 +259,9 @@ table th > div {
     background: #C8E8FF;
     margin: 0 5px;
     padding: 2px 5px;
+}
+
+div.w2p_flash.alert {
+    z-index: 999999;
+    top: 15px;
 }

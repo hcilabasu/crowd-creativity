@@ -53,8 +53,8 @@ $(function(){
         } else if (text.length > maxIdeaCharacters){
             alert("You can use at most " + maxIdeaCharacters + " characters in your idea");
             validationError = true;
-        } else if (concepts.length < 3){
-            alert("You must insert at least three concepts for your idea!");
+        } else if (concepts.length < 1){
+            alert("You must insert at least one tag for your idea!");
             validationError = true;
         }
         
@@ -99,12 +99,12 @@ $(function(){
         var ideaIds = JSON.parse($("#idea-id").val());
         var originality = originalityInput.val();
         var usefulness = usefulnessInput.val();
-        var similarity = similarityInput.val();
+        var closer_index = similarityInput.val();
 
         if(ENV.condition === 3 && (!originality || !usefulness)){
             alert("Both ratings are mandatory!");
-        } else if(ENV.condition === 4 && (!similarity)){
-            alert("You must select a similarity rating!");
+        } else if(ENV.condition === 4 && (!closer_index)){
+            alert("You must select the most similar idea!");
         } else {
             // Submit
             $.ajax({
@@ -114,7 +114,7 @@ $(function(){
                     ideaIds: ideaIds,
                     originality: originality,
                     usefulness: usefulness,
-                    similarity: similarity
+                    closer_index: closer_index
                 },
                 success: rateIdea
             })
@@ -179,7 +179,9 @@ $(function(){
         $(".toggle").toggleClass("hidden");
         originalityInput.prop("checked", false);
         usefulnessInput.prop("checked", false);
-        similarityInput.prop("checked", false)
+        similarityInput.prop("checked", false);
+
+        $.web2py.flash("Your task has been submitted!", "");
     };
 
     var finishSession = function(){
@@ -233,4 +235,7 @@ $(function(){
     }
 
     $(".tooltip-toggle").tooltip(); // Tooltip
+
+
 });
+
