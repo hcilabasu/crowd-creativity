@@ -97,8 +97,7 @@ def get_idea():
         ).select(orderby='<random>')
 
     # this dictionary specifies how many ideas each condition needs
-    # Condition 1 doesn't need any ideas, so threshold is high
-    threshold = {1:1000, 2:1, 3:1, 4:3}
+    threshold = {2:3, 3:1, 4:3}
     if len(ideas) < threshold[userCondition]:
         __log_action(userId, "get_idea", "[]")
         return json.dumps(dict()) # there are not enough ideas
