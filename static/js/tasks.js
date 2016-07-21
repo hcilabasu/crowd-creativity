@@ -70,7 +70,15 @@ $(function(){
             addIdea({text:text, concepts:concepts}, function(){
                 // Add idea to user's view
                 $("#no-user-idea").remove();
-                $("#user-ideas").prepend("<li class='list-group-item'><p>" + text + "</p></li>")    
+                // Build concepts string
+                var conceptsStr = "";
+                for (var i = 0; i < concepts.length; i++){
+                    conceptsStr += "<span>";
+                    conceptsStr += concepts[i]
+                    conceptsStr += "</span>";
+                }
+                
+                $("#user-ideas").prepend("<li class='list-group-item'><p>" + text + conceptsStr + "</p></li>")    
             });
         }    
     });

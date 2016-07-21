@@ -54,7 +54,11 @@ def index():
         __log_action(userId, "refresh_page", json.dumps({'condition':session.userCondition}))
 
     # get user ideas
-    ideas = db(db.idea.userId == userId).select(orderby=~db.idea.id)
+    ideas = db(
+        (db.idea.userId == userId) & (
+            (db.idea.id == db.concept_idea.idea) & 
+            (db.concept.id == db.concept_idea.concept))
+    ).select(orderby=~db.idea.id, groupby=db.idea.id)
     return dict(userCondition=session.userCondition, ideas=ideas, startTime=session.startTimeUTC)
 
 def add_idea():
