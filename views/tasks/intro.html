@@ -15,20 +15,20 @@
 
 				{{if userCondition == 1:}}
 					<img src="{{=URL('static', 'images/intro/c1.PNG')}}"/>
-					<p>The image is marked in 3 different sections:</p>
+					<p>The interface is divided in 3 different sections:</p>
 					<ol>
-						<li><strong>Idea input:</strong> This is where you will write your ideas. </li>
-						<li><strong>Problem description:</strong> This is where the problem is described. Read it carefully before starting to generate ideas.</li>
-						<li><strong>Ideas list:</strong> Whenever you submit an idea, it will be added to this list.</li>
+						<li><strong>Problem description (top):</strong> This is where the problem is described. Read it carefully before starting to generate ideas. The timer is also displayed here.</li>
+						<li><strong>Submit a new idea (middle):</strong> This is where you will write your ideas, as well as tags for them. </li>
+						<li><strong>Your previous ideas (bottom):</strong> Whenever you submit an idea, it will be added to this list.</li>
 					</ol>
 				{{else:}}
 					<img src="{{=URL('static', 'images/intro/c2-3-4.PNG')}}"/>
 					<p>The image is marked in 4 different sections:</p>
 					<ol>
-						<li><strong>Idea input:</strong> This is where you will write your ideas. </li>
-						<li><strong>Problem description:</strong> This is where the problem is described. Read it carefully before starting to generate ideas.</li>
-						<li><strong>Ideas list:</strong> Whenever you submit an idea, it will be added to this list.</li>
-						<li><strong>Inspiration panel:</strong> Whenever you run out of ideas, you can get inspirations here. The next section describes how this works.</li>
+						<li><strong>Problem description (top):</strong> This is where the problem is described. Read it carefully before starting to generate ideas. The timer is also displayed here.</li>
+						<li><strong>Submit a new idea (left/top):</strong> This is where you will write your ideas, as well as tags for them. </li>
+						<li><strong>Your previous ideas (left/bottom):</strong> Whenever you submit an idea, it will be added to this list.</li>
+						<li><strong>Inspiration panel (right):</strong> Whenever you run out of ideas, you can get inspiration here. The next section describes how this works.</li>
 					</ol>
 				{{pass}}				
 
@@ -36,12 +36,12 @@
 					<h3>Getting inspired</h3>
 
 					{{if userCondition == 2:}}
-						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong>. It will present you with the idea developed by another user. When you're done, click the <strong>Close Idea</strong> button. See the image below: </p>
+						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong> button. It will present you with 3 ideas developed by other users. When you're done, click the <strong>Close Idea</strong> button. See the image below: </p>
 
 						<img src="{{=URL('static', 'images/intro/c2-help.PNG')}}"/>
 
 					{{elif userCondition == 3:}}
-						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong>. It will present you with the idea developed by another user along with a small task. The task asks you to rate that idea in two dimensions: originality and usefulness. When you're done, click the <strong>submit rating</strong> button. See the image below: </p>
+						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong> button. It will present you with 3 ideas developed by other users along with a small task. The task asks you to rate that idea in two dimensions: originality and usefulness. When you're done, click the <strong>submit rating</strong> button. See the image below: </p>
 
 						<img src="{{=URL('static', 'images/intro/c3-help.PNG')}}"/>
 
