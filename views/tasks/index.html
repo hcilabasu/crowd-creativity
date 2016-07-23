@@ -36,11 +36,18 @@
 			            	<p>Thank you for your ideas! Please answer the questions below (mandatory). After you answer them, you will be presented with a code. To get paid, copy and paste it back into the MTurk hit.</p>
 			            	<form id="survey">
 				            	<p>
-				            		1. Did you find the "get inspiration" button useful?
+				            		1. How useful did you find the "get inspiration" button to be?
 				            		<!-- Yes / No -->
-				            		<ul class="horizontal-radial">
-						        		<li> <input type="radio" name="useful-inspiration" value="yes"/> Yes</li>
-						        		<li> <input type="radio" name="useful-inspiration" value="no"/> No</li>
+				            		<ul>
+						        		<li> <input type="radio" name="useful-inspiration" id="survey-useul-3" value="3"/> 
+						        			<label for="survey-useul-3">It helped a lot</label>
+						        		</li>
+						        		<li> <input type="radio" name="useful-inspiration" id="survey-useul-2" value="2"/> 
+						        			<label for="survey-useul-2">It didn't make a difference</label>
+					        			</li>
+						        		<li> <input type="radio" name="useful-inspiration" id="survey-useul-1" value="1"/> 
+						        			<label for="survey-useul-1">It made things harder</label>
+						        		</li>
 						        	</ul>
 				            	</p>
 				            	<p>
@@ -51,7 +58,7 @@
 			            	<p>Once you've answered all questions, press the "get code" button below, and paste the code back into the MTurk HIT.</p>
 			            {{pass}}
 			            <button class="btn btn-primary" id="get-code">Get code</button>
-			            <h3 class="quote" id="final-id" style="display:none">Loading id...</h3>
+			            <h3 id="final-id" style="display:none">Loading id...</h3>
 		            </div>
 		        </div>
 		    </div>

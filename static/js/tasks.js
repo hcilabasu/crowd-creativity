@@ -15,7 +15,7 @@ $(function(){
     var lastUpdateTime = null;
     var othersIndex = 0;
 
-    var maxTime = 1800000000; // In minutes
+    var maxTime = 1; // In minutes
 
     // Start timer
     var interval = window.setInterval(function(){
@@ -229,6 +229,7 @@ $(function(){
             type: "GET",
             url: URL.getFinalID,
             success:function(data){
+                $("#survey").hide();
                 $("#final-id").css("display", "block").text(data);
             }
         });
