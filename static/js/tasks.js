@@ -168,6 +168,7 @@ $(function(){
 
             $("#idea-id").val(JSON.stringify(ids));             
             $(".toggle").toggleClass("hidden");
+            $("#pretask-instructions").hide();
         }
     };
 
@@ -177,6 +178,7 @@ $(function(){
         var similarityInput = $("input[name=similarity]:checked");
         // The idea has been rated
         $(".toggle").toggleClass("hidden");
+        $("#pretask-instruction").show();
         originalityInput.prop("checked", false);
         usefulnessInput.prop("checked", false);
         similarityInput.prop("checked", false);
