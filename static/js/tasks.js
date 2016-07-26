@@ -144,7 +144,7 @@ $(function(){
     var parseConcepts = function(string){
         concepts = string.split(',');
         for(var i = 0; i < concepts.length; i++){
-            concepts[i] = concepts[i].trim();
+            concepts[i] = concepts[i].trim().replace('#','');
         }
         return concepts;
     };
