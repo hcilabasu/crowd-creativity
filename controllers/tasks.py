@@ -141,19 +141,22 @@ def rate_idea():
         farther_index = 1 if closer_index == 2 else 2
         print('Seed: %d, Closer: %d, Farther: %d' % (ideaIds[0], ideaIds[closer_index], ideaIds[farther_index]))
         if len(ideaIds) == 3:
-
             db.idea_triplets.insert(
                 userId=userId, 
                 dateAdded=date_time,
                 ratingType="similarity", 
                 seed_idea=ideaIds[0], 
                 closer_idea=ideaIds[closer_index], 
-                farther_idea=ideaIds[farther_index] 
-            )
+                farther_idea=ideaIds[farther_index])
         else:
             # Error
             response.status = 500
             return "This rating task requires exactly three ideas"
+        __log_action(
+                session.userId, 
+                "task_completed:similarity", "{condition:4, triplet:[%d,%d,%d]}" 
+                    % (ideaIds[0],ideaIds[closer_index],ideaIds[farther_index]))
+
 
 def post_survey():
     __log_action(session.userId, "post_survey", "")
