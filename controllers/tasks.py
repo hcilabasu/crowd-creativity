@@ -154,8 +154,8 @@ def rate_idea():
             return "This rating task requires exactly three ideas"
         __log_action(
                 session.userId, 
-                "task_completed:similarity", "{condition:4, triplet:[%d,%d,%d]}" 
-                    % (ideaIds[0],ideaIds[closer_index],ideaIds[farther_index]))
+                "task_completed:similarity", 
+                json.dumps({'condition':4, 'triplet': [ideaIds[0],ideaIds[closer_index],ideaIds[farther_index]]})) 
 
 
 def post_survey():
