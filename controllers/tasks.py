@@ -14,8 +14,8 @@ User Conditions
 
 
 # CONFIG
-ADD_TO_POOL = True # if false, new ideas are not added to the pool of ideas used in the tasks.
-DEBUG = True
+ADD_TO_POOL = False # if false, new ideas are not added to the pool of ideas used in the tasks.
+DEBUG = False
 
 
 def enter():
