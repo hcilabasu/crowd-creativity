@@ -15,7 +15,7 @@ $(function(){
     var lastUpdateTime = null;
     var othersIndex = 0;
 
-    var maxTime = 18; // In minutes
+    var maxTime = ENV.ideationTime; // In minutes
 
     // Start timer
     var interval = window.setInterval(function(){

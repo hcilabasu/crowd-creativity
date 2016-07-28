@@ -16,10 +16,11 @@ User Conditions
 # CONFIG
 ADD_TO_POOL = False # if false, new ideas are not added to the pool of ideas used in the tasks.
 DEBUG = False
+IDEATION_TIME = 18 # in minutes
 
 
 def enter():
-    return dict()
+    return dict(ideationTime=IDEATION_TIME)
 
 def intro():
     if session.userCondition == None:
@@ -32,7 +33,7 @@ def intro():
         session.userCondition = userCondition
         __log_action('intro', "force_condition", json.dumps({'new_condition':userCondition}))
 
-    return dict(userCondition=session.userCondition)
+    return dict(userCondition=session.userCondition, ideationTime=IDEATION_TIME)
 
 def index():
     if session.userCondition == None:
@@ -59,7 +60,7 @@ def index():
             (db.idea.id == db.concept_idea.idea) & 
             (db.concept.id == db.concept_idea.concept))
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
-    return dict(userCondition=session.userCondition, ideas=ideas, startTime=session.startTimeUTC)
+    return dict(userCondition=session.userCondition, ideas=ideas, startTime=session.startTimeUTC, ideationTime=IDEATION_TIME)
 
 def add_idea():
     '''
