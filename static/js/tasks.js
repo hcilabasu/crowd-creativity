@@ -143,10 +143,14 @@ $(function(){
 
     var parseConcepts = function(string){
         concepts = string.split(',');
+        conceptsOutput = []
         for(var i = 0; i < concepts.length; i++){
-            concepts[i] = concepts[i].trim().replace('#','');
+            var concept = concepts[i].trim().replace('#','');
+            if (concept && concept.length !== 0){
+                conceptsOutput.push(concept);
+            }
         }
-        return concepts;
+        return conceptsOutput;
     };
     
     var getIdeaForTask = function(data){
