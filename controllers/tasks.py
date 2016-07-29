@@ -92,8 +92,8 @@ def get_idea():
     if userId != None:
         ideas = db(
             (db.idea.userId != userId) & 
-            (db.idea.userCondition == userCondition) & 
-            (db.idea.ratings == min_ratings) &
+            # (db.idea.userCondition == userCondition) & 
+            # (db.idea.ratings == min_ratings) &
             (db.idea.pool == True)
         ).select(orderby='<random>')
 
