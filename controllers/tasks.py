@@ -105,8 +105,9 @@ def get_idea():
             print("Searching with min = %d" % min_ratings)
             query = ((db.idea.userId != userId) & 
                 # (db.idea.userCondition == userCondition) & 
-                (db.idea.ratings == min_ratings) & 
                 (db.idea.pool == True))
+            if userCondition != 2:
+                query = query & (db.idea.ratings == min_ratings) # Condition 2 is decoupled from rating number
             results = db(query).select(orderby='<random>')
             for i in results:
                 ideas.append({'idea':i.idea, 'id':i.id})
