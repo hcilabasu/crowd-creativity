@@ -16,7 +16,7 @@ User Conditions
 # CONFIG
 ADD_TO_POOL = False # if false, new ideas are not added to the pool of ideas used in the tasks.
 DEBUG = False
-IDEATION_TIME = 18 # in minutes
+IDEATION_TIME = 99999 # in minutes
 
 
 def enter():
@@ -89,22 +89,36 @@ def get_idea():
     userCondition = session.userCondition
     ideas = []
     min_ratings = __get_min_ratings(userId, userCondition)
-    if userId != None:
-        ideas = db(
-            (db.idea.userId != userId) & 
-            # (db.idea.userCondition == userCondition) & 
-            # (db.idea.ratings == min_ratings) &
-            (db.idea.pool == True)
-        ).select(orderby='<random>')
+    max_ratings = __get_max_ratings(userId, userCondition)
 
+    print('Min: %d, max: %d' % (min_ratings, max_ratings))
     # this dictionary specifies how many ideas each condition needs
     threshold = {2:3, 3:1, 4:3}
+
+    if userId != None:
+
+        # Grab ideas. The first loop looks for all ideas with ratings == min_rating. If not enough are found,
+        # the next iteration will increase the min_ratings and append the ideas. This will go on until 
+        # the threshold is surpassed, or until min_ratings = max_ratings.
+        ideas = []
+        while len(ideas) < threshold[userCondition] and min_ratings <= max_ratings:
+            print("Searching with min = %d" % min_ratings)
+            query = ((db.idea.userId != userId) & 
+                # (db.idea.userCondition == userCondition) & 
+                (db.idea.ratings == min_ratings) & 
+                (db.idea.pool == True))
+            results = db(query).select(orderby='<random>')
+            for i in results:
+                ideas.append({'idea':i.idea, 'id':i.id})
+            min_ratings += 1
+
     if len(ideas) < threshold[userCondition]:
         __log_action(userId, "get_idea", "[]")
         return json.dumps(dict()) # there are not enough ideas
     else:
         selected = ideas[0:threshold[userCondition]] # get as many ideas as needed
-        clean_ideas = [{'idea':i.idea, 'id':i.id} for i in selected]
+        random.shuffle(selected) # shuffling to avoid the lowest rated appearing in front
+        clean_ideas = [{'idea':i['idea'], 'id':i['id']} for i in selected]
 
         # log retrieved ideas
         __log_action(userId, "get_idea", json.dumps(clean_ideas))
@@ -142,6 +156,7 @@ def rate_idea():
         farther_index = 1 if closer_index == 2 else 2
         print('Seed: %d, Closer: %d, Farther: %d' % (ideaIds[0], ideaIds[closer_index], ideaIds[farther_index]))
         if len(ideaIds) == 3:
+            # insert ratings
             db.idea_triplets.insert(
                 userId=userId, 
                 dateAdded=date_time,
@@ -149,6 +164,11 @@ def rate_idea():
                 seed_idea=ideaIds[0], 
                 closer_idea=ideaIds[closer_index], 
                 farther_idea=ideaIds[farther_index])
+            # update rating count
+            for idea_id in ideaIds:
+                idea = db(db.idea.id == idea_id).select().first()
+                idea.ratings += 1
+                idea.update_record()
         else:
             # Error
             response.status = 500
@@ -214,10 +234,22 @@ def __get_condition():
                 r.conditionCount = 0
                 r.update_record()
 
+# Generic function to get number of ratings. Is used by the next two functions.
+def __get_query_ratings(query, userId, condition):
+    number = db(
+            (db.idea.userId != userId) & 
+            # (db.idea.userCondition == condition) & 
+            (db.idea.pool == True)
+        ).select(query).first()[query]
+    return number
+
 def __get_min_ratings(userId, condition):
     min_query = db.idea.ratings.min()
-    min_number = db((db.idea.userId != userId) & (db.idea.userCondition == condition) & (db.idea.pool == True)).select(min_query).first()[min_query]
-    return min_number
+    return __get_query_ratings(min_query, userId, condition)
+
+def __get_max_ratings(userId, condition):
+    max_query = db.idea.ratings.max()
+    return __get_query_ratings(max_query, userId, condition) 
 
 def __insert_or_retrieve_concept_id(concept):
     conceptResult = db(db.concept.concept == concept).select(db.concept.id)
