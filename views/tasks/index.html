@@ -41,13 +41,13 @@
 				            		<!-- Yes / No -->
 				            		<ul>
 						        		<li> <input type="radio" name="useful-inspiration" id="survey-useul-3" value="3"/> 
-						        			<label for="survey-useul-3">It helped a lot</label>
+						        			<label for="survey-useul-3">3 - It helped a lot</label>
 						        		</li>
 						        		<li> <input type="radio" name="useful-inspiration" id="survey-useul-2" value="2"/> 
-						        			<label for="survey-useul-2">It didn't make a difference</label>
+						        			<label for="survey-useul-2">2 - It didn't make a difference</label>
 					        			</li>
 						        		<li> <input type="radio" name="useful-inspiration" id="survey-useul-1" value="1"/> 
-						        			<label for="survey-useul-1">It made things harder</label>
+						        			<label for="survey-useul-1">1 - It made things harder</label>
 						        		</li>
 						        	</ul>
 				            	</p>
@@ -172,6 +172,19 @@
 			        		<!-- The value for these radio buttons represents the index for each idea in the array of ideas -->
 			        		<li> <input type="radio" name="similarity" id="similarity-2" value="1"/> <label for="similarity-2">Idea #2</label> </li>
 			        		<li> <input type="radio" name="similarity" id="similarity-3" value="2"/> <label for="similarity-3">Idea #3</label> </li>
+			        	</ul>
+
+			        	<h4>How confident are you in your answer?</h4>
+			        	<ul class="horizontal-radial">
+			        		<li>
+			        			<label for="confidence-1">Unsure</label> 
+			        			<input type="radio" name="confidence" value="1" id="confidence-1"/> 
+			        		</li>
+			        		<li> <input type="radio" name="confidence" value="2" id="confidence-2"/> </li>
+			        		<li>
+			        			<input type="radio" name="confidence" value="3" id="confidence-3"/> 
+			        			<label for="confidence-3">Confident</label>
+			        		</li>
 			        	</ul>
 
 			        	<button class="btn" id="task-submit">Submit task</button>

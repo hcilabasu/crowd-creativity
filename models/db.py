@@ -125,6 +125,7 @@ db.define_table('idea_triplets',
     Field('seed_idea', 'reference idea'),
     Field('closer_idea', 'reference idea'),
     Field('farther_idea', 'reference idea'),
+    Field('confidence', 'integer'),
     Field('ratingType', 'string'),
     Field('dateAdded', 'datetime'),
     Field('userId', 'string'))

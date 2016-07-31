@@ -16,7 +16,7 @@ User Conditions
 # CONFIG
 ADD_TO_POOL = False # if false, new ideas are not added to the pool of ideas used in the tasks.
 DEBUG = False
-IDEATION_TIME = 99999 # in minutes
+IDEATION_TIME = 1 # in minutes
 
 
 def enter():
@@ -154,6 +154,7 @@ def rate_idea():
             return "This rating task requires exactly one idea"
     elif userCondition == 4: # rating similarity triplet
         closer_index = int(request.vars['closer_index'])
+        confidence = int(request.vars['confidence'])
         farther_index = 1 if closer_index == 2 else 2
         print('Seed: %d, Closer: %d, Farther: %d' % (ideaIds[0], ideaIds[closer_index], ideaIds[farther_index]))
         if len(ideaIds) == 3:
@@ -164,7 +165,8 @@ def rate_idea():
                 ratingType="similarity", 
                 seed_idea=ideaIds[0], 
                 closer_idea=ideaIds[closer_index], 
-                farther_idea=ideaIds[farther_index])
+                farther_idea=ideaIds[farther_index],
+                confidence=confidence)
             # update rating count
             for idea_id in ideaIds:
                 idea = db(db.idea.id == idea_id).select().first()

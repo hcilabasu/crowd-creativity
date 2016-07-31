@@ -95,16 +95,18 @@ $(function(){
         var originalityInput = $("input[name=originality]:checked");
         var usefulnessInput = $("input[name=usefulness]:checked");
         var similarityInput = $("input[name=similarity]:checked");
+        var confidenceInput = $("input[name=confidence]:checked");
 
         var ideaIds = JSON.parse($("#idea-id").val());
         var originality = originalityInput.val();
         var usefulness = usefulnessInput.val();
         var closer_index = similarityInput.val();
+        var confidence = confidenceInput.val();
 
         if(ENV.condition === 3 && (!originality || !usefulness)){
             alert("Both ratings are mandatory!");
-        } else if(ENV.condition === 4 && (!closer_index)){
-            alert("You must select the most similar idea!");
+        } else if(ENV.condition === 4 && (!closer_index || !confidence)){
+            alert("You must select the most similar idea and indicate your confidence level!");
         } else {
             // Submit
             $.ajax({
@@ -114,7 +116,8 @@ $(function(){
                     ideaIds: ideaIds,
                     originality: originality,
                     usefulness: usefulness,
-                    closer_index: closer_index
+                    closer_index: closer_index,
+                    confidence: confidence
                 },
                 success: rateIdea
             })
@@ -181,12 +184,14 @@ $(function(){
         var originalityInput = $("input[name=originality]:checked");
         var usefulnessInput = $("input[name=usefulness]:checked");
         var similarityInput = $("input[name=similarity]:checked");
+        var confidenceInput = $("input[name=confidence]:checked");
         // The idea has been rated
         $(".toggle").toggleClass("hidden");
         $("#pretask-instructions").show();
         originalityInput.prop("checked", false);
         usefulnessInput.prop("checked", false);
         similarityInput.prop("checked", false);
+        confidenceInput.prop("checked", false);
 
         $.web2py.flash("Your task has been submitted!", "");
     };
