@@ -37,6 +37,10 @@ ul {
     list-style-type: none;
 }
 
+label {
+    font-weight: normal;
+}
+
 .logo {
     color: white;
     font-family: 'ChunkFive'; 
@@ -194,6 +198,10 @@ table th > div {
     border-top-color: #FD542D;
 }
 
+.tasks h4 {
+    margin: 20px 0 0 0;
+}
+
 .horizontal-radial {
     margin: 0 0 30px 0;
     padding: 0;
@@ -267,4 +275,42 @@ div.w2p_flash.alert {
 
 #final-id {
     margin: 20px 0 0 0;
+}
+
+#ideas-container {
+    -webkit-column-count: 3;
+    -webkit-column-gap: 10px;
+    -webkit-column-fill: auto;
+    -moz-column-count: 3;
+    -moz-column-gap: 10px;
+    -moz-column-fill: auto;
+    column-count: 3;
+    column-gap: 15px;
+    column-fill: auto;
+}
+
+.ideaWrapper {
+    display: inline-block;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    background: #DFF0FD;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.ideas-container:before {
+    content: "Click on the most similar idea:";
+}
+
+.ideaWrapper.selected {
+    background: #3AAAFC;
+    color: white;
+}
+
+.seedIdea {
+    padding: 20px 10px;
+    text-align: center;
 }

@@ -94,7 +94,7 @@ $(function(){
     $("#task-submit").click(function(e){
         var originalityInput = $("input[name=originality]:checked");
         var usefulnessInput = $("input[name=usefulness]:checked");
-        var similarityInput = $("input[name=similarity]:checked");
+        var similarityInput = $(".ideaWrapper.selected input");
         var confidenceInput = $("input[name=confidence]:checked");
 
         var ideaIds = JSON.parse($("#idea-id").val());
@@ -127,11 +127,19 @@ $(function(){
     $("#close-idea").click(function(e){
         $(".toggle").toggleClass("hidden");
         $("#pretask-instructions").show();
+        $("#ideas-panel").empty();
     });
     
     $("#get-code").click(function(){
         getCodeClick();
     });
+
+    var bindIdeaWrapperClick = function(){
+        $(".clickable").bind('click', function(event){
+            $(".ideaWrapper.selected").toggleClass('selected');
+            $(event.target).toggleClass('selected');
+        });
+    };
 
     var addIdea = function(idea, callback){
         $.ajax({
@@ -163,20 +171,38 @@ $(function(){
         if(!ideas.length){
             alert("No other ideas were submitted yet. Check again later.");
         } else {
-            var ideaContainer = $("#ideas-container");
+            var ideaPanel = $("#ideas-panel");
+            var ideaContainer = $("<div id='ideas-container'/>");
             ideaContainer.empty(); // clear container
             var ids = [];
+            // Appending ideas to panel
             for(var i = 0; i < ideas.length; i++){
                 var idea = ideas[i];
-                if(ideas.length > 1)
-                    ideaContainer.append($("<h4></h4>").text("Idea #" + (i+1)))
-                ideaContainer.append($("<p class='quote'></p>").text(idea.idea));
+                var wrapper = $("<p></p>").text(idea.idea);
+                // If condition == 4, use the first idea as the seed
+                if(i == 0 && ENV.condition == 4) {
+                    wrapper.addClass('seedIdea');
+                    wrapper.html('<strong>Seed Idea:</strong><br/>' + wrapper.text());
+                    ideaPanel.append(wrapper);
+                } else {
+                    wrapper.addClass('ideaWrapper');
+                    wrapper.append($("<input type='hidden' value='"+i+"'/>"));
+                    ideaContainer.append(wrapper);
+
+                    if(ENV.condition == 4){
+                        wrapper.addClass('clickable');
+                    }
+                }
+                
                 ids.push(idea.id);
             }
+            ideaPanel.append(ideaContainer);
 
             $("#idea-id").val(JSON.stringify(ids));             
             $(".toggle").toggleClass("hidden");
             $("#pretask-instructions").hide();
+
+            bindIdeaWrapperClick();
         }
     };
 
@@ -185,13 +211,16 @@ $(function(){
         var usefulnessInput = $("input[name=usefulness]:checked");
         var similarityInput = $("input[name=similarity]:checked");
         var confidenceInput = $("input[name=confidence]:checked");
-        // The idea has been rated
+        // The idea has been rated. Clear and empty everything
         $(".toggle").toggleClass("hidden");
         $("#pretask-instructions").show();
+        $("#ideas-panel").empty();
         originalityInput.prop("checked", false);
         usefulnessInput.prop("checked", false);
         similarityInput.prop("checked", false);
         confidenceInput.prop("checked", false);
+
+
 
         $.web2py.flash("Your task has been submitted!", "");
     };

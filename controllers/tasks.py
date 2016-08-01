@@ -16,7 +16,9 @@ User Conditions
 # CONFIG
 ADD_TO_POOL = False # if false, new ideas are not added to the pool of ideas used in the tasks.
 DEBUG = False
-IDEATION_TIME = 1 # in minutes
+IDEATION_TIME = 18 # in minutes
+# this dictionary specifies how many ideas each condition needs
+THRESHOLD = {2:7, 3:1, 4:7}
 
 
 def enter():
@@ -92,16 +94,13 @@ def get_idea():
     max_ratings = __get_max_ratings(userId, userCondition)
 
     print('Min: %d, max: %d' % (min_ratings, max_ratings))
-    # this dictionary specifies how many ideas each condition needs
-    threshold = {2:3, 3:1, 4:3}
 
     if userId != None:
-
         # Grab ideas. The first loop looks for all ideas with ratings == min_rating. If not enough are found,
         # the next iteration will increase the min_ratings and append the ideas. This will go on until 
         # the threshold is surpassed, or until min_ratings = max_ratings.
         ideas = []
-        while len(ideas) < threshold[userCondition] and min_ratings <= max_ratings:
+        while len(ideas) < THRESHOLD[userCondition] and min_ratings <= max_ratings:
             print("Searching with min = %d" % min_ratings)
             query = ((db.idea.userId != userId) & 
                 # (db.idea.userCondition == userCondition) & 
@@ -113,11 +112,11 @@ def get_idea():
                 ideas.append({'idea':i.idea, 'id':i.id})
             min_ratings += 1
 
-    if len(ideas) < threshold[userCondition]:
+    if len(ideas) < THRESHOLD[userCondition]:
         __log_action(userId, "get_idea", "[]")
         return json.dumps(dict()) # there are not enough ideas
     else:
-        selected = ideas[0:threshold[userCondition]] # get as many ideas as needed
+        selected = ideas[0:THRESHOLD[userCondition]] # get as many ideas as needed
         random.shuffle(selected) # shuffling to avoid the lowest rated appearing in front
         clean_ideas = [{'idea':i['idea'], 'id':i['id']} for i in selected]
 
@@ -136,11 +135,12 @@ def rate_idea():
     ideaIds = request.vars['ideaIds[]'] if isinstance(request.vars['ideaIds[]'], list) else [request.vars['ideaIds[]']] # expected: array of ids if more than one item. Otherwise, single number
     ideaIds = [int(x) for x in ideaIds] # Casting to integers
     date_time = datetime.datetime.now()
+    num_ideas = THRESHOLD[userCondition]
 
     if userCondition == 3: # rating originality and usefulness
         originality = request.vars['originality']
         usefulness = request.vars['usefulness']
-        if len(ideaIds) == 1:
+        if len(ideaIds) == num_ideas:
             # insert ratings
             db.idea_rating.insert(userId=userId, ratingType="originality", rating=originality, dateAdded=date_time, idea=ideaIds[0])
             db.idea_rating.insert(userId=userId, ratingType="usefulness", rating=usefulness, dateAdded=date_time, idea=ideaIds[0])
@@ -151,22 +151,25 @@ def rate_idea():
         else:
             # Error
             response.status = 500
-            return "This rating task requires exactly one idea"
+            return "This rating task requires exactly %d idea" % num_ideas
     elif userCondition == 4: # rating similarity triplet
         closer_index = int(request.vars['closer_index'])
         confidence = int(request.vars['confidence'])
-        farther_index = 1 if closer_index == 2 else 2
-        print('Seed: %d, Closer: %d, Farther: %d' % (ideaIds[0], ideaIds[closer_index], ideaIds[farther_index]))
-        if len(ideaIds) == 3:
+        close_set = set([ideaIds[0], ideaIds[closer_index]]) # set of the index of the seed and the close idea
+        farther_set = [i for i in ideaIds if i not in close_set]
+
+        print('Seed: %d, Closer: %d, Farther: %s' % (ideaIds[0], ideaIds[closer_index], str(farther_set)))
+        if len(ideaIds) == num_ideas:
             # insert ratings
-            db.idea_triplets.insert(
-                userId=userId, 
-                dateAdded=date_time,
-                ratingType="similarity", 
-                seed_idea=ideaIds[0], 
-                closer_idea=ideaIds[closer_index], 
-                farther_idea=ideaIds[farther_index],
-                confidence=confidence)
+            for farther_index in farther_set:
+                db.idea_triplets.insert(
+                    userId=userId, 
+                    dateAdded=date_time,
+                    ratingType="similarity", 
+                    seed_idea=ideaIds[0], 
+                    closer_idea=ideaIds[closer_index], 
+                    farther_idea=farther_index,
+                    confidence=confidence)
             # update rating count
             for idea_id in ideaIds:
                 idea = db(db.idea.id == idea_id).select().first()
@@ -175,11 +178,15 @@ def rate_idea():
         else:
             # Error
             response.status = 500
-            return "This rating task requires exactly three ideas"
+            return "This rating task requires exactly %d ideas" % num_ideas
         __log_action(
                 session.userId, 
                 "task_completed:similarity", 
-                json.dumps({'condition':4, 'triplet': [ideaIds[0],ideaIds[closer_index],ideaIds[farther_index]]})) 
+                json.dumps({
+                    'condition':4, 
+                    'close': ideaIds[closer_index], 
+                    'farther': farther_set
+                })) 
 
 
 def post_survey():

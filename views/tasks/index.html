@@ -130,11 +130,11 @@
 		        		{{if userCondition == 2:}}
 		        			Feel free to use the ideas below as inspiration: remix them with your own ideas, expand on them, or use them in anyway you'd like!
 		        		{{elif userCondition == 4:}}
-		        			The task below asks you to select which idea is more similar to idea #1. After you finish the task, feel free to use them as inspiration: remix them with your own ideas, expand on them, or use them in anyway you'd like!
+		        			<strong>Click on the idea that is more closely related to the seed idea, select how closely related they are, and click on the submit button. </strong> After you finish the task, feel free to use them as inspiration: remix them with your own ideas, expand on them, or use them in anyway you'd like! 
 		        		{{pass}}
 	        		</p>
 
-		        	<div id="ideas-container">
+		        	<div id="ideas-panel">
 		        		<!-- The ideas are dynamically added here -->
 		        	</div>
 
@@ -167,23 +167,23 @@
 
 			        	<button class="btn btn-primary" id="task-submit">Submit rating</button>
 			        {{elif userCondition == 4:}}
-			        	<h4>Which idea is more similar to idea #1?</h4>
+			        	<!-- <h4>Which idea is more similar to idea #1?</h4>
 			        	<ul>
-			        		<!-- The value for these radio buttons represents the index for each idea in the array of ideas -->
+			        		
 			        		<li> <input type="radio" name="similarity" id="similarity-2" value="1"/> <label for="similarity-2">Idea #2</label> </li>
 			        		<li> <input type="radio" name="similarity" id="similarity-3" value="2"/> <label for="similarity-3">Idea #3</label> </li>
-			        	</ul>
+			        	</ul>-->
 
-			        	<h4>How confident are you in your answer?</h4>
+			        	<h4>How closely related is the idea?</h4>
 			        	<ul class="horizontal-radial">
 			        		<li>
-			        			<label for="confidence-1">Unsure</label> 
+			        			<label for="confidence-1">Very unrelated</label> 
 			        			<input type="radio" name="confidence" value="1" id="confidence-1"/> 
 			        		</li>
 			        		<li> <input type="radio" name="confidence" value="2" id="confidence-2"/> </li>
 			        		<li>
 			        			<input type="radio" name="confidence" value="3" id="confidence-3"/> 
-			        			<label for="confidence-3">Confident</label>
+			        			<label for="confidence-3">Very related</label>
 			        		</li>
 			        	</ul>
 
