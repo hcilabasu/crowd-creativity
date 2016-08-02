@@ -43,6 +43,7 @@ $(function(){
         // get their content
         var text = ideaInput.val();
         var concepts = parseConcepts(conceptsInput.val());
+        var validationError = false;
 
         if(!text){
             alert("The idea text is mandatory!");
