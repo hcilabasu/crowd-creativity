@@ -19,6 +19,7 @@ DEBUG = False
 IDEATION_TIME = 18 # in minutes
 # this dictionary specifies how many ideas each condition needs
 THRESHOLD = {2:7, 3:1, 4:7}
+INSPIRATION_N = 5 # how many ideas should be retrieved when inspirations are called
 
 
 def enter():
@@ -82,6 +83,24 @@ def add_idea():
             concept_id = __insert_or_retrieve_concept_id(concept)
             # Inserting relationships
             db.concept_idea.insert(concept=concept_id, idea=idea_id)
+
+def get_ideas_sim():
+    ''' 
+    Endpoint for getting a set of other ideas. 
+    It randomly selects a seed and then the n most similar ideas 
+    '''
+    random_seed = db(db.idea.pool == True).select(orderby='<random>').first()
+    other_ideas = db(
+        (db.idea_similarity.idea_a == random_seed.id) | 
+        (db.idea_similarity.idea_b == random_seed.id)).select(
+            orderby=~db.idea_similarity.similarity)[0:INSPIRATION_N]
+    # Get ids and similarities
+    choose_id = lambda idea : idea.idea_a if idea.idea_a != random_seed.id else idea.idea_b
+    other_ids = {choose_id(idea) : dict(id=choose_id(idea),sim=idea.similarity) for idea in other_ideas}
+    # Retrieve other ideas' complete objects
+    other_ideas = db(db.idea.id.belongs(other_ids.keys())).select()
+    other = [dict(id=i.id, text=i.idea, sim=other_ids[i.id]['sim']) for i in other_ideas]
+    return json.dumps(dict(seed=random_seed.idea, other=other))
 
 def get_idea():
     '''

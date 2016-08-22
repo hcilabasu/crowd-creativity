@@ -18,6 +18,7 @@ myconf = AppConfig(reload=True)
 if not request.env.web2py_runtime_gae:
     ## if NOT running on Google App Engine use SQLite or other DB
     db = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['all'])
+    db_scheduler = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['all'])
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
     db = DAL('google:datastore+ndb')
@@ -140,6 +141,11 @@ db.define_table('sessionCondition',
     Field('conditionNumber', 'integer'),
     Field('conditionName', 'string'),
     Field('conditionCount', 'integer'))
+
+db.define_table('idea_similarity',
+    Field('idea_a', 'reference idea'),
+    Field('idea_b', 'reference idea'), # idea_b should ALWAYS hold the highest ID of the two ideas
+    Field('similarity', 'double'))
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
