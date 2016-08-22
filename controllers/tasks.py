@@ -18,7 +18,7 @@ ADD_TO_POOL = False # if false, new ideas are not added to the pool of ideas use
 DEBUG = False
 IDEATION_TIME = 18 # in minutes
 # this dictionary specifies how many ideas each condition needs
-THRESHOLD = {2:7, 3:1, 4:7}
+THRESHOLD = {2:3, 3:1, 4:3}
 INSPIRATION_N = 5 # how many ideas should be retrieved when inspirations are called
 
 
