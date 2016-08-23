@@ -105,7 +105,8 @@ db.define_table('idea',
     Field('userCondition','integer'), 
     Field('ratings','integer'),
     Field('dateAdded','datetime'),
-    Field('pool','boolean'))
+    Field('pool','boolean'),
+    Field('relatedIdeas','list:reference idea'))
     
 db.define_table('concept',
     Field('concept', 'string', unique=True))

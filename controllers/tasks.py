@@ -119,30 +119,39 @@ def get_idea():
         # the next iteration will increase the min_ratings and append the ideas. This will go on until 
         # the threshold is surpassed, or until min_ratings = max_ratings.
         ideas = []
-        while len(ideas) < THRESHOLD[userCondition] and min_ratings <= max_ratings:
-            print("Searching with min = %d" % min_ratings)
-            query = ((db.idea.userId != userId) & 
-                # (db.idea.userCondition == userCondition) & 
-                (db.idea.pool == True))
-            if userCondition != 2:
-                query = query & (db.idea.ratings == min_ratings) # Condition 2 is decoupled from rating number
-            results = db(query).select(orderby='<random>')
-            for i in results:
-                ideas.append({'idea':i.idea, 'id':i.id})
-            min_ratings += 1
+        # while len(ideas) < THRESHOLD[userCondition] and min_ratings <= max_ratings:
+        #     print("Searching with min = %d" % min_ratings)
+        #     query = ((db.idea.userId != userId) & 
+        #         # (db.idea.userCondition == userCondition) & 
+        #         (db.idea.pool == True))
+        #     if userCondition != 2:
+        #         query = query & (db.idea.ratings == min_ratings) # Condition 2 is decoupled from rating number
+        #     results = db(query).select(orderby='<random>')
+        #     for i in results:
+        #         ideas.append({'idea':i.idea, 'id':i.id})
+        #     min_ratings += 1
+
+        random_seed = db(db.idea.pool == True).select(orderby='<random>').first() 
+
+        ideas.append(random_seed)
+        for related in random_seed.relatedIdeas:
+            ideas.append(related)
 
     if len(ideas) < THRESHOLD[userCondition]:
         __log_action(userId, "get_idea", "[]")
         return json.dumps(dict()) # there are not enough ideas
     else:
-        selected = ideas[0:THRESHOLD[userCondition]] # get as many ideas as needed
-        random.shuffle(selected) # shuffling to avoid the lowest rated appearing in front
-        clean_ideas = [{'idea':i['idea'], 'id':i['id']} for i in selected]
-
+        clean_ideas = [{'idea':i['idea'], 'id':i['id']} for i in ideas] # clean the objects
+        
+        others = clean_ideas[1:] # get all but the seed
+        random.shuffle(others) # shuffle others
+        
+        selected = [clean_ideas[0]] + others
+        
         # log retrieved ideas
-        __log_action(userId, "get_idea", json.dumps(clean_ideas))
+        __log_action(userId, "get_idea", json.dumps(selected))
 
-        return json.dumps(clean_ideas)
+        return json.dumps(selected)
 
 
 def rate_idea():
