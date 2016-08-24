@@ -120,19 +120,18 @@ input[type=text] {
     padding-left: 0;
 }
 
+
 table {
     font-size: 0.8em;
-    table-layout: fixed;
     word-wrap:break-word;
 }
 
 table td,
 table th {
     padding: 10px;
-    border: solid 1px black;
-    width: 20px;
+    border: solid 1px #CCC;
 }
-
+/*
 table th {
     border: 0;
     font-weight: bolder;
@@ -145,11 +144,11 @@ table tr th {
 }
 
 table th > div {
-    transform: 
-        /* 45 is really 360 - 45 */
+    transform:
         rotate(315deg);
     width: 20px;
 }
+*/
 
 #matrix {
     margin-top: 40px;
