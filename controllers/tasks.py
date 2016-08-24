@@ -15,15 +15,17 @@ User Conditions
 
 # CONFIG
 ADD_TO_POOL = False # if false, new ideas are not added to the pool of ideas used in the tasks.
-DEBUG = False
-IDEATION_TIME = 18 # in minutes
+DEBUG = True
+IDEATION_TIME = 25 # in minutes
+SURVEY_TIME = 5 # expected time people will take to finish the survey. 
 # this dictionary specifies how many ideas each condition needs
 THRESHOLD = {2:3, 3:1, 4:3}
 INSPIRATION_N = 5 # how many ideas should be retrieved when inspirations are called
 
+POST_FORM_URL = 'https://goo.gl/forms/Dffgdll57iZC0rRw2'
 
 def enter():
-    return dict(ideationTime=IDEATION_TIME)
+    return dict(ideationTime=IDEATION_TIME, surveyTime=SURVEY_TIME)
 
 def intro():
     if session.userCondition == None:
@@ -36,7 +38,7 @@ def intro():
         session.userCondition = userCondition
         __log_action('intro', "force_condition", json.dumps({'new_condition':userCondition}))
 
-    return dict(userCondition=session.userCondition, ideationTime=IDEATION_TIME)
+    return dict(userCondition=session.userCondition, ideationTime=IDEATION_TIME, surveyTime=SURVEY_TIME)
 
 def index():
     if session.userCondition == None:
@@ -63,7 +65,12 @@ def index():
             (db.idea.id == db.concept_idea.idea) & 
             (db.concept.id == db.concept_idea.concept))
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
-    return dict(userCondition=session.userCondition, ideas=ideas, startTime=session.startTimeUTC, ideationTime=IDEATION_TIME)
+    return dict(
+        userCondition=session.userCondition, 
+        ideas=ideas, 
+        startTime=session.startTimeUTC, 
+        ideationTime=IDEATION_TIME,
+        formUrl=POST_FORM_URL)
 
 def add_idea():
     '''

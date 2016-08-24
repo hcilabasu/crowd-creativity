@@ -20,6 +20,15 @@ p {
     margin: 0 0 20px 0;
 }
 
+a {
+    color: #097BCF;
+    text-decoration: underline;
+}
+
+a:hover {
+    color: #3AAAFC;
+}
+
 img {
     width: 90%;
     border: solid 3px #999;
@@ -274,7 +283,7 @@ div.w2p_flash.alert {
 }
 
 #final-id {
-    margin: 20px 0 0 0;
+    margin: 20px 0 20PX 0;
 }
 
 #ideas-container {

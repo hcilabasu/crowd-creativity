@@ -228,42 +228,7 @@ $(function(){
 
     var finishSession = function(){
         $("#time-over").show();
-    };
-
-    var surveyIsValid = function(){
-        isValid = false;
-        var usefulInspiration = $("#survey input[name=useful-inspiration]:checked").val();
-        var openEnded = $("#survey textarea").val();
-
-        if(!usefulInspiration || (!openEnded || openEnded.length > 1000)){
-            isValid = false;
-        } else {
-            isValid = true;
-        }
-        return isValid;
-    };
-
-    var getCodeClick = function(){
-        if(ENV.condition == 1){
-            // Condition 1 has no survey. Get code.
-            getCode();
-        } else if(surveyIsValid()){
-            // Post survey to server
-            var usefulInspiration = $("#survey input[name=useful-inspiration]:checked").val();
-            var openEnded = $("#survey textarea").val();
-            $.ajax({
-                type: "POST",
-                url: URL.postSurvey,
-                data: {usefulInspiration:usefulInspiration, openEnded:openEnded},
-                success:function(data){
-
-                }
-            });   
-            // Get code and display it
-            getCode();
-        } else {
-            alert("Please, fill in all questions in the survey before clicking this button!");
-        }
+        getCode();
     };
 
     var getCode = function(){
@@ -271,8 +236,7 @@ $(function(){
             type: "GET",
             url: URL.getFinalID,
             success:function(data){
-                $("#survey").hide();
-                $("#final-id").css("display", "block").text(data);
+                $("#final-id strong").text(data);
             }
         });
     }

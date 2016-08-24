@@ -29,37 +29,21 @@
 		            <p>
 		            	<strong>Time left: </strong> <span id="timer">-</span>
 		            </p>  
+		            <p>P.S.: If you have any issues with the system, try refreshing the page: it will maintain your ideas and the timer in the same place as before.</p>
 		            <div id="time-over">
 		            	<h2>Congratulations, you're done with ideation!</h2>
-		            	{{if userCondition == 1:}}
-			            	<p>Thank you for your time and help! If you have any ideas left, feel free to keep adding them below. To get paid, press the button below and copy and paste the following code back into the MTurk hit:</p>
-			            {{else:}}
-			            	<p>Thank you for your ideas! If you have any ideas left, feel free to keep adding them below. Then, please answer the questions below (mandatory). After you answer them, you will be presented with a code. To get paid, copy and paste it back into the MTurk hit.</p>
-			            	<form id="survey">
-				            	<p>
-				            		1. How useful did you find the "get inspiration" button to be?
-				            		<!-- Yes / No -->
-				            		<ul>
-						        		<li> <input type="radio" name="useful-inspiration" id="survey-useul-3" value="3"/> 
-						        			<label for="survey-useul-3">3 - It helped a lot</label>
-						        		</li>
-						        		<li> <input type="radio" name="useful-inspiration" id="survey-useul-2" value="2"/> 
-						        			<label for="survey-useul-2">2 - It didn't make a difference</label>
-					        			</li>
-						        		<li> <input type="radio" name="useful-inspiration" id="survey-useul-1" value="1"/> 
-						        			<label for="survey-useul-1">1 - It made things harder</label>
-						        		</li>
-						        	</ul>
-				            	</p>
-				            	<p>
-				            		2. What open-ended comments do you have about the "get inspiration" button, or the system in general?
-				            		<textarea></textarea>
-				            	</p>
-			            	</form>
-			            	<p>Once you've answered all questions, press the "get code" button below, and paste the code back into the MTurk HIT.</p>
-			            {{pass}}
-			            <button class="btn btn-primary" id="get-code">Get code</button>
-			            <h3 id="final-id" style="display:none">Loading id...</h3>
+		            	
+		            	<p>Thank you for your ideas! If you have any ideas left, feel free to keep adding them below. Then, please copy the id presented below--you will need it for the final steps.</p>
+		            	
+		            	<h3 id="final-id">Your ID: <strong>Loading id...</strong></h3>
+
+		            	<p>There are two things left for you to be done with this task:</p>
+		            	<ol>
+		            		<li>Fill out this survey (it will open in a new window): <a href="{{=formUrl}}" target="_blank">ideation survey</a></li>
+		            		<li>AFTER you finish the survey above, paste the ID above back onto the MTurk HIT.</li>
+		            	</ol>
+			            
+			            <p>That's it. Thank you for your time!</p>
 		            </div>
 		        </div>
 		    </div>
