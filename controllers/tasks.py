@@ -2,6 +2,7 @@ import uuid
 import datetime
 import json
 import random
+from collections import deque
 
 '''
 User Conditions
@@ -52,6 +53,11 @@ def index():
         # Selecting condition
         session.startTime = datetime.datetime.now()
         session.startTimeUTC = datetime.datetime.utcnow()
+        # generate random list of inspirations
+        pool_ideas = db(db.idea.pool == True).select(db.idea.id)
+        ids = [i.id for i in pool_ideas]
+        random.shuffle(ids)
+        session.ids = deque(ids)
         # add user to DB
         db.user_info.insert(userId=userId, userCondition=session.userCondition, initialLogin=session.startTime)
         __log_action(userId, "start_session", json.dumps({'condition':session.userCondition}))
@@ -138,10 +144,12 @@ def get_idea():
         #         ideas.append({'idea':i.idea, 'id':i.id})
         #     min_ratings += 1
 
-        random_seed = db(db.idea.pool == True).select(orderby='<random>').first() 
+        seed_id = session.ids[0]
+        session.ids.rotate() # shift array
+        seed = db(db.idea.id == seed_id).select().first() 
 
-        ideas.append(random_seed)
-        for related in random_seed.relatedIdeas:
+        ideas.append(seed)
+        for related in seed.relatedIdeas:
             ideas.append(related)
 
     if len(ideas) < THRESHOLD[userCondition]:
