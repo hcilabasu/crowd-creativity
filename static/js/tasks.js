@@ -97,12 +97,14 @@ $(function(){
         var usefulnessInput = $("input[name=usefulness]:checked");
         var similarityInput = $(".ideaWrapper.selected input");
         var confidenceInput = $("input[name=confidence]:checked");
+        var combinationTask = $("#combination-input");
 
         var ideaIds = JSON.parse($("#idea-id").val());
         var originality = originalityInput.val();
         var usefulness = usefulnessInput.val();
         var closer_index = similarityInput.val();
         var confidence = confidenceInput.val();
+        var combinatedIdea = combinationTask.val();
 
         if(ENV.condition === 3 && (!originality || !usefulness)){
             alert("Both ratings are mandatory!");
@@ -118,7 +120,8 @@ $(function(){
                     originality: originality,
                     usefulness: usefulness,
                     closer_index: closer_index,
-                    confidence: confidence
+                    confidence: confidence,
+                    combined_idea: combinatedIdea
                 },
                 success: rateIdea
             })

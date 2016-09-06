@@ -20,8 +20,11 @@ DEBUG = True
 IDEATION_TIME = 25 # in minutes
 SURVEY_TIME = 5 # expected time people will take to finish the survey. 
 # this dictionary specifies how many ideas each condition needs
-THRESHOLD = {2:3, 3:1, 4:3}
-INSPIRATION_N = 5 # how many ideas should be retrieved when inspirations are called
+THRESHOLD = {2:3, 3:1, 4:3, 5:3}
+
+# how many ideas should be retrieved when inspirations are called
+# Right now, this only affects a test function. Regular conditions use the THRESHOLD var
+INSPIRATION_N = 5 
 
 POST_FORM_URL = 'https://goo.gl/forms/Dffgdll57iZC0rRw2'
 
@@ -34,7 +37,7 @@ def intro():
 
     # change condition if there is a param
     condition_param = request.vars["condition"]
-    if condition_param and (int(condition_param) >= 1 and int(condition_param) <= 4):
+    if condition_param and (int(condition_param) >= 1 and int(condition_param) <= 5):
         userCondition = int(condition_param)
         session.userCondition = userCondition
         __log_action('intro', "force_condition", json.dumps({'new_condition':userCondition}))
@@ -54,7 +57,7 @@ def index():
         session.startTime = datetime.datetime.now()
         session.startTimeUTC = datetime.datetime.utcnow()
         # generate random list of inspirations
-        pool_ideas = db(db.idea.pool == True).select(db.idea.id)
+        pool_ideas = db((db.idea.pool == True) & (db.idea.origin == 'ideation')).select(db.idea.id)
         ids = [i.id for i in pool_ideas]
         random.shuffle(ids)
         session.ids = deque(ids)
@@ -90,7 +93,14 @@ def add_idea():
         dateAdded = datetime.datetime.now()
         __log_action(userId, "add_idea", idea)
         # Inserting idea
-        idea_id = db.idea.insert(userId=userId, idea=idea, dateAdded=dateAdded, userCondition=userCondition, ratings=0, pool=ADD_TO_POOL)
+        idea_id = db.idea.insert(
+            userId=userId, 
+            idea=idea, 
+            dateAdded=dateAdded, 
+            userCondition=userCondition, 
+            ratings=0, 
+            pool=ADD_TO_POOL,
+            origin='ideation')
         # Inserting concepts
         for concept in concepts:
             concept_id = __insert_or_retrieve_concept_id(concept)
@@ -102,7 +112,7 @@ def get_ideas_sim():
     Endpoint for getting a set of other ideas. 
     It randomly selects a seed and then the n most similar ideas 
     '''
-    random_seed = db(db.idea.pool == True).select(orderby='<random>').first()
+    random_seed = db((db.idea.pool == True) & (db.idea.origin=='ideation')).select(orderby='<random>').first()
     other_ideas = db(
         (db.idea_similarity.idea_a == random_seed.id) | 
         (db.idea_similarity.idea_b == random_seed.id)).select(
@@ -145,12 +155,15 @@ def get_idea():
         #     min_ratings += 1
 
         seed_id = session.ids[0]
+        print('Session id %d' % seed_id)
         session.ids.rotate() # shift array
         seed = db(db.idea.id == seed_id).select().first() 
 
         ideas.append(seed)
         for related in seed.relatedIdeas:
             ideas.append(related)
+
+        print('Ideas: %d' % len(ideas))
 
     if len(ideas) < THRESHOLD[userCondition]:
         __log_action(userId, "get_idea", "[]")
@@ -230,6 +243,19 @@ def rate_idea():
                     'close': ideaIds[closer_index], 
                     'farther': farther_set
                 })) 
+    elif userCondition == 5:
+        user_id = session.userId
+        user_condition = session.userCondition
+        combined_idea = request.vars['combined_idea']
+        date_added = datetime.datetime.now()
+        db.idea.insert(
+            userId=user_id, 
+            idea=combined_idea, 
+            dateAdded=date_added, 
+            userCondition=user_condition, 
+            ratings=0, 
+            pool=ADD_TO_POOL,
+            origin='task-combination')
 
 
 def post_survey():
@@ -292,7 +318,8 @@ def __get_query_ratings(query, userId, condition):
     number = db(
             (db.idea.userId != userId) & 
             # (db.idea.userCondition == condition) & 
-            (db.idea.pool == True)
+            (db.idea.pool == True) &
+            (db.idea.origin == 'ideation')
         ).select(query).first()[query]
     return number
 

@@ -115,6 +115,8 @@
 		        			Feel free to use the ideas below as inspiration: remix them with your own ideas, expand on them, or use them in anyway you'd like!
 		        		{{elif userCondition == 4:}}
 		        			<strong>Click on the idea that is more closely related to the seed idea, select how closely related they are, and click on the submit button. </strong> After you finish the task, feel free to use them as inspiration: remix them with your own ideas, expand on them, or use them in anyway you'd like! 
+		        		{{elif userCondition == 5:}}
+		        			Carefully read the ideas presented here. Then, in the texbox below, write an idea that combines those three (or at least two of them) together in some way. Don't feel pressured to represent all ideas equally in your combination: feel free to pick and choose from the ideas to compose your combination.
 		        		{{pass}}
 	        		</p>
 
@@ -172,6 +174,10 @@
 			        	</ul>
 
 			        	<button class="btn" id="task-submit">Submit task</button>
+		        	{{elif userCondition == 5:}}
+		        		<h4>Combine at least 2 of the ideas above into a new idea</h4><br/>
+		        		<textarea id="combination-input" placeholder="Write your combined idea here."></textarea>
+		        		<button class="btn" id="task-submit">Submit task</button>
 		        	{{else:}}
 		        		<button class="btn" id="close-idea">Done</button>
 		        	{{pass}}
