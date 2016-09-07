@@ -307,6 +307,13 @@ div.w2p_flash.alert {
 
 .clickable {
     cursor: pointer;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.clickable:hover {
+    box-shadow: 0 0 5px #3AAAFC;
 }
 
 .ideas-container:before {
