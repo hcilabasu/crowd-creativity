@@ -138,10 +138,10 @@ def get_idea():
     print('Min: %d, max: %d' % (min_ratings, max_ratings))
 
     if userId != None:
+        # Alternative: This code grabs ideas the rating count
         # Grab ideas. The first loop looks for all ideas with ratings == min_rating. If not enough are found,
         # the next iteration will increase the min_ratings and append the ideas. This will go on until 
         # the threshold is surpassed, or until min_ratings = max_ratings.
-        ideas = []
         # while len(ideas) < THRESHOLD[userCondition] and min_ratings <= max_ratings:
         #     print("Searching with min = %d" % min_ratings)
         #     query = ((db.idea.userId != userId) & 
@@ -154,16 +154,17 @@ def get_idea():
         #         ideas.append({'idea':i.idea, 'id':i.id})
         #     min_ratings += 1
 
-        seed_id = session.ids[0]
-        print('Session id %d' % seed_id)
-        session.ids.rotate() # shift array
-        seed = db(db.idea.id == seed_id).select().first() 
+        # Alternative: This code grabs the ideas based on the session ids list
+        # seed_id = session.ids[0]
+        # print('Session id %d' % seed_id)
+        # session.ids.rotate() # shift array
+        # seed = db(db.idea.id == seed_id).select().first() 
+        # ideas.append(seed)
+        # for related in seed.relatedIdeas:
+        #     ideas.append(related)
 
-        ideas.append(seed)
-        for related in seed.relatedIdeas:
-            ideas.append(related)
-
-        print('Ideas: %d' % len(ideas))
+        # Alternative: this just grabs n random ideas
+        ideas = db((db.idea.pool == True) & (db.idea.origin=='ideation')).select(orderby='<random>')[:THRESHOLD[userCondition]]
 
     if len(ideas) < THRESHOLD[userCondition]:
         __log_action(userId, "get_idea", "[]")
