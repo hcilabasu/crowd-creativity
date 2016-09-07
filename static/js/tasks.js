@@ -253,6 +253,7 @@ $(function(){
         var usefulnessInput = $("input[name=usefulness]:checked");
         var similarityInput = $("input[name=similarity]:checked");
         var confidenceInput = $("input[name=confidence]:checked");
+        var combinationInput = $("#combination-input");
         // The idea has been rated. Clear and empty everything
         $(".toggle").toggleClass("hidden");
         $("#pretask-instructions").show();
@@ -261,8 +262,7 @@ $(function(){
         usefulnessInput.prop("checked", false);
         similarityInput.prop("checked", false);
         confidenceInput.prop("checked", false);
-
-
+        combinationInput.val("");
 
         $.web2py.flash("Your task has been submitted!", "");
     };
