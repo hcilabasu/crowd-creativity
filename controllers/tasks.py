@@ -181,10 +181,17 @@ def get_idea():
 
         return json.dumps(selected)
 
+def close_inspiration():
+    __log_action(
+        session.userId, 
+        "close_inspiration", 
+        json.dumps({
+            'condition':session.userCondition, 
+        })) 
 
 def rate_idea():
     '''
-    Endpoint for rating an idea
+    Endpoint for submitting a task
     '''
     userCondition = session.userCondition
     userId = session.userId
@@ -200,18 +207,16 @@ def rate_idea():
         for o, u, i in zip(originality, usefulness, ideaIds):
             db.idea_rating.insert(userId=userId, ratingType="originality", rating=o, dateAdded=date_time, idea=i)
             db.idea_rating.insert(userId=userId, ratingType="usefulness", rating=u, dateAdded=date_time, idea=i)
-        # if len(ideaIds) == num_ideas:
-        #     # insert ratings
-        #     db.idea_rating.insert(userId=userId, ratingType="originality", rating=originality, dateAdded=date_time, idea=ideaIds[0])
-        #     db.idea_rating.insert(userId=userId, ratingType="usefulness", rating=usefulness, dateAdded=date_time, idea=ideaIds[0])
-        #     # update ratings count
-        #     idea = db(db.idea.id == ideaIds[0]).select().first()
-        #     idea.ratings += 1
-        #     idea.update_record()
-        # else:
-        #     # Error
-        #     response.status = 500
-        #     return "This rating task requires exactly %d idea" % num_ideas
+            # idea = db(db.idea.id == ideaIds[0]).select().first()
+            # idea.ratings += 1
+            # idea.update_record()
+        __log_action(
+                session.userId, 
+                "task_completed:rating", 
+                json.dumps({
+                    'condition':userCondition, 
+                    'ideas': ','.join([str(i) for i in ideaIds])
+                })) 
     elif userCondition == 4: # rating similarity triplet
         closer_index = int(request.vars['closer_index'])
         confidence = int(request.vars['confidence'])
@@ -260,6 +265,13 @@ def rate_idea():
             ratings=0, 
             pool=ADD_TO_POOL,
             origin='task-combination')
+        __log_action(
+                session.userId, 
+                "task_completed:combination", 
+                json.dumps({
+                    'condition':userCondition, 
+                    'combined_idea': combined_idea
+                })) 
 
 
 def post_survey():

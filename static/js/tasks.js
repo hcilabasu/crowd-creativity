@@ -136,6 +136,11 @@ $(function(){
         $(".toggle").toggleClass("hidden");
         $("#pretask-instructions").show();
         $("#ideas-panel").empty();
+        // Log
+        $.ajax({
+            type: 'GET',
+            url: URL.closeInspiration
+        })
     });
     
     $("#get-code").click(function(){
