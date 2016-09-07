@@ -20,7 +20,7 @@ DEBUG = True
 IDEATION_TIME = 25 # in minutes
 SURVEY_TIME = 5 # expected time people will take to finish the survey. 
 # this dictionary specifies how many ideas each condition needs
-THRESHOLD = {2:3, 3:1, 4:3, 5:3}
+THRESHOLD = {2:3, 3:3, 4:3, 5:3}
 
 # how many ideas should be retrieved when inspirations are called
 # Right now, this only affects a test function. Regular conditions use the THRESHOLD var
@@ -57,6 +57,7 @@ def index():
         session.startTime = datetime.datetime.now()
         session.startTimeUTC = datetime.datetime.utcnow()
         # generate random list of inspirations
+        # future: deprecate the following section, as it's not being used anymore
         pool_ideas = db((db.idea.pool == True) & (db.idea.origin == 'ideation')).select(db.idea.id)
         ids = [i.id for i in pool_ideas]
         random.shuffle(ids)
@@ -216,7 +217,9 @@ def rate_idea():
                 "task_completed:rating", 
                 json.dumps({
                     'condition':userCondition, 
-                    'ideas': ','.join([str(i) for i in ideaIds])
+                    'ideas': ','.join([str(i) for i in ideaIds]),
+                    'originality': ','.join(str(o) for o in originality),
+                    'usefulness': ','.join(str(u) for u in usefulness)
                 })) 
     elif userCondition == 4: # rating similarity triplet
         closer_index = int(request.vars['closer_index'])
@@ -224,7 +227,6 @@ def rate_idea():
         close_set = set([ideaIds[0], ideaIds[closer_index]]) # set of the index of the seed and the close idea
         farther_set = [i for i in ideaIds if i not in close_set]
 
-        print('Seed: %d, Closer: %d, Farther: %s' % (ideaIds[0], ideaIds[closer_index], str(farther_set)))
         if len(ideaIds) == num_ideas:
             # insert ratings
             for farther_index in farther_set:
@@ -249,9 +251,11 @@ def rate_idea():
                 session.userId, 
                 "task_completed:similarity", 
                 json.dumps({
-                    'condition':4, 
+                    'condition':4,
+                    'seed': ideaIds[0],
                     'close': ideaIds[closer_index], 
-                    'farther': farther_set
+                    'farther': farther_set,
+                    'confidence': confidence
                 })) 
     elif userCondition == 5:
         user_id = session.userId
