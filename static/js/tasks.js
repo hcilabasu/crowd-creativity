@@ -108,12 +108,14 @@ $(function(){
         }
         var closer_index = similarityInput.val();
         var confidence = confidenceInput.val();
-        var combinatedIdea = combinationTask.val();
+        var combinedIdea = combinationTask.val();
 
         if(ENV.condition === 3 && (originality.length != ideaIds.length || usefulness.length != ideaIds.length)){
             alert("Both ratings are mandatory!");
         } else if(ENV.condition === 4 && (!closer_index || !confidence)){
             alert("You must select the most similar idea and indicate your confidence level!");
+        } else if(ENV.condition === 5 && (!combinedIdea)) {
+            alert("You must write a combined idea!");
         } else {
             // Submit
             $.ajax({
@@ -125,7 +127,7 @@ $(function(){
                     usefulness: usefulness,
                     closer_index: closer_index,
                     confidence: confidence,
-                    combined_idea: combinatedIdea
+                    combined_idea: combinedIdea
                 },
                 success: rateIdea
             })
