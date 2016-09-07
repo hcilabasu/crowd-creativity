@@ -194,20 +194,24 @@ def rate_idea():
     num_ideas = THRESHOLD[userCondition]
 
     if userCondition == 3: # rating originality and usefulness
-        originality = request.vars['originality']
-        usefulness = request.vars['usefulness']
-        if len(ideaIds) == num_ideas:
-            # insert ratings
-            db.idea_rating.insert(userId=userId, ratingType="originality", rating=originality, dateAdded=date_time, idea=ideaIds[0])
-            db.idea_rating.insert(userId=userId, ratingType="usefulness", rating=usefulness, dateAdded=date_time, idea=ideaIds[0])
-            # update ratings count
-            idea = db(db.idea.id == ideaIds[0]).select().first()
-            idea.ratings += 1
-            idea.update_record()
-        else:
-            # Error
-            response.status = 500
-            return "This rating task requires exactly %d idea" % num_ideas
+        originality = request.vars['originality[]']
+        usefulness = request.vars['usefulness[]']
+
+        for o, u, i in zip(originality, usefulness, ideaIds):
+            db.idea_rating.insert(userId=userId, ratingType="originality", rating=o, dateAdded=date_time, idea=i)
+            db.idea_rating.insert(userId=userId, ratingType="usefulness", rating=u, dateAdded=date_time, idea=i)
+        # if len(ideaIds) == num_ideas:
+        #     # insert ratings
+        #     db.idea_rating.insert(userId=userId, ratingType="originality", rating=originality, dateAdded=date_time, idea=ideaIds[0])
+        #     db.idea_rating.insert(userId=userId, ratingType="usefulness", rating=usefulness, dateAdded=date_time, idea=ideaIds[0])
+        #     # update ratings count
+        #     idea = db(db.idea.id == ideaIds[0]).select().first()
+        #     idea.ratings += 1
+        #     idea.update_record()
+        # else:
+        #     # Error
+        #     response.status = 500
+        #     return "This rating task requires exactly %d idea" % num_ideas
     elif userCondition == 4: # rating similarity triplet
         closer_index = int(request.vars['closer_index'])
         confidence = int(request.vars['confidence'])

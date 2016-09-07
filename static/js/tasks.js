@@ -93,20 +93,24 @@ $(function(){
     });
 
     $("#task-submit").click(function(e){
-        var originalityInput = $("input[name=originality]:checked");
-        var usefulnessInput = $("input[name=usefulness]:checked");
+        var originalityInput = $("input[name^=originality-]:checked"); 
+        var usefulnessInput = $("input[name^=usefulness-]:checked");        
         var similarityInput = $(".ideaWrapper.selected input");
         var confidenceInput = $("input[name=confidence]:checked");
         var combinationTask = $("#combination-input");
 
         var ideaIds = JSON.parse($("#idea-id").val());
-        var originality = originalityInput.val();
-        var usefulness = usefulnessInput.val();
+        var originality = [];
+        var usefulness = []; 
+        for (var i = 0; i < originalityInput.length; i++) { // originality and usefulness have same length
+            originality.push($(originalityInput[i]).val()); 
+            usefulness.push($(usefulnessInput[i]).val());
+        }
         var closer_index = similarityInput.val();
         var confidence = confidenceInput.val();
         var combinatedIdea = combinationTask.val();
 
-        if(ENV.condition === 3 && (!originality || !usefulness)){
+        if(ENV.condition === 3 && (originality.length != ideaIds.length || usefulness.length != ideaIds.length)){
             alert("Both ratings are mandatory!");
         } else if(ENV.condition === 4 && (!closer_index || !confidence)){
             alert("You must select the most similar idea and indicate your confidence level!");
@@ -168,9 +172,35 @@ $(function(){
         }
         return conceptsOutput;
     };
+
+    var getRatingTemplate = function(i){ // This is terrible, but time is short
+        var template = '<h4>How original is the idea above?</h4>\
+        <p>Originality: how surprising, novel, unusual, or creative this idea is.</p>\
+        <ul class="horizontal-radial">\
+            <li> Extremely unoriginal <input type="radio" name="originality-'+i+'" value="1"/> </li>\
+            <li> <input type="radio" name="originality-'+i+'" value="2"/> </li>\
+            <li> <input type="radio" name="originality-'+i+'" value="3"/> </li>\
+            <li> <input type="radio" name="originality-'+i+'" value="4"/> </li>\
+            <li> <input type="radio" name="originality-'+i+'" value="5"/> </li>\
+            <li> <input type="radio" name="originality-'+i+'" value="6"/> </li>\
+            <li> <input type="radio" name="originality-'+i+'" value="7"/> Extremely original </li>\
+        </ul>\
+        <h4>How useful is the idea above?</h4>\
+        <p>Usefulness: how practical and feasable the idea is if it were to be implemented</p>\
+        <ul class="horizontal-radial">\
+            <li> Extremely useless <input type="radio" name="usefulness-'+i+'" value="1"/> </li>\
+            <li> <input type="radio" name="usefulness-'+i+'" value="2"/> </li>\
+            <li> <input type="radio" name="usefulness-'+i+'" value="3"/> </li>\
+            <li> <input type="radio" name="usefulness-'+i+'" value="4"/> </li>\
+            <li> <input type="radio" name="usefulness-'+i+'" value="5"/> </li>\
+            <li> <input type="radio" name="usefulness-'+i+'" value="6"/> </li>\
+            <li> <input type="radio" name="usefulness-'+i+'" value="7"/> Extremely useful </li>\
+        </ul>';
+        return template;
+    }
     
     var getIdeaForTask = function(data){
-        var ideas = JSON.parse(data)
+        var ideas = JSON.parse(data);
         
         if(!ideas.length){
             alert("No other ideas were submitted yet. Check again later.");
@@ -187,14 +217,17 @@ $(function(){
                 if(i == 0 && ENV.condition == 4) {
                     wrapper.addClass('seedIdea');
                     wrapper.html('<strong>Seed Idea:</strong><br/>' + wrapper.text());
-                    ideaPanel.append(wrapper);
+                    ideaPanel.append(wrapper);                    
                 } else {
                     wrapper.addClass('ideaWrapper');
                     wrapper.append($("<input type='hidden' value='"+i+"'/>"));
                     ideaContainer.append(wrapper);
 
+                    var template = $.parseHTML(getRatingTemplate(i));
                     if(ENV.condition == 4){
                         wrapper.addClass('clickable');
+                    } else if (ENV.condition == 3) {
+                        ideaContainer.append($(template));
                     }
                 }
                 
