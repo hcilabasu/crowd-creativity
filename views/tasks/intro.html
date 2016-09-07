@@ -34,20 +34,24 @@
 					<h3>Getting inspired</h3>
 
 					{{if userCondition == 2:}}
-						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong> button. It will present you with ideas developed by other users. When you're done, click the <strong>done</strong> button. See the image below (the number of ideas may be different for you): </p>
+						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong> button. It will present you with ideas developed by other users. When you're done, click the <strong>done</strong> button. See the image below: </p>
 
 						<img src="{{=URL('static', 'images/intro/c2-help.PNG')}}"/>
 
 					{{elif userCondition == 3:}}
-						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong> button. It will present you with 3 ideas developed by other users along with a small task. The task asks you to rate that idea in two dimensions: originality and usefulness. When you're done, click the <strong>submit task</strong> button. See the image below: </p>
+						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong> button. It will present you with a few ideas developed by other users, along with a small task. The task asks you to rate those ideas in two dimensions: originality and usefulness. When you're done, click the <strong>submit task</strong> button. The image below shows the interface for rating one idea: </p>
 
 						<img src="{{=URL('static', 'images/intro/c3-help.PNG')}}"/>
 
 					{{elif userCondition == 4:}}
-						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong>. It will present you with ideas developed by other users. The task asks you to choose, from the ideas in blue, the idea that is most similar to the seed (the one above), and then to rate how similar they are. Just click on the one that's more closely related. When you're done, click the <strong>submit rating</strong> button. See the image below (the number of ideas may be different for you): </p>
+						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong>. It will present you with a few ideas developed by other users. The task asks you to choose, from the ideas in blue, the idea that is most similar to the seed (the one above), and then to rate how similar they are. Just click on the one that's more closely related. When you're done, click the <strong>submit rating</strong> button. See the image below: </p>
 
 						<img src="{{=URL('static', 'images/intro/c4-help.PNG')}}"/>
+					{{elif userCondition == 5:}}
+						<p>If you run out of ideas, you can click the <strong>Get inspiration</strong>. It will present you with a few ideas developed by other users. The task asks you to combine the ideas in blue into a new unique idea. Don't worry about representing all three ideas equally--just mix and match whichever concepts or insights from each of the three ideas as you want. Also, don't worry if the final result is crazy! The only requirement is that your new idea involves concepts used in the at least two of the ideas presented to you. </p>
+						<p>You can write your new remixed idea into the textbox and then submit it, as seen below: </p>
 
+						<img src="{{=URL('static', 'images/intro/c5-help.PNG')}}"/>
 					{{pass}}
 				{{pass}}
 
