@@ -101,6 +101,12 @@ input[type=text] {
     margin-top: 40px;
 }
 
+.bottom-separator {
+    margin-bottom: 40px;
+    padding-bottom: 40px !important;
+    border-bottom: solid 1px #CCC;
+}
+
 #clusters {
     background: white;
     height: 400px;

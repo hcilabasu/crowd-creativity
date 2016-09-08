@@ -114,10 +114,18 @@
 	        		<p id="task-instructions">
 		        		{{if userCondition == 2:}}
 		        			Feel free to use the ideas below as inspiration: remix them with your own ideas, expand on them, or use them in anyway you'd like!
+		        		{{elif userCondition == 3:}}
+		        			For each idea below, rate it in terms of its originality and usefulness. Once you're done, feel free to use them as inspiration: remix them with your own ideas, expand on them, or use them in anyway you'd like!
+
+		        			<br/><br/>
+		        			<strong>Originality: </strong>how surprising, novel, unusual, or creative this idea is.
+		        			<br/>
+		        			<strong>Usefulness: </strong>how practical and feasable the idea is if it were to be implemented
+		        			
 		        		{{elif userCondition == 4:}}
 		        			<strong>Click on the idea that is more closely related to the seed idea, select how closely related they are, and click on the submit button. </strong> After you finish the task, feel free to use them as inspiration: remix them with your own ideas, expand on them, or use them in anyway you'd like! 
 		        		{{elif userCondition == 5:}}
-		        			Carefully read the ideas presented here. Then, in the texbox below, write an idea that combines those three (or at least two of them) together in some way. Don't feel pressured to represent all ideas equally in your combination: feel free to pick and choose from the ideas to compose your combination.
+		        			Carefully read the following three ideas, and combine at least two of them to create a new idea. Your new idea doesn’t have to be feasible, so you can pick the first one that pops into your head. It can mix and match any concepts or insights from the old ideas. Write your new idea in the textbox below.
 		        		{{pass}}
 	        		</p>
 

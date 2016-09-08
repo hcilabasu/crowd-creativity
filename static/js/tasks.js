@@ -182,7 +182,6 @@ $(function(){
 
     var getRatingTemplate = function(i){ // This is terrible, but time is short
         var template = '<h4>How original is the idea above?</h4>\
-        <p>Originality: how surprising, novel, unusual, or creative this idea is.</p>\
         <ul class="horizontal-radial">\
             <li> Extremely unoriginal <input type="radio" name="originality-'+i+'" value="1"/> </li>\
             <li> <input type="radio" name="originality-'+i+'" value="2"/> </li>\
@@ -193,8 +192,7 @@ $(function(){
             <li> <input type="radio" name="originality-'+i+'" value="7"/> Extremely original </li>\
         </ul>\
         <h4>How useful is the idea above?</h4>\
-        <p>Usefulness: how practical and feasable the idea is if it were to be implemented</p>\
-        <ul class="horizontal-radial">\
+        <ul class="horizontal-radial bottom-separator">\
             <li> Extremely useless <input type="radio" name="usefulness-'+i+'" value="1"/> </li>\
             <li> <input type="radio" name="usefulness-'+i+'" value="2"/> </li>\
             <li> <input type="radio" name="usefulness-'+i+'" value="3"/> </li>\
