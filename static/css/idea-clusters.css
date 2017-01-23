@@ -55,7 +55,7 @@ label {
     font-family: 'ChunkFive'; 
     font-weight: normal; 
     font-style: normal;
-    font-size: 4em;
+    font-size: 3em;
 }
 
 .navbar {
@@ -344,5 +344,5 @@ div.w2p_flash.alert {
 }
 
 #layoutContainer {
-    padding-top: 51px;
+    padding-top: 36px;
 }
