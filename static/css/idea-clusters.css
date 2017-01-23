@@ -342,3 +342,7 @@ div.w2p_flash.alert {
     padding: 20px 10px;
     text-align: center;
 }
+
+#layoutContainer {
+    padding-top: 51px;
+}
