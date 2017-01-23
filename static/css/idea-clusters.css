@@ -87,6 +87,8 @@ input[type=text] {
     width: 100%;
 }
 
+input[type=range] {}
+
 .top-buffer {
     margin-top: 20px;
 }
@@ -137,27 +139,35 @@ table th {
     padding: 10px;
     border: solid 1px #CCC;
 }
-/*
-table th {
+
+.center {
+    text-align: center;
+    width: 100%;
+}
+
+#matrix-container {
+    overflow: scroll;
+    height: 500px;
+}
+
+#matrix {
+    margin-top: 40px;
+}
+
+#matrix th {
     border: 0;
     font-weight: bolder;
     overflow: visible;
     text-align: right;
 }
 
-table tr th {
+#matrix tr th {
     white-space: nowrap;
 }
 
-table th > div {
-    transform:
-        rotate(315deg);
+#matrix th > div {
+    transform: rotate(315deg);
     width: 20px;
-}
-*/
-
-#matrix {
-    margin-top: 40px;
 }
 
 #getHint {

@@ -149,5 +149,11 @@ db.define_table('idea_similarity',
     Field('idea_b', 'reference idea'), # idea_b should ALWAYS hold the highest ID of the two ideas
     Field('similarity', 'double'))
 
+db.define_table('concept_matrix',
+    Field('tags', 'string'),
+    Field('ideas', 'integer'),
+    Field('time_unit', 'integer'),
+    Field('start_time', 'datetime'))
+
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
