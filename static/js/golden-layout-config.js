@@ -8,12 +8,14 @@ var config = {
                 type: 'component',
                 title: 'Idea viewer',
                 height: 50,
+                isClosable: false,
                 componentName: 'ideaViewer',
                 componentState: { } 
             },            {
                 type: 'component',
                 title: 'Solution space',
-                componentName: 'ideaViewer',
+                isClosable: false,
+                componentName: 'other',
                 componentState: { } 
             }]
             
@@ -23,12 +25,14 @@ var config = {
                 type: 'component',
                 title: 'Versioning',
                 height: 40,
-                componentName: 'ideaViewer',
+                isClosable: false,
+                componentName: 'other',
                 componentState: { }
             },{
                 type: 'component',
                 title: 'Suggested tasks',
-                componentName: 'ideaViewer',
+                isClosable: false,
+                componentName: 'other',
                 componentState: { }
             }]
         }]
@@ -42,6 +46,10 @@ var layoutContainer = $("#layoutContainer")[0];
 var myLayout = new GoldenLayout(config, layoutContainer);
 
 myLayout.registerComponent( 'ideaViewer', function( container, componentState ){
+    container.getElement().html('<div id="ideasContainer"></div>');
+});
+
+myLayout.registerComponent( 'other', function( container, componentState ){
     container.getElement().html(componentState.label);
 });
 

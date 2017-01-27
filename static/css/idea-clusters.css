@@ -50,18 +50,44 @@ label {
     font-weight: normal;
 }
 
+
+textarea {
+    width: 100%;
+    height: 100px;
+    border: solid 1px #CCC;
+    padding: 10px;
+    margin: 0 0 20px 0;
+}
+
+input[type=text] {
+    border: solid 1px #CCC;
+    padding: 10px;
+    width: 100%;
+    margin: 0 0 20px 0;
+}
+
+input[type=range] {}
+
 .logo {
     color: white;
     font-family: 'ChunkFive'; 
     font-weight: normal; 
     font-style: normal;
-    font-size: 3em;
+    font-size: 2.5em;
+    line-height: 1.5em;
+    display: inline-block;
+    margin-right: 50px;
+}
+
+.container {
+    position: relative;
 }
 
 .navbar {
+    position: relative;
     background: #3AAAFC;
     border-bottom: 0;
-    padding-bottom: 10px;
+    margin-bottom: 0;
     box-shadow: inset 0 -5px 0 0 rgba(0,0,0,0.2);
 }
 
@@ -71,23 +97,8 @@ label {
 }
 
 .main-container {
-    margin-top: 50px;
+    margin-top: 0;
 }
-
-textarea {
-    width: 100%;
-    height: 100px;
-    border: solid 1px #CCC;
-    padding: 10px;
-}
-
-input[type=text] {
-    border: solid 1px #CCC;
-    padding: 10px;
-    width: 100%;
-}
-
-input[type=range] {}
 
 .top-buffer {
     margin-top: 20px;
@@ -237,10 +248,32 @@ table th {
 }
 
 .btn {
-    background: #DDD;
+    background-color: #DDD;
     color: #333;
     border-radius: 0;
     box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2);
+}
+
+.navbar .btn-primary {
+    background-color: #1D62A8;
+    color: white;
+}
+
+.navbar .btn:hover {
+    background-color: #144C80;
+}
+
+.btn-plus:active {
+    background: url(../images/plus.png) no-repeat 12px center !important;
+    background-size: 16px 16px !important;
+    background-color: #1D62A8 !important;
+    box-shadow: #163066 0 0 20px inset;
+}
+
+.btn-plus {
+    background: url(../images/plus.png) no-repeat 12px center;
+    padding-left: 35px;
+    background-size: 16px 16px;
 }
 
 
@@ -344,5 +377,66 @@ div.w2p_flash.alert {
 }
 
 #layoutContainer {
-    padding-top: 36px;
+}
+
+.navContainer {
+    display: inline-block;
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-25%);
+    transform: translateY(-25%);
+}
+
+#addIdeaPopup {
+    display:none;
+    position: absolute;
+    bottom: 0px;
+    width: 400px;
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%);
+    padding-top: 15px;
+    background: url(../images/triangle.png) no-repeat;
+    background-position: 35px -4px;
+}
+
+#addIdeaPopup > div {
+    overflow: auto; /* Needed so that the button float doesn't cause the container to collapse under it */
+    background: white;
+    border: solid 1px #CCC;
+    border-top-width: 0;
+    padding: 20px;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+    box-shadow-top: none !important;
+}
+
+.floatRight {
+    float: right;
+}
+
+#ideasContainer p {
+    position: relative;
+    display: inline-block;
+    background: #FFDE78;
+    border: solid 1px #FFAF3C;
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 0 0 1px #666;
+    width: 130px;
+    height: 100px;
+    font-size: 0.8em;
+    overflow: hidden;
+}
+
+#ideasContainer p .overlay {
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 30px;
+    width: 100%;
+    background: #FFDE78; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(rgba(255, 222, 120, 0), #FFBD5E); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(rgba(255, 222, 120, 0), #FFBD5E); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(rgba(255, 222, 120, 0), #FFBD5E); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(rgba(255, 222, 120, 0), #FFBD5E); /* Standard syntax */
 }
