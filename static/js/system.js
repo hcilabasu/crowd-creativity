@@ -53,7 +53,12 @@ var loadIdeas = function(){
 };
 
 var addIdeaToDisplay = function(idea){
-	$("#ideasContainer").append($("<p></p>").text(idea).append('<span class="overlay"></span>'));
+	var ideaBlock = $("<p></p>").text(idea);
+	$("#ideasContainer").append(ideaBlock.append('<span class="overlay"></span>'));
+	// Make it draggable
+	ideaBlock.draggable({ 
+		containment: "parent", scroll: true 
+	});
 
 };
 

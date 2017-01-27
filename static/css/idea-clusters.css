@@ -413,6 +413,11 @@ div.w2p_flash.alert {
     float: right;
 }
 
+#ideasContainer {
+    overflow: scroll;
+    height: 100%;
+}
+
 #ideasContainer p {
     position: relative;
     display: inline-block;
