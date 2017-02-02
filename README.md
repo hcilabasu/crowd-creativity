@@ -3,7 +3,7 @@
 This is a web2py project. Just download web2py, add this to the applications folder, and you should be good to go!
 
 ## Todo
-- Implement persistent layout
+- Implement persistance of layout
 - Allow enter to submit the idea if the category input is highlighted
 - Validate input
 

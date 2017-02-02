@@ -26,7 +26,7 @@ var config = {
                 title: 'Versioning',
                 height: 40,
                 isClosable: false,
-                componentName: 'other',
+                componentName: 'versioning',
                 componentState: { }
             },{
                 type: 'component',
@@ -48,6 +48,12 @@ var myLayout = new GoldenLayout(config, layoutContainer);
 myLayout.registerComponent( 'ideaViewer', function( container, componentState ){
     container.getElement().html('<div id="ideasContainer"></div>');
 });
+
+
+myLayout.registerComponent( 'versioning', function( container, componentState ){
+    container.getElement().html('<div id="versioningContainer"></div>');
+});
+
 
 myLayout.registerComponent( 'other', function( container, componentState ){
     container.getElement().html(componentState.label);

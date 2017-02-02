@@ -4,12 +4,15 @@ body {
 
 h2, h3 {
     margin-top: 0;
-    margin-bottom: 30px;
+    margin-bottom: 0;
+    font-size: 1.3em;
+    font-weight: bolder;
 }
 
 h2 {
     font-size: 2em;
     font-family: 'ChunkFive';
+    margin-bottom: 20px;
 }
 
 h4 {
@@ -30,10 +33,10 @@ a:hover {
 }
 
 img {
-    width: 90%;
+    /*width: 90%;
     border: solid 3px #999;
     display: block;
-    margin: 0 auto 20px auto;
+    margin: 0 auto 20px auto;*/
 }
 
 ol {
@@ -418,7 +421,7 @@ div.w2p_flash.alert {
     height: 100%;
 }
 
-#ideasContainer p {
+.ideaBlock {
     position: relative;
     display: inline-block;
     background: #FFDE78;
@@ -432,7 +435,7 @@ div.w2p_flash.alert {
     overflow: hidden;
 }
 
-#ideasContainer p .overlay {
+.ideaBlock span {
     display: inline-block;
     position: absolute;
     bottom: 0;
@@ -445,3 +448,67 @@ div.w2p_flash.alert {
     background: -moz-linear-gradient(rgba(255, 222, 120, 0), #FFBD5E); /* For Firefox 3.6 to 15 */
     background: linear-gradient(rgba(255, 222, 120, 0), #FFBD5E); /* Standard syntax */
 }
+
+.ideaBlock.ideaHover {
+    border: solid 1px #FF6E3C;
+    background: #FFCB78;
+}
+
+#overlay {
+    z-index: 99999;
+    background: rgba(255,255,255,0.8);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    display:none;
+}
+
+.popupDialog {
+    display: none;
+    overflow: auto;
+}
+
+#overlay .popupDialog {
+    width: 500px;
+    height: auto;
+    margin: 50px auto 0 auto;
+    padding: 20px 20px 20px 20px;
+    background: white !important;
+    border: solid 1px #CCC;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.clickEnabled {
+    cursor: pointer;
+    padding: 10px;
+}
+
+.clickEnabled > p {
+    margin-bottom: 0;
+}
+
+.clickEnabled:hover {
+    background: #A0D3FF;
+}
+
+.sideImage {
+    float:left;
+    margin-right: 15px;
+}
+
+#combineIdeas > .combineIdeasShowIdeas {
+    text-align: center;
+}
+
+    #combineIdeas p {
+        margin-bottom: 0;
+    }
+
+    #combineIdeas .choices {
+
+    }
+
+    #combineIdeas .ideaInput {
+        display: none;
+    }

@@ -2,14 +2,19 @@ $(function(){
 
 	$(document).click(function(event) { 
 	    if(!$(event.target).closest('.popupDialog').length) {
-	        if($('.popupDialog').is(":visible")) {
+	        if($('.popupDialog').is(':visible')) {
 	            $('.popupDialog').fadeOut('fast');
+	        }
+	        if($('#overlay').is(':visible')) {
+	        	$('#overlay').fadeOut('fast');
 	        }
 	    }        
 	});
 
-	// Load user ideas to the viewer
-	loadIdeas();
+	// Load panels on page load
+	loadUserIdeas();
+	loadVersioningPanel();
+
 
 });
 
@@ -39,7 +44,7 @@ var submitIdea = function(event){
     });
 };
 
-var loadIdeas = function(){
+var loadUserIdeas = function(){
 	$.ajax({
         type: "GET",
         url: URL.getUserIdeas,
@@ -52,15 +57,48 @@ var loadIdeas = function(){
     });
 };
 
+var loadVersioningPanel = function(){
+	$.ajax({
+        type: "GET",
+        url: URL.getAllIdeas,
+        success: function(data){
+        	ideas = JSON.parse(data);
+        	buildVersioningPanel(ideas);
+        }
+    });
+};
+
 var addIdeaToDisplay = function(idea){
-	var ideaBlock = $("<p></p>").text(idea);
-	$("#ideasContainer").append(ideaBlock.append('<span class="overlay"></span>'));
+	var ideaBlock = $('<p class="ideaBlock"></p>').text(idea).append('<span></span>');
+	$("#ideasContainer").append(ideaBlock);
 	// Make it draggable
 	ideaBlock.draggable({ 
-		containment: "parent", scroll: true 
+		containment: "parent", 
+		scroll: true,
+		revert: "valid",
+		start: function(event, ui){
+			$(this).css('z-index', 9999);
+		},
+		stop: function(event, ui){
+			$(this).css('z-index', 1);
+		}
 	});
-
+	// Make it droppable
+	ideaBlock.droppable({
+		drop: function(event, ui){
+			var idea1 = ui.draggable.text();
+			var idea2 = $(this).text();
+			toggleOverlay('combineIdeas', {ideas: [idea1, idea2]});
+		},
+		classes: {
+			'ui-droppable-hover': 'ideaHover'
+		}
+	});
 };
+
+var buildVersioningPanel = function(ideas){
+	$("#versioningContainer").text('');
+}
 
 var submitIdeaSuccess = function(idea){
 	// Add to UI
@@ -70,3 +108,23 @@ var submitIdeaSuccess = function(idea){
 	$("#addIdeaPopup textarea").focus();
 	$.web2py.flash("Your idea has been added!", "");
 };
+
+var toggleOverlay = function(popUpId, params){
+	$('#overlay').fadeToggle('fast');
+	$('#' + popUpId).fadeToggle('fast');
+	// Call setup function for the ID
+	window[popUpId + 'Setup'](params);
+};
+
+var combineIdeasSetup = function(params){
+	$('#combineIdeas .ideaBlock').each(function(index){
+		$(this).text(params['ideas'][index]);
+	});
+}
+
+var replaceCombineIdeasOptions = function(event, type){
+	$('#combineIdeas .choices').fadeOut('fast');
+	$('#combineIdeas .ideaInput').fadeIn('fast');
+
+	$('.combinationType').text(type + 'd');
+}

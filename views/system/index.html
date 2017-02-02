@@ -4,6 +4,7 @@
 	
 	<script type="text/javascript" src="{{=URL('static','js/jquery-ui.min.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/system.js')}}"></script>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
 
 	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/goldenlayout-base.css')}}" />
 	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/goldenlayout-light-theme.css')}}" />
@@ -11,7 +12,8 @@
 	<script>
 	    var URL = {
 	    	addIdea: "{{=URL('system','add_idea')}}",
-	    	getUserIdeas: "{{=URL('system','get_user_ideas')}}"
+	    	getUserIdeas: "{{=URL('system','get_user_ideas')}}",
+	    	getAllIdeas: "{{=URL('system','get_all_ideas')}}"
 	    };
 	    var ENV = {};
 	</script>
@@ -35,6 +37,47 @@
 		</div>
 	</div>
 {{end}}
+
+<div id="overlay">
+	<div class="popupDialog" id="combineIdeas">
+
+		<h2>Idea Combination</h2>
+
+		<div class="combineIdeasShowIdeas">
+			<p class="ideaBlock"><span></span></p>
+			<p class="ideaBlock"><span></span></p>
+		</div>
+
+		<div class="choices">
+			<p>Choose an action:</p>
+
+			<ul>
+				<li class="clickEnabled" onclick="replaceCombineIdeasOptions(event,'merge')">
+					<img src="{{=URL('static','images/ideas.png')}}" class="sideImage" />
+					<h3>Merge ideas</h3>
+					<p>Use this when two ideas are virtually the same. This will eliminate the two ideas in favor of your merged idea.</p>
+				</li>
+				<li class="clickEnabled" onclick="replaceCombineIdeasOptions(event,'combine')">
+					<img src="{{=URL('static','images/ideas.png')}}" class="sideImage" />
+					<h3>Combine ideas</h3>
+					<p>Use this to combine two different ideas into a new, original idea. This will keep the two ideas and add your new idea. </p>
+				</li>
+			</ul>
+		</div>
+		<div class="ideaInput">
+			<p>Please, write down your <span class='combinationType'></span> idea in the textarea below. Make sure to include as much detail as possible!</p>
+
+			<textarea></textarea>
+
+			<p>Suggest a category for your idea. Try to be as precise and consistent as you can, but don't worry too much about it, as the system may improve it over time:</p>
+
+			<input type="text" name="categoryinput" />
+
+			<button class="btn floatRight" onclick="submitIdea(event)">Submit</button>
+		</div>
+
+	</div>
+</div>
 
 <!-- for some reason, the layout doesn't work when added at the end of the page (page_js block) -->
 <script type="text/javascript" src="{{=URL('static','js/goldenlayout.min.js')}}"></script>

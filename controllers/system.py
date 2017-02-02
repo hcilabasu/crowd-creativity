@@ -62,8 +62,14 @@ def get_user_ideas():
             (db.concept.id == db.concept_idea.concept))
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
     clean_ideas = [i.idea.idea for i in ideas]
-    # Log
-    __log_action(userId, "get_user_ideas", json.dumps({'num_ideas':len(clean_ideas)}))
+    return json.dumps(clean_ideas)
+
+def get_all_ideas():
+    userId = session.userId
+    ideas = db((db.idea.id == db.concept_idea.idea) & 
+               (db.concept.id == db.concept_idea.concept)
+    ).select(orderby=~db.idea.id, groupby=db.idea.id)
+    clean_ideas = [dict(id=i.idea.id, idea=i.idea.idea) for i in ideas]
     return json.dumps(clean_ideas)
 
 
