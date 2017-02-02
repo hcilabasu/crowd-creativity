@@ -107,7 +107,8 @@ db.define_table('idea',
     Field('dateAdded','datetime'),
     Field('pool','boolean'),
     Field('relatedIdeas','list:reference idea'),
-    Field('origin', 'string'))
+    Field('origin', 'string'),
+    Field('sources', 'list:reference idea'))
     
 db.define_table('concept',
     Field('concept', 'string', unique=True))
