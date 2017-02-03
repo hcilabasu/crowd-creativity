@@ -1,47 +1,82 @@
+var EVENTS = {
+	popOverClose: []
+}
+
 $(function(){
 
-	$(document).click(function(event) { 
-	    if(!$(event.target).closest('.popupDialog').length) {
-	        if($('.popupDialog').is(':visible')) {
-	            $('.popupDialog').fadeOut('fast');
-	        }
-	        if($('#overlay').is(':visible')) {
-	        	$('#overlay').fadeOut('fast');
-	        }
-	    }        
-	});
+	// Setup popover closure
+	$(document).click(closePopovers);
 
 	// Load panels on page load
 	loadUserIdeas();
 	loadVersioningPanel();
 
-
 });
 
 var openIdeaPopup = function(event){
-	$("#addIdeaPopup").fadeToggle('fast');
-	$("#addIdeaPopup textarea").focus();
+	$('#addIdeaPopup').fadeToggle('fast');
+	$('#addIdeaPopup textarea').focus();
 	event.stopPropagation();
 };
 
-var submitIdea = function(event){
+var submitNewIdea = function(event){
 	// Get values
-	var idea = $("#addIdeaPopup textarea").val();
-	var category = $("#addIdeaPopup input").val();
+	var idea = $('#addIdeaPopup textarea').val();
+	var categories = $('#addIdeaPopup input').val().split(',');
+	// Submit
+	submitIdea(idea, categories, 'original', [], function(){
+		var _idea = idea;
+    	submitIdeaSuccess(_idea);
+	});
+};
 
+var submitCombinedIdea = function(event){
+	var idea = $('#combineIdeas textarea').val();
+	var type = $('#combineIdeas input[name=combineTypeInput]').val();
+	var categories = $('#combineIdeas input[name=combinedCategoryinput]').val().split(',');
+	var sources = JSON.parse($('#combineIdeas input[name=combinedIdeaIds]').val());
+	submitIdea(idea, categories, type, sources, function(){
+		var _idea = idea;
+		var _type = type;
+		submitCombinedIdeaSuccess(_idea, _type);
+	});
+};
+
+var submitIdea = function(idea, category, origin, sources, successCallback){
 	// Send to server
     $.ajax({
         type: "POST",
         url: URL.addIdea,
         data: {
             "idea": idea,
-            "concepts": [category]
+            "concepts": category,
+            "origin": origin,
+            "sources": sources
         },
-        success: function(){
-        	var _idea = idea;
-        	submitIdeaSuccess(_idea);
-        }
+        success: successCallback
     });
+};
+
+var submitIdeaSuccess = function(idea){
+	// Add to UI
+	addIdeaToDisplay(idea);
+	// Clearing up inputs and giving feedback to the user
+	$("#addIdeaPopup input, #addIdeaPopup textarea").val("");
+	$("#addIdeaPopup textarea").focus();
+	$.web2py.flash("Your idea has been added!", "");
+};
+
+var submitCombinedIdeaSuccess = function(idea, type){
+	// If idea is merged, remove previous two and add merged. Otherwise, add new idea
+	if (type == 'merge'){
+		// Remove two ideas
+
+		// TODO 
+	}
+	// Add idea
+	addIdeaToDisplay(idea);
+	// Close overlay
+	closeOverlay();
 };
 
 var loadUserIdeas = function(){
@@ -69,7 +104,10 @@ var loadVersioningPanel = function(){
 };
 
 var addIdeaToDisplay = function(idea){
-	var ideaBlock = $('<p class="ideaBlock"></p>').text(idea).append('<span></span>');
+	var ideaBlock = $('<p class="ideaBlock"></p>').text(idea.idea)
+		.append('<span></span>')
+		.append($('<input type="hidden" name="ideaId"></input>').val(idea.id))
+		.append($('<input type="hidden" name="ideaCategories"></input>').val(idea.categories));
 	$("#ideasContainer").append(ideaBlock);
 	// Make it draggable
 	ideaBlock.draggable({ 
@@ -86,9 +124,16 @@ var addIdeaToDisplay = function(idea){
 	// Make it droppable
 	ideaBlock.droppable({
 		drop: function(event, ui){
-			var idea1 = ui.draggable.text();
-			var idea2 = $(this).text();
-			toggleOverlay('combineIdeas', {ideas: [idea1, idea2]});
+			var idea1Element = ui.draggable;
+			var idea2Element = $(this);
+
+			var idea1 = {idea: idea1Element.text(), 
+						 id: $('input[name=ideaId]', idea1Element).val(),
+						 categories: $('input[name=ideaCategories]', idea1Element).val()};
+			var idea2 = {idea: idea2Element.text(), 
+						 id: $('input[name=ideaId]', idea2Element).val(),
+						 categories: $('input[name=ideaCategories]', idea2Element).val()};
+			openOverlay('combineIdeas', {ideas: [idea1, idea2]});
 		},
 		classes: {
 			'ui-droppable-hover': 'ideaHover'
@@ -97,34 +142,66 @@ var addIdeaToDisplay = function(idea){
 };
 
 var buildVersioningPanel = function(ideas){
+	// TODO build D3.js visualization
 	$("#versioningContainer").text('');
 }
 
-var submitIdeaSuccess = function(idea){
-	// Add to UI
-	addIdeaToDisplay(idea);
-	// Clearing up inputs and giving feedback to the user
-	$("#addIdeaPopup input, #addIdeaPopup textarea").val("");
-	$("#addIdeaPopup textarea").focus();
-	$.web2py.flash("Your idea has been added!", "");
-};
-
-var toggleOverlay = function(popUpId, params){
+// Opens up the popup overlay and sets up the popup using the function [popupId]Setup.
+var openOverlay = function(popUpId, params){
 	$('#overlay').fadeToggle('fast');
 	$('#' + popUpId).fadeToggle('fast');
 	// Call setup function for the ID
 	window[popUpId + 'Setup'](params);
 };
 
+var closeOverlay = function(){
+	$('#overlay').fadeToggle('fast');
+};
+
+var closePopovers = function(event) { 
+	// Closes any popovers that are open
+    if(!$(event.target).closest('.popupDialog').length) {
+        if($('.popupDialog, #overlay').is(':visible')) {
+            $('.popupDialog, #overlay').fadeOut('fast', function(){
+            	// Fire events
+			    while(EVENTS.popOverClose.length > 0){
+			    	var handler = EVENTS.popOverClose.pop();
+			    	handler();
+			    }
+            });
+        }
+    }        
+};
+
 var combineIdeasSetup = function(params){
+	// Add the idea text to the blocks
+	ids = []
+	categories = []
 	$('#combineIdeas .ideaBlock').each(function(index){
-		$(this).text(params['ideas'][index]);
+		$(this).text(params['ideas'][index]['idea']);
+		ids.push(params['ideas'][index]['id'])
+		categories.push(params['ideas'][index]['categories'])
+	});
+	// Set the values
+	$('#combineIdeas input[name=combinedIdeaIds]').val(JSON.stringify(ids));
+	$('#combineIdeas input[name=combinedCategoryinput]').val(categories.join(','));
+
+	// Set up tear down function
+	EVENTS.popOverClose.push(function(){
+		// Empty fields
+		$('#combineIdeas input[name=combineTypeInput]').val();
+		$('#combineIdeas input[name=ideaIds]').val();
+		// Switch back options panel
+		$('#combineIdeas .choices').show();
+		$('#combineIdeas .ideaInput').hide();
+		closeOverlay();
 	});
 }
 
 var replaceCombineIdeasOptions = function(event, type){
-	$('#combineIdeas .choices').fadeOut('fast');
-	$('#combineIdeas .ideaInput').fadeIn('fast');
-
+	$('#combineIdeas .choices').hide('fast');
+	$('#combineIdeas .ideaInput').show('fast');
+	// Sets the text in the paragraph
 	$('.combinationType').text(type + 'd');
-}
+	$('#combineIdeas input[name=combineTypeInput]').val(type)
+};

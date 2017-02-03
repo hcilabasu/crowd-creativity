@@ -32,7 +32,7 @@
 
 				<input type="text" name="categoryinput" />
 
-				<button class="btn floatRight" onclick="submitIdea(event)">Submit</button>
+				<button class="btn floatRight" onclick="submitNewIdea(event)">Submit</button>
 			</div>
 		</div>
 	</div>
@@ -67,13 +67,16 @@
 		<div class="ideaInput">
 			<p>Please, write down your <span class='combinationType'></span> idea in the textarea below. Make sure to include as much detail as possible!</p>
 
-			<textarea></textarea>
-
+			<textarea name="combinedIdeaInput"></textarea>
+			
 			<p>Suggest a category for your idea. Try to be as precise and consistent as you can, but don't worry too much about it, as the system may improve it over time:</p>
 
-			<input type="text" name="categoryinput" />
+			<input type="text" name="combinedCategoryinput" />
 
-			<button class="btn floatRight" onclick="submitIdea(event)">Submit</button>
+			<input type="hidden" name="combineTypeInput">
+			<input type="hidden" name="combinedIdeaIds">
+
+			<button class="btn floatRight" onclick="submitCombinedIdea(event)">Submit</button>
 		</div>
 
 	</div>

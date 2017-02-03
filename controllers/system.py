@@ -35,6 +35,9 @@ def add_idea():
     if userId != None:
         idea = request.vars['idea'].strip()
         concepts = request.vars['concepts[]'] if isinstance(request.vars['concepts[]'], list) else [request.vars['concepts[]']]
+        origin = request.vars['origin']
+        sources = request.vars['sources[]'] if isinstance(request.vars['sources[]'], list) else [request.vars['sources[]']]
+        sources = [int(s) for s in sources]
         dateAdded = datetime.datetime.now()
         # Inserting idea
         idea_id = db.idea.insert(
@@ -44,7 +47,8 @@ def add_idea():
             userCondition=userCondition, 
             ratings=0, 
             pool=ADD_TO_POOL,
-            origin='ideation')
+            origin=origin,
+            sources=sources)
         # Inserting concepts
         for concept in concepts:
             concept_id = __insert_or_retrieve_concept_id(concept)
@@ -60,8 +64,12 @@ def get_user_ideas():
         (db.idea.userId == userId) & (
             (db.idea.id == db.concept_idea.idea) & 
             (db.concept.id == db.concept_idea.concept))
-    ).select(orderby=~db.idea.id, groupby=db.idea.id)
-    clean_ideas = [i.idea.idea for i in ideas]
+    ).select(orderby=db.idea.id, groupby=db.idea.id)
+    clean_ideas = [
+        dict(id=i.idea.id, 
+            idea=i.idea.idea, 
+            categories=[concept.concept.concept for concept in i.idea.concept_idea.select()]
+        ) for i in ideas]
     return json.dumps(clean_ideas)
 
 def get_all_ideas():

@@ -7,5 +7,8 @@ This is a web2py project. Just download web2py, add this to the applications fol
 - Allow enter to submit the idea if the category input is highlighted
 - Validate input
 
+- Remove two ideas when one is merged (system.js:74)
+
 ## Known issues
 - The bottom of the layout is cutoff by the amount of the navbar
+- When an idea is combined/merged, it shows blank until the page is refreshed
