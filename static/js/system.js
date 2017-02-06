@@ -24,9 +24,15 @@ var submitNewIdea = function(event){
 	var idea = $('#addIdeaPopup textarea').val();
 	var categories = $('#addIdeaPopup input').val().split(',');
 	// Submit
-	submitIdea(idea, categories, 'original', [], function(){
+	submitIdea(idea, categories, 'original', [], function(data){
+		var _id = JSON.parse(data).id;
 		var _idea = idea;
-    	submitIdeaSuccess(_idea);
+    	// Add to UI
+		addIdeaToDisplay({idea:_idea, id:_id});
+		// Clearing up inputs and giving feedback to the user
+		$("#addIdeaPopup input, #addIdeaPopup textarea").val("");
+		$("#addIdeaPopup textarea").focus();
+		$.web2py.flash("Your idea has been added!", "");
 	});
 };
 
@@ -35,10 +41,22 @@ var submitCombinedIdea = function(event){
 	var type = $('#combineIdeas input[name=combineTypeInput]').val();
 	var categories = $('#combineIdeas input[name=combinedCategoryinput]').val().split(',');
 	var sources = JSON.parse($('#combineIdeas input[name=combinedIdeaIds]').val());
-	submitIdea(idea, categories, type, sources, function(){
+	submitIdea(idea, categories, type, sources, function(data){
+		var _id = JSON.parse(data).id;
 		var _idea = idea;
 		var _type = type;
-		submitCombinedIdeaSuccess(_idea, _type);
+		var _sources = sources;
+		// If idea is merged, remove previous two and add merged. Otherwise, add new idea
+		if (type == 'merge'){
+			// Remove two ideas
+			for(var i = 0; i < _sources.length; i++){
+				$('#idea_' + _sources[i]).remove();
+			}
+		}
+		// Add idea
+		addIdeaToDisplay({idea:_idea, id:_id});
+		// Close overlay
+		closeOverlay();
 	});
 };
 
@@ -55,28 +73,6 @@ var submitIdea = function(idea, category, origin, sources, successCallback){
         },
         success: successCallback
     });
-};
-
-var submitIdeaSuccess = function(idea){
-	// Add to UI
-	addIdeaToDisplay(idea);
-	// Clearing up inputs and giving feedback to the user
-	$("#addIdeaPopup input, #addIdeaPopup textarea").val("");
-	$("#addIdeaPopup textarea").focus();
-	$.web2py.flash("Your idea has been added!", "");
-};
-
-var submitCombinedIdeaSuccess = function(idea, type){
-	// If idea is merged, remove previous two and add merged. Otherwise, add new idea
-	if (type == 'merge'){
-		// Remove two ideas
-
-		// TODO 
-	}
-	// Add idea
-	addIdeaToDisplay(idea);
-	// Close overlay
-	closeOverlay();
 };
 
 var loadUserIdeas = function(){
@@ -104,11 +100,13 @@ var loadVersioningPanel = function(){
 };
 
 var addIdeaToDisplay = function(idea){
-	var ideaBlock = $('<p class="ideaBlock"></p>').text(idea.idea)
+	// TODO add id to p element in the form: idea_[id], where [id] is the ID of the idea
+	var ideaBlock = $('<p class="ideaBlock" id="idea_'+idea.id+'" style="display:none"></p>').text(idea.idea)
 		.append('<span></span>')
 		.append($('<input type="hidden" name="ideaId"></input>').val(idea.id))
 		.append($('<input type="hidden" name="ideaCategories"></input>').val(idea.categories));
 	$("#ideasContainer").append(ideaBlock);
+	ideaBlock.fadeIn('slow');
 	// Make it draggable
 	ideaBlock.draggable({ 
 		containment: "parent", 
@@ -179,8 +177,8 @@ var combineIdeasSetup = function(params){
 	categories = []
 	$('#combineIdeas .ideaBlock').each(function(index){
 		$(this).text(params['ideas'][index]['idea']);
-		ids.push(params['ideas'][index]['id'])
-		categories.push(params['ideas'][index]['categories'])
+		ids.push(params['ideas'][index]['id']);
+		categories.push(params['ideas'][index]['categories']);
 	});
 	// Set the values
 	$('#combineIdeas input[name=combinedIdeaIds]').val(JSON.stringify(ids));

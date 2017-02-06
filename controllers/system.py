@@ -29,14 +29,16 @@ def add_idea():
     '''
     Endpoint for adding a new idea.
     '''
-    print("here")
     userId = session.userId
     userCondition = session.userCondition
+    idea_id = 0
     if userId != None:
         idea = request.vars['idea'].strip()
         concepts = request.vars['concepts[]'] if isinstance(request.vars['concepts[]'], list) else [request.vars['concepts[]']]
         origin = request.vars['origin']
-        sources = request.vars['sources[]'] if isinstance(request.vars['sources[]'], list) else [request.vars['sources[]']]
+        sources = []
+        if request.vars['sources[]']:
+            sources = request.vars['sources[]'] if isinstance(request.vars['sources[]'], list) else [request.vars['sources[]']]
         sources = [int(s) for s in sources]
         dateAdded = datetime.datetime.now()
         # Inserting idea
@@ -56,6 +58,7 @@ def add_idea():
             db.concept_idea.insert(concept=concept_id, idea=idea_id)
         # Log
         __log_action(userId, "add_idea", idea)
+    return json.dumps(dict(id=idea_id))
 
 
 def get_user_ideas():
