@@ -108,6 +108,7 @@ db.define_table('idea',
     Field('pool','boolean'),
     Field('relatedIdeas','list:reference idea'),
     Field('origin', 'string'),
+    Field('replacedBy', 'reference idea'),
     Field('sources', 'list:reference idea'))
     
 db.define_table('concept',
