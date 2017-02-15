@@ -51,7 +51,7 @@ myLayout.registerComponent( 'ideaViewer', function( container, componentState ){
 
 
 myLayout.registerComponent( 'versioning', function( container, componentState ){
-    container.getElement().html('<div id="versioningContainer"></div>');
+    container.getElement().html('<div id="versioningContainer"><svg></svg></div>');
 });
 
 

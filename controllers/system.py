@@ -4,9 +4,11 @@ import json
 
 
 ADD_TO_POOL = True
-
+TEST_USER_ID = 'ac403a5b927b4df6b3d986fae55145e8' # Use None if no test ID is needed
 
 def index():
+    if TEST_USER_ID:
+        session.userId = TEST_USER_ID # Force userID for testing
     userId = session.userId
     if userId == None:
         # Generating new user
@@ -56,6 +58,12 @@ def add_idea():
             concept_id = __insert_or_retrieve_concept_id(concept)
             # Inserting relationships
             db.concept_idea.insert(concept=concept_id, idea=idea_id)
+        # If idea was marged, update replacedBy on the original ideas
+        if origin == 'merge':
+            for source in sources:
+                idea = db(db.idea.id == source).select().first()
+                idea.replacedBy = idea_id
+                idea.update_record()
         # Log
         __log_action(userId, "add_idea", idea)
     return json.dumps(dict(id=idea_id))
@@ -64,8 +72,9 @@ def add_idea():
 def get_user_ideas():
     userId = session.userId
     ideas = db(
-        (db.idea.userId == userId) & (
-            (db.idea.id == db.concept_idea.idea) & 
+        (db.idea.replacedBy == None) &
+        (db.idea.userId == userId) & 
+        ((db.idea.id == db.concept_idea.idea) & 
             (db.concept.id == db.concept_idea.concept))
     ).select(orderby=db.idea.id, groupby=db.idea.id)
     clean_ideas = [
@@ -76,15 +85,68 @@ def get_user_ideas():
     return json.dumps(clean_ideas)
 
 def get_all_ideas():
-    userId = session.userId
     ideas = db((db.idea.id == db.concept_idea.idea) & 
                (db.concept.id == db.concept_idea.concept)
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
     clean_ideas = [dict(id=i.idea.id, idea=i.idea.idea) for i in ideas]
     return json.dumps(clean_ideas)
 
+def get_versioning_structure():
+    ''' 
+    Return the structure for the versioning panel 
+    Structure:
+    [
+        [{ <-- Level 1 start
+            id:31, connections: [{ids:[43,57], type:'merge'}, ...]
+         }, 
+         {
+            id:..., connections: [...]
+         }],     
+        [ <-- Level 2 start
+            ...
+        ],     
+        ...
+    ]
+
+    '''
+    # get all ideas
+    results = db((db.idea.id == db.concept_idea.idea) & 
+               (db.concept.id == db.concept_idea.concept)
+    ).select(orderby=db.idea.id, groupby=db.idea.id)
+    
+    # start aux variables
+    levels_map = dict() # key: idea_id, value: level
+    levels = []
+    # Iterate over each result and build the levels array
+    for r in results:
+        sources = r.idea.sources
+        level = __get_level(r.idea.sources, levels_map)
+        # add level to dictionary
+        levels_map[r.idea.id] = level
+        if level > len(levels)-1: # this is the first idea in a new level
+            levels.append([])
+        # add idea to level list
+        levels[level].append(dict(
+            id = r.idea.id,
+            connection = dict(
+                type= r.idea.origin,
+                ids = r.idea.sources
+            )
+        ))
+        # clean_ideas = [dict(id=i.idea.id, idea=i.idea.idea) for i in ideas]
+    return json.dumps(levels)
+
+
+
 
 ### PRIVATE FUNCTIONS ###
+
+def __get_level(ids, levels_map):
+    # Gets the level of an idea based on its sources
+    max_level = -1
+    for id in ids:
+        max_level = max(max_level, levels_map[id])
+    return max_level+1
 
 def __log_action(user_id, action_name, extra_info):
     print("Logging " + action_name)

@@ -3,17 +3,20 @@
 {{block page_js}}
 	
 	<script type="text/javascript" src="{{=URL('static','js/jquery-ui.min.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/util.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/system.js')}}"></script>
 	<script src="https://d3js.org/d3.v4.min.js"></script>
 
 	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/goldenlayout-base.css')}}" />
 	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/goldenlayout-light-theme.css')}}" />
-	
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/charts.css')}}" />
+
 	<script>
 	    var URL = {
 	    	addIdea: "{{=URL('system','add_idea')}}",
 	    	getUserIdeas: "{{=URL('system','get_user_ideas')}}",
-	    	getAllIdeas: "{{=URL('system','get_all_ideas')}}"
+	    	getAllIdeas: "{{=URL('system','get_all_ideas')}}",
+	    	getVersioningStructure: "{{=URL('system','get_versioning_structure')}}"
 	    };
 	    var ENV = {};
 	</script>

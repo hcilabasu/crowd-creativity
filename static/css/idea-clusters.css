@@ -512,3 +512,8 @@ div.w2p_flash.alert {
     #combineIdeas .ideaInput {
         display: none;
     }
+
+#versioningContainer {
+    overflow: scroll;
+    height: 100%;
+}

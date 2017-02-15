@@ -1,0 +1,23 @@
+
+.tick {
+	display: none;
+}
+
+.smallIdea {
+	fill: #FFDE78;
+	stroke: #FFAF3C;
+	stroke-width: 0.5;
+	cursor: pointer;
+}
+
+.axis {
+	stroke: #CCC;
+}
+
+.versioningConnection.combine {
+	stroke: #4747D5;
+}
+
+.versioningConnection.merge {
+	stroke: #DF6464;
+}
