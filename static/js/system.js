@@ -105,7 +105,7 @@ var addIdeaToDisplay = function(idea){
 		.append($('<input type="hidden" name="ideaCategories"></input>').val(idea.categories));
 	$("#ideasContainer").append(ideaBlock);
 	ideaBlock.fadeIn('slow');
-	// Make it draggable
+	// Add dynamic behaviors
 	ideaBlock.draggable({ 
 		containment: "parent", 
 		scroll: true,
@@ -116,14 +116,7 @@ var addIdeaToDisplay = function(idea){
 		stop: function(event, ui){
 			$(this).css('z-index', 1);
 		}
-	}).resizable({
-      maxHeight: 200,
-      maxWidth: 230,
-      minHeight: 130,
-      minWidth: 100
-    });
-	// Make it droppable
-	ideaBlock.droppable({
+	}).droppable({
 		drop: function(event, ui){
 			var idea1Element = ui.draggable;
 			var idea2Element = $(this);
@@ -139,7 +132,12 @@ var addIdeaToDisplay = function(idea){
 		classes: {
 			'ui-droppable-hover': 'ideaDragHover'
 		}
-	});
+	}).resizable({
+      maxHeight: 200,
+      maxWidth: 230,
+      minHeight: 100,
+      minWidth: 130
+    });
 };
 
 var buildVersioningPanel = function(structure){
