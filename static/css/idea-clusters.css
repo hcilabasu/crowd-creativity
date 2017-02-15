@@ -449,7 +449,7 @@ div.w2p_flash.alert {
     background: linear-gradient(rgba(255, 222, 120, 0), #FFBD5E); /* Standard syntax */
 }
 
-.ideaBlock.ideaHover {
+.ideaBlock.ideaDragHover {
     border: solid 1px #FF6E3C;
     background: #FFCB78;
 }
