@@ -1,10 +1,24 @@
-var EVENTS = {
-	popOverClose: []
-}
+var EVENTS = {popOverClose: []},
+	TEMPLATES = {};
 
 $(function(){
+	// Parse templates
+	Mustache.tags = ['[[',']]']
+	$('script[type$=x-tmpl-mustache]').each(function(i,d){
+		var id = $(d).attr('id');
+		var html = $('#'+id).html()
+		Mustache.parse(html)
+		TEMPLATES[id] = html;
+	});
+
 	// Setup popover closure
 	$(document).click(closePopovers);
+
+	// Load windowed layout
+	LAYOUT.init();
+	window.onresize = function(){
+		LAYOUT.updateSize();
+	};
 
 	// Load panels on page load
 	loadUserIdeas();
@@ -98,13 +112,10 @@ var loadVersioningPanel = function(){
 };
 
 var addIdeaToDisplay = function(idea){
-	// TODO add id to p element in the form: idea_[id], where [id] is the ID of the idea
-	var ideaBlock = $('<p class="ideaBlock ideaHover id'+idea.id+'" id="id'+idea.id+'" style="display:none"></p>').text(idea.idea)
-		.append('<span></span>')
-		.append($('<input type="hidden" name="ideaId"></input>').val(idea.id))
-		.append($('<input type="hidden" name="ideaCategories"></input>').val(idea.categories));
-	$("#ideasContainer").append(ideaBlock);
-	ideaBlock.fadeIn('slow');
+	// Load template
+	var ideaParameters = {id:idea.id, idea:idea.idea, categories:idea.categories};
+	var ideaBlock = $(Mustache.render(TEMPLATES.ideaBlockTemplate, ideaParameters));
+
 	// Add dynamic behaviors
 	ideaBlock.draggable({ 
 		containment: "parent", 
@@ -138,6 +149,10 @@ var addIdeaToDisplay = function(idea){
       minHeight: 100,
       minWidth: 130
     });
+
+    // Display
+    $("#ideasContainer").append(ideaBlock);
+    ideaBlock.fadeIn('slow');
 };
 
 var buildVersioningPanel = function(structure){

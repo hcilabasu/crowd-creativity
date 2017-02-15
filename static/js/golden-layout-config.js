@@ -1,4 +1,7 @@
 var config = {
+    dimensions: {
+        borderWidth: 5
+    },
     content: [{
         type: 'row',
         content:[{
@@ -24,7 +27,7 @@ var config = {
             content:[{
                 type: 'component',
                 title: 'Versioning',
-                height: 40,
+                height: 60,
                 isClosable: false,
                 componentName: 'versioning',
                 componentState: { }
@@ -39,27 +42,17 @@ var config = {
     }]
 };
 
-/* The config argument is required. A DOM element can be provided as optional second argument. 
-If none is specified GoldenLayout takes over the entire page by adding itself to document.body */
-var layoutContainer = $("#layoutContainer")[0];
+var layoutContainer = $("#layoutContainer");
+var LAYOUT = new GoldenLayout(config);
 
-var myLayout = new GoldenLayout(config, layoutContainer);
-
-myLayout.registerComponent( 'ideaViewer', function( container, componentState ){
-    container.getElement().html('<div id="ideasContainer"></div>');
+LAYOUT.registerComponent( 'ideaViewer', function( container, componentState ){
+    container.getElement().html(Mustache.render(TEMPLATES.ideaViewerTemplate));
 });
 
-
-myLayout.registerComponent( 'versioning', function( container, componentState ){
-    container.getElement().html('<div id="versioningContainer"><svg></svg></div>');
+LAYOUT.registerComponent( 'versioning', function( container, componentState ){
+    container.getElement().html(Mustache.render(TEMPLATES.versioningViewerTemplate));
 });
 
-
-myLayout.registerComponent( 'other', function( container, componentState ){
+LAYOUT.registerComponent( 'other', function( container, componentState ){
     container.getElement().html(componentState.label);
-});
-
-$(function(){
-    // Initialize layout
-    myLayout.init();
 });

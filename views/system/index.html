@@ -2,12 +2,19 @@
 
 {{block page_js}}
 	
+	<!-- Load JS libraries -->
 	<script type="text/javascript" src="{{=URL('static','js/jquery-ui.min.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/goldenlayout.min.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/mustache.min.js')}}"></script>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+
+	<!-- Load JS custom code -->
+	<script type="text/javascript" src="{{=URL('static','js/golden-layout-config.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/util.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/visualizations.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/system.js')}}"></script>
-	<script src="https://d3js.org/d3.v4.min.js"></script>
-
+	
+	<!-- Load styles -->
 	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/goldenlayout-base.css')}}" />
 	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/goldenlayout-light-theme.css')}}" />
 	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/visualizations.css')}}" />
@@ -21,6 +28,24 @@
 	    	getVersioningStructure: "{{=URL('system','get_versioning_structure')}}"
 	    };
 	    var ENV = {};
+	</script>
+
+	<!-- Handlebars templates -->
+	<script id="ideaViewerTemplate" type="text/x-tmpl-mustache">
+		<div id="ideasContainer"></div>
+	</script>
+
+	<script id="versioningViewerTemplate" type="text/x-tmpl-mustache">
+		<div id="versioningContainer"><svg></svg></div>
+	</script>
+
+	<script id="ideaBlockTemplate" type="text/x-tmpl-mustache">
+		<p class="ideaBlock ideaHover id[[id]]" id="id[[id]]" style="display:none">
+			[[idea]]
+			<span></span>
+			<input type="hidden" name="ideaId" val="[[id]]"></input>
+			<input type="hidden" name="ideaCategories" val="[[categories]]"></input>
+		</p>
 	</script>
 {{end}}
 
@@ -86,11 +111,4 @@
 
 	</div>
 </div>
-
-<!-- for some reason, the layout doesn't work when added at the end of the page (page_js block) -->
-<script type="text/javascript" src="{{=URL('static','js/goldenlayout.min.js')}}"></script>
-<script type="text/javascript" src="{{=URL('static','js/golden-layout-config.js')}}"></script>
-
-<div id="layoutContainer"></div>
-
 
