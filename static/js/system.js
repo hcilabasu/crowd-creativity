@@ -116,7 +116,12 @@ var addIdeaToDisplay = function(idea){
 		stop: function(event, ui){
 			$(this).css('z-index', 1);
 		}
-	});
+	}).resizable({
+      maxHeight: 200,
+      maxWidth: 230,
+      minHeight: 130,
+      minWidth: 100
+    });
 	// Make it droppable
 	ideaBlock.droppable({
 		drop: function(event, ui){
