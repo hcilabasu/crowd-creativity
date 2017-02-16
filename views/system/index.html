@@ -30,12 +30,26 @@
 	    var ENV = {};
 	</script>
 
-	<!-- Handlebars templates -->
+	<!-- Mustache templates -->
 	<script id="ideaViewerTemplate" type="text/x-tmpl-mustache">
+		<div class="toolbar">
+			<ul>
+				<li><a href="#" title="Reload this panel" onclick="loadUserIdeas()">
+					<img src="{{=URL('static','images/reload.png')}}">
+				</a></li>
+			</ul>
+		</div>
 		<div id="ideasContainer"></div>
 	</script>
 
 	<script id="versioningViewerTemplate" type="text/x-tmpl-mustache">
+		<div class="toolbar">
+			<ul>
+				<li><a href="#" title="Reload this panel" onclick="loadVersioningPanel()">
+					<img src="{{=URL('static','images/reload.png')}}">
+				</a></li>
+			</ul>
+		</div>
 		<div id="versioningContainer"><svg></svg></div>
 	</script>
 

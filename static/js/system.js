@@ -88,6 +88,9 @@ var submitIdea = function(idea, category, origin, sources, successCallback){
 };
 
 var loadUserIdeas = function(){
+	// Clear panel
+	$('#ideasContainer').empty();
+	// Load ideas
 	$.ajax({
         type: "GET",
         url: URL.getUserIdeas,
@@ -101,6 +104,9 @@ var loadUserIdeas = function(){
 };
 
 var loadVersioningPanel = function(){
+	// Clear Panel
+	$('#versioningContainer').html('<svg></svg>');
+	// Load panel
 	$.ajax({
         type: "GET",
         url: URL.getVersioningStructure,

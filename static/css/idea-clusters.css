@@ -531,3 +531,50 @@ div.w2p_flash.alert {
     overflow: auto;
     height: 100%;
 }
+
+.toolbar {
+    background: #EEE;
+    background: -webkit-linear-gradient(white, #EEE); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(white, #EEE); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(white, #EEE); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(white, #EEE); /* Standard syntax */
+    border-bottom: solid 1px #CCC;
+}
+
+    .toolbar ul {
+        display: inline-block;
+        list-style-type: none;
+        margin: 5px 0 5px 0;
+        padding: 0 20px;
+        border-right: solid 1px #CCC;
+    }
+
+    .toolbar ul:last-child {
+        border-right: none;
+    }
+
+    .toolbar ul:first-child {
+        padding-left: 10px;
+    }
+
+        .toolbar ul > li {
+            display: inline-block;
+        }
+
+        .toolbar ul > li > a {
+            display: inline-block;
+            height: 30px;
+            width: 40px;
+            text-align: center;
+            line-height: 30px;
+            border: solid 1px #CCC;
+            border-radius: 3px;
+            text-decoration: none;
+        }
+
+        .toolbar ul > li > a:hover {
+            background: #DDD;
+        }
+            .toolbar ul > li > a > img {
+                height: 30px;
+            }
