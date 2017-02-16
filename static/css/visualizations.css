@@ -10,6 +10,10 @@
 	cursor: pointer;
 }
 
+	.smallIdea:hover {
+		fill: #FFBD5E;
+	}
+
 .axis {
 	stroke: #CCC;
 }

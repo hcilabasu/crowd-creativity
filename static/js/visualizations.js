@@ -104,8 +104,23 @@ VISUALIZATIONS = {
 					.attr('class', 'smallIdea ideaContainer hover id' + ideaId)
 					.attr('height', smallIdeaHeight)
 					.attr('width', smallIdeaHeight)
-					.attr('transform', function(f,k){ 
-						return 'translate(' + ideaPosition.x + ',' + ideaPosition.y + ')'; 
+					.attr('x', ideaPosition.x)
+					.attr('y', ideaPosition.y)
+					// Add hover effects
+					.on('mouseover', function(d){
+						var idea = d3.select(this);
+						var position = {x:idea.attr('x'), y:idea.attr('y')};
+						idea.transition()
+							.attr('width', smallIdeaHeight + 10)
+							.attr('height', smallIdeaHeight + 10)
+							.attr('transform', 'translate(-5,-5)')
+					}).on('mouseout', function(d){
+						var idea = d3.select(this);
+						var position = {x:idea.attr('x'), y:idea.attr('y')};
+						idea.transition()
+							.attr('width', smallIdeaHeight)
+							.attr('height', smallIdeaHeight)
+							.attr('transform', 'translate(0,0)')
 					});
 				ideasElements.push(rect);
 			}
