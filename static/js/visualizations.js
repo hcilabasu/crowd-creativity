@@ -1,4 +1,8 @@
 VISUALIZATIONS = {
+	/* global visualization dimensions */
+	dim: {
+		smallIdea: 15 // Dimensions of square small idea. Valid for width and height
+	},
 	/*
 	This function builds the core of the versioning panel
 
@@ -19,7 +23,6 @@ VISUALIZATIONS = {
 			width = levelWidth * numLevels + margin.left + margin.right,
 			levelHeight = 30,
 			height = levelHeight * maxIdeasPerLevel + margin.top + margin.bottom,
-			smallIdeaHeight = 15, // TODO calculate this from max number of ideas on any level
 			labelHeight = 20, // TODO figure out a better way to fit the labels on top of the chart e.g. DO A HEIGHTS DICT THAT HAS ALL HEIGHTS
 			ideaMap = {}, // Used to store the x,y coordinates of every idea
 			ideasElements = [] // Used to store the idea SVG elements for be added after the lines
@@ -82,15 +85,15 @@ VISUALIZATIONS = {
 				var connections = structure[i][j].connection.ids;
 				var connectionType = structure[i][j].connection.type;
 				var ideaPosition = {
-					x: levelScale(i) - smallIdeaHeight / 2, 
-					y: scales[i](j) - smallIdeaHeight / 2
+					x: levelScale(i) - VISUALIZATIONS.dim.smallIdea / 2, 
+					y: scales[i](j) - VISUALIZATIONS.dim.smallIdea / 2
 				};
 				ideaMap[ideaId] = ideaPosition;
 
 				// Add lines
 				connections.forEach(function(d){
 					// Set positions
-					var offset = smallIdeaHeight / 2;
+					var offset = VISUALIZATIONS.dim.smallIdea / 2;
 					var lineData = [
 						{x: ideaPosition.x + offset, y: ideaPosition.y + offset },
 						{x: ideaMap[d].x + offset, y: ideaMap[d].y + offset }];
@@ -111,40 +114,44 @@ VISUALIZATIONS = {
 			.enter()
 			.append('rect')
 			.attr('class', function(d){ return 'smallIdea ideaContainer hover id' + d.id; })
-			.attr('height', smallIdeaHeight)
-			.attr('width', smallIdeaHeight)
+			.attr('height', VISUALIZATIONS.dim.smallIdea)
+			.attr('width', VISUALIZATIONS.dim.smallIdea)
 			.attr('x', function(d){ return d.position.x; })
 			.attr('y', function(d){ return d.position.y; })
 			// Add hover effects
 			.on('mouseover', function(d){
-				var idea = d3.select(this);
-				var position = {x:idea.attr('x'), y:idea.attr('y')};
-				idea.transition()
-					.duration(200)
-					.attr('width', smallIdeaHeight + 10)
-					.attr('height', smallIdeaHeight + 10)
-					.attr('transform', 'translate(-5,-5)')
+				VISUALIZATIONS.focusIdeaInVersioning('id' + d.id);
 				// Toggle the idea in the idea panel as well
 				UTIL.addClass('id'+d.id, 'ideaHover');
 			}).on('mouseout', function(d){
-				var idea = d3.select(this);
-				var position = {x:idea.attr('x'), y:idea.attr('y')};
-				idea.transition()
-					.duration(200)
-					.attr('width', smallIdeaHeight)
-					.attr('height', smallIdeaHeight)
-					.attr('transform', 'translate(0,0)')
+				VISUALIZATIONS.unfocusIdeaInVersioning('id' + d.id);
 				// Toggle the idea in the idea panel as well
 				UTIL.removeClass('id'+d.id, 'ideaHover');
 			}).on('click', function(d){
 				// Load idea
 				loadIdea(d.id);
 			});
+	},
 
-		// ideasElements.forEach(function(d){
-		// 	axesContainer.append(function(){
-		// 		return d.node();
-		// 	});
-		// });
+	focusIdeaInVersioning: function(id){
+		var idea = d3.selectAll('.' + id);
+		var position = {x:idea.attr('x'), y:idea.attr('y')};
+		idea.classed('smallIdeaHover', true);
+		idea.transition()
+			.duration(200)
+			.attr('width', VISUALIZATIONS.dim.smallIdea + 10)
+			.attr('height', VISUALIZATIONS.dim.smallIdea + 10)
+			.attr('transform', 'translate(-5,-5)');
+	},
+
+	unfocusIdeaInVersioning: function(id){
+		var idea = d3.selectAll('.' + id);
+		var position = {x:idea.attr('x'), y:idea.attr('y')};
+		idea.classed('smallIdeaHover', false);
+		idea.transition()
+			.duration(200)
+			.attr('width', VISUALIZATIONS.dim.smallIdea)
+			.attr('height', VISUALIZATIONS.dim.smallIdea)
+			.attr('transform', 'translate(0,0)');
 	}
 }

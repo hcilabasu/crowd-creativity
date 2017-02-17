@@ -176,6 +176,15 @@ var addIdeaToDisplay = function(idea){
       maxWidth: 230,
       minHeight: 100,
       minWidth: 130
+    }).hover(function(){
+    	var id = $(this).attr('id');
+    	UTIL.addClass(id, 'ideaHover');
+    	// Trigger visualizations
+    	VISUALIZATIONS.focusIdeaInVersioning(id);
+    },function(){
+    	var id = $(this).attr('id');
+    	UTIL.removeClass(id, 'ideaHover');
+    	VISUALIZATIONS.unfocusIdeaInVersioning(id);
     });
 
     // Display
