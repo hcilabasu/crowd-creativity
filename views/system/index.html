@@ -25,7 +25,8 @@
 	    	addIdea: "{{=URL('system','add_idea')}}",
 	    	getUserIdeas: "{{=URL('system','get_user_ideas')}}",
 	    	getAllIdeas: "{{=URL('system','get_all_ideas')}}",
-	    	getVersioningStructure: "{{=URL('system','get_versioning_structure')}}"
+	    	getVersioningStructure: "{{=URL('system','get_versioning_structure')}}",
+	    	getIdeaById: "{{=URL('system','get_idea_by_id')}}"
 	    };
 	    var ENV = {};
 	</script>
@@ -54,7 +55,7 @@
 	</script>
 
 	<script id="ideaBlockTemplate" type="text/x-tmpl-mustache">
-		<p class="ideaBlock ideaHover id[[id]]" id="id[[id]]" style="display:none">
+		<p class="ideaBlock id[[id]]" id="id[[id]]" style="display:none">
 			[[idea]]
 			<span></span>
 			<input type="hidden" name="ideaId" val="[[id]]"></input>

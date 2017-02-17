@@ -5,5 +5,17 @@ var UTIL = {
 	*/
 	range: function(s,e){
 		return Array.apply(s, Array(e-s)).map(function(d,i) { return i+s; });
+	},
+	/*
+	Adds the class for the element with id elementId
+	*/
+	addClass: function(id, c){
+		$('#' + id).addClass(c);
+	},
+	/*
+	Removes the class for the element with id elementId
+	*/
+	removeClass: function(id, c){
+		$('#' + id).removeClass(c);
 	}
-}
+};

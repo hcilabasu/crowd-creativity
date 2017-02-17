@@ -58,6 +58,7 @@ VISUALIZATIONS = {
 			.attr('transform', 'translate(0, ' + labelHeight + ')');
 
 		// Add elements
+		var ideasArray = []
 		for (var i = 0; i < structure.length; i++){
 			// Add labels
 			axisLabels.append('text')
@@ -100,36 +101,50 @@ VISUALIZATIONS = {
 				});
 
 				// Add idea blocks
-				var rect = d3.select(document.createElementNS("http://www.w3.org/2000/svg", "rect"))
-					.attr('class', 'smallIdea ideaContainer hover id' + ideaId)
-					.attr('height', smallIdeaHeight)
-					.attr('width', smallIdeaHeight)
-					.attr('x', ideaPosition.x)
-					.attr('y', ideaPosition.y)
-					// Add hover effects
-					.on('mouseover', function(d){
-						var idea = d3.select(this);
-						var position = {x:idea.attr('x'), y:idea.attr('y')};
-						idea.transition()
-							.attr('width', smallIdeaHeight + 10)
-							.attr('height', smallIdeaHeight + 10)
-							.attr('transform', 'translate(-5,-5)')
-					}).on('mouseout', function(d){
-						var idea = d3.select(this);
-						var position = {x:idea.attr('x'), y:idea.attr('y')};
-						idea.transition()
-							.attr('width', smallIdeaHeight)
-							.attr('height', smallIdeaHeight)
-							.attr('transform', 'translate(0,0)')
-					});
-				ideasElements.push(rect);
+				var ideaObject = { id: ideaId, position: ideaPosition }
+				ideasArray.push(ideaObject)
 			}
 		}
 		// Add ideas
-		ideasElements.forEach(function(d){
-			axesContainer.append(function(){
-				return d.node();
+		axesContainer.selectAll('rect')
+			.data(ideasArray)
+			.enter()
+			.append('rect')
+			.attr('class', function(d){ return 'smallIdea ideaContainer hover id' + d.id; })
+			.attr('height', smallIdeaHeight)
+			.attr('width', smallIdeaHeight)
+			.attr('x', function(d){ return d.position.x; })
+			.attr('y', function(d){ return d.position.y; })
+			// Add hover effects
+			.on('mouseover', function(d){
+				var idea = d3.select(this);
+				var position = {x:idea.attr('x'), y:idea.attr('y')};
+				idea.transition()
+					.duration(200)
+					.attr('width', smallIdeaHeight + 10)
+					.attr('height', smallIdeaHeight + 10)
+					.attr('transform', 'translate(-5,-5)')
+				// Toggle the idea in the idea panel as well
+				UTIL.addClass('id'+d.id, 'ideaHover');
+			}).on('mouseout', function(d){
+				var idea = d3.select(this);
+				var position = {x:idea.attr('x'), y:idea.attr('y')};
+				idea.transition()
+					.duration(200)
+					.attr('width', smallIdeaHeight)
+					.attr('height', smallIdeaHeight)
+					.attr('transform', 'translate(0,0)')
+				// Toggle the idea in the idea panel as well
+				UTIL.removeClass('id'+d.id, 'ideaHover');
+			}).on('click', function(d){
+				// Load idea
+				loadIdea(d.id);
 			});
-		});
+
+		// ideasElements.forEach(function(d){
+		// 	axesContainer.append(function(){
+		// 		return d.node();
+		// 	});
+		// });
 	}
 }

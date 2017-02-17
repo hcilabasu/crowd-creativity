@@ -83,6 +83,20 @@ def get_user_ideas():
         ) for i in ideas]
     return json.dumps(clean_ideas)
 
+def get_idea_by_id():
+    id = int(request.vars['id'])
+
+    idea = db((db.idea.id == id) &
+                ((db.idea.id == db.concept_idea.idea) & 
+                (db.concept.id == db.concept_idea.concept))
+    ).select(orderby=~db.idea.id, groupby=db.idea.id).first()
+
+    clean_idea = dict(id=idea.idea.id, 
+        idea=idea.idea.idea, 
+        categories=[concept.concept.concept for concept in idea.idea.concept_idea.select()])
+
+    return json.dumps(clean_idea)
+
 def get_all_ideas():
     ideas = db((db.idea.id == db.concept_idea.idea) & 
                (db.concept.id == db.concept_idea.concept)

@@ -103,6 +103,24 @@ var loadUserIdeas = function(){
     });
 };
 
+var loadIdea = function(id){
+	if($('#id' + id).length){
+		// Idea is already in pane. Focus
+		$('#id' + id).addClass('glow').delay(3000).queue(function(next){ $(this).removeClass('glow'); next(); });
+	} else {
+		// Idea is not in the pane. Retrieve and display.
+		$.ajax({
+	        type: "GET",
+	        data: {id:id},
+	        url: URL.getIdeaById,
+	        success: function(data){
+	        	var idea = JSON.parse(data);
+	    		addIdeaToDisplay(idea);
+	        }
+	    });
+	}
+};
+
 var loadVersioningPanel = function(){
 	// Clear Panel
 	$('#versioningContainer').html('<svg></svg>');
@@ -126,7 +144,7 @@ var addIdeaToDisplay = function(idea){
 	ideaBlock.draggable({ 
 		containment: "parent", 
 		scroll: true,
-		revert: "valid",
+		revert: true,
 		start: function(event, ui){
 			$(this).css('z-index', 9999);
 		},

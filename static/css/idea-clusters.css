@@ -433,6 +433,7 @@ div.w2p_flash.alert {
 #ideasContainer {
     overflow: scroll;
     height: 100%;
+    padding: 20px;
 }
 
 .ideaBlock {
@@ -466,6 +467,14 @@ div.w2p_flash.alert {
 .ideaBlock.ideaDragHover {
     border: solid 1px #FF6E3C;
     background: #FFCB78;
+}
+
+.ideaHover {
+    background-color: #FFBD5E;
+    width: 150px; /* Relative to ideaBlock size */
+    height: 120px;
+    margin: 0;
+    transition: width 0.2s, height 0.2s, background-color 0.2s, margin 0.2s;
 }
 
 #overlay {
@@ -533,12 +542,9 @@ div.w2p_flash.alert {
 }
 
 .toolbar {
-    background: #EEE;
-    background: -webkit-linear-gradient(white, #EEE); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(white, #EEE); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(white, #EEE); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(white, #EEE); /* Standard syntax */
+    background: white;
     border-bottom: solid 1px #CCC;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.1);
 }
 
     .toolbar ul {
@@ -559,6 +565,7 @@ div.w2p_flash.alert {
 
         .toolbar ul > li {
             display: inline-block;
+            margin-left: -1px;
         }
 
         .toolbar ul > li > a {
@@ -567,14 +574,26 @@ div.w2p_flash.alert {
             width: 40px;
             text-align: center;
             line-height: 30px;
-            border: solid 1px #CCC;
-            border-radius: 3px;
             text-decoration: none;
+            border: solid 1px #EEE;
         }
 
         .toolbar ul > li > a:hover {
-            background: #DDD;
+            background: #EEE;
         }
             .toolbar ul > li > a > img {
                 height: 30px;
             }
+
+@keyframes glow {
+    0%   {box-shadow: 0 0 0px #3AAAFC;}
+    50%  {box-shadow: 0 0 20px #3AAAFC;}
+    100% {box-shadow: 0 0 0px #3AAAFC;}
+}
+
+.glow {
+    animation-name: glow;
+    animation-duration: 1s;
+    animation-iteration-count: 3;
+    animation-timing-function: ease-out;
+}
