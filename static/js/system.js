@@ -103,6 +103,10 @@ var loadUserIdeas = function(){
     });
 };
 
+var closeIdea = function(id){
+	$('#id'+id).hide(200, function(){ remove(); });
+}
+
 var loadIdea = function(id){
 	if($('#id' + id).length){
 		// Idea is already in pane. Focus

@@ -450,7 +450,17 @@ div.w2p_flash.alert {
     overflow: hidden;
 }
 
-.ideaBlock span {
+.ideaBlock a.close {
+    background: url(../images/close-24.png) no-repeat center center;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    top: 0;
+    right: 0;
+}
+
+.ideaBlock span.fade {
     display: inline-block;
     position: absolute;
     bottom: 0;
@@ -593,7 +603,7 @@ div.w2p_flash.alert {
 
 .glow {
     animation-name: glow;
-    animation-duration: 1s;
-    animation-iteration-count: 3;
+    animation-duration: 0.5s;
+    animation-iteration-count: 2;
     animation-timing-function: ease-out;
 }
