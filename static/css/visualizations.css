@@ -20,6 +20,10 @@
 	stroke: #CCC;
 }
 
+.versioningConnection {
+	stroke-width: 4;
+}
+
 .versioningConnection.combine {
 	stroke: #4747D5;
 }
