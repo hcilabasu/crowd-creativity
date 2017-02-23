@@ -120,11 +120,12 @@ db.define_table('concept_idea',
 
 db.define_table('idea_rating',
     Field('idea', 'reference idea'),
+    Field('completed', 'boolean'),
     Field('relativeTo', 'reference idea'), # If the task is comparing the idea in terms of another
-    Field('ratingType', 'string'),
-    Field('rating', 'integer'),
-    Field('dateAdded', 'datetime'),
-    Field('userId', 'string'))
+    Field('ratingOriginality', 'integer'),
+    Field('ratingUsefulness', 'integer'),
+    Field('dateCompleted', 'datetime'),
+    Field('completedBy', 'string'))
 
 db.define_table('idea_triplets',
     Field('seed_idea', 'reference idea'),

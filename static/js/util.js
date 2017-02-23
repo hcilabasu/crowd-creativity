@@ -9,13 +9,13 @@ var UTIL = {
 	/*
 	Adds the class for the element with id elementId
 	*/
-	addClass: function(id, c){
-		$('#' + id).addClass(c);
+	addClass: function(selector, c){
+		$(selector).addClass(c);
 	},
 	/*
 	Removes the class for the element with id elementId
 	*/
-	removeClass: function(id, c){
-		$('#' + id).removeClass(c);
+	removeClass: function(selector, c){
+		$(selector).removeClass(c);
 	}
 };

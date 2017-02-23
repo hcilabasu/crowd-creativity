@@ -26,7 +26,9 @@
 	    	getUserIdeas: "{{=URL('system','get_user_ideas')}}",
 	    	getAllIdeas: "{{=URL('system','get_all_ideas')}}",
 	    	getVersioningStructure: "{{=URL('system','get_versioning_structure')}}",
-	    	getIdeaById: "{{=URL('system','get_idea_by_id')}}"
+	    	getIdeaById: "{{=URL('system','get_idea_by_id')}}",
+			getSuggestedTasks: "{{=URL('system','get_suggested_tasks')}}",
+			submitRatingTask: "{{=URL('system','submit_rating_task')}}"
 	    };
 	    var ENV = {};
 	</script>
@@ -54,10 +56,54 @@
 		<div id="versioningContainer"><svg></svg></div>
 	</script>
 
+	<script id="suggestedTasksViewerTemplate" type="text/x-tmpl-mustache">
+		<div class="toolbar">
+			<ul>
+				<li><a href="#" title="Reload this panel" onclick="loadSuggestedTasks();">
+					<img src="{{=URL('static','images/reload.png')}}">
+				</a></li>
+			</ul>
+		</div>
+		<div id="suggestedTasksContainer">
+			<ul id="suggestedTasksList">
+			</ul>
+		</div>
+	</script>
+
+	<script id="ratingTaskTemplate" type="text/x-tmpl-mustache">
+		<h3>Rating task</h3>
+		<div id="ideaPlaceholder"></div>
+		<h4>How original is this idea?</h4>
+		<ul class="horizontal-radial">
+			<li> Extremely unoriginal <input type="radio" name="originality" value="1"/> </li>
+			<li> <input type="radio" name="originality" value="2"/> </li>
+			<li> <input type="radio" name="originality" value="3"/> </li>
+			<li> <input type="radio" name="originality" value="4"/> </li>
+			<li> <input type="radio" name="originality" value="5"/> </li>
+			<li> <input type="radio" name="originality" value="6"/> </li>
+			<li> <input type="radio" name="originality" value="7"/> Extremely original </li>
+		</ul>
+
+		<h4>How useful is this idea?</h4>
+		<ul class="horizontal-radial">
+			<li> Extremely useless <input type="radio" name="usefulness" value="1"/> </li>
+			<li> <input type="radio" name="usefulness" value="2"/> </li>
+			<li> <input type="radio" name="usefulness" value="3"/> </li>
+			<li> <input type="radio" name="usefulness" value="4"/> </li>
+			<li> <input type="radio" name="usefulness" value="5"/> </li>
+			<li> <input type="radio" name="usefulness" value="6"/> </li>
+			<li> <input type="radio" name="usefulness" value="7"/> Extremely useful </li>
+		</ul>
+
+		<a href="#" class="btn" onclick="submitRatingTask(event)">Submit</a>
+	</script>
+
 	<script id="ideaBlockTemplate" type="text/x-tmpl-mustache">
 		<p class="ideaBlock id[[id]]" id="id[[id]]" style="display:none">
 			[[idea]]
+			[[#closeable]]
 			<a href="#" title="Close idea" class="close" onclick="closeIdea('[[id]]')"></a>
+			[[/closeable]]
 			<span class="fade"></span>
 			<input type="hidden" name="ideaId" value="[[id]]"></input>
 			<input type="hidden" name="ideaCategories" value="[[categories]]"></input>

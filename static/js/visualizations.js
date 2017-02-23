@@ -122,11 +122,11 @@ VISUALIZATIONS = {
 			.on('mouseover', function(d){
 				VISUALIZATIONS.focusIdeaInVersioning('id' + d.id);
 				// Toggle the idea in the idea panel as well
-				UTIL.addClass('id'+d.id, 'ideaHover');
+				UTIL.addClass('.id'+d.id, 'ideaHover');
 			}).on('mouseout', function(d){
 				VISUALIZATIONS.unfocusIdeaInVersioning('id' + d.id);
 				// Toggle the idea in the idea panel as well
-				UTIL.removeClass('id'+d.id, 'ideaHover');
+				UTIL.removeClass('.id'+d.id, 'ideaHover');
 			}).on('click', function(d){
 				// Load idea
 				loadIdea(d.id);
@@ -134,7 +134,7 @@ VISUALIZATIONS = {
 	},
 
 	focusIdeaInVersioning: function(id){
-		var idea = d3.selectAll('.' + id);
+		var idea = d3.selectAll('#versioningContainer .' + id);
 		var position = {x:idea.attr('x'), y:idea.attr('y')};
 		idea.classed('smallIdeaHover', true);
 		idea.transition()
@@ -145,7 +145,7 @@ VISUALIZATIONS = {
 	},
 
 	unfocusIdeaInVersioning: function(id){
-		var idea = d3.selectAll('.' + id);
+		var idea = d3.selectAll('#versioningContainer .' + id);
 		var position = {x:idea.attr('x'), y:idea.attr('y')};
 		idea.classed('smallIdeaHover', false);
 		idea.transition()

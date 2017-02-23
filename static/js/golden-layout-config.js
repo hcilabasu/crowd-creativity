@@ -6,7 +6,7 @@ var config = {
         type: 'row',
         content:[{
             type: 'column',
-            width: 60,
+            width: 65,
             content: [{
                 type: 'component',
                 title: 'Idea viewer',
@@ -27,7 +27,7 @@ var config = {
             content:[{
                 type: 'component',
                 title: 'Versioning',
-                height: 60,
+                height: 45,
                 isClosable: false,
                 componentName: 'versioning',
                 componentState: { }
@@ -35,7 +35,7 @@ var config = {
                 type: 'component',
                 title: 'Suggested tasks',
                 isClosable: false,
-                componentName: 'other',
+                componentName: 'suggestedTasks',
                 componentState: { }
             }]
         }]
@@ -51,6 +51,10 @@ LAYOUT.registerComponent( 'ideaViewer', function( container, componentState ){
 
 LAYOUT.registerComponent( 'versioning', function( container, componentState ){
     container.getElement().html(Mustache.render(TEMPLATES.versioningViewerTemplate));
+});
+
+LAYOUT.registerComponent( 'suggestedTasks', function( container, componentState ){
+    container.getElement().html(Mustache.render(TEMPLATES.suggestedTasksViewerTemplate));
 });
 
 LAYOUT.registerComponent( 'other', function( container, componentState ){

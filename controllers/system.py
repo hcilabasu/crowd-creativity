@@ -5,6 +5,8 @@ import json
 ADD_TO_POOL = True
 TEST_USER_ID = 'ac403a5b927b4df6b3d986fae55145e8' # Use None if no test ID is needed
 
+TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea
+
 def index():
     if TEST_USER_ID:
         session.userId = TEST_USER_ID # Force userID for testing
@@ -63,6 +65,8 @@ def add_idea():
                 idea = db(db.idea.id == source).select().first()
                 idea.replacedBy = idea_id
                 idea.update_record()
+        # Insert tasks
+        __insert_tasks_for_idea(idea_id, userId)
         # Log
         __log_action(userId, "add_idea", idea)
     return json.dumps(dict(id=idea_id))
@@ -149,10 +153,54 @@ def get_versioning_structure():
         # clean_ideas = [dict(id=i.idea.id, idea=i.idea.idea) for i in ideas]
     return json.dumps(levels)
 
+def get_suggested_tasks():
+    user_id = session.userId
+    # retrieve tasks already completed
+    completed_ratings = [row.idea for row in db(db.idea_rating.completedBy == user_id).select(db.idea_rating.idea)]
+    # retrieve tasks TODO make sure the user only gets tasks he did not yet complete
+    rating_tasks_results = db(
+        (db.idea_rating.completed == False) & 
+        (db.idea_rating.idea == db.idea.id) &
+        ~(db.idea_rating.idea.belongs(completed_ratings))
+    ).select(groupby=db.idea_rating.idea)
+    rating_tasks = [dict(task_id=r.idea_rating.id, idea=r.idea.idea, idea_id=r.idea.id) for r in rating_tasks_results]
+    return json.dumps(dict(rating=rating_tasks))
+
+def submit_rating_task():
+    idea_id = request.vars['idea_id']
+    originality = int(request.vars['originality'])
+    usefulness = int(request.vars['usefulness'])
+    date_completed = datetime.datetime.now()
+    user_id = session.userId
+    # retrieve first available task for this idea
+    rating = db((db.idea_rating.idea == idea_id) & (db.idea_rating.completed == False)).select().first()
+    if rating:
+        # rating found. Update record
+        rating.completed = True
+        rating.ratingOriginality = originality
+        rating.ratingUsefulness = usefulness
+        rating.dateCompleted = date_completed
+        rating.completedBy = user_id
+        rating.update_record()
+    else:
+        # there were no available ratings for this idea (other people already did it). Create a new one
+        db.idea_rating.insert(
+            idea=idea_id, 
+            completed=True, 
+            ratingOriginality=originality, 
+            ratingUsefulness=usefulness, 
+            dateCompleted=date_completed, 
+            completedBy=user_id)
+    return 'ok'
 
 
 
 ### PRIVATE FUNCTIONS ###
+
+def __insert_tasks_for_idea(idea_id, user_id):
+    # Inser rating tasks
+    for i in range(0,TASKS_PER_IDEA):
+        db.idea_rating.insert(idea=idea_id, completed=False)
 
 def __get_level(ids, levels_map):
     # Gets the level of an idea based on its sources

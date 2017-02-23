@@ -23,6 +23,7 @@ $(function(){
 	// Load panels on page load
 	loadUserIdeas();
 	loadVersioningPanel();
+	loadSuggestedTasks();
 });
 
 var openIdeaPopup = function(event){
@@ -44,7 +45,7 @@ var submitNewIdea = function(event){
 		// Clearing up inputs and giving feedback to the user
 		$("#addIdeaPopup input, #addIdeaPopup textarea").val("");
 		$("#addIdeaPopup textarea").focus();
-		$.web2py.flash("Your idea has been added!", "");
+		$.web2py.flash("Your idea has been added!", "ok");
 	});
 };
 
@@ -140,62 +141,129 @@ var loadVersioningPanel = function(){
 };
 
 var addIdeaToDisplay = function(idea){
+	var ideaBlock = createIdeaElement(idea, {closeable:true, draggable:true, resizable: true, focuseable: true});
+	$("#ideasContainer").append(ideaBlock);
+    ideaBlock.fadeIn('slow');
+};
+
+var createIdeaElement = function(idea, params){
 	// Load template
-	var ideaParameters = {id:idea.id, idea:idea.idea, categories:idea.categories};
+	var ideaParameters = {id:idea.id, idea:idea.idea, categories:idea.categories, closeable:params['closeable']};
 	var ideaBlock = $(Mustache.render(TEMPLATES.ideaBlockTemplate, ideaParameters));
 
-	// Add dynamic behaviors
-	ideaBlock.draggable({ 
-		containment: "parent", 
-		scroll: true,
-		revert: true,
-		start: function(event, ui){
-			$(this).css('z-index', 9999);
-		},
-		stop: function(event, ui){
-			$(this).css('z-index', 1);
-		}
-	}).droppable({
-		drop: function(event, ui){
-			var idea1Element = ui.draggable;
-			var idea2Element = $(this);
+	// Drag and drop
+	if(typeof params['draggable'] == 'boolean' && params['draggable']){
+		ideaBlock.draggable({ 
+			containment: "parent", 
+			scroll: true,
+			revert: true,
+			start: function(event, ui){
+				$(this).css('z-index', 9999);
+			},
+			stop: function(event, ui){
+				$(this).css('z-index', 1);
+			}
+		}).droppable({
+			drop: function(event, ui){
+				var idea1Element = ui.draggable;
+				var idea2Element = $(this);
 
-			var idea1 = {idea: idea1Element.text(), 
-						 id: $('input[name=ideaId]', idea1Element).val(),
-						 categories: $('input[name=ideaCategories]', idea1Element).val()};
-			var idea2 = {idea: idea2Element.text(), 
-						 id: $('input[name=ideaId]', idea2Element).val(),
-						 categories: $('input[name=ideaCategories]', idea2Element).val()};
-			openOverlay('combineIdeas', {ideas: [idea1, idea2]});
-		},
-		classes: {
-			'ui-droppable-hover': 'ideaDragHover'
-		}
-	}).resizable({
-      maxHeight: 200,
-      maxWidth: 230,
-      minHeight: 100,
-      minWidth: 130
-    }).hover(function(){
-    	var id = $(this).attr('id');
-    	UTIL.addClass(id, 'ideaHover');
-    	// Trigger visualizations
-    	VISUALIZATIONS.focusIdeaInVersioning(id);
-    },function(){
-    	var id = $(this).attr('id');
-    	UTIL.removeClass(id, 'ideaHover');
-    	VISUALIZATIONS.unfocusIdeaInVersioning(id);
-    });
+				var idea1 = {idea: idea1Element.text(), 
+							id: $('input[name=ideaId]', idea1Element).val(),
+							categories: $('input[name=ideaCategories]', idea1Element).val()};
+				var idea2 = {idea: idea2Element.text(), 
+							id: $('input[name=ideaId]', idea2Element).val(),
+							categories: $('input[name=ideaCategories]', idea2Element).val()};
+				openOverlay('combineIdeas', {ideas: [idea1, idea2]});
+			},
+			classes: {
+				'ui-droppable-hover': 'ideaDragHover'
+			}
+		});
+	}
+	
+	// Resizable
+	if(typeof params['resizable'] == 'boolean' && params['resizable']){
+		ideaBlock.resizable({
+		maxHeight: 200,
+		maxWidth: 230,
+		minHeight: 100,
+		minWidth: 130
+		});
+	}
+	
+	// Focuseable
+	if(typeof params['focuseable'] == 'boolean' && params['focuseable']){
+		ideaBlock.hover(function(){
+			var id = $(this).attr('id');
+			UTIL.addClass('.' + id, 'ideaHover');
+			// Trigger visualizations
+			VISUALIZATIONS.focusIdeaInVersioning(id);
+		},function(){
+			var id = $(this).attr('id');
+			UTIL.removeClass('.' + id, 'ideaHover');
+			VISUALIZATIONS.unfocusIdeaInVersioning(id);
+		});
+	}
 
-    // Display
-    $("#ideasContainer").append(ideaBlock);
-    ideaBlock.fadeIn('slow');
+	return ideaBlock;
 };
 
 var buildVersioningPanel = function(structure){
 	// Build panel
 	VISUALIZATIONS.buildVersioningPanel(structure);
-}
+};
+
+var loadSuggestedTasks = function(){
+	$('#suggestedTasksList').empty();
+	$.ajax({
+        type: "GET",
+        url: URL.getSuggestedTasks,
+        success: function(data){
+        	var structure = JSON.parse(data);
+        	buildSuggestedTasksPanel(structure);
+        }
+    });
+};
+
+var buildSuggestedTasksPanel = function(structure){
+	var tasksList = $('#suggestedTasksList');
+	for(var i = 0; i < structure.rating.length; i++){
+		var idea = {idea: structure.rating[i].idea, id: structure.rating[i].idea_id};
+		var params = {closeable: false, focuseable: true}
+		var taskItem = $("<li></li>").html(Mustache.render(TEMPLATES.ratingTaskTemplate, idea));
+		$('#ideaPlaceholder', taskItem).replaceWith(createIdeaElement(idea, params));
+		$('.ideaBlock', taskItem).css('display', 'block');
+		taskItem.css('display','none');
+		tasksList.append(taskItem);
+		taskItem.fadeIn();
+	}
+};
+
+var submitRatingTask = function(event){
+	var taskContainer = $(event.target).parent('li');
+	var ideaBlock = $('.ideaBlock', taskContainer);
+	var data = {
+		idea_id: $('input[name=ideaId]',ideaBlock).val(),
+		originality: $('[name=originality]:checked',taskContainer).val(),
+		usefulness: $('[name=usefulness]:checked',taskContainer).val()
+	};
+	$.ajax({
+        type: "POST",
+        url: URL.submitRatingTask,
+		data: data,
+        success: function(data){
+			var _container = taskContainer;
+			$.web2py.flash('Task successfully submitted!', 'ok');
+        	_container.hide(300, function(){
+				_container.remove();
+			})
+        },
+		error: function(){
+			$.web2py.flash('Something went wrong!', 'error');
+		}
+    });
+};
 
 // Opens up the popup overlay and sets up the popup using the function [popupId]Setup.
 var openOverlay = function(popUpId, params){
