@@ -541,8 +541,10 @@
         var flash = $('.w2p_flash');
         web2py.hide_flash();
         flash.html(message).addClass(status);
-        if(flash.html()) flash.append('<span id="closeflash"> &times; </span>').slideDown();
-        flash.delay(5000).fadeOut();
+        if(flash.html()) flash.append('<span id="closeflash"> &times; </span>').fadeIn(1000);
+        flash.delay(5000).fadeOut(1000, function(){
+          $(this).removeClass(status);
+        });
       },
       hide_flash: function() {
         $('.w2p_flash').fadeOut(0).html('');
