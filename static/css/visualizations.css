@@ -31,3 +31,87 @@
 .versioningConnection.merge {
 	stroke: #DF6464;
 }
+
+
+/* SOLUTION SPACE */
+#solutionSpaceContainer {
+	height: 100%;
+	position: relative;
+	overflow: auto;
+	min-width: 100%;
+}
+
+#solutionSpaceHeader {
+	background: #EEE;
+	min-width: 100%;
+	padding-left: 70px;
+	height: 70px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 4;
+	border-bottom: solid 1px #CCC;
+}
+
+#solutionSpaceLeftColumn {
+	background: #EEE;
+	width: 70px;
+	position: absolute;
+	min-height: 100%;
+	left: 0;
+	top: 70px;
+	z-index: 3;
+	border-right: solid 1px #CCC;
+}
+
+#solutionSpaceRightColumn {
+	background: #EEE;
+	width: 70px;
+	position: absolute;
+	right: 0;
+	top: 70px;
+	z-index: 3;
+	border-left: solid 1px #CCC;
+	min-height: 100%;
+}
+
+#spaceContainer {
+	position: absolute;
+	top: 70px;
+	left: 70px;
+	z-index: 2;
+}
+
+.spCell {
+	width: 70px;
+	height: 70px;
+	border: solid 1px #CCC;
+	float: left;
+	line-height: 70px;
+	text-align: center;
+	overflow: hidden;
+}
+
+.spRow {
+	width: 100%;
+	clear: left;
+	overflow: auto;
+}
+
+#solutionSpaceHeader .spCell {
+	border-top: none;
+	border-bottom: none;
+}
+
+#solutionSpace .spCell:last-child {
+	border:none;
+}
+
+#solutionSpaceLeftColumn .spCell {
+	border-left: none;
+	border-right: none;
+}
+
+#solutionSpaceLeftColumn .spCell:first-child {
+	border-top: none;
+}

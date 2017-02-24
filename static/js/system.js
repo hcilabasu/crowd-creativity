@@ -16,14 +16,12 @@ $(function(){
 
 	// Load windowed layout
 	LAYOUT.init();
-	window.onresize = function(){
-		LAYOUT.updateSize();
-	};
 
 	// Load panels on page load
 	loadUserIdeas();
 	loadVersioningPanel();
 	loadSuggestedTasks();
+	loadSolutionSpace();
 });
 
 var openIdeaPopup = function(event){
@@ -264,6 +262,30 @@ var submitRatingTask = function(event){
 		}
     });
 };
+
+var loadSolutionSpace = function(){
+	// $('#solutionSpaceContainer').empty();
+	$.ajax({
+        type: "GET",
+        url: URL.getSolutionSpace,
+        success: function(data){
+        	var structure = JSON.parse(data);
+        	buildSolutionSpacePanel(structure);
+        }
+    });
+};
+
+var buildSolutionSpacePanel = function(structure){
+	// $('#solutionSpaceContainer').html('In development...');
+	var container = $('#solutionSpaceContainer');
+	container.on('scroll resize',function(event){
+		$('#solutionSpaceHeader').offset({top:container.offset().top});
+		$('#solutionSpaceLeftColumn').offset({left:container.offset().left});
+		var rightColumn = $('#solutionSpaceRightColumn');
+		rightColumn.offset({left:container.prop("clientWidth") - rightColumn.width()});
+	});
+};
+
 
 // Opens up the popup overlay and sets up the popup using the function [popupId]Setup.
 var openOverlay = function(popUpId, params){

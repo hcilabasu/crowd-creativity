@@ -193,6 +193,8 @@ def submit_rating_task():
             completedBy=user_id)
     return 'ok'
 
+def get_solution_space():
+    return 0
 
 
 ### PRIVATE FUNCTIONS ###

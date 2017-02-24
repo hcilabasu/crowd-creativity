@@ -1,4 +1,8 @@
 var config = {
+    settings: {
+        hasHeaders: true,
+        clearance: 5
+    },
     dimensions: {
         borderWidth: 5
     },
@@ -18,7 +22,7 @@ var config = {
                 type: 'component',
                 title: 'Solution space',
                 isClosable: false,
-                componentName: 'other',
+                componentName: 'solutionSpace',
                 componentState: { } 
             }]
             
@@ -57,6 +61,6 @@ LAYOUT.registerComponent( 'suggestedTasks', function( container, componentState 
     container.getElement().html(Mustache.render(TEMPLATES.suggestedTasksViewerTemplate));
 });
 
-LAYOUT.registerComponent( 'other', function( container, componentState ){
-    container.getElement().html(componentState.label);
+LAYOUT.registerComponent( 'solutionSpace', function( container, componentState ){
+    container.getElement().html(Mustache.render(TEMPLATES.solutionSpaceViewerTemplate));
 });
