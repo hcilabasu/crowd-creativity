@@ -4,7 +4,7 @@
 	
 	<!-- Load JS libraries -->
 	<script type="text/javascript" src="{{=URL('static','js/jquery-ui.min.js')}}"></script>
-	<script type="text/javascript" src="{{=URL('static','js/goldenlayout.min.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/goldenlayout.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/mustache.min.js')}}"></script>
 	<script src="https://d3js.org/d3.v4.min.js"></script>
 
@@ -28,7 +28,8 @@
 	    	getVersioningStructure: "{{=URL('system','get_versioning_structure')}}",
 	    	getIdeaById: "{{=URL('system','get_idea_by_id')}}",
 			getSuggestedTasks: "{{=URL('system','get_suggested_tasks')}}",
-			submitRatingTask: "{{=URL('system','submit_rating_task')}}"
+			submitRatingTask: "{{=URL('system','submit_rating_task')}}",
+			getSolutionSpace: "{{=URL('system','get_solution_space')}}"
 	    };
 	    var ENV = {};
 	</script>
@@ -42,7 +43,7 @@
 				</a></li>
 			</ul>
 		</div>
-		<div id="ideasContainer"></div>
+		<div id="ideasContainer" class="viewContainer"></div>
 	</script>
 
 	<script id="versioningViewerTemplate" type="text/x-tmpl-mustache">
@@ -53,7 +54,7 @@
 				</a></li>
 			</ul>
 		</div>
-		<div id="versioningContainer"><svg></svg></div>
+		<div id="versioningContainer" class="viewContainer"><svg></svg></div>
 	</script>
 
 	<script id="suggestedTasksViewerTemplate" type="text/x-tmpl-mustache">
@@ -64,9 +65,36 @@
 				</a></li>
 			</ul>
 		</div>
-		<div id="suggestedTasksContainer">
+		<div id="suggestedTasksContainer" class="viewContainer">
 			<ul id="suggestedTasksList">
 			</ul>
+		</div>
+	</script>
+
+	<script id="solutionSpaceViewerTemplate" type="text/x-tmpl-mustache">
+		<div class="toolbar">
+			<ul>
+				<li><a href="#" title="Reload this panel" onclick="loadSolutionSpace();">
+					<img src="{{=URL('static','images/reload.png')}}">
+				</a></li>
+			</ul>
+		</div>
+		<div id="solutionSpaceContainer" class="viewContainer">
+			<div id="solutionSpaceHeader">
+				Header
+			</div>
+
+			<div id="solutionSpaceLeftColumn">
+				Left
+			</div>
+
+			<div id="solutionSpaceRightColumn">
+				Right
+			</div>
+
+			<div id="spaceContainer">
+				Container
+			</div>
 		</div>
 	</script>
 
