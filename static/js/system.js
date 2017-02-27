@@ -264,7 +264,7 @@ var submitRatingTask = function(event){
 };
 
 var loadSolutionSpace = function(){
-	// $('#solutionSpaceContainer').empty();
+	$('#solutionSpaceContainer').empty();
 	$.ajax({
         type: "GET",
         url: URL.getSolutionSpace,
@@ -276,7 +276,7 @@ var loadSolutionSpace = function(){
 };
 
 var buildSolutionSpacePanel = function(structure){
-	// $('#solutionSpaceContainer').html('In development...');
+	$('#solutionSpaceContainer').html(Mustache.render(TEMPLATES.solutionSpaceStructureTemplate));
 	var container = $('#solutionSpaceContainer');
 	container.on('scroll resize',function(event){
 		$('#solutionSpaceHeader').offset({top:container.offset().top});
