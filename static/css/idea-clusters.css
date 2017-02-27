@@ -655,7 +655,7 @@ div.w2p_flash.alert {
     }
 
 #suggestedTasksList > li .ideaBlock {
-    display: inline-block;
+    display: inline-block !important;
     width: auto;
     height: auto;
     margin: 15px 0 !important;

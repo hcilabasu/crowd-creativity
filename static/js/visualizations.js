@@ -171,7 +171,7 @@ VISUALIZATIONS = {
 			structure.categories.forEach(function(e,j){
 				var concepts = [d.concept, e.concept].sort(); // Make it alphabetical
 				var cellClass = 'spCell cl_' + (concepts[0] === concepts[1] ? concepts [0] : concepts[0] + ' cl_' + concepts[1]); // If this is the diagonal, add only one class.
-				var newCell = $('<div></div>').addClass(cellClass);
+				var newCell = $('<div><span></span></div>').addClass(cellClass);
 				newRow.append(newCell);
 			});
 		});
@@ -185,7 +185,35 @@ VISUALIZATIONS = {
 			concepts.forEach(function(e,j){
 				selector += ' cl_' + e;
 			});
-			$('[class="' + selector + '"]').css('background', 'rgba(223,100,100,' + d.n / maxN + ')');
+			$('[class="' + selector + '"] span').css('background', 'rgba(102,102,102,' + d.n / maxN + ')');
+		});
+
+		// Add interactivity
+		$('#spaceContainer .spCell').hover(function(e){
+			$(this).addClass('cellHover');
+			var position = $(this).index() + 1;
+			$('.spRow .spCell:nth-child('+position+')').addClass('cellHover');
+
+			// Get classes to trigger hover
+			var classes = $(this).attr('class').split(' ');
+			// Remove classes that don't start with cl_
+			for(var i = 0; i < classes.length; i++){
+				if(!classes[i].startsWith('cl_')){
+					classes.splice(i,1);
+				} else {
+					classes[i] = '.'+classes[i]
+				}
+			}
+			console.dir(classes.join(''));
+			UTIL.addClass('#ideasContainer .' + classes.join(''), 'ideaHover');
+			
+		},function(){
+			$(this).removeClass('cellHover');
+			var position = $(this).index() + 1;
+			$('.spRow .spCell:nth-child('+position+')').removeClass('cellHover');
+
+			// Remove ideahover class
+			UTIL.removeClass('.ideaHover', 'ideaHover');
 		});
 	}
 }

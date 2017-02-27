@@ -148,6 +148,11 @@ var createIdeaElement = function(idea, params){
 	// Load template
 	var ideaParameters = {id:idea.id, idea:idea.idea, categories:idea.categories, closeable:params['closeable']};
 	var ideaBlock = $(Mustache.render(TEMPLATES.ideaBlockTemplate, ideaParameters));
+	if(idea.categories){
+		idea.categories.forEach(function(d,i){
+			ideaBlock.addClass('cl_' + d);
+		});
+	}
 
 	// Drag and drop
 	if(typeof params['draggable'] == 'boolean' && params['draggable']){
