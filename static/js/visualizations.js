@@ -153,5 +153,39 @@ VISUALIZATIONS = {
 			.attr('width', VISUALIZATIONS.dim.smallIdea)
 			.attr('height', VISUALIZATIONS.dim.smallIdea)
 			.attr('transform', 'translate(0,0)');
+	},
+
+	buildSolutionSpacePanel: function(structure){
+		var container = $('#spaceContainer');
+		structure.categories.forEach(function(d,i){
+			var cell = $('<div></div>').addClass('spCell');
+			var stats = $('<div></div>').addClass('spCell');
+			cell.append($('<span></span>').text(d.concept));
+			$('#solutionSpaceHeader').append(cell);
+			$('#solutionSpaceLeftColumn').append(cell.clone());
+			$('#solutionSpaceRightColumn').append(stats);
+
+			// Create cells 
+			var newRow = $('<div></div>').addClass('spRow');
+			container.append(newRow);
+			structure.categories.forEach(function(e,j){
+				var concepts = [d.concept, e.concept].sort(); // Make it alphabetical
+				var cellClass = 'spCell cl_' + (concepts[0] === concepts[1] ? concepts [0] : concepts[0] + ' cl_' + concepts[1]); // If this is the diagonal, add only one class.
+				var newCell = $('<div></div>').addClass(cellClass);
+				newRow.append(newCell);
+			});
+		});
+
+		// Iterate over connections and paint them. TODO possibly optimize by using the previous double loop to already print the cell color
+		// ALternatively, kill inner loop above and only print cells that have content
+		var maxN = structure.max_n;
+		structure.connections.forEach(function(d,i){
+			var selector = 'spCell';
+			var concepts = d.concepts.sort();
+			concepts.forEach(function(e,j){
+				selector += ' cl_' + e;
+			});
+			$('[class="' + selector + '"]').css('background', 'rgba(223,100,100,' + d.n / maxN + ')');
+		});
 	}
 }

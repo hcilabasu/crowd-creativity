@@ -1,11 +1,14 @@
 import uuid
 import datetime
 import json
+from collections import defaultdict
+import itertools
 
 ADD_TO_POOL = True
 TEST_USER_ID = 'ac403a5b927b4df6b3d986fae55145e8' # Use None if no test ID is needed
 
 TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea
+SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of concepts)
 
 def index():
     if TEST_USER_ID:
@@ -194,7 +197,40 @@ def submit_rating_task():
     return 'ok'
 
 def get_solution_space():
-    return 0
+    categories = db(db.concept.id > 0).select().as_list()
+    ''' Structure:
+    connections = [{
+        concepts: [...]
+        n: number
+    },
+    ...
+    ] '''
+    # get ideas with respective concepts
+    ideas = db((db.idea.id == db.concept_idea.idea) & 
+        (db.concept.id == db.concept_idea.concept)
+    ).select(orderby=~db.idea.id, groupby=db.idea.id)
+    # extract tags
+    i = 0
+    max_n = 0
+    connections = dict()
+    for idea in ideas:
+        tags = list()
+        for concept in idea.idea.concept_idea.select():
+            concept = concept.concept.concept.lower()
+            tags.append(concept)
+        tags.sort() # this contains a sorted array of tags for idea
+        # insert into data structure
+        for i in range(1,SIZE_OVERLAP+1): # this will iterate over all unique permutations of the tags, inserting them in pairs
+            for combination in itertools.combinations(tags, i):
+                key = '|'.join(combination)
+                if key not in connections.keys():
+                    connections[key] = dict(concepts=combination, n=0)
+                n = connections[key]['n'] + 1
+                connections[key]['n'] = n
+                if n > max_n:
+                    max_n = n
+    connections = [v for (k,v) in connections.items()]
+    return json.dumps(dict(categories=categories, connections=connections, max_n=max_n))
 
 
 ### PRIVATE FUNCTIONS ###

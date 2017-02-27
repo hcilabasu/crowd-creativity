@@ -284,6 +284,8 @@ var buildSolutionSpacePanel = function(structure){
 		var rightColumn = $('#solutionSpaceRightColumn');
 		rightColumn.offset({left:container.prop("clientWidth") - rightColumn.width()});
 	});
+
+	VISUALIZATIONS.buildSolutionSpacePanel(structure);
 };
 
 
