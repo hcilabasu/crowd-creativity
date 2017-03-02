@@ -204,7 +204,6 @@ VISUALIZATIONS = {
 					classes[i] = '.'+classes[i]
 				}
 			}
-			console.dir(classes.join(''));
 			UTIL.addClass('#ideasContainer .' + classes.join(''), 'ideaHover');
 			
 		},function(){

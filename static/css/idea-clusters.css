@@ -551,14 +551,20 @@ div.w2p_flash.alert {
 
 #combineIdeas > .combineIdeasShowIdeas {
     text-align: center;
+    margin-bottom: 20px;
 }
 
     #combineIdeas p {
-        margin-bottom: 0;
+        margin-bottom: 10px;
     }
 
-    #combineIdeas .choices {
+    #combineIdeas .choices li {
+        border-top: solid 1px #CCC;
+        overflow: auto;
+    }
 
+    #combineIdeas .choices li:last-child {
+        border-bottom: solid 1px #CCC;
     }
 
     #combineIdeas .ideaInput {
