@@ -38,8 +38,9 @@ var submitNewIdea = function(event){
 	submitIdea(idea, categories, 'original', [], function(data){
 		var _id = JSON.parse(data).id;
 		var _idea = idea;
+		var _categories = categories;
     	// Add to UI
-		addIdeaToDisplay({idea:_idea, id:_id});
+		addIdeaToDisplay({idea:_idea, id:_id, categories:_categories});
 		// Clearing up inputs and giving feedback to the user
 		$("#addIdeaPopup input, #addIdeaPopup textarea").val("");
 		$("#addIdeaPopup textarea").focus();
@@ -57,6 +58,7 @@ var submitCombinedIdea = function(event){
 		var _idea = idea;
 		var _type = type;
 		var _sources = sources;
+		var _categories = categories;
 		// If idea is merged, remove previous two and add merged. Otherwise, add new idea
 		if (type == 'merge'){
 			// Remove two ideas
@@ -65,7 +67,7 @@ var submitCombinedIdea = function(event){
 			}
 		}
 		// Add idea
-		addIdeaToDisplay({idea:_idea, id:_id});
+		addIdeaToDisplay({idea:_idea, id:_id, categories:_categories});
 		// Close overlay
 		closeOverlay();
 	});
