@@ -84,7 +84,8 @@ def get_user_ideas():
             (db.concept.id == db.concept_idea.concept))
     ).select(orderby=db.idea.id, groupby=db.idea.id)
     clean_ideas = [
-        dict(id=i.idea.id, 
+        dict(id=i.idea.id,
+            userId=i.idea.userId, 
             idea=i.idea.idea, 
             categories=[concept.concept.concept for concept in i.idea.concept_idea.select()]
         ) for i in ideas]
@@ -100,6 +101,7 @@ def get_idea_by_id():
 
     clean_idea = dict(id=idea.idea.id, 
         idea=idea.idea.idea, 
+        userId=idea.idea.userId,
         categories=[concept.concept.concept for concept in idea.idea.concept_idea.select()])
 
     return json.dumps(clean_idea)

@@ -147,8 +147,9 @@ var addIdeaToDisplay = function(idea){
 };
 
 var createIdeaElement = function(idea, params){
+	var addedBy = idea.userId === ENV.userId ? 'you' : 'someone else';
 	// Load template
-	var ideaParameters = {id:idea.id, idea:idea.idea, categories:idea.categories, closeable:params['closeable']};
+	var ideaParameters = {id:idea.id, addedBy:addedBy, idea:idea.idea, categories:idea.categories, closeable:params['closeable']};
 	var ideaBlock = $(Mustache.render(TEMPLATES.ideaBlockTemplate, ideaParameters));
 	if(idea.categories){
 		idea.categories.forEach(function(d,i){

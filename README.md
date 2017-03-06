@@ -5,7 +5,6 @@ This is a web2py project. Just download web2py, add this to the applications fol
 ## Todo for Study 1
 - Validate input
 - Allow enter to submit the idea if the category input is highlighted
-- Color-code user ideas vs other ideas
 - When hovering for over 1 second on an idea, category, or anywhere else applicable, update the suggested tasks panel with 5 suggested tasks based on the context of the highlighted idea. Make sure to do something to call attention to the panel (e.g. glow)
 - When something is highlighted in a panel, scroll panel to focus on it
 - Implement iteration of idea 
@@ -18,3 +17,6 @@ This is a web2py project. Just download web2py, add this to the applications fol
 
 ## Known issues
 - The bottom of the layout is cutoff by the amount of the navbar
+
+## Completed
+- Color-code user ideas vs other ideas (implemented as a text at the bottom of the idea block)
