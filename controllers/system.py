@@ -5,40 +5,40 @@ from collections import defaultdict
 import itertools
 
 ADD_TO_POOL = True
-TEST_USER_ID = 'ac403a5b927b4df6b3d986fae55145e8' # Use None if no test ID is needed
+TEST_USER_ID = 'testuser1' # Use None if no test ID is needed
 
 TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea
 SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of concepts)
 
 def index():
     if TEST_USER_ID:
-        session.userId = TEST_USER_ID # Force userID for testing
-    userId = session.userId
-    if userId == None:
+        session.user_id = TEST_USER_ID # Force userID for testing
+    user_id = session.user_id
+    if user_id == None:
         # Generating new user
-        userId = uuid.uuid4().hex
-        session.userId = userId
+        user_id = uuid.uuid4().hex
+        session.user_id = user_id
         # Selecting condition
         session.startTime = datetime.datetime.now()
         session.startTimeUTC = datetime.datetime.utcnow()
         session.userCondition = 2 # TODO randomly select condition
         # add user to DB
-        db.user_info.insert(userId=userId, userCondition=session.userCondition, initialLogin=session.startTime)
-        __log_action(userId, "start_session", json.dumps({'condition':session.userCondition}))
+        db.user_info.insert(userId=user_id, userCondition=session.userCondition, initialLogin=session.startTime)
+        __log_action(user_id, "start_session", json.dumps({'condition':session.userCondition}))
     else:
         # user already has ID. This means it's a page reload. Log it.
-        __log_action(userId, "refresh_page", json.dumps({'condition':session.userCondition}))
-    return dict()
+        __log_action(user_id, "refresh_page", json.dumps({'condition':session.userCondition}))
+    return dict(user_id=user_id)
 
 
 def add_idea():
     '''
     Endpoint for adding a new idea.
     '''
-    userId = session.userId
+    user_id = session.user_id
     userCondition = session.userCondition
     idea_id = 0
-    if userId != None:
+    if user_id != None:
         idea = request.vars['idea'].strip()
         concepts = request.vars['concepts[]'] if isinstance(request.vars['concepts[]'], list) else [request.vars['concepts[]']]
         origin = request.vars['origin']
@@ -49,7 +49,7 @@ def add_idea():
         dateAdded = datetime.datetime.now()
         # Inserting idea
         idea_id = db.idea.insert(
-            userId=userId, 
+            userId=user_id, 
             idea=idea, 
             dateAdded=dateAdded, 
             userCondition=userCondition, 
@@ -69,17 +69,17 @@ def add_idea():
                 idea.replacedBy = idea_id
                 idea.update_record()
         # Insert tasks
-        __insert_tasks_for_idea(idea_id, userId)
+        __insert_tasks_for_idea(idea_id, user_id)
         # Log
-        __log_action(userId, "add_idea", idea)
+        __log_action(user_id, "add_idea", idea)
     return json.dumps(dict(id=idea_id))
 
 
 def get_user_ideas():
-    userId = session.userId
+    user_id = session.user_id
     ideas = db(
         (db.idea.replacedBy == None) &
-        (db.idea.userId == userId) & 
+        (db.idea.userId == user_id) & 
         ((db.idea.id == db.concept_idea.idea) & 
             (db.concept.id == db.concept_idea.concept))
     ).select(orderby=db.idea.id, groupby=db.idea.id)
@@ -157,7 +157,7 @@ def get_versioning_structure():
     return json.dumps(levels)
 
 def get_suggested_tasks():
-    user_id = session.userId
+    user_id = session.user_id
     # retrieve tasks already completed
     completed_ratings = [row.idea for row in db(db.idea_rating.completedBy == user_id).select(db.idea_rating.idea)]
     # retrieve tasks TODO make sure the user only gets tasks he did not yet complete
@@ -174,7 +174,7 @@ def submit_rating_task():
     originality = int(request.vars['originality'])
     usefulness = int(request.vars['usefulness'])
     date_completed = datetime.datetime.now()
-    user_id = session.userId
+    user_id = session.user_id
     # retrieve first available task for this idea
     rating = db((db.idea_rating.idea == idea_id) & (db.idea_rating.completed == False)).select().first()
     if rating:

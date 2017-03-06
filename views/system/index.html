@@ -31,7 +31,9 @@
 			submitRatingTask: "{{=URL('system','submit_rating_task')}}",
 			getSolutionSpace: "{{=URL('system','get_solution_space')}}"
 	    };
-	    var ENV = {};
+	    var ENV = {
+			userId: "{{=user_id}}"
+		};
 	</script>
 
 	<!-- Mustache templates -->
