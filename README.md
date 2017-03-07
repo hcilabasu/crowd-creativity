@@ -6,6 +6,7 @@ This is a web2py project. Just download web2py, add this to the applications fol
 - Validate input
 - Allow enter to submit the idea if the category input is highlighted
 - When hovering for over 1 second on an idea, category, or anywhere else applicable, update the suggested tasks panel with 5 suggested tasks based on the context of the highlighted idea. Make sure to do something to call attention to the panel (e.g. glow)
+- Implement categorization tasks
 - When something is highlighted in a panel, scroll panel to focus on it
 - Implement iteration of idea 
 - Improve versioning visualization by minimizing edge length

@@ -31,7 +31,7 @@ var config = {
             content:[{
                 type: 'component',
                 title: 'Versioning',
-                height: 45,
+                height: 85,
                 isClosable: false,
                 componentName: 'versioning',
                 componentState: { }

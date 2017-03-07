@@ -105,13 +105,13 @@ var loadUserIdeas = function(){
 };
 
 var closeIdea = function(id){
-	$('#id'+id).hide(200, function(){ remove(); });
+	$('#ideasContainer #id'+id).hide(200, function(){ this.remove(); });
 }
 
 var loadIdea = function(id){
-	if($('#id' + id).length){
+	if($('#ideasContainer #id' + id).length){
 		// Idea is already in pane. Focus
-		$('#id' + id).addClass('glow').delay(3000).queue(function(next){ $(this).removeClass('glow'); next(); });
+		$('#ideasContainer #id' + id).addClass('glow').delay(3000).queue(function(next){ $(this).removeClass('glow'); next(); });
 	} else {
 		// Idea is not in the pane. Retrieve and display.
 		$.ajax({

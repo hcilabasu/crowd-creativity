@@ -19,9 +19,9 @@ VISUALIZATIONS = {
 		// Setup dimensions, etc.
 		var margin = {top: 20, right: 20, bottom: 20, left: 30},
 			numLevels = structure.length,
-			levelWidth = 60,
+			levelWidth = 80,
 			width = levelWidth * numLevels + margin.left + margin.right,
-			levelHeight = 30,
+			levelHeight = 50,
 			height = levelHeight * maxIdeasPerLevel + margin.top + margin.bottom,
 			labelHeight = 20, // TODO figure out a better way to fit the labels on top of the chart e.g. DO A HEIGHTS DICT THAT HAS ALL HEIGHTS
 			ideaMap = {}, // Used to store the x,y coordinates of every idea
@@ -61,12 +61,12 @@ VISUALIZATIONS = {
 			.attr('transform', 'translate(0, ' + labelHeight + ')');
 
 		// Add elements
-		var ideasArray = []
+		var ideasArray = [];
 		for (var i = 0; i < structure.length; i++){
 			// Add labels
 			axisLabels.append('text')
 				.attr("text-anchor", "middle")
-				.text('Level ' + (i+1))
+				.text('Iteration ' + (i+1))
 				.attr('y', 0)
 				.attr('x', levelScale(i));
 
@@ -82,12 +82,22 @@ VISUALIZATIONS = {
 			for (var j = 0; j < structure[i].length; j++){
 				// Setup
 				var ideaId = structure[i][j].id;
-				var connections = structure[i][j].connection.ids;
+				var connections = structure[i][j].connection.ids; // Parents
 				var connectionType = structure[i][j].connection.type;
-				var ideaPosition = {
-					x: levelScale(i) - VISUALIZATIONS.dim.smallIdea / 2, 
-					y: scales[i](j) - VISUALIZATIONS.dim.smallIdea / 2
-				};
+				var ideaPosition = 0;
+				if (connections.length === 0){
+					// There are no previous connections. Add to next available space 
+					ideaPosition = {
+						x: levelScale(i) - VISUALIZATIONS.dim.smallIdea / 2, 
+						y: scales[i](j) - VISUALIZATIONS.dim.smallIdea / 2
+					};
+				} else {
+					var midPoint = (ideaMap[connections[0]].y + ideaMap[connections[1]].y) / 2;
+					ideaPosition = {
+						x: levelScale(i) - VISUALIZATIONS.dim.smallIdea / 2, 
+						y: midPoint
+					};
+				}
 				ideaMap[ideaId] = ideaPosition;
 
 				// Add lines
