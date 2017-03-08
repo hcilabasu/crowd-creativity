@@ -15,11 +15,14 @@ $(function(){
 	$('#overlay').click(closeOverlay);
 
 	// Start tag input
-	$('#addIdea input[name=categoryinput]').tagsInput({
+	var tagConfig = {
 		delimiter: [',', ' ', ';'], // Doesn't seem like I can set the UI delimiters separate from the backend. If you change this, change cleanup on the submit function
 		height: 'auto',
 		width: '100%'
-	})
+	};
+	ENV.tagsDelimiter = ',, ,;';
+	$('#addIdea input[name=categoryinput]').tagsInput(tagConfig);
+	$('#combineIdeas input[name=combinedCategoryinput]').tagsInput(tagConfig);
 
 	// Load windowed layout
 	LAYOUT.init();
@@ -38,7 +41,7 @@ var openIdeaPopup = function(event){
 var submitNewIdea = function(event){
 	// Get values
 	var idea = $('#addIdea textarea').val();
-	var categories = $('#addIdea input').val().split(',, ,;'); // This weird pattern is based on the tag plugin's output. Change it if delimiter param is changed at setup.
+	var categories = $('#addIdea input').val().split(ENV.tagsDelimiter); // This weird pattern is based on the tag plugin's output. Change it if delimiter param is changed at setup.
 	// Submit
 	submitIdea(idea, categories, 'original', [], function(data){
 		var _id = JSON.parse(data).id;
@@ -184,10 +187,10 @@ var createIdeaElement = function(idea, params){
 
 				var idea1 = {idea: idea1Element.text(), 
 							id: $('input[name=ideaId]', idea1Element).val(),
-							categories: $('input[name=ideaCategories]', idea1Element).val()};
+							categories: $('input[name=ideaCategories]', idea1Element).val().split(',')};
 				var idea2 = {idea: idea2Element.text(), 
 							id: $('input[name=ideaId]', idea2Element).val(),
-							categories: $('input[name=ideaCategories]', idea2Element).val()};
+							categories: $('input[name=ideaCategories]', idea2Element).val().split(',')};
 				event.stopPropagation();
 				openOverlay('combineIdeas', {ideas: [idea1, idea2]});
 			},
@@ -316,9 +319,16 @@ var openOverlay = function(popUpId, params){
 };
 
 var closeOverlay = function(event){
-	if($(event.target).is('#overlay')){
+	if(!event || $(event.target).is('#overlay')){
 		$('#overlay').fadeOut('fast');
+
+		// Call event handlers
+		for(var i = 0; i < EVENTS.popOverClose.length; i++){
+			var handler = EVENTS.popOverClose.pop();
+			handler();
+		}
 	}
+	
 };
 
 var combineIdeasSetup = function(params){
@@ -328,11 +338,11 @@ var combineIdeasSetup = function(params){
 	$('#combineIdeas .ideaBlock').each(function(index){
 		$(this).text(params['ideas'][index]['idea']);
 		ids.push(params['ideas'][index]['id']);
-		categories.push(params['ideas'][index]['categories']);
+		categories = categories.concat(params['ideas'][index]['categories']);
 	});
 	// Set the values
 	$('#combineIdeas input[name=combinedIdeaIds]').val(JSON.stringify(ids));
-	$('#combineIdeas input[name=combinedCategoryinput]').val(categories.join(','));
+	$('#combineIdeas input[name=combinedCategoryinput]').importTags(categories.join(ENV.tagsDelimiter));
 
 	// Set up tear down function
 	EVENTS.popOverClose.push(function(){
