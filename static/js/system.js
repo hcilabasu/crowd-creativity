@@ -298,6 +298,7 @@ var loadSolutionSpace = function(){
 var buildSolutionSpacePanel = function(structure){
 	$('#solutionSpaceContainer').html(Mustache.render(TEMPLATES.solutionSpaceStructureTemplate));
 	var container = $('#solutionSpaceContainer');
+	// Make sure header columns stay in place
 	container.on('scroll resize',function(event){
 		$('#solutionSpaceHeader').offset({top:container.offset().top});
 		$('#solutionSpaceLeftColumn').offset({left:container.offset().left});

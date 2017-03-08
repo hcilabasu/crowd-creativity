@@ -84,6 +84,8 @@
 	top: 40px;
 	left: 40px;
 	z-index: 2;
+	margin-bottom: 40px;
+	padding-right: 40px;
 }
 
 .spCell {
