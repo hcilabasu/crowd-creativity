@@ -195,7 +195,7 @@ VISUALIZATIONS = {
 			concepts.forEach(function(e,j){
 				selector += ' cl_' + e;
 			});
-			$('[class="' + selector + '"] span').css('background', 'rgba(102,102,102,' + d.n / maxN + ')');
+			$('[class="' + selector + '"] span').css('background', 'rgba(102,102,102,' + (0.1 + (d.n / maxN * 0.9)) + ')');
 		});
 
 		// Add interactivity
@@ -203,26 +203,23 @@ VISUALIZATIONS = {
 			$(this).addClass('cellHover');
 			var position = $(this).index() + 1;
 			$('.spRow .spCell:nth-child('+position+')').addClass('cellHover');
-
 			// Get classes to trigger hover
-			var classes = $(this).attr('class').split(' ');
-			// Remove classes that don't start with cl_
-			for(var i = 0; i < classes.length; i++){
-				if(!classes[i].startsWith('cl_')){
-					classes.splice(i,1);
-				} else {
-					classes[i] = '.'+classes[i]
-				}
-			}
-			UTIL.addClass('#ideasContainer .' + classes.join(''), 'ideaHover');
-			
+			var classes = UTIL.getClasses($(this), 'cl_');
+			UTIL.addClass('#ideasContainer ' + classes.join(''), 'ideaHover');
 		},function(){
 			$(this).removeClass('cellHover');
 			var position = $(this).index() + 1;
 			$('.spRow .spCell:nth-child('+position+')').removeClass('cellHover');
-
 			// Remove ideahover class
 			UTIL.removeClass('.ideaHover', 'ideaHover');
+		}).click(function(event){
+			event.stopPropagation();
+			var classes = UTIL.getClasses($(this), 'cl_');
+			// Clean up
+			classes.forEach(function(d,i){
+				classes[i] = d.replace('.cl_', '');
+			});
+			openOverlay('categoriesView', {categories: classes});
 		});
 	}
 }

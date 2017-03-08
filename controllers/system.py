@@ -59,6 +59,7 @@ def add_idea():
             sources=sources)
         # Inserting concepts
         for concept in concepts:
+            concept = concept.replace(' ', '')
             concept_id = __insert_or_retrieve_concept_id(concept)
             # Inserting relationships
             db.concept_idea.insert(concept=concept_id, idea=idea_id)
@@ -233,6 +234,27 @@ def get_solution_space():
                     max_n = n
     connections = [v for (k,v) in connections.items()]
     return json.dumps(dict(categories=categories, connections=connections, max_n=max_n))
+
+def get_ideas_per_category():
+    '''
+    Retrieve all ideas that have the category passed as parameter
+    '''
+    concept = request.vars['concept']
+    if not concept: #no concept was passed as param. Return empty
+        return json.dumps([])
+    # There is a concept. Retrieve ideas
+    ideas = db((db.idea.id == db.concept_idea.idea) & 
+        (db.concept.id == db.concept_idea.concept) &
+        (db.concept.concept == concept)
+    ).select(orderby=~db.idea.id, groupby=db.idea.id)
+
+    clean_ideas = [
+        dict(id=i.idea.id,
+            userId=i.idea.userId, 
+            idea=i.idea.idea, 
+            categories=[concept.concept.concept for concept in i.idea.concept_idea.select()]
+        ) for i in ideas]
+    return json.dumps(clean_ideas)
 
 
 ### PRIVATE FUNCTIONS ###

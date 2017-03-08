@@ -7,6 +7,7 @@
 	<script type="text/javascript" src="{{=URL('static','js/goldenlayout.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/mustache.min.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/d3.v4.min.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/jquery.tagsinput.min.js')}}"></script>
 
 	<!-- Load JS custom code -->
 	<script type="text/javascript" src="{{=URL('static','js/golden-layout-config.js')}}"></script>
@@ -19,6 +20,7 @@
 	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/goldenlayout-light-theme.css')}}" />
 	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/visualizations.css')}}" />
 	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/jquery-ui.min.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/jquery.tagsinput.min.css')}}" />
 
 	<script>
 	    var URL = {
@@ -29,7 +31,8 @@
 	    	getIdeaById: "{{=URL('system','get_idea_by_id')}}",
 			getSuggestedTasks: "{{=URL('system','get_suggested_tasks')}}",
 			submitRatingTask: "{{=URL('system','submit_rating_task')}}",
-			getSolutionSpace: "{{=URL('system','get_solution_space')}}"
+			getSolutionSpace: "{{=URL('system','get_solution_space')}}",
+			getIdeasPerCategory: "{{=URL('system','get_ideas_per_category')}}"
 	    };
 	    var ENV = {
 			userId: "{{=user_id}}"
@@ -138,28 +141,49 @@
 			<input type="hidden" name="ideaCategories" value="[[categories]]"></input>
 		</p>
 	</script>
+
+	<script id="categoriesViewTemplate" type="text/x-tmpl-mustache">
+		<h2>Categories view</h2>
+		<p>See ideas in each category you selected. If you see ideas you like, drag and drop to combine or merge them.</p>
+
+		<div class="twoCategoryIdeasList">
+			<div class="[[category1]]">
+				<h3>[[category1]]</h3>
+				<ul></ul>
+			</div>
+
+			<div class="[[category2]]">
+				<h3>[[category2]]</h3>
+				<ul></ul>
+			</div>
+		</div>
+	</script>
 {{end}}
 
 {{block navMenu}}
 	<div class="navContainer">
 		<button class="btn btn-primary btn-plus" id="addIdeaButton" onclick="openIdeaPopup(event)">Add idea</button>
-		<div id="addIdeaPopup" class="popupDialog">
-			<div>
-				<p>Please, write down your idea in the textarea below. Make sure to include as much detail as possible!</p>
-
-				<textarea></textarea>
-
-				<p>Suggest tags for your idea. Try to be as precise and consistent as you can, but don't worry too much about it, as the system may improve it over time:</p>
-
-				<input type="text" name="categoryinput" />
-
-				<button class="btn floatRight" onclick="submitNewIdea(event)">Submit</button>
-			</div>
-		</div>
 	</div>
 {{end}}
 
 <div id="overlay">
+	<div class="popupDialog" id="categoriesView">
+	</div>
+
+	<div class="popupDialog" id="addIdea">
+		<div>
+			<p>Please, write down your idea in the textarea below. Make sure to include as much detail as possible!</p>
+
+			<textarea></textarea>
+
+			<p>Suggest tags for your idea. Try to be as precise and consistent as you can, but don't worry too much about it, as the system may improve it over time:</p>
+
+			<input type="text" name="categoryinput" />
+
+			<button class="btn floatRight" onclick="submitNewIdea(event)">Submit</button>
+		</div>
+	</div>
+
 	<div class="popupDialog" id="combineIdeas">
 
 		<h2>Idea Combination</h2>

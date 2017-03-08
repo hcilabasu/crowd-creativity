@@ -17,5 +17,20 @@ var UTIL = {
 	*/
 	removeClass: function(selector, c){
 		$(selector).removeClass(c);
+	},
+	/*
+	Gets the classes of the element, and selects only the ones that start with prefix
+	*/
+	getClasses: function(jqElement, startsWithPrefix){
+		var classes = jqElement.attr('class').split(' ');
+		var filtered = [];
+		// Remove classes that don't start with prefix
+		for(var i = 0; i < classes.length; i++){
+			if(classes[i].startsWith(startsWithPrefix)){
+				// Class starts with prefix. 
+				filtered.push('.' + classes[i]);
+			}
+		}
+		return filtered;
 	}
 };

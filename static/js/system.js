@@ -11,8 +11,15 @@ $(function(){
 		TEMPLATES[id] = html;
 	});
 
-	// Setup popover closure
-	$(document).click(closePopovers);
+	// Close overlay on click
+	$('#overlay').click(closeOverlay);
+
+	// Start tag input
+	$('#addIdea input[name=categoryinput]').tagsInput({
+		delimiter: [',', ' ', ';'], // Doesn't seem like I can set the UI delimiters separate from the backend. If you change this, change cleanup on the submit function
+		height: 'auto',
+		width: '100%'
+	})
 
 	// Load windowed layout
 	LAYOUT.init();
@@ -25,15 +32,13 @@ $(function(){
 });
 
 var openIdeaPopup = function(event){
-	$('#addIdeaPopup').fadeToggle('fast');
-	$('#addIdeaPopup textarea').focus();
-	event.stopPropagation();
+	openOverlay('addIdea');
 };
 
 var submitNewIdea = function(event){
 	// Get values
-	var idea = $('#addIdeaPopup textarea').val();
-	var categories = $('#addIdeaPopup input').val().split(',');
+	var idea = $('#addIdea textarea').val();
+	var categories = $('#addIdea input').val().split(',, ,;'); // This weird pattern is based on the tag plugin's output. Change it if delimiter param is changed at setup.
 	// Submit
 	submitIdea(idea, categories, 'original', [], function(data){
 		var _id = JSON.parse(data).id;
@@ -42,8 +47,9 @@ var submitNewIdea = function(event){
     	// Add to UI
 		addIdeaToDisplay({idea:_idea, id:_id, categories:_categories});
 		// Clearing up inputs and giving feedback to the user
-		$("#addIdeaPopup input, #addIdeaPopup textarea").val("");
-		$("#addIdeaPopup textarea").focus();
+		$("#addIdea input").importTags(''); 
+		$("#addIdea textarea").val("");
+		$("#addIdea textarea").focus();
 		$.web2py.flash("Your idea has been added!", "ok");
 	});
 };
@@ -159,15 +165,17 @@ var createIdeaElement = function(idea, params){
 
 	// Drag and drop
 	if(typeof params['draggable'] == 'boolean' && params['draggable']){
-		ideaBlock.draggable({ 
-			containment: "parent", 
-			scroll: true,
+		ideaBlock.draggable({  
+			appendTo: "parent",
+			helper: "clone",
 			revert: true,
 			start: function(event, ui){
-				$(this).css('z-index', 9999);
+				event.stopPropagation();
+				$(this).css('opacity', 0);
 			},
 			stop: function(event, ui){
-				$(this).css('z-index', 1);
+				event.stopPropagation();
+				$(this).css('opacity', 1);
 			}
 		}).droppable({
 			drop: function(event, ui){
@@ -180,6 +188,7 @@ var createIdeaElement = function(idea, params){
 				var idea2 = {idea: idea2Element.text(), 
 							id: $('input[name=ideaId]', idea2Element).val(),
 							categories: $('input[name=ideaCategories]', idea2Element).val()};
+				event.stopPropagation();
 				openOverlay('combineIdeas', {ideas: [idea1, idea2]});
 			},
 			classes: {
@@ -299,29 +308,17 @@ var buildSolutionSpacePanel = function(structure){
 
 // Opens up the popup overlay and sets up the popup using the function [popupId]Setup.
 var openOverlay = function(popUpId, params){
-	$('#overlay').fadeToggle('fast');
-	$('#' + popUpId).fadeToggle('fast');
+	$('#overlay > div').hide();
+	$('#overlay').fadeIn('fast');
+	$('#' + popUpId).fadeIn('fast');
 	// Call setup function for the ID
 	window[popUpId + 'Setup'](params);
 };
 
-var closeOverlay = function(){
-	$('#overlay').fadeToggle('fast');
-};
-
-var closePopovers = function(event) { 
-	// Closes any popovers that are open
-    if(!$(event.target).closest('.popupDialog').length) {
-        if($('.popupDialog, #overlay').is(':visible')) {
-            $('.popupDialog, #overlay').fadeOut('fast', function(){
-            	// Fire events
-			    while(EVENTS.popOverClose.length > 0){
-			    	var handler = EVENTS.popOverClose.pop();
-			    	handler();
-			    }
-            });
-        }
-    }        
+var closeOverlay = function(event){
+	if($(event.target).is('#overlay')){
+		$('#overlay').fadeOut('fast');
+	}
 };
 
 var combineIdeasSetup = function(params){
@@ -356,3 +353,38 @@ var replaceCombineIdeasOptions = function(event, type){
 	$('.combinationType').text(type + 'd');
 	$('#combineIdeas input[name=combineTypeInput]').val(type)
 };
+
+var categoriesViewSetup = function(params){
+	var templateParams = {
+		category1: params.categories[0],
+		category2: params.categories[1]
+	};
+	$('#categoriesView').html(Mustache.render(TEMPLATES.categoriesViewTemplate, templateParams));
+
+	var addIdeasToContainer = function(container, ideas){
+		ideas.forEach(function(d,i){
+			var li = $('<li></li>');
+			var ideaBlock = createIdeaElement(d, {closeable:false, draggable:true, resizable: false, focuseable: false});
+			li.html(ideaBlock);
+			container.append(li);
+			ideaBlock.fadeIn('fast');
+		});
+	}
+
+	// Load ideas for each category
+	params.categories.forEach(function(d,i){
+		$.ajax({
+			type: "GET",
+			url: URL.getIdeasPerCategory,
+			data: {concept: d},
+			success: function(data){
+				var ideas = JSON.parse(data);
+				addIdeasToContainer($('#categoriesView .' + d + ' ul'), ideas);
+			}
+		});
+	});
+}
+
+var addIdeaSetup = function(){
+	$('#addIdea textarea').focus();
+}
