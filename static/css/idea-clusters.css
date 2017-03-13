@@ -11,7 +11,7 @@ body {
 
 h2, h3 {
     margin-top: 0;
-    margin-bottom: 0;
+    margin-bottom: 10px;
     font-size: 1.3em;
     font-weight: bolder;
 }
@@ -25,11 +25,11 @@ h2 {
 h4 {
     font-weight: bolder;
     font-size: 1em;
-    margin-bottom: 0;
+    margin-bottom: 10px;
 }
 
 p {
-    margin: 0 0 20px 0;
+    margin: 0 0 10px 0;
 }
 
 a {
@@ -221,6 +221,12 @@ table th {
     text-align: left;
     text-transform: none;
     line-height: 1.2em;
+}
+
+.tooltip {
+    display: inline-block;
+    position: relative;
+    opacity: 1;
 }
 
 .top-row {
@@ -645,7 +651,7 @@ div.w2p_flash.alert {
 #suggestedTasksContainer {
     overflow: auto;
     height: 100%;
-    padding-bottom: 120px;
+    padding-bottom: 30px;
     background: #EEE;
 }
 
@@ -710,3 +716,11 @@ div.w2p_flash.alert {
             .twoCategoryIdeasList > div > ul > li > p {
                 text-align: left;
             }
+.tagsList {
+    display: block;
+    margin-bottom: 10px;
+}
+
+    .tagsList li {
+        display: inline-block;
+    }

@@ -15,14 +15,14 @@ $(function(){
 	$('#overlay').click(closeOverlay);
 
 	// Start tag input
-	var tagConfig = {
+	ENV.tagConfig = {
 		delimiter: [',', ' ', ';'], // Doesn't seem like I can set the UI delimiters separate from the backend. If you change this, change cleanup on the submit function
 		height: 'auto',
 		width: '100%'
 	};
 	ENV.tagsDelimiter = ',, ,;';
-	$('#addIdea input[name=categoryinput]').tagsInput(tagConfig);
-	$('#combineIdeas input[name=combinedCategoryinput]').tagsInput(tagConfig);
+	$('#addIdea input[name=categoryinput]').tagsInput(ENV.tagConfig);
+	$('#combineIdeas input[name=combinedCategoryinput]').tagsInput(ENV.tagConfig);
 
 	// Load windowed layout
 	LAYOUT.init();
@@ -246,15 +246,37 @@ var loadSuggestedTasks = function(){
 
 var buildSuggestedTasksPanel = function(structure){
 	var tasksList = $('#suggestedTasksList');
-	for(var i = 0; i < structure.rating.length; i++){
-		var idea = {idea: structure.rating[i].idea, id: structure.rating[i].idea_id};
+	for(var i = 0; i < structure.length; i++){
+		var idea = {idea: structure[i].idea, id: structure[i].idea_id, suggestedCategories: structure[i].suggested_categories};
 		var params = {closeable: false, focuseable: true}
-		var taskItem = $("<li></li>").html(Mustache.render(TEMPLATES.ratingTaskTemplate, idea));
+		var taskItem;
+		if(structure[i].type === 'rating'){
+			// Rating task
+			taskItem = $("<li></li>").html(Mustache.render(TEMPLATES.ratingTaskTemplate, idea));
+		} else if(structure[i].type === 'suggest'){
+			// Suggest category task
+			var template = $(Mustache.render(TEMPLATES.suggestTaskTemplate, idea));
+			taskItem = $("<li></li>").html(template);
+			// Setup
+			
+		} else if(structure[i].type === 'selectBest' || structure[i].type === 'categorize'){
+			// select best or categorize tasks
+			var template = $(Mustache.render(TEMPLATES.categorizeTaskTemplate, idea));
+			taskItem = $("<li></li>").html(template);
+			// Add labels
+			idea.suggestedCategories.forEach(function(d,i){
+				$('.tagsList', taskItem).append($("<li></li>").html(Mustache.render(TEMPLATES.tagTemplate, {tag:d})));
+			});
+		} 
+		// Finish setting up idea in the template
 		$('#ideaPlaceholder', taskItem).replaceWith(createIdeaElement(idea, params));
 		$('.ideaBlock', taskItem).css('display', 'block');
+		// Dramatic entrance
 		taskItem.css('display','none');
 		tasksList.append(taskItem);
 		taskItem.fadeIn();
+		// Setup input tag. For some reason, it doesn't work before element is visible. TODO figure better workaround
+		$('[name=categoryinput]', tasksList).tagsInput(ENV.tagConfig);
 	}
 };
 
@@ -272,15 +294,45 @@ var submitRatingTask = function(event){
 		data: data,
         success: function(data){
 			var _container = taskContainer;
-			$.web2py.flash('Task successfully submitted!', 'ok');
-        	_container.hide(300, function(){
-				_container.remove();
-			})
+			closeTask(_container);
         },
 		error: function(){
 			$.web2py.flash('Something went wrong!', 'error');
 		}
     });
+};
+
+var submitSuggestTask = function(event){
+	var taskContainer = $(event.target).parent('li');
+	var ideaBlock = $('.ideaBlock', taskContainer);
+	var data = {
+		idea_id: $('input[name=ideaId]',ideaBlock).val(),
+		suggested_tags: $('[name=categoryInput]', taskContainer).val().split(ENV.tagsDelimiter),
+		type: 'suggest'
+	};
+	$.ajax({
+        type: "POST",
+        url: URL.submitCategorizationTask,
+		data: data,
+        success: function(data){
+			var _container = taskContainer;
+			closeTask(_container);
+        },
+		error: function(){
+			$.web2py.flash('Something went wrong!', 'error');
+		}
+    });
+};
+
+var submitCategorizaTask = function(event) {
+	alert('TODO');
+};
+
+var closeTask = function(container){
+	$.web2py.flash('Task successfully submitted!', 'ok');
+	container.hide(300, function(){
+		container.remove();
+	})
 };
 
 var loadSolutionSpace = function(){

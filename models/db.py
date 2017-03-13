@@ -127,6 +127,14 @@ db.define_table('idea_rating',
     Field('dateCompleted', 'datetime'),
     Field('completedBy', 'string'))
 
+db.define_table('categorization',
+    Field('idea', 'reference idea'),
+    Field('completed', 'boolean',),
+    Field('categorizationType', 'string'), # selectBest / categorize
+    Field('suggestedCategories', 'list:string'),
+    Field('chosenCategories', 'list:string'),
+    Field('completedBy', 'string'))
+
 db.define_table('idea_triplets',
     Field('seed_idea', 'reference idea'),
     Field('closer_idea', 'reference idea'),

@@ -8,11 +8,15 @@ div.tagsinput {
 }
 
 div.tagsinput span.tag {
+    display: block;
+    float: left;
+}
+
+span.tag {
     border: 1px solid #489de8;
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
-    display: block;
-    float: left;
+    display: inline-block;
     padding: 5px;
     text-decoration: none;
     background: #A0D3FF;
@@ -23,7 +27,7 @@ div.tagsinput span.tag {
     font-size: 13px
 }
 
-div.tagsinput span.tag a {
+span.tag a {
     font-weight: 700;
     color: #489de8;
     text-decoration: none;

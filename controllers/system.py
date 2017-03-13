@@ -7,7 +7,7 @@ import itertools
 ADD_TO_POOL = True
 TEST_USER_ID = 'testuser1' # Use None if no test ID is needed
 
-TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea
+TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of concepts)
 
 def index():
@@ -69,8 +69,9 @@ def add_idea():
                 idea = db(db.idea.id == source).select().first()
                 idea.replacedBy = idea_id
                 idea.update_record()
+        idea = dict(id=idea_id, idea=idea, concepts=concepts)
         # Insert tasks
-        __insert_tasks_for_idea(idea_id, user_id)
+        __insert_tasks_for_idea(idea, user_id)
         # Log
         __log_action(user_id, "add_idea", idea)
     return json.dumps(dict(id=idea_id))
@@ -161,16 +162,16 @@ def get_versioning_structure():
 
 def get_suggested_tasks():
     user_id = session.user_id
-    # retrieve tasks already completed
-    completed_ratings = [row.idea for row in db(db.idea_rating.completedBy == user_id).select(db.idea_rating.idea)]
-    # retrieve tasks TODO make sure the user only gets tasks he did not yet complete
-    rating_tasks_results = db(
-        (db.idea_rating.completed == False) & 
-        (db.idea_rating.idea == db.idea.id) &
-        ~(db.idea_rating.idea.belongs(completed_ratings))
-    ).select(groupby=db.idea_rating.idea)
-    rating_tasks = [dict(task_id=r.idea_rating.id, idea=r.idea.idea, idea_id=r.idea.id) for r in rating_tasks_results]
-    return json.dumps(dict(rating=rating_tasks))
+    # rating tasks
+    rating_tasks = __get_rating_tasks(user_id)
+    # Categorizations tasks
+    # 1- selectBest
+    select_best_tasks = __get_select_best_tasks(user_id)
+    # 2- categorize
+    categorize_tasks = __get_categorize_tasks(user_id)
+    # Join all tasks
+    tasks = select_best_tasks + categorize_tasks + rating_tasks
+    return json.dumps(tasks)
 
 def submit_rating_task():
     idea_id = request.vars['idea_id']
@@ -198,6 +199,20 @@ def submit_rating_task():
             dateCompleted=date_completed, 
             completedBy=user_id)
     return 'ok'
+
+def submit_categorization_task():
+    idea_id = request.vars['idea_id']
+    type = int(request.vars['type'])
+
+    # Check the type of task submitted
+    if type == 'suggest':
+        pass
+    elif type == 'selectBest':
+        pass
+    elif type == 'categorize':
+        pass
+    date_completed = datetime.datetime.now()
+    user_id = session.user_id
 
 def get_solution_space():
     categories = db(db.concept.id > 0).select().as_list()
@@ -258,11 +273,44 @@ def get_ideas_per_category():
 
 
 ### PRIVATE FUNCTIONS ###
+def __get_rating_tasks(user_id):
+    # retrieve tasks already completed
+    completed_ratings = [row.idea for row in db(db.idea_rating.completedBy == user_id).select(db.idea_rating.idea)]
+    # retrieve tasks
+    rating_tasks_results = db(
+        (db.idea_rating.completed == False) & 
+        (db.idea_rating.idea == db.idea.id) &
+        ~(db.idea_rating.idea.belongs(completed_ratings))
+    ).select(groupby=db.idea_rating.idea)
+    return  [dict(type="rating", task_id=r.idea_rating.id, idea=r.idea.idea, idea_id=r.idea.id) for r in rating_tasks_results]
 
-def __insert_tasks_for_idea(idea_id, user_id):
-    # Inser rating tasks
+def __get_select_best_tasks(user_id):
+    # retrieve tasks already completed
+    completed = [row.idea for row in db(db.categorization.completedBy == user_id).select(db.categorization.idea)]
+    # retrieve tasks
+    tasks_results = db(
+        (db.categorization.completed == False) & 
+        (db.categorization.idea == db.idea.id) &
+        ~(db.categorization.idea.belongs(completed))
+    ).select(groupby=db.categorization.idea)
+    return [dict(type=r.categorization.categorizationType, 
+        suggested_categories=r.categorization.suggestedCategories, 
+        task_id=r.categorization.id, 
+        idea=r.idea.idea, 
+        idea_id=r.idea.id) for r in tasks_results]
+
+def __get_categorize_tasks(user_id):
+    tasks = []
+    return tasks
+
+def __insert_tasks_for_idea(idea, user_id):
+    # Insert categorization tasks
     for i in range(0,TASKS_PER_IDEA):
-        db.idea_rating.insert(idea=idea_id, completed=False)
+        # insert selectBest types. Categorize tasks will be inserted when these are completed
+        db.categorization.insert(idea=idea['id'], completed=False, suggestedCategories=idea['concepts'], categorizationType='suggest')
+    # Insert rating tasks
+    for i in range(0,TASKS_PER_IDEA):
+        db.idea_rating.insert(idea=idea['id'], completed=False)
 
 def __get_level(ids, levels_map):
     # Gets the level of an idea based on its sources

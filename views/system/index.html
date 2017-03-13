@@ -31,6 +31,7 @@
 	    	getIdeaById: "{{=URL('system','get_idea_by_id')}}",
 			getSuggestedTasks: "{{=URL('system','get_suggested_tasks')}}",
 			submitRatingTask: "{{=URL('system','submit_rating_task')}}",
+			submitCategorizationTask: "{{=URL('system','submit_categorization_task')}}",
 			getSolutionSpace: "{{=URL('system','get_solution_space')}}",
 			getIdeasPerCategory: "{{=URL('system','get_ideas_per_category')}}"
 	    };
@@ -102,6 +103,22 @@
 		</div>
 	</script>
 
+	<script id="suggestTaskTemplate" type="text/x-tmpl-mustache">
+		<h3>Suggest tags</h3>
+		<div id="ideaPlaceholder"></div>
+		<p>Suggest tags for this idea<a class="tooltip" href="#" title="Write appropriate tags for this idea">?</a></p>
+		<input type="text" name="categoryinput" />
+		<a href="#" class="btn" onclick="submitSuggestTask(event)">Submit</a>
+	</script>
+
+	<script id="categorizeTaskTemplate" type="text/x-tmpl-mustache">
+		<h3>Categorize task</h3>
+		<div id="ideaPlaceholder"></div>
+		<p>Click on <strong>all</strong> tags that are appropriate for this idea <a class="tooltip" href="#" title="Click on one or more of the tags below that you feel fit to describe the idea above.">?</a></p>
+		<ul class="tagsList multiple"></ul>
+		<a href="#" class="btn" onclick="submitCategorizaTask(event)">Submit</a>
+	</script>
+
 	<script id="ratingTaskTemplate" type="text/x-tmpl-mustache">
 		<h3>Rating task</h3>
 		<div id="ideaPlaceholder"></div>
@@ -157,6 +174,10 @@
 				<ul></ul>
 			</div>
 		</div>
+	</script>
+
+	<script id="tagTemplate" type="text/x-tmpl-mustache">
+		<span class="tag"><a href="#">[[tag]]</a></span>
 	</script>
 {{end}}
 

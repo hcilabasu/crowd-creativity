@@ -18,7 +18,6 @@ This is a web2py project. Just download web2py, add this to the applications fol
 ## Known issues
 - The bottom of the layout is cutoff by the amount of the navbar
 - It is possible that two ideas in the versioning panel may be placed in the same location.
-- Last categories in solution space view are clipped
 
 ## Completed
 - Color-code user ideas vs other ideas (implemented as a text at the bottom of the idea block)
