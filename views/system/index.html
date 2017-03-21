@@ -58,6 +58,9 @@
 				<li><a href="#" title="Reload this panel" onclick="loadVersioningPanel()">
 					<img src="{{=URL('static','images/reload.png')}}">
 				</a></li>
+				<li><a href="#" title="Auto-reload toggle" onclick="toggleVersioningTimer()">
+					Auto-reload (<span id='versioningTimerDisplay'>OFF</span>)
+				</a></li>
 			</ul>
 		</div>
 		<div id="versioningContainer" class="viewContainer"><svg></svg></div>
@@ -68,6 +71,9 @@
 			<ul>
 				<li><a href="#" title="Reload this panel" onclick="loadSuggestedTasks();">
 					<img src="{{=URL('static','images/reload.png')}}">
+				</a></li>
+				<li><a href="#" title="Auto-reload toggle" onclick="toggleTasksTimer()">
+					Auto-reload (<span id='tasksTimerDisplay'></span>)
 				</a></li>
 			</ul>
 		</div>
@@ -82,6 +88,9 @@
 			<ul>
 				<li><a href="#" title="Reload this panel" onclick="loadSolutionSpace();">
 					<img src="{{=URL('static','images/reload.png')}}">
+				</a></li>
+				<li><a href="#" title="Auto-reload toggle" onclick="toggleSolutionSpaceTimer()">
+					Auto-reload (<span id='solutionSpaceTimerDisplay'></span>)
 				</a></li>
 			</ul>
 		</div>
@@ -107,15 +116,25 @@
 		<h3>Suggest tags</h3>
 		<div id="ideaPlaceholder"></div>
 		<p>Suggest tags for this idea<a class="tooltip" href="#" title="Write appropriate tags for this idea">?</a></p>
-		<input type="text" name="categoryinput" />
+		<input type="text" name="categoryInput" />
 		<a href="#" class="btn" onclick="submitSuggestTask(event)">Submit</a>
 	</script>
 
-	<script id="categorizeTaskTemplate" type="text/x-tmpl-mustache">
-		<h3>Categorize task</h3>
+	<script id="selectBestTaskTemplate" type="text/x-tmpl-mustache">
+		<h3>Select the best tag</h3>
 		<div id="ideaPlaceholder"></div>
-		<p>Click on <strong>all</strong> tags that are appropriate for this idea <a class="tooltip" href="#" title="Click on one or more of the tags below that you feel fit to describe the idea above.">?</a></p>
+		<p>Click on the <strong>one</strong> tag that you think is the most appropriate to describe this idea</p>
+		<ul class="tagsList single"></ul>
+		<input name="taskType" type="hidden" value="selectBest"/>
+		<a href="#" class="btn" onclick="submitCategorizaTask(event)">Submit</a>
+	</script>
+
+	<script id="categorizeTaskTemplate" type="text/x-tmpl-mustache">
+		<h3>Select all appropriate tags</h3>
+		<div id="ideaPlaceholder"></div>
+		<p>Click on <strong>one or more</strong> tags that are appropriate for this idea</p>
 		<ul class="tagsList multiple"></ul>
+		<input name="taskType" type="hidden" value="categorize"/>
 		<a href="#" class="btn" onclick="submitCategorizaTask(event)">Submit</a>
 	</script>
 
@@ -184,7 +203,13 @@
 {{block navMenu}}
 	<div class="navContainer">
 		<button class="btn btn-primary btn-plus" id="addIdeaButton" onclick="openIdeaPopup(event)">Add idea</button>
+		
+		<div class="navBlock">
+			<strong>User ID:</strong> {{=user_id}}
+		</div>
 	</div>
+
+	
 {{end}}
 
 <div id="overlay">

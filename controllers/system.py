@@ -163,14 +163,11 @@ def get_versioning_structure():
 def get_suggested_tasks():
     user_id = session.user_id
     # rating tasks
-    rating_tasks = __get_rating_tasks(user_id)
+    rating_tasks = [] #__get_rating_tasks(user_id)
     # Categorizations tasks
-    # 1- selectBest
-    select_best_tasks = __get_select_best_tasks(user_id)
-    # 2- categorize
-    categorize_tasks = __get_categorize_tasks(user_id)
+    categorization_tasks = __get_categorization_tasks(user_id)
     # Join all tasks
-    tasks = select_best_tasks + categorize_tasks + rating_tasks
+    tasks = categorization_tasks + rating_tasks
     return json.dumps(tasks)
 
 def submit_rating_task():
@@ -202,17 +199,70 @@ def submit_rating_task():
 
 def submit_categorization_task():
     idea_id = request.vars['idea_id']
-    type = int(request.vars['type'])
-
-    # Check the type of task submitted
-    if type == 'suggest':
-        pass
-    elif type == 'selectBest':
-        pass
-    elif type == 'categorize':
-        pass
+    type = request.vars['type']
+    next_type = dict(suggest='selectBest', selectBest='categorize', categorize='categorize')[type]
     date_completed = datetime.datetime.now()
     user_id = session.user_id
+    suggested_tags = None
+    chosen_tags = None
+    categorized_tags = None
+    # Check the type of task submitted and do task specific action
+    # TODO clean up great number of calls
+    if type == 'suggest':
+        suggested_tags = request.vars['suggested_tags[]'] if isinstance(request.vars['suggested_tags[]'], list) else [request.vars['suggested_tags[]']]
+    elif type == 'selectBest' or type == 'categorize':
+        chosen_tags = request.vars['chosen_tags[]'] if isinstance(request.vars['chosen_tags[]'], list) else [request.vars['chosen_tags[]']]
+    # retrieve task
+    task = db((db.categorization.categorizationType == type) &(db.categorization.idea == idea_id) & (db.categorization.completed == False)).select().first()
+    if task:
+        # a task was found. Update it
+        task.completed = True
+        if suggested_tags:
+            task.suggestedCategories = suggested_tags
+        if chosen_tags and type == 'selectBest':
+            task.chosenCategories = chosen_tags
+        if chosen_tags and type == 'categorize':
+            task.categorized = chosen_tags
+        task.completedBy = user_id
+        task.update_record()
+    
+    # Check if all suggest tasks for this idea have been completed. If so, move to next kind of task
+    tasks = db((db.categorization.categorizationType == type) & (db.categorization.idea == idea_id) & (db.categorization.completed == False)).select()
+    if len(tasks) == 0:
+        # retrieve all tasks
+        tasks = db((db.categorization.categorizationType == type) & (db.categorization.idea == idea_id)).select()
+        # gather categories
+        suggestedCategories = set()
+        if type == 'suggest':
+            # All suggest tasks have been done. Merge them into the suggestedCategories field.
+            for t in tasks:
+                # TODO do some processing to reduce redundancies
+                suggestedCategories = suggestedCategories.union(set(t.suggestedCategories))
+        elif type == 'selectBest':
+            # All selectBest tasks have been done. Keep only the n most voted into the chosenCategories field
+            count = defaultdict(int)
+            for t in tasks:
+                for c in t.chosenCategories:
+                    count[c] += 1
+            # keep the top n
+            sorted_items = sorted(count.items(), key=lambda x:x[1], reverse=True)[0:3]
+            chosen_categories = [c[0] for c in sorted_items]
+        elif type == 'categorize':
+            # All categorize tasks have been done. Finalize processing and recategorize ideas.
+            pass
+        # update 
+        for t in tasks:
+            t.categorizationType = next_type
+            t.completed = False
+            t.completedBy = None
+            if type == 'suggest':
+                t.suggestedCategories = list(suggestedCategories)
+            if type == 'selectBest':
+                t.chosenCategories = chosen_categories
+            t.update_record()
+        # All have been completed. Upgrade them if applicable
+        __log_action(user_id, "upgrade_categorization_Task", json.dumps({'condition':session.userCondition, 'idea_id': idea_id, 'new_type': next_type}))
+            
 
 def get_solution_space():
     categories = db(db.concept.id > 0).select().as_list()
@@ -284,7 +334,7 @@ def __get_rating_tasks(user_id):
     ).select(groupby=db.idea_rating.idea)
     return  [dict(type="rating", task_id=r.idea_rating.id, idea=r.idea.idea, idea_id=r.idea.id) for r in rating_tasks_results]
 
-def __get_select_best_tasks(user_id):
+def __get_categorization_tasks(user_id):
     # retrieve tasks already completed
     completed = [row.idea for row in db(db.categorization.completedBy == user_id).select(db.categorization.idea)]
     # retrieve tasks
@@ -295,13 +345,10 @@ def __get_select_best_tasks(user_id):
     ).select(groupby=db.categorization.idea)
     return [dict(type=r.categorization.categorizationType, 
         suggested_categories=r.categorization.suggestedCategories, 
+        chosen_categories=r.categorization.chosenCategories,
         task_id=r.categorization.id, 
         idea=r.idea.idea, 
         idea_id=r.idea.id) for r in tasks_results]
-
-def __get_categorize_tasks(user_id):
-    tasks = []
-    return tasks
 
 def __insert_tasks_for_idea(idea, user_id):
     # Insert categorization tasks

@@ -2,6 +2,9 @@ var EVENTS = {popOverClose: []},
 	TEMPLATES = {};
 
 $(function(){
+	// Setup constants
+	ENV.autoReloadTimer = 15; // seconds
+	
 	// Parse templates
 	Mustache.tags = ['[[',']]']
 	$('script[type$=x-tmpl-mustache]').each(function(i,d){
@@ -147,6 +150,12 @@ var loadVersioningPanel = function(){
         	buildVersioningPanel(structure);
         }
     });
+	// Start auto-refresh panel
+	toggleVersioningTimer();
+};
+
+var toggleVersioningTimer = function(){
+	UTIL.toggleTimer($('#versioningTimerDisplay'), loadVersioningPanel);
 };
 
 var addIdeaToDisplay = function(idea){
@@ -242,30 +251,52 @@ var loadSuggestedTasks = function(){
         	buildSuggestedTasksPanel(structure);
         }
     });
+	// Start auto-refresh panel
+	toggleTasksTimer();
+};
+
+var toggleTasksTimer = function(){
+	UTIL.toggleTimer($('#tasksTimerDisplay'), loadSuggestedTasks);
 };
 
 var buildSuggestedTasksPanel = function(structure){
 	var tasksList = $('#suggestedTasksList');
 	for(var i = 0; i < structure.length; i++){
-		var idea = {idea: structure[i].idea, id: structure[i].idea_id, suggestedCategories: structure[i].suggested_categories};
+		var type = structure[i].type;
+		var idea = {
+			idea: structure[i].idea, 
+			id: structure[i].idea_id, 
+			suggestedCategories: structure[i].suggested_categories,
+			chosenCategories: structure[i].chosen_categories,
+		};
 		var params = {closeable: false, focuseable: true}
 		var taskItem;
-		if(structure[i].type === 'rating'){
+		if(type === 'rating'){
 			// Rating task
 			taskItem = $("<li></li>").html(Mustache.render(TEMPLATES.ratingTaskTemplate, idea));
-		} else if(structure[i].type === 'suggest'){
+		} else if(type === 'suggest'){
 			// Suggest category task
 			var template = $(Mustache.render(TEMPLATES.suggestTaskTemplate, idea));
 			taskItem = $("<li></li>").html(template);
 			// Setup
 			
-		} else if(structure[i].type === 'selectBest' || structure[i].type === 'categorize'){
+		} else if(type === 'selectBest' || type === 'categorize'){
 			// select best or categorize tasks
-			var template = $(Mustache.render(TEMPLATES.categorizeTaskTemplate, idea));
+			var template = $(Mustache.render(TEMPLATES[type + 'TaskTemplate'], idea));
+			var tagsList = type === 'selectBest' ? idea.suggestedCategories : idea.chosenCategories;
 			taskItem = $("<li></li>").html(template);
 			// Add labels
-			idea.suggestedCategories.forEach(function(d,i){
-				$('.tagsList', taskItem).append($("<li></li>").html(Mustache.render(TEMPLATES.tagTemplate, {tag:d})));
+			tagsList.forEach(function(d,i){
+				var tag = $(Mustache.render(TEMPLATES.tagTemplate, {tag:d}));
+				$('.tagsList', taskItem).append($("<li></li>").html(tag));
+				tag.click(function(event){
+					var parent = $(this).closest('.tagsList');
+					if (parent.hasClass('single')){
+						// This list supports only one selected tag. Unselect currently selected tags.
+						$('.selected', parent).removeClass('selected');
+					}
+					$(this).toggleClass('selected');
+				});
 			});
 		} 
 		// Finish setting up idea in the template
@@ -276,7 +307,7 @@ var buildSuggestedTasksPanel = function(structure){
 		tasksList.append(taskItem);
 		taskItem.fadeIn();
 		// Setup input tag. For some reason, it doesn't work before element is visible. TODO figure better workaround
-		$('[name=categoryinput]', tasksList).tagsInput(ENV.tagConfig);
+		$('[name=categoryInput]', tasksList).tagsInput(ENV.tagConfig);
 	}
 };
 
@@ -303,13 +334,15 @@ var submitRatingTask = function(event){
 };
 
 var submitSuggestTask = function(event){
+	// Collect data
 	var taskContainer = $(event.target).parent('li');
 	var ideaBlock = $('.ideaBlock', taskContainer);
 	var data = {
 		idea_id: $('input[name=ideaId]',ideaBlock).val(),
-		suggested_tags: $('[name=categoryInput]', taskContainer).val().split(ENV.tagsDelimiter),
+		suggested_tags: $('input[name=categoryInput]', taskContainer).val().split(ENV.tagsDelimiter),
 		type: 'suggest'
 	};
+	// Submit
 	$.ajax({
         type: "POST",
         url: URL.submitCategorizationTask,
@@ -325,7 +358,31 @@ var submitSuggestTask = function(event){
 };
 
 var submitCategorizaTask = function(event) {
-	alert('TODO');
+	// Collect data
+	var taskContainer = $(event.target).parent('li');
+	var ideaBlock = $('.ideaBlock', taskContainer);
+	var chosenTags = [];
+	$('.selected', taskContainer).each(function(index, el){
+		chosenTags.push($(el).text());
+	});
+	var data = {
+		idea_id: $('input[name=ideaId]',ideaBlock).val(),
+		chosen_tags: chosenTags,
+		type: $('[name=taskType]', taskContainer).val()
+	};
+	// Submit
+	$.ajax({
+        type: "POST",
+        url: URL.submitCategorizationTask,
+		data: data,
+        success: function(data){
+			var _container = taskContainer;
+			closeTask(_container);
+        },
+		error: function(){
+			$.web2py.flash('Something went wrong!', 'error');
+		}
+    });
 };
 
 var closeTask = function(container){
@@ -345,6 +402,12 @@ var loadSolutionSpace = function(){
         	buildSolutionSpacePanel(structure);
         }
     });
+	// Start auto-refresh panel
+	toggleSolutionSpaceTimer();
+};
+
+var toggleSolutionSpaceTimer = function(){
+	UTIL.toggleTimer($('#solutionSpaceTimerDisplay'), loadSolutionSpace)
 };
 
 var buildSolutionSpacePanel = function(structure){

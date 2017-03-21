@@ -22,7 +22,8 @@ span.tag {
     background: #A0D3FF;
     color: #217ccc;
     margin-right: 5px;
-    margin-bottom: 5px;
+    margin-top: 2.5px;
+    margin-bottom: 2.5px;
     font-family: helvetica;
     font-size: 13px
 }
@@ -36,7 +37,7 @@ span.tag a {
 
 div.tagsinput input {
     width: 80px;
-    margin: 0 5px 5px 0;
+    margin: 2.5px 5px 2.5px 0;
     font-family: helvetica;
     font-size: 13px;
     border: 1px solid transparent;

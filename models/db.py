@@ -131,8 +131,9 @@ db.define_table('categorization',
     Field('idea', 'reference idea'),
     Field('completed', 'boolean',),
     Field('categorizationType', 'string'), # selectBest / categorize
-    Field('suggestedCategories', 'list:string'),
-    Field('chosenCategories', 'list:string'),
+    Field('suggestedCategories', 'list:string'), # Results from suggest tasks
+    Field('chosenCategories', 'list:string'), # Results from selectBest tasks
+    Field('categorized', 'list:string'), # Results from categorize tasks
     Field('completedBy', 'string'))
 
 db.define_table('idea_triplets',

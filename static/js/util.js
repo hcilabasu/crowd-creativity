@@ -32,5 +32,43 @@ var UTIL = {
 			}
 		}
 		return filtered;
+	},
+	/*
+	Starts a timer, displaing the countdown on timerDisplay, and executing endFn at every duration seconds.
+	*/
+	setTimer: function(timerDisplay, endFn, duration, repeat){
+		timerDisplay.text(duration);
+		var interval = window.setInterval(function(){
+			var seconds = parseInt(timerDisplay.text());
+			if(!isNaN(seconds)) {
+				// Display is on. Continue timer from there
+				timerDisplay.text(seconds);
+				if(seconds <= 0){
+					seconds = duration;
+					endFn();
+					if(!repeat){
+						clearInterval(interval);
+					}
+				} else {
+					timerDisplay.text(seconds - 1);
+				}
+			} else {
+				// Display was turned off. Stop interval
+				clearInterval(interval);
+			}
+		}, 1000);
+		return interval;
+	},
+	/*
+	Toggles a timer based on the state of its display
+	*/
+	toggleTimer: function(display, fn){
+		if (isNaN(parseInt(display.text()))){
+			// It is currently off. Turn it on
+			UTIL.setTimer(display, fn, ENV.autoReloadTimer, false);
+		} else {
+			// It is currently on. Turn it off
+			display.text('OFF');
+		}	
 	}
 };

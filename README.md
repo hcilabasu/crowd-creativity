@@ -14,6 +14,7 @@ This is a web2py project. Just download web2py, add this to the applications fol
 ## Wishlist
 - Implement persistance of layout
 - Implement a central highlighting function and standard, that whenever called highlights ideas in any panels
+- Standardize tags, concepts, categories to tags only.
 
 ## Known issues
 - The bottom of the layout is cutoff by the amount of the navbar

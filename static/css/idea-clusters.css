@@ -416,6 +416,12 @@ div.w2p_flash.alert {
     transform: translateY(-25%);
 }
 
+.navContainer > .navBlock {
+    line-height: 46px;
+    display: inline-block;
+    margin-left: 20px;
+}
+
 #addIdeaPopup {
     display:none;
     position: absolute;
@@ -621,11 +627,12 @@ div.w2p_flash.alert {
         .toolbar ul > li > a {
             display: inline-block;
             height: 30px;
-            width: 40px;
             text-align: center;
             line-height: 30px;
             text-decoration: none;
-            border: solid 1px #EEE;
+            border: solid 1px #CCC;
+            padding: 0 5px;
+            border-radius: 2px;
         }
 
         .toolbar ul > li > a:hover {
@@ -723,4 +730,17 @@ div.w2p_flash.alert {
 
     .tagsList li {
         display: inline-block;
+    }
+
+    .tagsList .tag {
+        cursor: pointer;
+    } 
+
+    .tag.selected {
+        background: #217ccc;
+        color: white;
+    }
+
+    .tag.selected a {
+        color: white;
     }
