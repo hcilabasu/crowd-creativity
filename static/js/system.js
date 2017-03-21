@@ -3,7 +3,7 @@ var EVENTS = {popOverClose: []},
 
 $(function(){
 	// Setup constants
-	ENV.autoReloadTimer = 15; // seconds
+	ENV.autoReloadTimer = 'OFF'; // seconds or 'OFF' to disable
 	
 	// Parse templates
 	Mustache.tags = ['[[',']]']
@@ -35,6 +35,10 @@ $(function(){
 	loadVersioningPanel();
 	loadSuggestedTasks();
 	loadSolutionSpace();
+	// Start auto-refresh timers
+	toggleVersioningTimer();
+	toggleTasksTimer();
+	toggleSolutionSpaceTimer();
 });
 
 var openIdeaPopup = function(event){
@@ -150,8 +154,6 @@ var loadVersioningPanel = function(){
         	buildVersioningPanel(structure);
         }
     });
-	// Start auto-refresh panel
-	toggleVersioningTimer();
 };
 
 var toggleVersioningTimer = function(){
@@ -251,8 +253,6 @@ var loadSuggestedTasks = function(){
         	buildSuggestedTasksPanel(structure);
         }
     });
-	// Start auto-refresh panel
-	toggleTasksTimer();
 };
 
 var toggleTasksTimer = function(){
@@ -402,8 +402,6 @@ var loadSolutionSpace = function(){
         	buildSolutionSpacePanel(structure);
         }
     });
-	// Start auto-refresh panel
-	toggleSolutionSpaceTimer();
 };
 
 var toggleSolutionSpaceTimer = function(){

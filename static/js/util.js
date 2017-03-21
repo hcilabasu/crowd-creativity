@@ -38,18 +38,23 @@ var UTIL = {
 	*/
 	setTimer: function(timerDisplay, endFn, duration, repeat){
 		timerDisplay.text(duration);
+		var _duration = duration;
 		var interval = window.setInterval(function(){
 			var seconds = parseInt(timerDisplay.text());
 			if(!isNaN(seconds)) {
 				// Display is on. Continue timer from there
 				timerDisplay.text(seconds);
 				if(seconds <= 0){
-					seconds = duration;
+					seconds = _duration;
 					endFn();
 					if(!repeat){
+						// Do not repeat. Stop timer
 						clearInterval(interval);
+					} else {
+						timerDisplay.text(_duration);
 					}
 				} else {
+					// Decrease timer
 					timerDisplay.text(seconds - 1);
 				}
 			} else {
@@ -65,7 +70,7 @@ var UTIL = {
 	toggleTimer: function(display, fn){
 		if (isNaN(parseInt(display.text()))){
 			// It is currently off. Turn it on
-			UTIL.setTimer(display, fn, ENV.autoReloadTimer, false);
+			UTIL.setTimer(display, fn, ENV.autoReloadTimer, true);
 		} else {
 			// It is currently on. Turn it off
 			display.text('OFF');
