@@ -24,8 +24,8 @@ $(function(){
 		width: '100%'
 	};
 	ENV.tagsDelimiter = ',, ,;';
-	$('#addIdea input[name=categoryinput]').tagsInput(ENV.tagConfig);
-	$('#combineIdeas input[name=combinedCategoryinput]').tagsInput(ENV.tagConfig);
+	$('#addIdea input[name=tagInput]').tagsInput(ENV.tagConfig);
+	$('#combineIdeas input[name=combinedTagInput]').tagsInput(ENV.tagConfig);
 
 	// Load windowed layout
 	LAYOUT.init();
@@ -44,14 +44,14 @@ var openIdeaPopup = function(event){
 var submitNewIdea = function(event){
 	// Get values
 	var idea = $('#addIdea textarea').val();
-	var categories = $('#addIdea input').val().split(ENV.tagsDelimiter); // This weird pattern is based on the tag plugin's output. Change it if delimiter param is changed at setup.
+	var tags = $('#addIdea input').val().split(ENV.tagsDelimiter); // This weird pattern is based on the tag plugin's output. Change it if delimiter param is changed at setup.
 	// Submit
-	submitIdea(idea, categories, 'original', [], function(data){
+	submitIdea(idea, tags, 'original', [], function(data){
 		var _id = JSON.parse(data).id;
 		var _idea = idea;
-		var _categories = categories;
+		var _tags = tags;
     	// Add to UI
-		addIdeaToDisplay({idea:_idea, id:_id, categories:_categories});
+		addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
 		// Clearing up inputs and giving feedback to the user
 		$("#addIdea input").importTags(''); 
 		$("#addIdea textarea").val("");
@@ -63,14 +63,14 @@ var submitNewIdea = function(event){
 var submitCombinedIdea = function(event){
 	var idea = $('#combineIdeas textarea').val();
 	var type = $('#combineIdeas input[name=combineTypeInput]').val();
-	var categories = $('#combineIdeas input[name=combinedCategoryinput]').val().split(',');
+	var tags = $('#combineIdeas input[name=combinedTagInput]').val().split(',');
 	var sources = JSON.parse($('#combineIdeas input[name=combinedIdeaIds]').val());
-	submitIdea(idea, categories, type, sources, function(data){
+	submitIdea(idea, tags, type, sources, function(data){
 		var _id = JSON.parse(data).id;
 		var _idea = idea;
 		var _type = type;
 		var _sources = sources;
-		var _categories = categories;
+		var _tags = tags;
 		// If idea is merged, remove previous two and add merged. Otherwise, add new idea
 		if (type == 'merge'){
 			// Remove two ideas
@@ -79,20 +79,20 @@ var submitCombinedIdea = function(event){
 			}
 		}
 		// Add idea
-		addIdeaToDisplay({idea:_idea, id:_id, categories:_categories});
+		addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
 		// Close overlay
 		closeOverlay();
 	});
 };
 
-var submitIdea = function(idea, category, origin, sources, successCallback){
+var submitIdea = function(idea, tag, origin, sources, successCallback){
 	// Send to server
     $.ajax({
         type: "POST",
         url: URL.addIdea,
         data: {
             "idea": idea,
-            "concepts": category,
+            "tags": tag,
             "origin": origin,
             "sources": sources
         },
@@ -167,10 +167,10 @@ var addIdeaToDisplay = function(idea){
 var createIdeaElement = function(idea, params){
 	var addedBy = idea.userId === ENV.userId ? 'you' : 'someone else';
 	// Load template
-	var ideaParameters = {id:idea.id, addedBy:addedBy, idea:idea.idea, categories:idea.categories, closeable:params['closeable']};
+	var ideaParameters = {id:idea.id, addedBy:addedBy, idea:idea.idea, tags:idea.tags, closeable:params['closeable']};
 	var ideaBlock = $(Mustache.render(TEMPLATES.ideaBlockTemplate, ideaParameters));
-	if(idea.categories){
-		idea.categories.forEach(function(d,i){
+	if(idea.tags){
+		idea.tags.forEach(function(d,i){
 			ideaBlock.addClass('cl_' + d);
 		});
 	}
@@ -196,10 +196,10 @@ var createIdeaElement = function(idea, params){
 
 				var idea1 = {idea: idea1Element.text(), 
 							id: $('input[name=ideaId]', idea1Element).val(),
-							categories: $('input[name=ideaCategories]', idea1Element).val().split(',')};
+							tags: $('input[name=ideaTags]', idea1Element).val().split(',')};
 				var idea2 = {idea: idea2Element.text(), 
 							id: $('input[name=ideaId]', idea2Element).val(),
-							categories: $('input[name=ideaCategories]', idea2Element).val().split(',')};
+							tags: $('input[name=ideaTags]', idea2Element).val().split(',')};
 				event.stopPropagation();
 				openOverlay('combineIdeas', {ideas: [idea1, idea2]});
 			},
@@ -266,8 +266,8 @@ var buildSuggestedTasksPanel = function(structure){
 		var idea = {
 			idea: structure[i].idea, 
 			id: structure[i].idea_id, 
-			suggestedCategories: structure[i].suggested_categories,
-			chosenCategories: structure[i].chosen_categories,
+			suggestedTags: structure[i].suggested_tags,
+			chosenTags: structure[i].chosen_tags,
 		};
 		var params = {closeable: false, focuseable: true}
 		var taskItem;
@@ -283,10 +283,10 @@ var buildSuggestedTasksPanel = function(structure){
 		} else if(type === 'selectBest' || type === 'categorize'){
 			// select best or categorize tasks
 			var template = $(Mustache.render(TEMPLATES[type + 'TaskTemplate'], idea));
-			var tagsList = type === 'selectBest' ? idea.suggestedCategories : idea.chosenCategories;
+			var tagsList = type === 'selectBest' ? idea.suggestedTags : idea.chosenTags;
 			taskItem = $("<li></li>").html(template);
 			// Add labels
-			tagsList.forEach(function(d,i){
+			tagsList.forEach(function(d,j){
 				var tag = $(Mustache.render(TEMPLATES.tagTemplate, {tag:d}));
 				$('.tagsList', taskItem).append($("<li></li>").html(tag));
 				tag.click(function(event){
@@ -307,7 +307,7 @@ var buildSuggestedTasksPanel = function(structure){
 		tasksList.append(taskItem);
 		taskItem.fadeIn();
 		// Setup input tag. For some reason, it doesn't work before element is visible. TODO figure better workaround
-		$('[name=categoryInput]', tasksList).tagsInput(ENV.tagConfig);
+		$('[name=tagInput]', tasksList).tagsInput(ENV.tagConfig);
 	}
 };
 
@@ -450,15 +450,15 @@ var closeOverlay = function(event){
 var combineIdeasSetup = function(params){
 	// Add the idea text to the blocks
 	ids = []
-	categories = []
+	tags = []
 	$('#combineIdeas .ideaBlock').each(function(index){
 		$(this).text(params['ideas'][index]['idea']);
 		ids.push(params['ideas'][index]['id']);
-		categories = categories.concat(params['ideas'][index]['categories']);
+		tags = tags.concat(params['ideas'][index]['tags']);
 	});
 	// Set the values
 	$('#combineIdeas input[name=combinedIdeaIds]').val(JSON.stringify(ids));
-	$('#combineIdeas input[name=combinedCategoryinput]').importTags(categories.join(ENV.tagsDelimiter));
+	$('#combineIdeas input[name=combinedTagInput]').importTags(tags.join(ENV.tagsDelimiter));
 
 	// Set up tear down function
 	EVENTS.popOverClose.push(function(){
@@ -480,12 +480,12 @@ var replaceCombineIdeasOptions = function(event, type){
 	$('#combineIdeas input[name=combineTypeInput]').val(type)
 };
 
-var categoriesViewSetup = function(params){
+var tagsViewSetup = function(params){
 	var templateParams = {
-		category1: params.categories[0],
-		category2: params.categories[1]
+		category1: params.tags[0],
+		category2: params.tags[1]
 	};
-	$('#categoriesView').html(Mustache.render(TEMPLATES.categoriesViewTemplate, templateParams));
+	$('#tagsView').html(Mustache.render(TEMPLATES.tagsViewTemplate, templateParams));
 
 	var addIdeasToContainer = function(container, ideas){
 		ideas.forEach(function(d,i){
@@ -498,14 +498,14 @@ var categoriesViewSetup = function(params){
 	}
 
 	// Load ideas for each category
-	params.categories.forEach(function(d,i){
+	params.tags.forEach(function(d,i){
 		$.ajax({
 			type: "GET",
 			url: URL.getIdeasPerCategory,
-			data: {concept: d},
+			data: {tag: d},
 			success: function(data){
 				var ideas = JSON.parse(data);
-				addIdeasToContainer($('#categoriesView .' + d + ' ul'), ideas);
+				addIdeasToContainer($('#tagsView .' + d + ' ul'), ideas);
 			}
 		});
 	});

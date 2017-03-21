@@ -111,11 +111,11 @@ db.define_table('idea',
     Field('replacedBy', 'reference idea'),
     Field('sources', 'list:reference idea'))
     
-db.define_table('concept',
-    Field('concept', 'string', unique=True))
+db.define_table('tag',
+    Field('tag', 'string', unique=True))
     
-db.define_table('concept_idea',
-    Field('concept', 'reference concept'),
+db.define_table('tag_idea',
+    Field('tag', 'reference tag'),
     Field('idea', 'reference idea'))
 
 db.define_table('idea_rating',
@@ -131,8 +131,8 @@ db.define_table('categorization',
     Field('idea', 'reference idea'),
     Field('completed', 'boolean',),
     Field('categorizationType', 'string'), # selectBest / categorize
-    Field('suggestedCategories', 'list:string'), # Results from suggest tasks
-    Field('chosenCategories', 'list:string'), # Results from selectBest tasks
+    Field('suggestedTags', 'list:string'), # Results from suggest tasks
+    Field('chosenTags', 'list:string'), # Results from selectBest tasks
     Field('categorized', 'list:string'), # Results from categorize tasks
     Field('completedBy', 'string'))
 
@@ -160,12 +160,6 @@ db.define_table('idea_similarity',
     Field('idea_a', 'reference idea'),
     Field('idea_b', 'reference idea'), # idea_b should ALWAYS hold the highest ID of the two ideas
     Field('similarity', 'double'))
-
-db.define_table('concept_matrix',
-    Field('tags', 'string'),
-    Field('ideas', 'integer'),
-    Field('time_unit', 'integer'),
-    Field('start_time', 'datetime'))
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

@@ -8,7 +8,7 @@ ADD_TO_POOL = True
 TEST_USER_ID = 'testuser1' # Use None if no test ID is needed
 
 TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
-SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of concepts)
+SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of tags)
 
 def index():
     if TEST_USER_ID:
@@ -40,7 +40,7 @@ def add_idea():
     idea_id = 0
     if user_id != None:
         idea = request.vars['idea'].strip()
-        concepts = request.vars['concepts[]'] if isinstance(request.vars['concepts[]'], list) else [request.vars['concepts[]']]
+        tags = request.vars['tags[]'] if isinstance(request.vars['tags[]'], list) else [request.vars['tags[]']]
         origin = request.vars['origin']
         sources = []
         if request.vars['sources[]']:
@@ -57,19 +57,19 @@ def add_idea():
             pool=ADD_TO_POOL,
             origin=origin,
             sources=sources)
-        # Inserting concepts
-        for concept in concepts:
-            concept = concept.replace(' ', '')
-            concept_id = __insert_or_retrieve_concept_id(concept)
+        # Inserting tags
+        for tag in tags:
+            tag = tag.replace(' ', '')
+            tag_id = __insert_or_retrieve_tag_id(tag)
             # Inserting relationships
-            db.concept_idea.insert(concept=concept_id, idea=idea_id)
+            db.tag_idea.insert(tag=tag_id, idea=idea_id)
         # If idea was marged, update replacedBy on the original ideas
         if origin == 'merge':
             for source in sources:
                 idea = db(db.idea.id == source).select().first()
                 idea.replacedBy = idea_id
                 idea.update_record()
-        idea = dict(id=idea_id, idea=idea, concepts=concepts)
+        idea = dict(id=idea_id, idea=idea, tags=tags)
         # Insert tasks
         __insert_tasks_for_idea(idea, user_id)
         # Log
@@ -82,14 +82,14 @@ def get_user_ideas():
     ideas = db(
         (db.idea.replacedBy == None) &
         (db.idea.userId == user_id) & 
-        ((db.idea.id == db.concept_idea.idea) & 
-            (db.concept.id == db.concept_idea.concept))
+        ((db.idea.id == db.tag_idea.idea) & 
+            (db.tag.id == db.tag_idea.tag))
     ).select(orderby=db.idea.id, groupby=db.idea.id)
     clean_ideas = [
         dict(id=i.idea.id,
             userId=i.idea.userId, 
             idea=i.idea.idea, 
-            categories=[concept.concept.concept for concept in i.idea.concept_idea.select()]
+            tags=[tag.tag.tag for tag in i.idea.tag_idea.select()]
         ) for i in ideas]
     return json.dumps(clean_ideas)
 
@@ -97,20 +97,20 @@ def get_idea_by_id():
     id = int(request.vars['id'])
 
     idea = db((db.idea.id == id) &
-                ((db.idea.id == db.concept_idea.idea) & 
-                (db.concept.id == db.concept_idea.concept))
+                ((db.idea.id == db.tag_idea.idea) & 
+                (db.tag.id == db.tag_idea.tag))
     ).select(orderby=~db.idea.id, groupby=db.idea.id).first()
 
     clean_idea = dict(id=idea.idea.id, 
         idea=idea.idea.idea, 
         userId=idea.idea.userId,
-        categories=[concept.concept.concept for concept in idea.idea.concept_idea.select()])
+        tags=[tag.tag.tag for tag in idea.idea.tag_idea.select()])
 
     return json.dumps(clean_idea)
 
 def get_all_ideas():
-    ideas = db((db.idea.id == db.concept_idea.idea) & 
-               (db.concept.id == db.concept_idea.concept)
+    ideas = db((db.idea.id == db.tag_idea.idea) & 
+               (db.tag.id == db.tag_idea.tag)
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
     clean_ideas = [dict(id=i.idea.id, idea=i.idea.idea) for i in ideas]
     return json.dumps(clean_ideas)
@@ -134,8 +134,8 @@ def get_versioning_structure():
 
     '''
     # get all ideas
-    results = db((db.idea.id == db.concept_idea.idea) & 
-               (db.concept.id == db.concept_idea.concept)
+    results = db((db.idea.id == db.tag_idea.idea) & 
+               (db.tag.id == db.tag_idea.tag)
     ).select(orderby=db.idea.id, groupby=db.idea.id)
     
     # start aux variables
@@ -218,9 +218,9 @@ def submit_categorization_task():
         # a task was found. Update it
         task.completed = True
         if suggested_tags:
-            task.suggestedCategories = suggested_tags
+            task.suggestedTags = suggested_tags
         if chosen_tags and type == 'selectBest':
-            task.chosenCategories = chosen_tags
+            task.chosenTags = chosen_tags
         if chosen_tags and type == 'categorize':
             task.categorized = chosen_tags
         task.completedBy = user_id
@@ -231,22 +231,22 @@ def submit_categorization_task():
     if len(tasks) == 0:
         # retrieve all tasks
         tasks = db((db.categorization.categorizationType == type) & (db.categorization.idea == idea_id)).select()
-        # gather categories
-        suggestedCategories = set()
+        # gather tags
+        suggestedTags = set()
         if type == 'suggest':
-            # All suggest tasks have been done. Merge them into the suggestedCategories field.
+            # All suggest tasks have been done. Merge them into the suggestedTags field.
             for t in tasks:
                 # TODO do some processing to reduce redundancies
-                suggestedCategories = suggestedCategories.union(set(t.suggestedCategories))
+                suggestedTags = suggestedTags.union(set(t.suggestedTags))
         elif type == 'selectBest':
-            # All selectBest tasks have been done. Keep only the n most voted into the chosenCategories field
+            # All selectBest tasks have been done. Keep only the n most voted into the chosenTags field
             count = defaultdict(int)
             for t in tasks:
-                for c in t.chosenCategories:
+                for c in t.chosenTags:
                     count[c] += 1
             # keep the top n
             sorted_items = sorted(count.items(), key=lambda x:x[1], reverse=True)[0:3]
-            chosen_categories = [c[0] for c in sorted_items]
+            chosen_tags = [c[0] for c in sorted_items]
         elif type == 'categorize':
             # All categorize tasks have been done. Finalize processing and recategorize ideas.
             pass
@@ -256,68 +256,68 @@ def submit_categorization_task():
             t.completed = False
             t.completedBy = None
             if type == 'suggest':
-                t.suggestedCategories = list(suggestedCategories)
+                t.suggestedTags = list(suggestedTags)
             if type == 'selectBest':
-                t.chosenCategories = chosen_categories
+                t.chosenTags = chosen_tags
             t.update_record()
         # All have been completed. Upgrade them if applicable
         __log_action(user_id, "upgrade_categorization_Task", json.dumps({'condition':session.userCondition, 'idea_id': idea_id, 'new_type': next_type}))
             
 
 def get_solution_space():
-    categories = db(db.concept.id > 0).select().as_list()
     ''' Structure:
     connections = [{
-        concepts: [...]
+        tags: [...]
         n: number
     },
     ...
     ] '''
-    # get ideas with respective concepts
-    ideas = db((db.idea.id == db.concept_idea.idea) & 
-        (db.concept.id == db.concept_idea.concept)
+    tags = db(db.tag.id > 0).select().as_list()
+    # get ideas with respective tags
+    ideas = db((db.idea.id == db.tag_idea.idea) & 
+        (db.tag.id == db.tag_idea.tag)
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
     # extract tags
     i = 0
     max_n = 0
     connections = dict()
     for idea in ideas:
-        tags = list()
-        for concept in idea.idea.concept_idea.select():
-            concept = concept.concept.concept.lower()
-            tags.append(concept)
-        tags.sort() # this contains a sorted array of tags for idea
+        idea_tags = list()
+        for tag in idea.idea.tag_idea.select():
+            tag = tag.tag.tag.lower()
+            idea_tags.append(tag)
+        idea_tags.sort() # this contains a sorted array of tags for idea
         # insert into data structure
         for i in range(1,SIZE_OVERLAP+1): # this will iterate over all unique permutations of the tags, inserting them in pairs
-            for combination in itertools.combinations(tags, i):
+            for combination in itertools.combinations(idea_tags, i):
                 key = '|'.join(combination)
                 if key not in connections.keys():
-                    connections[key] = dict(concepts=combination, n=0)
+                    connections[key] = dict(tags=combination, n=0)
                 n = connections[key]['n'] + 1
                 connections[key]['n'] = n
                 if n > max_n:
                     max_n = n
     connections = [v for (k,v) in connections.items()]
-    return json.dumps(dict(categories=categories, connections=connections, max_n=max_n))
+    return json.dumps(dict(tags=tags, connections=connections, max_n=max_n))
 
-def get_ideas_per_category():
+def get_ideas_per_tag():
     '''
-    Retrieve all ideas that have the category passed as parameter
+    Retrieve all ideas that have the tags passed as parameter
     '''
-    concept = request.vars['concept']
-    if not concept: #no concept was passed as param. Return empty
+    tag = request.vars['tag']
+    if not tag: #no tag was passed as param. Return empty
         return json.dumps([])
-    # There is a concept. Retrieve ideas
-    ideas = db((db.idea.id == db.concept_idea.idea) & 
-        (db.concept.id == db.concept_idea.concept) &
-        (db.concept.concept == concept)
+    # There is a tag. Retrieve ideas
+    ideas = db((db.idea.id == db.tag_idea.idea) & 
+        (db.tag.id == db.tag_idea.tag) &
+        (db.tag.tag == tag)
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
 
     clean_ideas = [
         dict(id=i.idea.id,
             userId=i.idea.userId, 
             idea=i.idea.idea, 
-            categories=[concept.concept.concept for concept in i.idea.concept_idea.select()]
+            tags=[tag.tag.tag for tag in i.idea.tag_idea.select()]
         ) for i in ideas]
     return json.dumps(clean_ideas)
 
@@ -344,8 +344,8 @@ def __get_categorization_tasks(user_id):
         ~(db.categorization.idea.belongs(completed))
     ).select(groupby=db.categorization.idea)
     return [dict(type=r.categorization.categorizationType, 
-        suggested_categories=r.categorization.suggestedCategories, 
-        chosen_categories=r.categorization.chosenCategories,
+        suggested_tags=r.categorization.suggestedTags, 
+        chosen_tags=r.categorization.chosenTags,
         task_id=r.categorization.id, 
         idea=r.idea.idea, 
         idea_id=r.idea.id) for r in tasks_results]
@@ -354,7 +354,7 @@ def __insert_tasks_for_idea(idea, user_id):
     # Insert categorization tasks
     for i in range(0,TASKS_PER_IDEA):
         # insert selectBest types. Categorize tasks will be inserted when these are completed
-        db.categorization.insert(idea=idea['id'], completed=False, suggestedCategories=idea['concepts'], categorizationType='suggest')
+        db.categorization.insert(idea=idea['id'], completed=False, suggestedTags=idea['tags'], categorizationType='suggest')
     # Insert rating tasks
     for i in range(0,TASKS_PER_IDEA):
         db.idea_rating.insert(idea=idea['id'], completed=False)
@@ -375,9 +375,9 @@ def __log_action(user_id, action_name, extra_info):
         extraInfo=extra_info
     )
 
-def __insert_or_retrieve_concept_id(concept):
-    conceptResult = db(db.concept.concept == concept).select(db.concept.id)
-    if conceptResult:
-        return conceptResult[0].id
+def __insert_or_retrieve_tag_id(tag):
+    tagResult = db(db.tag.tag == tag).select(db.tag.id)
+    if tagResult:
+        return tagResult[0].id
     else:
-        return db.concept.insert(concept=concept)
+        return db.tag.insert(tag=tag)

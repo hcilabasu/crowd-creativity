@@ -167,10 +167,10 @@ VISUALIZATIONS = {
 
 	buildSolutionSpacePanel: function(structure){
 		var container = $('#spaceContainer');
-		structure.categories.forEach(function(d,i){
+		structure.tags.forEach(function(d,i){
 			var cell = $('<div></div>').addClass('spCell');
 			var stats = $('<div></div>').addClass('spCell');
-			cell.append($('<span></span>').text(d.concept));
+			cell.append($('<span></span>').text(d.tag));
 			$('#solutionSpaceHeader').append(cell);
 			$('#solutionSpaceLeftColumn').append(cell.clone());
 			$('#solutionSpaceRightColumn').append(stats);
@@ -178,9 +178,9 @@ VISUALIZATIONS = {
 			// Create cells 
 			var newRow = $('<div></div>').addClass('spRow');
 			container.append(newRow);
-			structure.categories.forEach(function(e,j){
-				var concepts = [d.concept, e.concept].sort(); // Make it alphabetical
-				var cellClass = 'spCell cl_' + (concepts[0] === concepts[1] ? concepts [0] : concepts[0] + ' cl_' + concepts[1]); // If this is the diagonal, add only one class.
+			structure.tags.forEach(function(e,j){
+				var tags = [d.tag, e.tag].sort(); // Make it alphabetical
+				var cellClass = 'spCell cl_' + (tags[0] === tags[1] ? tags [0] : tags[0] + ' cl_' + tags[1]); // If this is the diagonal, add only one class.
 				var newCell = $('<div><span></span></div>').addClass(cellClass);
 				newRow.append(newCell);
 			});
@@ -191,8 +191,8 @@ VISUALIZATIONS = {
 		var maxN = structure.max_n;
 		structure.connections.forEach(function(d,i){
 			var selector = 'spCell';
-			var concepts = d.concepts.sort();
-			concepts.forEach(function(e,j){
+			var tags = d.tags.sort();
+			tags.forEach(function(e,j){
 				selector += ' cl_' + e;
 			});
 			$('[class="' + selector + '"] span').css('background', 'rgba(102,102,102,' + (0.1 + (d.n / maxN * 0.9)) + ')');
@@ -219,7 +219,7 @@ VISUALIZATIONS = {
 			classes.forEach(function(d,i){
 				classes[i] = d.replace('.cl_', '');
 			});
-			openOverlay('categoriesView', {categories: classes});
+			openOverlay('tagsView', {tags: classes});
 		});
 	}
 }
