@@ -32,11 +32,10 @@ class TasksView extends View {
                 var parentContainer = $(this.container).parent(); // This is the scroll container element
                 var taskBlock = ideaBlock.parent(); // This is the task block that will be scrolled to
                 var scrollTo = taskBlock.offset().top - parentContainer.offset().top + parentContainer.scrollTop();
-                console.dir(scrollTo);
                 parentContainer.animate({
                     scrollTop: scrollTo
-                }, 300);
-            }, 500);
+                }, ENV.scrollSpeed);
+            }, ENV.scrollDelay);
         }
     }
 

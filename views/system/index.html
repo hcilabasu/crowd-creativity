@@ -28,7 +28,8 @@
 	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/jquery.tagsinput.min.css')}}" />
 
 	<script>
-	    var URL = {
+		// Set up globals
+	    var URL = { // URLs
 	    	addIdea: "{{=URL('system','add_idea')}}",
 	    	getUserIdeas: "{{=URL('system','get_user_ideas')}}",
 	    	getAllIdeas: "{{=URL('system','get_all_ideas')}}",
@@ -39,10 +40,17 @@
 			submitCategorizationTask: "{{=URL('system','submit_categorization_task')}}",
 			getSolutionSpace: "{{=URL('system','get_solution_space')}}",
 			getIdeasPerCategory: "{{=URL('system','get_ideas_per_tag')}}"
-	    };
-	    var ENV = {
-			userId: "{{=user_id}}"
-		};
+	    },		
+	    ENV = { // Global constants
+			userId: "{{=user_id}}",
+			autoReloadTimer: 15, // seconds or 'OFF' to disable
+			scrollDelay: 500, // Delay before a view scrolls to an idea on hover
+			scrollSpeed: 200, // Speed in which the scroll happens
+		},
+		EVENTS = {popOverClose: []},
+		TEMPLATES = {}, // Mustache templates (dynamically loaded on page load)
+		VIEWS = {}, // View objects
+		TOOLBAR = {}; // Toolbar event handlers
 	</script>
 
 	<!-- Mustache templates -->

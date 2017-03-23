@@ -27,7 +27,17 @@ class IdeaViewerView extends View {
     highlightIdeaHandler(e){
         console.dir('Custom IDEA Highlight idea');
         var id = e.params.id;
-        $(this.container + ' .id' + id).addClass('ideaHover');
+        // Highlight
+        var ideaBlock = $(this.container + ' .id' + id);
+        ideaBlock.addClass('ideaHover');
+        // If hovering for over a given threshold of time, scroll down to the idea
+        this.hoverTimeout = window.setTimeout(()=>{ // Wait
+            var container = $(this.container); 
+            var scrollTo = ideaBlock.offset().top - container.offset().top + container.scrollTop();
+            container.animate({
+                scrollTop: scrollTo
+            }, ENV.scrollSpeed);
+        }, ENV.scrollDelay);
     }
 
     /*
@@ -36,7 +46,10 @@ class IdeaViewerView extends View {
     blurIdeaHandler(e){
         console.dir('Custom IDEA Blur idea');
         var id = e.params.id;
+        // Remove highlight
         $(this.container + ' .id' + id).removeClass('ideaHover');
+        // Cancel hover timer
+        clearTimeout(this.hoverTimeout);
     }
 
     /*

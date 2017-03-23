@@ -1,11 +1,4 @@
-var EVENTS = {popOverClose: []},
-	TEMPLATES = {},
-	VIEWS = {};
-
 $(function(){
-	// Setup constants
-	ENV.autoReloadTimer = 15; // seconds or 'OFF' to disable
-	
 	// Parse templates
 	Mustache.tags = ['[[',']]']
 	$('script[type$=x-tmpl-mustache]').each(function(i,d){
@@ -41,40 +34,40 @@ $(function(){
 	// toggleVersioningTimer();
 	// toggleTasksTimer();
 	// toggleSolutionSpaceTimer();
-});
 
-/* Toolbar button handlers */
-var TOOLBAR = {
-	ideaViewer: {
-		reload: function(){
-			VIEWS.ideasView.load();
-		}
-	},
-	versioningView: {
-		reload: function(){
-			VIEWS.versioningView.load();
+	/* Toolbar button handlers */
+	TOOLBAR = {
+		ideaViewer: {
+			reload: function(){
+				VIEWS.ideasView.load();
+			}
 		},
-		toggleAutoReload: function(){
-			UTIL.toggleTimer($('#versioningTimerDisplay'), ()=>VIEWS.versioningView.load());
-		}
-	},
-	suggestedTasks: {
-		reload: function(){
-			VIEWS.tasksView.load();
+		versioningView: {
+			reload: function(){
+				VIEWS.versioningView.load();
+			},
+			toggleAutoReload: function(){
+				UTIL.toggleTimer($('#versioningTimerDisplay'), ()=>VIEWS.versioningView.load());
+			}
 		},
-		toggleAutoReload: function(){
-			UTIL.toggleTimer($('#tasksTimerDisplay'), ()=>VIEWS.tasksView.load());
-		}
-	},
-	solutionSpaceView: {
-		reload: function(){
-			VIEWS.solutionSpaceView.load();
+		suggestedTasks: {
+			reload: function(){
+				VIEWS.tasksView.load();
+			},
+			toggleAutoReload: function(){
+				UTIL.toggleTimer($('#tasksTimerDisplay'), ()=>VIEWS.tasksView.load());
+			}
 		},
-		toggleAutoReload: function(){
-			UTIL.toggleTimer($('#solutionSpaceTimerDisplay'), ()=>VIEWS.solutionSpaceView.load());
+		solutionSpaceView: {
+			reload: function(){
+				VIEWS.solutionSpaceView.load();
+			},
+			toggleAutoReload: function(){
+				UTIL.toggleTimer($('#solutionSpaceTimerDisplay'), ()=>VIEWS.solutionSpaceView.load());
+			}
 		}
-	}
-}; 
+	}; 
+});
 
 var submitNewIdea = function(event){
 	// Get values

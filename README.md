@@ -13,6 +13,7 @@ This is a web2py project. Just download web2py, add this to the applications fol
 ## Wishlist
 - Implement persistance of layout
 - Consolidate prefixes (e.g. cl_, id) into constants (possibly at the ENV variable)
+- Move each mustache template to its own html file
 
 ## Known issues
 - The bottom of the layout is cutoff by the amount of the navbar

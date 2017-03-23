@@ -35,12 +35,22 @@ class VersioningView extends View {
         console.dir('Custom VERSIONING Highlight idea');
         var id = e.params.id; 
         var idea = d3.selectAll(this.container + ' .id' + id);
+		// Hover
 		idea.classed('smallIdeaHover', true);
 		idea.transition()
 			.duration(200)
 			.attr('width', this.dimensions.smallIdea + 10)
 			.attr('height', this.dimensions.smallIdea + 10)
 			.attr('transform', 'translate(-5,-5)');
+		// If hovering for over a given threshold of time, scroll down to the idea
+		this.hoverTimeout = window.setTimeout(()=>{ // Wait
+			var container = $(this.container); // This is the scroll container element
+			var taskBlock = $(idea.nodes()[0]); // This is the task block that will be scrolled to
+			var scrollTo = taskBlock.offset().top - container.offset().top + container.scrollTop();
+			container.animate({
+				scrollTop: scrollTo - 30 // padding
+			}, ENV.scrollSpeed);
+		}, ENV.scrollDelay);
     }
 
     /*
@@ -50,12 +60,15 @@ class VersioningView extends View {
         console.dir('Custom VERSIONING Blur idea');
         var id = e.params.id; 
         var idea = d3.selectAll(this.container + ' .id' + id);
+		// Remove highlight
 		idea.classed('smallIdeaHover', false);
 		idea.transition()
 			.duration(200)
 			.attr('width', this.dimensions.smallIdea)
 			.attr('height', this.dimensions.smallIdea)
 			.attr('transform', 'translate(0,0)');
+		// Clear timeout
+		clearTimeout(this.hoverTimeout);
     }
 
     /*
