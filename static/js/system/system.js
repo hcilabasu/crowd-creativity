@@ -97,7 +97,7 @@ var submitNewIdea = function(event){
 var submitCombinedIdea = function(event){
 	var idea = $('#combineIdeas textarea').val();
 	var type = $('#combineIdeas input[name=combineTypeInput]').val();
-	var tags = $('#combineIdeas input[name=combinedTagInput]').val().split(',');
+	var tags = $('#combineIdeas input[name=combinedTagInput]').val().split(ENV.tagsDelimiter);
 	var sources = JSON.parse($('#combineIdeas input[name=combinedIdeaIds]').val());
 	submitIdea(idea, tags, type, sources, function(data){
 		var _id = JSON.parse(data).id;
