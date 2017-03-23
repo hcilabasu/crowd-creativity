@@ -133,7 +133,7 @@ class VersioningView extends View {
 				.attr("text-anchor", "middle")
 				.text('Iteration ' + (i+1))
 				.attr('y', 0)
-				.attr('x', levelScale(i));
+				.attr('x', levelScale(i) + 20);
 
 			// Add axis lines
 			var lineData = [
