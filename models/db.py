@@ -112,7 +112,8 @@ db.define_table('idea',
     Field('sources', 'list:reference idea'))
     
 db.define_table('tag',
-    Field('tag', 'string', unique=True))
+    Field('tag', 'string', unique=True),
+    Field('replacedBy', 'reference tag'))
     
 db.define_table('tag_idea',
     Field('tag', 'reference tag'),

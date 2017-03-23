@@ -5,6 +5,7 @@ div.tagsinput {
     width: 300px;
     overflow-y: auto;
     margin-bottom: 20px;
+    cursor: text;
 }
 
 div.tagsinput span.tag {

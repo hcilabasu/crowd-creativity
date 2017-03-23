@@ -9,12 +9,10 @@ This is a web2py project. Just download web2py, add this to the applications fol
 - Implement categorization tasks
 - When something is highlighted in a panel, scroll panel to focus on it
 - Implement iteration of idea 
-- Implement real time updating
 
 ## Wishlist
 - Implement persistance of layout
-- Implement a central highlighting function and standard, that whenever called highlights ideas in any panels
-- Standardize tags, concepts, categories to tags only.
+- Consolidate prefixes (e.g. cl_, id) into constants (possibly at the ENV variable)
 
 ## Known issues
 - The bottom of the layout is cutoff by the amount of the navbar
@@ -23,3 +21,6 @@ This is a web2py project. Just download web2py, add this to the applications fol
 ## Completed
 - Color-code user ideas vs other ideas (implemented as a text at the bottom of the idea block)
 - Improve versioning visualization by minimizing edge length (children are always placed in between parents)
+- Refactored code to use custom events to trigger highlights in each panel
+- Standardize tags, concepts, categories to tags only.
+- Implement real time updating (NOTE: not real time yet. Implemented auto reload for now. Real time will require more thought)

@@ -11,9 +11,14 @@
 
 	<!-- Load JS custom code -->
 	<script type="text/javascript" src="{{=URL('static','js/golden-layout-config.js')}}"></script>
-	<script type="text/javascript" src="{{=URL('static','js/util.js')}}"></script>
-	<script type="text/javascript" src="{{=URL('static','js/visualizations.js')}}"></script>
-	<script type="text/javascript" src="{{=URL('static','js/system.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/classes.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/view.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/ideaviewer-view.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/tasks-view.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/versioning-view.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/solutionspace-view.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/util.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/system.js')}}"></script>
 	
 	<!-- Load styles -->
 	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/goldenlayout-base.css')}}" />
@@ -44,7 +49,7 @@
 	<script id="ideaViewerTemplate" type="text/x-tmpl-mustache">
 		<div class="toolbar">
 			<ul>
-				<li><a href="#" title="Reload this panel" onclick="loadUserIdeas()">
+				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.ideaViewer.reload()">
 					<img src="{{=URL('static','images/reload.png')}}">
 				</a></li>
 			</ul>
@@ -69,10 +74,10 @@
 	<script id="suggestedTasksViewerTemplate" type="text/x-tmpl-mustache">
 		<div class="toolbar">
 			<ul>
-				<li><a href="#" title="Reload this panel" onclick="loadSuggestedTasks();">
+				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.suggestedTasks.reload()">
 					<img src="{{=URL('static','images/reload.png')}}">
 				</a></li>
-				<li><a href="#" title="Auto-reload toggle" onclick="toggleTasksTimer()">
+				<li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.suggestedTasks.toggleAutoReload()">
 					Auto-reload (<span id='tasksTimerDisplay'>OFF</span>)
 				</a></li>
 			</ul>
@@ -117,7 +122,7 @@
 		<div id="ideaPlaceholder"></div>
 		<p>Suggest tags for this idea<a class="tooltip" href="#" title="Write appropriate tags for this idea">?</a></p>
 		<input type="text" name="tagInput" />
-		<a href="#" class="btn" onclick="submitSuggestTask(event)">Submit</a>
+		<a href="#" class="btn">Submit</a>
 	</script>
 
 	<script id="selectBestTaskTemplate" type="text/x-tmpl-mustache">
@@ -126,7 +131,7 @@
 		<p>Click on the <strong>one</strong> tag that you think is the most appropriate to describe this idea</p>
 		<ul class="tagsList single"></ul>
 		<input name="taskType" type="hidden" value="selectBest"/>
-		<a href="#" class="btn" onclick="submitCategorizaTask(event)">Submit</a>
+		<a href="#" class="btn">Submit</a>
 	</script>
 
 	<script id="categorizeTaskTemplate" type="text/x-tmpl-mustache">
@@ -135,7 +140,7 @@
 		<p>Click on <strong>one or more</strong> tags that are appropriate for this idea</p>
 		<ul class="tagsList multiple"></ul>
 		<input name="taskType" type="hidden" value="categorize"/>
-		<a href="#" class="btn" onclick="submitCategorizaTask(event)">Submit</a>
+		<a href="#" class="btn">Submit</a>
 	</script>
 
 	<script id="ratingTaskTemplate" type="text/x-tmpl-mustache">
