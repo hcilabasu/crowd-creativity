@@ -60,10 +60,10 @@
 	<script id="versioningViewerTemplate" type="text/x-tmpl-mustache">
 		<div class="toolbar">
 			<ul>
-				<li><a href="#" title="Reload this panel" onclick="loadVersioningPanel()">
+				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.versioningView.reload()">
 					<img src="{{=URL('static','images/reload.png')}}">
 				</a></li>
-				<li><a href="#" title="Auto-reload toggle" onclick="toggleVersioningTimer()">
+				<li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.versioningView.toggleAutoReload()">
 					Auto-reload (<span id='versioningTimerDisplay'>OFF</span>)
 				</a></li>
 			</ul>
@@ -91,10 +91,10 @@
 	<script id="solutionSpaceViewerTemplate" type="text/x-tmpl-mustache">
 		<div class="toolbar">
 			<ul>
-				<li><a href="#" title="Reload this panel" onclick="loadSolutionSpace();">
+				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.solutionSpaceView.reload()">
 					<img src="{{=URL('static','images/reload.png')}}">
 				</a></li>
-				<li><a href="#" title="Auto-reload toggle" onclick="toggleSolutionSpaceTimer()">
+				<li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.solutionSpaceView.toggleAutoReload()">
 					Auto-reload (<span id='solutionSpaceTimerDisplay'>OFF</span>)
 				</a></li>
 			</ul>

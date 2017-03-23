@@ -47,34 +47,31 @@ $(function(){
 var TOOLBAR = {
 	ideaViewer: {
 		reload: function(){
-			VIEWS['ideasView'].load();
-		},
-		toggleAutoReload: function(){
-			UTIL.toggleTimer($('#tasksTimerDisplay'), ()=>VIEWS['ideasView'].load());
+			VIEWS.ideasView.load();
 		}
 	},
 	versioningView: {
 		reload: function(){
-			VIEWS['versioningView'].load();
+			VIEWS.versioningView.load();
 		},
 		toggleAutoReload: function(){
-			UTIL.toggleTimer($('#tasksTimerDisplay'), ()=>VIEWS['versioningView'].load());
+			UTIL.toggleTimer($('#versioningTimerDisplay'), ()=>VIEWS.versioningView.load());
 		}
 	},
 	suggestedTasks: {
 		reload: function(){
-			VIEWS['tasksView'].load();
+			VIEWS.tasksView.load();
 		},
 		toggleAutoReload: function(){
-			UTIL.toggleTimer($('#tasksTimerDisplay'), ()=>VIEWS['tasksView'].load());
+			UTIL.toggleTimer($('#tasksTimerDisplay'), ()=>VIEWS.tasksView.load());
 		}
 	},
 	solutionSpaceView: {
 		reload: function(){
-			VIEWS['solutionSpaceView'].load();
+			VIEWS.solutionSpaceView.load();
 		},
 		toggleAutoReload: function(){
-			UTIL.toggleTimer($('#tasksTimerDisplay'), ()=>VIEWS['solutionSpaceView'].load());
+			UTIL.toggleTimer($('#solutionSpaceTimerDisplay'), ()=>VIEWS.solutionSpaceView.load());
 		}
 	}
 }; 
@@ -89,7 +86,7 @@ var submitNewIdea = function(event){
 		var _idea = idea;
 		var _tags = tags;
     	// Add to UI
-		addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
+		VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
 		// Clearing up inputs and giving feedback to the user
 		$("#addIdea input").importTags(''); 
 		$("#addIdea textarea").val("");
@@ -117,7 +114,7 @@ var submitCombinedIdea = function(event){
 			}
 		}
 		// Add idea
-		addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
+		VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
 		// Close overlay
 		closeOverlay();
 	});
@@ -154,7 +151,7 @@ var loadIdea = function(id){
 	        url: URL.getIdeaById,
 	        success: function(data){
 	        	var idea = JSON.parse(data);
-	    		addIdeaToDisplay(idea);
+	    		VIEWS.ideasView.addIdeaToDisplay(idea);
 	        }
 	    });
 	}

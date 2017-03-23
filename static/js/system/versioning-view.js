@@ -35,7 +35,6 @@ class VersioningView extends View {
         console.dir('Custom VERSIONING Highlight idea');
         var id = e.params.id; 
         var idea = d3.selectAll(this.container + ' .id' + id);
-		var position = {x:idea.attr('x'), y:idea.attr('y')};
 		idea.classed('smallIdeaHover', true);
 		idea.transition()
 			.duration(200)
@@ -51,7 +50,6 @@ class VersioningView extends View {
         console.dir('Custom VERSIONING Blur idea');
         var id = e.params.id; 
         var idea = d3.selectAll(this.container + ' .id' + id);
-		var position = {x:idea.attr('x'), y:idea.attr('y')};
 		idea.classed('smallIdeaHover', false);
 		idea.transition()
 			.duration(200)
@@ -155,7 +153,7 @@ class VersioningView extends View {
 				ideaMap[ideaId] = ideaPosition;
 
 				// Add lines
-				connections.forEach(function(d){
+				connections.forEach((d)=>{
 					// Set positions
 					var offset = this.dimensions.smallIdea / 2;
 					var lineData = [
