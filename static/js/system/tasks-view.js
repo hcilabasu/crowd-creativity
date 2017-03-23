@@ -23,7 +23,21 @@ class TasksView extends View {
     highlightIdeaHandler(e){
         console.dir('Custom TASK Highlight idea');
         var id = e.params.id;
-        $(this.container + ' .id' + id).addClass('ideaHover');
+        var ideaBlock = $(this.container + ' .id' + id);
+        if(ideaBlock.length > 0){
+            // Highlight it
+            ideaBlock.addClass('ideaHover');
+            // If hovering for over a given threshold of time, scroll down to the idea
+            this.hoverTimeout = window.setTimeout(()=>{ // Wait
+                var parentContainer = $(this.container).parent(); // This is the scroll container element
+                var taskBlock = ideaBlock.parent(); // This is the task block that will be scrolled to
+                var scrollTo = taskBlock.offset().top - parentContainer.offset().top + parentContainer.scrollTop();
+                console.dir(scrollTo);
+                parentContainer.animate({
+                    scrollTop: scrollTo
+                }, 300);
+            }, 500);
+        }
     }
 
     /*
@@ -32,7 +46,10 @@ class TasksView extends View {
     blurIdeaHandler(e){
         console.dir('Custom TASK Blur idea');
         var id = e.params.id;
+        // Remove highlight
         $(this.container + ' .id' + id).removeClass('ideaHover');
+        // Cancel timeout
+        clearTimeout(this.hoverTimeout);
     }
 
     /*
