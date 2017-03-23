@@ -5,7 +5,7 @@ from collections import defaultdict
 import itertools
 
 ADD_TO_POOL = True
-TEST_USER_ID = 'testuser1' # Use None if no test ID is needed
+TEST_USER_ID = 'testuser2' # Use None if no test ID is needed
 
 TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of tags)
@@ -77,14 +77,15 @@ def add_idea():
     return json.dumps(dict(id=idea_id))
 
 
-def get_user_ideas():
+def get_ideas():
     user_id = session.user_id
-    ideas = db(
-        (db.idea.replacedBy == None) &
-        (db.idea.userId == user_id) & 
-        ((db.idea.id == db.tag_idea.idea) & 
-            (db.tag.id == db.tag_idea.tag))
-    ).select(orderby=db.idea.id, groupby=db.idea.id)
+    added_by = request.vars.added_by
+    print(added_by)
+    query = (db.idea.replacedBy == None) & ((db.idea.id == db.tag_idea.idea) & (db.tag.id == db.tag_idea.tag))
+    if added_by:
+        query = query & (db.idea.userId == user_id)
+
+    ideas = db(query).select(orderby=db.idea.id, groupby=db.idea.id)
     clean_ideas = [
         dict(id=i.idea.id,
             userId=i.idea.userId, 

@@ -38,31 +38,37 @@ $(function(){
 	/* Toolbar button handlers */
 	TOOLBAR = {
 		ideaViewer: {
-			reload: function(){
+			reload: ()=>{
 				VIEWS.ideasView.load();
+			},
+			loadUserIdeas:()=>{
+				VIEWS.ideasView.load();
+			},
+			loadAllIdeas:()=>{
+				VIEWS.ideasView.loadIdeasAddedBy();
 			}
 		},
 		versioningView: {
-			reload: function(){
+			reload: ()=>{
 				VIEWS.versioningView.load();
 			},
-			toggleAutoReload: function(){
+			toggleAutoReload: ()=>{
 				UTIL.toggleTimer($('#versioningTimerDisplay'), ()=>VIEWS.versioningView.load());
 			}
 		},
 		suggestedTasks: {
-			reload: function(){
+			reload: ()=>{
 				VIEWS.tasksView.load();
 			},
-			toggleAutoReload: function(){
+			toggleAutoReload: ()=>{
 				UTIL.toggleTimer($('#tasksTimerDisplay'), ()=>VIEWS.tasksView.load());
 			}
 		},
 		solutionSpaceView: {
-			reload: function(){
+			reload: ()=>{
 				VIEWS.solutionSpaceView.load();
 			},
-			toggleAutoReload: function(){
+			toggleAutoReload: ()=>{
 				UTIL.toggleTimer($('#solutionSpaceTimerDisplay'), ()=>VIEWS.solutionSpaceView.load());
 			}
 		}

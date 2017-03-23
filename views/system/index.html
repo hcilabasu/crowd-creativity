@@ -31,7 +31,7 @@
 		// Set up globals
 	    var URL = { // URLs
 	    	addIdea: "{{=URL('system','add_idea')}}",
-	    	getUserIdeas: "{{=URL('system','get_user_ideas')}}",
+	    	getUserIdeas: "{{=URL('system','get_ideas')}}",
 	    	getAllIdeas: "{{=URL('system','get_all_ideas')}}",
 	    	getVersioningStructure: "{{=URL('system','get_versioning_structure')}}",
 	    	getIdeaById: "{{=URL('system','get_idea_by_id')}}",
@@ -59,6 +59,14 @@
 			<ul>
 				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.ideaViewer.reload()">
 					<img src="{{=URL('static','images/reload.png')}}">
+				</a></li>
+			</ul>
+			<ul>
+				<li><a href="#" title="Open your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
+					<img src="{{=URL('static','images/user.png')}}">
+				</a></li>
+				<li><a href="#" title="Open all ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
+					<img src="{{=URL('static','images/group.png')}}">
 				</a></li>
 			</ul>
 		</div>

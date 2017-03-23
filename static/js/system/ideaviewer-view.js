@@ -5,19 +5,7 @@ class IdeaViewerView extends View {
     */
     load(){
         console.dir('Initializing View');
-        // Clear panel
-        $(this.container).empty();
-        // Load ideas
-        $.ajax({
-            type: "GET",
-            url: URL.getUserIdeas,
-            success: (data)=>{
-                var ideas = JSON.parse(data);
-                for (var i = 0; i < ideas.length; i++) {
-                    this.addIdeaToDisplay(ideas[i]);
-                }
-            }
-        });
+        this.loadIdeasAddedBy(ENV.userId);
         return this;
     }
 
@@ -67,6 +55,27 @@ class IdeaViewerView extends View {
     blurTagsHandler(e){
         console.dir('Custom IDEA Blur tags');
         $(this.container + ' .ideaHover').removeClass('ideaHover');
+    }
+
+    loadIdeasAddedBy(userId){
+        // Clear panel
+        $(this.container).empty();
+        // Load ideas
+        var params = {};
+        if (userId) {
+            params.added_by = userId;
+        }
+        $.ajax({
+            type: "GET",
+            url: URL.getUserIdeas,
+            data: params,
+            success: (data)=>{
+                var ideas = JSON.parse(data);
+                for (var i = 0; i < ideas.length; i++) {
+                    this.addIdeaToDisplay(ideas[i]);
+                }
+            }
+        });
     }
 
     /* 
