@@ -45,7 +45,9 @@
 			userId: "{{=user_id}}",
 			autoReloadTimer: 15, // seconds or 'OFF' to disable
 			scrollDelay: 500, // Delay before a view scrolls to an idea on hover
-			scrollSpeed: 200, // Speed in which the scroll happens
+			scrollSpeed: 200, // Speed in which the scroll happens,
+			classPrefix: 'cl_',
+			idPrefix: 'id_'
 		},
 		EVENTS = {popOverClose: []},
 		TEMPLATES = {}, // Mustache templates (dynamically loaded on page load)
@@ -204,12 +206,12 @@
 		<p>See ideas that have the tags you selected. If you see ideas you like, drag and drop to combine or merge them.</p>
 
 		<div class="twoCategoryIdeasList">
-			<div class="[[category1]]">
+			<div class="cl_[[category1]]">
 				<h3>[[category1]]</h3>
 				<ul></ul>
 			</div>
 
-			<div class="[[category2]]">
+			<div class="cl_[[category2]]">
 				<h3>[[category2]]</h3>
 				<ul></ul>
 			</div>

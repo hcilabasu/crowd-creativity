@@ -17,15 +17,17 @@ class IdeaViewerView extends View {
         var id = e.params.id;
         // Highlight
         var ideaBlock = $(this.container + ' .id' + id);
-        ideaBlock.addClass('ideaHover');
-        // If hovering for over a given threshold of time, scroll down to the idea
-        this.hoverTimeout = window.setTimeout(()=>{ // Wait
-            var container = $(this.container); 
-            var scrollTo = ideaBlock.offset().top - container.offset().top + container.scrollTop();
-            container.animate({
-                scrollTop: scrollTo
-            }, ENV.scrollSpeed);
-        }, ENV.scrollDelay);
+        if(ideaBlock.length > 0) {
+            ideaBlock.addClass('ideaHover');
+            // If hovering for over a given threshold of time, scroll down to the idea
+            this.hoverTimeout = window.setTimeout(()=>{ // Wait
+                var container = $(this.container); 
+                var scrollTo = ideaBlock.offset().top - container.offset().top + container.scrollTop();
+                container.animate({
+                    scrollTop: scrollTo
+                }, ENV.scrollSpeed);
+            }, ENV.scrollDelay);
+        }
     }
 
     /*

@@ -225,7 +225,7 @@ var tagsViewSetup = function(params){
 	var addIdeasToContainer = function(container, ideas){
 		ideas.forEach(function(d,i){
 			var li = $('<li></li>');
-			var ideaElement = new IdeaViewerView(d, {closeable:false, draggable:true, resizable: false, focuseable: false});
+			var ideaElement = new Idea(d, {closeable:false, draggable:true, resizable: false, focuseable: false});
 			var ideaBlock = ideaElement.html();
 			li.html(ideaBlock);
 			container.append(li);
@@ -241,7 +241,7 @@ var tagsViewSetup = function(params){
 			data: {tag: d},
 			success: function(data){
 				var ideas = JSON.parse(data);
-				addIdeasToContainer($('#tagsView .' + d + ' ul'), ideas);
+				addIdeasToContainer($('#tagsView .' + ENV.classPrefix + d + ' ul'), ideas);
 			}
 		});
 	});
