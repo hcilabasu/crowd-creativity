@@ -70,11 +70,11 @@ class Idea {
             ideaBlock.hover(function(){
                 var id = $(this).attr('id').substring(2); // Get the id (remove the 'id' prefix)
                 // Trigger hover event
-                $.event.trigger({type:'highlightIdea', params:{id:id}});
+                $.event.trigger({type:EVENTS.highlightIdea, params:{id:id}});
             },function(){
                 var id = $(this).attr('id').substring(2); // Get the id (remove the 'id' prefix)
                 // Trigger blur event
-                $.event.trigger({type:'blurIdea', params:{id:id}});
+                $.event.trigger({type:EVENTS.blurIdea, params:{id:id}});
             });
         }
 

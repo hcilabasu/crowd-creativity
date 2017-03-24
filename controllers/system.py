@@ -30,7 +30,6 @@ def index():
         __log_action(user_id, "refresh_page", json.dumps({'condition':session.userCondition}))
     return dict(user_id=user_id)
 
-
 def add_idea():
     '''
     Endpoint for adding a new idea.
@@ -207,6 +206,7 @@ def submit_categorization_task():
     suggested_tags = None
     chosen_tags = None
     categorized_tags = None
+    completed = True
     # Check the type of task submitted and do task specific action
     # TODO clean up great number of calls
     if type == 'suggest':
@@ -250,11 +250,11 @@ def submit_categorization_task():
             chosen_tags = [c[0] for c in sorted_items]
         elif type == 'categorize':
             # All categorize tasks have been done. Finalize processing and recategorize ideas.
-            pass
+            completed = True
         # update 
         for t in tasks:
             t.categorizationType = next_type
-            t.completed = False
+            t.completed = completed
             t.completedBy = None
             if type == 'suggest':
                 t.suggestedTags = list(suggestedTags)
@@ -322,6 +322,28 @@ def get_ideas_per_tag():
         ) for i in ideas]
     return json.dumps(clean_ideas)
 
+def get_organization_ratio():
+    # TODO standardize this into a single variable, perhaps together with 'next_task' (see submit_categorization_task)
+    base_weights = dict(
+        suggest=0,
+        selectBest=1,
+        categorize=2
+    ) 
+    completed = 0
+    total = 0
+    # Categorization tasks
+    categorization_tasks = db(db.categorization.id > 0).select()
+    for c in categorization_tasks:
+        total += len(base_weights.keys())
+        # Update number of completed tasks
+        completed += base_weights[c.categorizationType] # base weight. Even if a task is not completed, it may already imply that others have been completed before.
+        if c.completed:
+            completed += 1
+    print('Ratio:')
+    print(completed)
+    print(total)
+    print('---')
+    return completed / float(total)
 
 ### PRIVATE FUNCTIONS ###
 def __get_rating_tasks(user_id):

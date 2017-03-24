@@ -39,7 +39,8 @@
 			submitRatingTask: "{{=URL('system','submit_rating_task')}}",
 			submitCategorizationTask: "{{=URL('system','submit_categorization_task')}}",
 			getSolutionSpace: "{{=URL('system','get_solution_space')}}",
-			getIdeasPerCategory: "{{=URL('system','get_ideas_per_tag')}}"
+			getIdeasPerCategory: "{{=URL('system','get_ideas_per_tag')}}",
+			getOrganizationRatio: "{{=URL('system','get_organization_ratio')}}" 
 	    },		
 	    ENV = { // Global constants
 			userId: "{{=user_id}}",
@@ -47,9 +48,18 @@
 			scrollDelay: 500, // Delay before a view scrolls to an idea on hover
 			scrollSpeed: 200, // Speed in which the scroll happens,
 			classPrefix: 'cl_',
-			idPrefix: 'id_'
+			idPrefix: 'id_',
+			autoUpdateOrganizationRatioSeconds: 30
 		},
-		EVENTS = {popOverClose: []},
+		EVENTS = {
+			popOverClose: [],
+			ideaSubmitted: 'ideaSubmitted',
+			taskSubmitted: 'taskSubmitted',
+			highlightIdea: 'highlightIdea',
+			blurIdea: 'blurIdea',
+			highlightTags: 'highlightTags',
+			blurTags: 'blurTags'
+		},
 		TEMPLATES = {}, // Mustache templates (dynamically loaded on page load)
 		VIEWS = {}, // View objects
 		TOOLBAR = {}; // Toolbar event handlers
@@ -226,6 +236,19 @@
 {{block navMenu}}
 	<div class="navContainer">
 		<button class="btn btn-primary btn-plus" id="addIdeaButton" onclick="openIdeaPopup(event)">Add idea</button>
+
+		<div class="navBlock">
+			<img src="{{=URL('static','images/messy.png')}}" alt="Completely disorganized">
+			<div class="scale" id="organizationRatio">
+				<div class="filling"></div>
+			</div>
+			<img src="{{=URL('static','images/organized.png')}}" alt="Completely organized">
+			<div class="dropDown">
+				<p><strong>Organization level</strong>: <span id="organizationRatioPercentage"></span>%</p>
+				<p>This scale shows how organized the idea space is.</p>
+				<p>To improve this, do some tasks on the <strong>Suggested Tasks</strong> view.</p>
+			</div>
+		</div>
 	</div>
 {{end}}
 
@@ -240,6 +263,8 @@
 	</div>
 
 	<div class="popupDialog" id="addIdea">
+		<h2>New idea</h2>
+
 		<div>
 			<p>Please, write down your idea in the textarea below. Make sure to include as much detail as possible!</p>
 
@@ -255,7 +280,7 @@
 
 	<div class="popupDialog" id="combineIdeas">
 
-		<h2>Idea Combination</h2>
+		<h2>Idea Mixing</h2>
 
 		<div class="combineIdeasShowIdeas">
 			<p class="ideaBlock"><span></span></p>

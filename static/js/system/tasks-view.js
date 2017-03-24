@@ -102,8 +102,8 @@ class TasksView extends View {
             var submitHandler = {
                 'rating': (e)=>{ this.submitRatingTask(e) },
                 'suggest': (e)=>{ this.submitSuggestTask(e) },
-                'selectBest': (e)=>{ this.submitCategorizeTask(e) },
-                'categorize': (e)=>{ this.submitCategorizeTask(e) },
+                'selectBest': (e)=>{ this.submitCategorizationTask(e) },
+                'categorize': (e)=>{ this.submitCategorizationTask(e) },
             };
             $('.btn', taskItem).click(submitHandler[type]);
             // Dramatic entrance
@@ -170,7 +170,7 @@ class TasksView extends View {
     /*
     Submits a categorize task
     */
-    submitCategorizaTask(event) {
+    submitCategorizationTask(event) {
         // Collect data
         var taskContainer = $(event.target).parent('li');
         var ideaBlock = $('.ideaBlock', taskContainer);
@@ -206,6 +206,8 @@ class TasksView extends View {
         container.hide(300, function(){
             container.remove();
         })
+        // Trigger event
+        $.event.trigger({type:EVENTS.taskSubmitted, params:{}});
     };
 
 }

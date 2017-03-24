@@ -4,10 +4,10 @@ class View {
         this.container = container;
 
         // Handle events
-        $(document).on('highlightIdea', (e)=>this.highlightIdeaHandler(e));
-        $(document).on('blurIdea', (e)=>this.blurIdeaHandler(e));
-        $(document).on('highlightTags', (e)=>this.highlightTagsHandler(e));
-        $(document).on('blurTags', (e)=>this.blurTagsHandler(e));
+        $(document).on(EVENTS.highlightIdea, (e)=>this.highlightIdeaHandler(e));
+        $(document).on(EVENTS.blurIdea, (e)=>this.blurIdeaHandler(e));
+        $(document).on(EVENTS.highlightTags, (e)=>this.highlightTagsHandler(e));
+        $(document).on(EVENTS.blurTags, (e)=>this.blurTagsHandler(e));
     }
 
     /*

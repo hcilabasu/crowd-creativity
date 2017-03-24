@@ -35,6 +35,9 @@ $(function(){
 	// toggleTasksTimer();
 	// toggleSolutionSpaceTimer();
 
+	// Start organization ration scale
+	startOrganizationRatioScale();
+
 	/* Toolbar button handlers */
 	TOOLBAR = {
 		ideaViewer: {
@@ -72,8 +75,52 @@ $(function(){
 				UTIL.toggleTimer($('#solutionSpaceTimerDisplay'), ()=>VIEWS.solutionSpaceView.load());
 			}
 		}
-	}; 
+	};
 });
+
+var startOrganizationRatioScale = function(){
+	// Attach refresh function to events
+	$(document).on([
+		EVENTS.ideaSubmitted,
+		EVENTS.taskSubmitted
+	].join(' '), (e)=>{
+		refreshOrganizationRatio();
+	});
+	// Run first timer
+	refreshOrganizationRatio();
+	// Start auto update timer
+	window.setInterval(()=>refreshOrganizationRatio(), ENV.autoUpdateOrganizationRatioSeconds * 1000);
+};
+
+var refreshOrganizationRatio = function(){
+	console.dir('Updating organization scale');
+	// Refreshes the organization ratio
+	$.ajax({
+		url: URL.getOrganizationRatio,
+		success: (data)=>{
+			// Calculate width
+			var ratio = parseFloat(data);
+			var percent = ratio * 100;
+			// Calculate color
+			// Extremes: low: #DF6464 (223,100,100), high: #3AAAFC (58,170,252)
+			var color = function(ratio){
+				var low = {r:223,g:100,b:100};
+				var high = {r:58,g:170,b:252};
+				return [
+					parseInt(low.r + (high.r - low.r) * ratio),
+					parseInt(low.g + (high.g - low.g) * ratio),
+					parseInt(low.b + (high.b - low.b) * ratio)
+				]
+			}(Math.pow(ratio, 3)); // We want blue to be mostly at the real high end
+			// Update scale
+			$('#organizationRatio .filling')
+				.css('width', percent + '%')
+				.css('background', 'rgb(' + color.join(',') + ')');
+			// Update percent
+			$('#organizationRatioPercentage').text(parseInt(percent));
+		}
+	});
+};
 
 var submitNewIdea = function(event){
 	// Get values
@@ -130,7 +177,11 @@ var submitIdea = function(idea, tag, origin, sources, successCallback){
             "origin": origin,
             "sources": sources
         },
-        success: successCallback
+        success: function(){
+			successCallback();
+			// Trigger event
+			$.event.trigger({type:EVENTS.ideaSubmitted, params:{idea:idea}});
+		}
     });
 };
 

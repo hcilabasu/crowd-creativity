@@ -196,10 +196,10 @@ class VersioningView extends View {
 			// Add hover effects
 			.on('mouseover', function(d){
                 // Trigger highlight event
-				$.event.trigger({type:'highlightIdea', params:{id:d.id}});
+				$.event.trigger({type:EVENTS.highlightIdea, params:{id:d.id}});
 			}).on('mouseout', function(d){
 				// Trigger blur event
-                $.event.trigger({type:'blurIdea', params:{id:d.id}});
+                $.event.trigger({type:EVENTS.blurIdea, params:{id:d.id}});
 			}).on('click', function(d){
 				// TODO Load idea on click
 				//loadIdea(d.id);
