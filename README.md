@@ -3,11 +3,10 @@
 This is a web2py project. Just download web2py, add this to the applications folder, and you should be good to go!
 
 ## Todo for Study 1
+- Implement tag suggestions when adding / combining ideas. Possibly remove suggest tasks, simply using user input + automated keyword extraction
 - Validate input
 - Allow enter to submit the idea if the category input is highlighted
-- When hovering for over 1 second on an idea, category, or anywhere else applicable, update the suggested tasks panel with 5 suggested tasks based on the context of the highlighted idea. Make sure to do something to call attention to the panel (e.g. glow)
 - Implement categorization tasks
-- When something is highlighted in a panel, scroll panel to focus on it
 - Implement iteration of idea 
 
 ## Wishlist
@@ -17,7 +16,7 @@ This is a web2py project. Just download web2py, add this to the applications fol
 
 ## Known issues
 - The bottom of the layout is cutoff by the amount of the navbar
-- It is possible that two ideas in the versioning panel may be placed in the same location.
+- It is possible that two ideas in the versioning panel may be placed in the same location. Implement collision detection and handling.
 
 ## Completed
 - Color-code user ideas vs other ideas (implemented as a text at the bottom of the idea block)
@@ -25,3 +24,4 @@ This is a web2py project. Just download web2py, add this to the applications fol
 - Refactored code to use custom events to trigger highlights in each panel
 - Standardize tags, concepts, categories to tags only.
 - Implement real time updating (NOTE: not real time yet. Implemented auto reload for now. Real time will require more thought)
+- When something is highlighted in a panel, scroll panel to focus on it (implemented with a timer)
