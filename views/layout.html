@@ -78,6 +78,8 @@
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <div class="nav navbar-nav navbar-right">
+            {{block rightNavMenu}}
+            {{end}}
             <!--{{='auth' in globals() and auth.navbar('Welcome',mode='dropdown') or ''}}-->
           </div>
           {{if response.menu:}}

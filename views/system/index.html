@@ -226,13 +226,13 @@
 {{block navMenu}}
 	<div class="navContainer">
 		<button class="btn btn-primary btn-plus" id="addIdeaButton" onclick="openIdeaPopup(event)">Add idea</button>
-		
-		<div class="navBlock">
-			<strong>User ID:</strong> {{=user_id}}
-		</div>
 	</div>
+{{end}}
 
-	
+{{block rightNavMenu}}
+<div class="navBlock">
+	<img src="{{=URL('static','images/user-navbar.png')}}" alt="{{=user_id}}"> {{=user_id}}
+</div>
 {{end}}
 
 <div id="overlay">
