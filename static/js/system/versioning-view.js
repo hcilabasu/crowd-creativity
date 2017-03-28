@@ -204,7 +204,7 @@ class VersioningView extends View {
                 $.event.trigger({type:EVENTS.blurIdea, params:{id:d.id}});
 			}).on('click', function(d){
 				// TODO Load idea on click
-				//loadIdea(d.id);
+				VIEWS.ideasView.loadIdea(d.id);
 			});
 	}
 

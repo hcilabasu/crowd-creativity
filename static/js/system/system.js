@@ -197,28 +197,6 @@ var submitIdea = function(idea, tag, origin, sources, successCallback){
     });
 };
 
-var closeIdea = function(id){
-	$('#ideasContainer #id'+id).hide(200, function(){ this.remove(); });
-}
-
-var loadIdea = function(id){
-	if($('#ideasContainer #id' + id).length){
-		// Idea is already in pane. Focus
-		$('#ideasContainer #id' + id).addClass('glow').delay(3000).queue(function(next){ $(this).removeClass('glow'); next(); });
-	} else {
-		// Idea is not in the pane. Retrieve and display.
-		$.ajax({
-	        type: "GET",
-	        data: {id:id},
-	        url: URL.getIdeaById,
-	        success: function(data){
-	        	var idea = JSON.parse(data);
-	    		VIEWS.ideasView.addIdeaToDisplay(idea);
-	        }
-	    });
-	}
-};
-
 var openIdeaPopup = function(event){
 	openOverlay('addIdea');
 };

@@ -90,4 +90,26 @@ class IdeaViewerView extends View {
         $(this.container).append(ideaBlock);
         ideaBlock.fadeIn('slow');
     };
+
+    closeIdea(id){
+        $(this.container + ' #id'+id).hide(200, function(){ this.remove(); });
+    }
+
+    loadIdea(id){
+        if($(this.container + ' #id' + id).length){
+            // Idea is already in pane. Focus
+            $(this.container + ' #id' + id).addClass('glow').delay(3000).queue(function(next){ $(this).removeClass('glow'); next(); });
+        } else {
+            // Idea is not in the pane. Retrieve and display.
+            $.ajax({
+                type: "GET",
+                data: {id:id},
+                url: URL.getIdeaById,
+                success: function(data){
+                    var idea = JSON.parse(data);
+                    VIEWS.ideasView.addIdeaToDisplay(idea);
+                }
+            });
+        }
+    };
 }

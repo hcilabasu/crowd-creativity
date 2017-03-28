@@ -21,6 +21,17 @@ class Idea {
             });
         }
 
+        // closeable
+        if(params['closeable'] && typeof params['closeable'] == 'boolean'){
+            $('.close', ideaBlock).click(()=>{
+                var id = idea.id;
+                // remove this block from the DOM
+                ideaBlock.hide(200, function(){ this.remove(); });
+                // Trigger blur method
+                $.event.trigger({type:EVENTS.blurIdea, params:{id:id}});
+            });
+        }
+
         // Drag and drop
         if(typeof params['draggable'] == 'boolean' && params['draggable']){
             ideaBlock.draggable({  
