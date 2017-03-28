@@ -4,11 +4,29 @@ import json
 from collections import defaultdict
 import itertools
 
+DEBUG = False # Add debug mode
+NUKE_KEY = 'blastoise'
 ADD_TO_POOL = True
-TEST_USER_ID = 'testuser2' # Use None if no test ID is needed
-
+TEST_USER_ID = 'testuser1' # Use None if no test ID is needed
 TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of tags)
+
+def nuke(): # Nukes the database to blank.
+    if (request.vars.key and request.vars.key == NUKE_KEY) or not DEBUG:
+        # nuke!
+        db(db.tag.id > 0).delete()
+        db(db.tag_idea.id > 0).delete()
+        db(db.idea.id > 0).delete()
+        db(db.categorization.id > 0).delete()
+        db(db.user_info.id > 0).delete()
+        db(db.idea_rating.id > 0).delete()
+        db(db.action_log.id > 0).delete()
+        return 'Nuke is a GO'
+    else:
+        response.status = 500
+        return 'Nuke is a negative!'
+            
+
 
 def index():
     if TEST_USER_ID:
