@@ -7,7 +7,7 @@ import itertools
 DEBUG = False # Add debug mode
 NUKE_KEY = 'blastoise'
 ADD_TO_POOL = True
-TEST_USER_ID = 'testuser1' # Use None if no test ID is needed
+TEST_USER_ID = 'testuser2' # Use None if no test ID is needed
 TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of tags)
 
@@ -24,9 +24,7 @@ def nuke(): # Nukes the database to blank.
         return 'Nuke is a GO'
     else:
         response.status = 500
-        return 'Nuke is a negative!'
-            
-
+        return 'Nuke is a negative!'            
 
 def index():
     if TEST_USER_ID:
@@ -361,7 +359,11 @@ def get_organization_ratio():
     print(completed)
     print(total)
     print('---')
-    return completed / float(total)
+    if total > 0:
+        return completed / float(total)
+    else:
+        # There is no data yet to calculate this.
+        return -1
 
 ### PRIVATE FUNCTIONS ###
 def __get_rating_tasks(user_id):
@@ -380,9 +382,10 @@ def __get_categorization_tasks(user_id):
     completed = [row.idea for row in db(db.categorization.completedBy == user_id).select(db.categorization.idea)]
     # retrieve tasks
     tasks_results = db(
-        (db.categorization.completed == False) & 
-        (db.categorization.idea == db.idea.id) &
-        ~(db.categorization.idea.belongs(completed))
+        (db.categorization.completed == False) &  # Uncompleted tasks
+        (db.categorization.idea == db.idea.id) & # Attach to idea
+        ~((db.idea.userId == user_id) & (db.categorization.categorizationType == 'suggest')) & # user has not authored this idea if this is a suggest type
+        ~(db.categorization.idea.belongs(completed)) # User has not yet completed it
     ).select(groupby=db.categorization.idea)
     return [dict(type=r.categorization.categorizationType, 
         suggested_tags=r.categorization.suggestedTags, 

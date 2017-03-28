@@ -45,11 +45,13 @@ class VersioningView extends View {
 		// If hovering for over a given threshold of time, scroll down to the idea
 		this.hoverTimeout = window.setTimeout(()=>{ // Wait
 			var container = $(this.container); // This is the scroll container element
-			var taskBlock = $(idea.nodes()[0]); // This is the task block that will be scrolled to
-			var scrollTo = taskBlock.offset().top - container.offset().top + container.scrollTop();
-			container.animate({
-				scrollTop: scrollTo - 30 // padding
-			}, ENV.scrollSpeed);
+			if(idea.nodes().length > 0){
+				var taskBlock = $(idea.nodes()[0]); // This is the task block that will be scrolled to
+				var scrollTo = taskBlock.offset().top - container.offset().top + container.scrollTop();
+				container.animate({
+					scrollTop: scrollTo - 30 // padding
+				}, ENV.scrollSpeed);
+			}
 		}, ENV.scrollDelay);
     }
 

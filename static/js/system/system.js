@@ -100,24 +100,36 @@ var refreshOrganizationRatio = function(){
 		success: (data)=>{
 			// Calculate width
 			var ratio = parseFloat(data);
-			var percent = ratio * 100;
-			// Calculate color
-			// Extremes: low: #DF6464 (223,100,100), high: #3AAAFC (58,170,252)
-			var color = function(ratio){
-				var low = {r:223,g:100,b:100};
-				var high = {r:58,g:170,b:252};
-				return [
-					parseInt(low.r + (high.r - low.r) * ratio),
-					parseInt(low.g + (high.g - low.g) * ratio),
-					parseInt(low.b + (high.b - low.b) * ratio)
-				]
-			}(Math.pow(ratio, 3)); // We want blue to be mostly at the real high end
-			// Update scale
-			$('#organizationRatio .filling')
-				.css('width', percent + '%')
-				.css('background', 'rgb(' + color.join(',') + ')');
-			// Update percent
-			$('#organizationRatioPercentage').text(parseInt(percent));
+			if (ratio >= 0){ 
+				var percent = ratio * 100;
+				// Calculate color
+				// Extremes: low: #DF6464 (223,100,100), high: #3AAAFC (58,170,252)
+				var color = function(ratio){
+					var low = {r:223,g:100,b:100};
+					var high = {r:58,g:170,b:252};
+					return [
+						parseInt(low.r + (high.r - low.r) * ratio),
+						parseInt(low.g + (high.g - low.g) * ratio),
+						parseInt(low.b + (high.b - low.b) * ratio)
+					]
+				}(Math.pow(ratio, 3)); // We want blue to be mostly at the real high end
+				// Update scale
+				$('#organizationRatio .filling')
+					.css('visibility', 'visible')
+					.css('width', percent + '%')
+					.css('background', 'rgb(' + color.join(',') + ')');
+				// Display correct text
+				$('#ratioUnavailable').hide();
+				$('#ratioAvailable').show();
+				// Update percent
+				$('#organizationRatioPercentage').text(parseInt(percent));
+			} else {
+				// There is no data yet
+				$('#organizationRatio .filling')
+					.css('visibility', 'hidden');
+				$('#ratioUnavailable').show();
+				$('#ratioAvailable').hide();
+			}
 		}
 	});
 };
@@ -177,8 +189,8 @@ var submitIdea = function(idea, tag, origin, sources, successCallback){
             "origin": origin,
             "sources": sources
         },
-        success: function(){
-			successCallback();
+        success: function(data){
+			successCallback(data);
 			// Trigger event
 			$.event.trigger({type:EVENTS.ideaSubmitted, params:{idea:idea}});
 		}

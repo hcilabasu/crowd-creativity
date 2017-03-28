@@ -244,9 +244,15 @@
 			</div>
 			<img src="{{=URL('static','images/organized.png')}}" alt="Completely organized">
 			<div class="dropDown">
-				<p><strong>Organization level</strong>: <span id="organizationRatioPercentage"></span>%</p>
-				<p>This scale shows how organized the idea space is.</p>
-				<p>To improve this, do some tasks on the <strong>Suggested Tasks</strong> view.</p>
+				<div id="ratioAvailable">
+					<p><strong>Organization level</strong>: <span id="organizationRatioPercentage"></span>%</p>
+					<p>This scale shows how organized the idea space is.</p>
+					<p>To improve this, do some tasks on the <strong>Suggested Tasks</strong> view.</p>
+				</div>
+				<div id="ratioUnavailable">
+					<p>This metric can't be calculated because no ideas have been added yet. 
+						Once someone adds an idea, this scale will be updated.</p>
+				</div>
 			</div>
 		</div>
 	</div>
