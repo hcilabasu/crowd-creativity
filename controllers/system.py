@@ -12,7 +12,7 @@ TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per k
 SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of tags)
 
 def nuke(): # Nukes the database to blank.
-    if (request.vars.key and request.vars.key == NUKE_KEY) or not DEBUG:
+    if (request.vars.key and request.vars.key == NUKE_KEY) and DEBUG:
         # nuke!
         db(db.tag.id > 0).delete()
         db(db.tag_idea.id > 0).delete()
