@@ -682,7 +682,9 @@ div.w2p_flash.alert {
 
         .toolbar ul > li > a {
             display: inline-block;
-            height: 30px;
+            height: 32px;
+            font-size: 0.9em;
+            color: black;
             text-align: center;
             line-height: 30px;
             text-decoration: none;
@@ -695,7 +697,8 @@ div.w2p_flash.alert {
             background: #EEE;
         }
             .toolbar ul > li > a > img {
-                height: 30px;
+                height: 32px;
+                margin-top: -3px;
             }
 
 @keyframes glow {
