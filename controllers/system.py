@@ -3,6 +3,7 @@ import datetime
 import json
 from collections import defaultdict
 import itertools
+from string import punctuation
 
 DEBUG = False # Add debug mode
 NUKE_KEY = 'blastoise'
@@ -74,7 +75,7 @@ def add_idea():
             sources=sources)
         # Inserting tags
         for tag in tags:
-            tag = tag.replace(' ', '')
+            tag = __clean_tag(tag)
             tag_id = __insert_or_retrieve_tag_id(tag)
             # Inserting relationships
             db.tag_idea.insert(tag=tag_id, idea=idea_id)
@@ -266,7 +267,15 @@ def submit_categorization_task():
             chosen_tags = [c[0] for c in sorted_items]
         elif type == 'categorize':
             # All categorize tasks have been done. Finalize processing and recategorize ideas.
+            # Run Global Structure Inference (Chilton et al., 2013)
             completed = True
+            # Step 1: remove insignificant categories
+
+            # Step 2: remove duplicate categories
+
+            # Step 3: create nested categories
+
+            
         # update 
         for t in tasks:
             t.categorizationType = next_type
@@ -418,6 +427,12 @@ def __log_action(user_id, action_name, extra_info):
         actionName=action_name, 
         extraInfo=extra_info
     )
+
+def __clean_tag(tag):
+    tag = tag.replace(' ', '') # remove spaces
+    tag = tag.lower() # lower case
+    tag = ''.join(c for c in tag if c not in punctuation) # remove punctuation
+    return tag
 
 def __insert_or_retrieve_tag_id(tag):
     tagResult = db(db.tag.tag == tag).select(db.tag.id)
