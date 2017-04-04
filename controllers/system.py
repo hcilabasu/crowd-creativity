@@ -374,6 +374,12 @@ def get_organization_ratio():
         # There is no data yet to calculate this.
         return -1
 
+def get_tags():
+    term = '%%%s%%' % (request.vars.term.lower())
+    tags = db(db.tag.tag.like(term)).select(db.tag.tag)
+    tags = [t.tag for t in tags]
+    return json.dumps(tags)
+
 ### PRIVATE FUNCTIONS ###
 def __get_rating_tasks(user_id):
     # retrieve tasks already completed

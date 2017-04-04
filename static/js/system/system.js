@@ -15,7 +15,8 @@ $(function(){
 	ENV.tagConfig = {
 		delimiter: [',', ' ', ';'], // Doesn't seem like I can set the UI delimiters separate from the backend. If you change this, change cleanup on the submit function
 		height: 'auto',
-		width: '100%'
+		width: '100%',
+		autocomplete_url: URL.getTags
 	};
 	ENV.tagsDelimiter = ',, ,;';
 	$('#addIdea input[name=tagInput]').tagsInput(ENV.tagConfig);
