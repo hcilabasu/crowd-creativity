@@ -41,7 +41,8 @@
 			getSolutionSpace: "{{=URL('system','get_solution_space')}}",
 			getIdeasPerCategory: "{{=URL('system','get_ideas_per_tag')}}",
 			getOrganizationRatio: "{{=URL('system','get_organization_ratio')}}",
-			getTags: "{{=URL('system','get_tags')}}"
+			getTags: "{{=URL('system','get_tags')}}",
+			getSuggestedTags: "{{=URL('system','get_suggested_tags')}}"
 	    },		
 	    ENV = { // Global constants
 			userId: "{{=user_id}}",
@@ -50,7 +51,8 @@
 			scrollSpeed: 200, // Speed in which the scroll happens,
 			classPrefix: 'cl_',
 			idPrefix: 'id_',
-			autoUpdateOrganizationRatioSeconds: 30
+			autoUpdateOrganizationRatioSeconds: 30,
+			numTags: 5
 		},
 		EVENTS = {
 			popOverClose: [],
@@ -277,7 +279,12 @@
 
 			<textarea></textarea>
 
-			<p>Suggest tags for your idea. Try to be as precise and consistent as you can, but don't worry too much about it, as the system may improve it over time:</p>
+			<p>Suggest at least 5 tags for your idea. Try to be as precise and consistent as you can, but don't worry too much about it, as the system may improve it over time:</p>
+		
+			<div class="suggestedTags">
+				Suggested tags (click to add): 
+				<div>Suggestions will appear as you type your idea.</div>
+			</div>
 
 			<input type="text" name="tagInput" />
 

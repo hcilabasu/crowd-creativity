@@ -4,11 +4,14 @@ import json
 from collections import defaultdict
 import itertools
 from string import punctuation
+import rake
+import os
+import random
 
 DEBUG = False # Add debug mode
 NUKE_KEY = 'blastoise'
 ADD_TO_POOL = True
-TEST_USER_ID = 'testuser2' # Use None if no test ID is needed
+TEST_USER_ID = 'testuser1' # Use None if no test ID is needed
 TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of tags)
 
@@ -88,6 +91,8 @@ def add_idea():
         idea = dict(id=idea_id, idea=idea, tags=tags)
         # Insert tasks
         __insert_tasks_for_idea(idea, user_id)
+        # Update reverse index
+        __update_reverse_index(idea)
         # Log
         __log_action(user_id, "add_idea", idea)
     return json.dumps(dict(id=idea_id))
@@ -380,6 +385,15 @@ def get_tags():
     tags = [t.tag for t in tags]
     return json.dumps(tags)
 
+def get_suggested_tags():
+    text = request.vars.text
+    # Get suggested tags
+    tags = __rake(text)
+    tags = [__clean_tag(t[0]) for t in tags]
+    # Submit response
+    response.headers['Content-Type'] = 'text/json'
+    return json.dumps(tags)
+
 ### PRIVATE FUNCTIONS ###
 def __get_rating_tasks(user_id):
     # retrieve tasks already completed
@@ -446,3 +460,14 @@ def __insert_or_retrieve_tag_id(tag):
         return tagResult[0].id
     else:
         return db.tag.insert(tag=tag)
+
+# keyword extraction
+def __rake(text):
+    file = os.path.join(request.folder,'static','SmartStoplist.txt')
+    r = rake.Rake(file)
+    keywords = r.run(text)
+    return keywords
+
+def __update_reverse_index():
+    keywords = __rake('A Python module implementation of the Rapid Automatic Keyword Extraction (RAKE) algorithm as described in: Rose, S., Engel, D., Cramer, N., & Cowley, W. (2010). Automatic Keyword Extraction from Individual Documents. In M. W. Berry & J. Kogan (Eds.), Text Mining: Theory and Applications: John Wiley & Sons. Initially by @aneesha, packaged by @tomaspinho')
+    return json.dumps(keywords)

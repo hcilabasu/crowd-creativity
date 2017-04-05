@@ -39,6 +39,12 @@ $(function(){
 	// Start organization ration scale
 	startOrganizationRatioScale();
 
+	// Start autosuggest tags behavior
+	startTagsSuggestion(
+		'#addIdea textarea', 
+		'#addIdea .suggestedTags > div', 
+		'#addIdea input[name=tagInput]');
+
 	/* Toolbar button handlers */
 	TOOLBAR = {
 		ideaViewer: {
@@ -292,3 +298,50 @@ var tagsViewSetup = function(params){
 var addIdeaSetup = function(){
 	$('#addIdea textarea').focus();
 }
+
+var startTagsSuggestion = function(watchInput, suggestionContainer, tagsInput){
+	console.dir('start tags sugg');
+	var textarea = $(watchInput);
+	var container = $(suggestionContainer);
+	var delay = 1000;
+	var timer = null;
+
+	// Success handler
+	var successHandler = function(data){
+		container.empty();
+		data.forEach(function(d,i){
+			// Create element and bind click handler
+			var tagElement = $('<span></span>').text(d).addClass('tag');
+			tagElement.click(function(){
+				// Tag was clicked. Add it to the input.
+				tagsInput = $(tagsInput);
+				var clickedTag = $(this).text();
+				if(!tagsInput.tagExist(clickedTag)){
+					tagsInput.addTag(clickedTag);
+				}
+			});
+			// Add to container
+			container.append(tagElement);
+		});
+	};
+
+	// Setup ajax call
+	var callback = function(text){
+		$.ajax({
+			url: URL.getSuggestedTags,
+			data: {text:text},
+			success: successHandler
+		})
+	};
+
+	// Bind debounced event to handler
+    textarea.on('keypress paste', function() {
+        if (timer) {
+            window.clearTimeout(timer);
+        }
+        timer = window.setTimeout( function() {
+            timer = null;
+            callback(textarea.val());
+        }, delay);
+    });
+};

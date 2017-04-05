@@ -820,3 +820,18 @@ div.w2p_flash.alert {
     border-radius: 5px;
     transition: width 1s, background 1s;
 }
+
+.suggestedTags {
+    margin: 20px 0;
+}
+
+    .suggestedTags > div {
+        color: #999;
+        display: inline;
+    }
+
+    .suggestedTags .tag {
+        cursor: pointer;
+        background: #EEE;
+        border: solid 1px #CCC;
+    }
