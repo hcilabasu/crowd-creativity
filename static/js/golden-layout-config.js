@@ -29,13 +29,13 @@ var config = {
         },{
             type: 'column',
             content:[{
-                type: 'component',
-                title: 'Versioning',
-                height: 45,
-                isClosable: false,
-                componentName: 'versioning',
-                componentState: { }
-            },{
+            //     type: 'component',
+            //     title: 'Versioning',
+            //     height: 45,
+            //     isClosable: false,
+            //     componentName: 'versioning',
+            //     componentState: { }
+            // },{
                 type: 'component',
                 title: 'Suggested tasks',
                 isClosable: false,
