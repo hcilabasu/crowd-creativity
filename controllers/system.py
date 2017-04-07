@@ -424,7 +424,8 @@ def __get_categorization_tasks(user_id):
         ~((db.idea.userId == user_id) & (db.categorization.categorizationType == 'suggest')) & # user has not authored this idea if this is a suggest type
         ~(db.categorization.idea.belongs(completed)) # User has not yet completed it
     ).select(groupby=db.categorization.idea)
-    return [dict(type=r.categorization.categorizationType, 
+    return [dict(id=r.categorization.id,
+        type=r.categorization.categorizationType, 
         suggested_tags=r.categorization.suggestedTags, 
         chosen_tags=r.categorization.chosenTags,
         task_id=r.categorization.id, 

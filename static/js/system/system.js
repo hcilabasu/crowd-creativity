@@ -154,10 +154,7 @@ var submitNewIdea = function(event){
 		if (form.tags.length < ENV.minNumberTags){
 			// Not enough tags. Throw a tantrum. 
 			if ($('#error-tags').length === 0){
-				$('#addIdea .tagsinput').after(
-					$('<label>Insert at least 3 tags</label>')
-						.attr('id','error-tags')
-						.addClass('error'));
+				UTIL.insertErrorMessage('#addIdea .tagsinput', 'Insert at least 3 tags', 'error-id');
 			}
 		} else {
 			// Clean any tags errors

@@ -113,6 +113,17 @@ var UTIL = {
 			returnArray[name] = value;
 		}
 		return returnArray;
+	},
+	/*
+	Inserts an error message after the given element
+	*/
+	insertErrorMessage: function(element, message, errorId) {
+		if($('#' + errorId).length === 0){
+			$(element).after(
+				$('<label>'+ message +'</label>')
+					.attr('id',errorId)
+					.addClass('error'));
+		}
 	}
 
 

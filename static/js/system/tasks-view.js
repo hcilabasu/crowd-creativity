@@ -98,6 +98,7 @@ class TasksView extends View {
             // Finish setting up idea in the template
             $('#ideaPlaceholder', taskItem).replaceWith(ideaElement.html());
             $('.ideaBlock', taskItem).css('display', 'block');
+            taskItem.attr('id', 'task-' + structure[i].id);
             // Set submit handlers
             var submitHandler = {
                 'rating': (e)=>{ this.submitRatingTask(e) },
@@ -149,22 +150,30 @@ class TasksView extends View {
         // Collect data
         var taskContainer = $(event.target).parent('li');
         var ideaBlock = $('.ideaBlock', taskContainer);
-        var data = {
-            idea_id: $('input[name=ideaId]',ideaBlock).val(),
-            suggested_tags: $('input[name=tagInput]', taskContainer).val().split(ENV.tagsDelimiter),
-            type: 'suggest'
-        };
-        // Submit
-        var _this = this; 
-        $.ajax({
-            type: "POST",
-            url: URL.submitCategorizationTask,
-            data: data,
-            success: (data)=>_this.closeTask(taskContainer),
-            error: function(){
-                $.web2py.flash('Something went wrong!', 'error');
-            }
-        });
+        var tags = $('input[name=tagInput]', taskContainer).val().split(ENV.tagsDelimiter);
+        var containerId = taskContainer.attr('id');
+        if(tags.length < ENV.minNumberTags){
+            UTIL.insertErrorMessage('#' + containerId + ' input[name=tagInput]', 'You must suggest at least 3 tags!', 'error-tag-' + containerId);
+        } else {
+            // Has enough tags
+            var data = {
+                idea_id: $('input[name=ideaId]',ideaBlock).val(),
+                suggested_tags: tags,
+                type: 'suggest'
+            };
+            // Submit
+            var _this = this; 
+            $.ajax({
+                type: "POST",
+                url: URL.submitCategorizationTask,
+                data: data,
+                success: (data)=>_this.closeTask(taskContainer),
+                error: function(){
+                    $.web2py.flash('Something went wrong!', 'error');
+                }
+            });
+        }
+        
     };
 
     /*
