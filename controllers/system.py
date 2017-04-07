@@ -8,7 +8,7 @@ import rake
 import os
 import random
 
-DEBUG = False # Add debug mode
+DEBUG = True # Add debug mode
 NUKE_KEY = 'blastoise'
 ADD_TO_POOL = True
 TEST_USER_ID = 'testuser1' # Use None if no test ID is needed
@@ -59,8 +59,7 @@ def add_idea():
     idea_id = 0
     # Get variables from request
     idea = str(request.vars['idea'])
-    tags = str(request.vars['tags[]'])
-    print('Tags: %s' % tags)
+    tags = request.vars['tags[]']
     origin = str(request.vars['origin'])
     sources = request.vars['sources[]']
     dateAdded = datetime.datetime.now()
@@ -73,7 +72,6 @@ def add_idea():
         if sources:
             sources = sources if isinstance(sources, list) else [sources]
             sources = [int(s) for s in sources]
-        
         # Inserting idea
         idea_id = db.idea.insert(
             userId=user_id, 
@@ -282,9 +280,12 @@ def submit_categorization_task():
             # All categorize tasks have been done. Finalize processing and recategorize ideas.
             # Run Global Structure Inference (Chilton et al., 2013)
             completed = True
-            # Step 1: remove insignificant categories
+            # Step 1: remove insignificant categories that have fewer than q items
+            q = 2
 
-            # Step 2: remove duplicate categories
+            # Step 2: remove duplicate categories (those that share more than p% of their items)
+            # Keep the one that has more items. Break ties randomly.
+            p = 0.75 # percent
 
             # Step 3: create nested categories
 
@@ -302,6 +303,10 @@ def submit_categorization_task():
         # All have been completed. Upgrade them if applicable
         __log_action(user_id, "upgrade_categorization_Task", json.dumps({'condition':session.userCondition, 'idea_id': idea_id, 'new_type': next_type}))
             
+def test():
+    structure = dict()
+    tags = db
+    return json.dumps(structure)
 
 def get_solution_space():
     ''' Structure:
