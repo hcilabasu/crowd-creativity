@@ -68,7 +68,7 @@ textarea {
     height: 100px;
     border: solid 1px #CCC;
     padding: 10px;
-    margin: 0 0 20px 0;
+    margin: 0 0 10px 0;
 }
 
 input[type=text] {
@@ -129,6 +129,11 @@ input[type=text] {
 .w2p_flash.error {
     background: indianred !important;
     color: white !important;
+}
+
+.error {
+    color: indianred;
+    margin-bottom: 20px;
 }
 
 .footer {
@@ -596,7 +601,7 @@ div.w2p_flash.alert {
 }
 
 #overlay .popupDialog {
-    width: 500px;
+    width: 530px;
     height: auto;
     margin: 50px auto 0 auto;
     padding: 20px 20px 20px 20px;
@@ -723,7 +728,7 @@ div.w2p_flash.alert {
 
 #suggestedTasksList > li {
     padding: 10px;
-    border-bottom: solid 1px #CCC;
+    border-bottom: solid 3px #CCC;
     background: white;
     transition: background 0.3s;
     overflow: auto;
@@ -754,8 +759,6 @@ div.w2p_flash.alert {
 #suggestedTasksList > li .ideaBlock.ideaHover {
     width: auto !important;
     height: auto !important;
-    margin: 5px 0 !important;
-    padding: 20px 10px !important;
     transition: padding 0.2s, margin 0.2s;
 }
 
@@ -828,6 +831,10 @@ div.w2p_flash.alert {
     .suggestedTags > div {
         color: #999;
         display: inline;
+    }
+
+    .suggestedTags > div:empty:before {
+        content: 'Suggestions will appear as you type your idea.'
     }
 
     .suggestedTags .tag {

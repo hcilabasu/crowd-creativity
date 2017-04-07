@@ -57,15 +57,23 @@ def add_idea():
     user_id = session.user_id
     userCondition = session.userCondition
     idea_id = 0
+    # Get variables from request
+    idea = str(request.vars['idea'])
+    tags = str(request.vars['tags[]'])
+    print('Tags: %s' % tags)
+    origin = str(request.vars['origin'])
+    sources = request.vars['sources[]']
+    dateAdded = datetime.datetime.now()
+
     if user_id != None:
-        idea = request.vars['idea'].strip()
-        tags = request.vars['tags[]'] if isinstance(request.vars['tags[]'], list) else [request.vars['tags[]']]
-        origin = request.vars['origin']
-        sources = []
-        if request.vars['sources[]']:
-            sources = request.vars['sources[]'] if isinstance(request.vars['sources[]'], list) else [request.vars['sources[]']]
-        sources = [int(s) for s in sources]
-        dateAdded = datetime.datetime.now()
+        # Clean up
+        idea = idea.strip()
+        tags = tags if isinstance(tags, list) else [tags]
+        tags = [str(t) for t in tags]
+        if sources:
+            sources = sources if isinstance(sources, list) else [sources]
+            sources = [int(s) for s in sources]
+        
         # Inserting idea
         idea_id = db.idea.insert(
             userId=user_id, 
@@ -91,8 +99,8 @@ def add_idea():
         idea = dict(id=idea_id, idea=idea, tags=tags)
         # Insert tasks
         __insert_tasks_for_idea(idea, user_id)
-        # Update reverse index
-        __update_reverse_index(idea)
+        # TODO Update reverse index
+        # __update_reverse_index()
         # Log
         __log_action(user_id, "add_idea", idea)
     return json.dumps(dict(id=idea_id))

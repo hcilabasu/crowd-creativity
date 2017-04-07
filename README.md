@@ -15,6 +15,7 @@ This is a web2py project. Just download web2py, add this to the applications fol
 - Consolidate prefixes (e.g. cl_, id) into constants (possibly at the ENV variable)
 - Move each mustache template to its own html file
 - Possibly hide the ideas in the task view until hover action is triggered
+- Turn the idea viewer into a generic view. Multiple instances can be opened, allowing for advanced search queries. The solution space would open one such window when a category is clicked.
 
 ## Known issues
 - The bottom of the layout is cutoff by the amount of the navbar

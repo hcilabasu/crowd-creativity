@@ -19,7 +19,7 @@ $(function(){
 		autocomplete_url: URL.getTags
 	};
 	ENV.tagsDelimiter = ',, ,;';
-	$('#addIdea input[name=tagInput]').tagsInput(ENV.tagConfig);
+	$('#addIdea input[name=tags]').tagsInput(ENV.tagConfig);
 	$('#combineIdeas input[name=combinedTagInput]').tagsInput(ENV.tagConfig);
 
 	// Load windowed layout
@@ -43,7 +43,7 @@ $(function(){
 	startTagsSuggestion(
 		'#addIdea textarea', 
 		'#addIdea .suggestedTags > div', 
-		'#addIdea input[name=tagInput]');
+		'#addIdea input[name=tags]');
 
 	/* Toolbar button handlers */
 	TOOLBAR = {
@@ -142,22 +142,43 @@ var refreshOrganizationRatio = function(){
 };
 
 var submitNewIdea = function(event){
-	// Get values
-	var idea = $('#addIdea textarea').val();
-	var tags = $('#addIdea input').val().split(ENV.tagsDelimiter); // This weird pattern is based on the tag plugin's output. Change it if delimiter param is changed at setup.
-	// Submit
-	submitIdea(idea, tags, 'original', [], function(data){
-		var _id = JSON.parse(data).id;
-		var _idea = idea;
-		var _tags = tags;
-    	// Add to UI
-		VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
-		// Clearing up inputs and giving feedback to the user
-		$("#addIdea input").importTags(''); 
-		$("#addIdea textarea").val("");
-		$("#addIdea textarea").focus();
-		$.web2py.flash("Your idea has been added!", "ok");
+	// Serialize form data
+	var formElement = $(event.target).closest('form');
+	var form = UTIL.objectifyForm(formElement.serializeArray(), {
+		tags: function(value){
+			return value.split(ENV.tagsDelimiter);
+		}
 	});
+	// Validate tags. For some reason, the jQuery validator does not pick it up.
+	if (form.tags.length < ENV.minNumberTags | !formElement.valid()){ 
+		if (form.tags.length < ENV.minNumberTags){
+			// Not enough tags. Throw a tantrum. 
+			if ($('#error-tags').length === 0){
+				$('#addIdea .tagsinput').after(
+					$('<label>Insert at least 3 tags</label>')
+						.attr('id','error-tags')
+						.addClass('error'));
+			}
+		} else {
+			// Clean any tags errors
+			$('#error-tags').remove();
+		}
+	} else {
+		// Submit
+		submitIdea(form.idea, form.tags, 'original', [], function(data){
+			var _id = JSON.parse(data).id;
+			var _idea = form.idea;
+			var _tags = form.tags;
+			// Add to UI
+			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
+			// Clearing up inputs and giving feedback to the user
+			$('#addIdea input').importTags(''); 
+			$('#addIdea textarea').val('');
+			$('#addIdea textarea').focus();
+			$('#addIdea .suggestedTags > div').html('');
+			$.web2py.flash('Your idea has been added!', 'ok');
+		});
+	}
 };
 
 var submitCombinedIdea = function(event){
@@ -185,14 +206,14 @@ var submitCombinedIdea = function(event){
 	});
 };
 
-var submitIdea = function(idea, tag, origin, sources, successCallback){
+var submitIdea = function(idea, tags, origin, sources, successCallback){
 	// Send to server
     $.ajax({
         type: "POST",
         url: URL.addIdea,
         data: {
             "idea": idea,
-            "tags": tag,
+            "tags": tags,
             "origin": origin,
             "sources": sources
         },
@@ -303,7 +324,7 @@ var startTagsSuggestion = function(watchInput, suggestionContainer, tagsInput){
 	console.dir('start tags sugg');
 	var textarea = $(watchInput);
 	var container = $(suggestionContainer);
-	var delay = 1000;
+	var delay = 250;
 	var timer = null;
 
 	// Success handler

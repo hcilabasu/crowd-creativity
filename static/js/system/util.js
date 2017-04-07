@@ -96,6 +96,24 @@ var UTIL = {
 			timeout = setTimeout(later, wait);
 			if (callNow) func.apply(context, args);
 		};
+	},
+	/*
+	This function returns a JSON object based on jQuery's form.serializeArray() method
+	- formArray: output from serializeArray() method
+	- customProcessing: this is a dictionary of processing functions for particular form elements
+	*/
+	objectifyForm: function(formArray, customProcessing) {
+		var returnArray = {};
+		for (var i = 0; i < formArray.length; i++){
+			var name = formArray[i]['name'];
+			var value = formArray[i]['value']
+			if (customProcessing && customProcessing[name]){
+				value = customProcessing[name](value);
+			}
+			returnArray[name] = value;
+		}
+		return returnArray;
 	}
+
 
 };

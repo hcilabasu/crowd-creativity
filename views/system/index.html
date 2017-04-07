@@ -8,6 +8,7 @@
 	<script type="text/javascript" src="{{=URL('static','js/mustache.min.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/d3.v4.min.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/jquery.tagsinput.min.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/jquery.validate.min.js')}}"></script>
 
 	<!-- Load JS custom code -->
 	<script type="text/javascript" src="{{=URL('static','js/golden-layout-config.js')}}"></script>
@@ -52,7 +53,7 @@
 			classPrefix: 'cl_',
 			idPrefix: 'id_',
 			autoUpdateOrganizationRatioSeconds: 30,
-			numTags: 5
+			minNumberTags: 3
 		},
 		EVENTS = {
 			popOverClose: [],
@@ -274,22 +275,22 @@
 	<div class="popupDialog" id="addIdea">
 		<h2>New idea</h2>
 
-		<div>
-			<p>Please, write down your idea in the textarea below. Make sure to include as much detail as possible!</p>
+		<form>
+			<p><strong>Write your idea in the space below.</strong> Make sure to include as much detail as possible!</p>
 
-			<textarea></textarea>
+			<textarea name='idea' required></textarea>
 
-			<p>Suggest at least 5 tags for your idea. Try to be as precise and consistent as you can, but don't worry too much about it, as the system may improve it over time:</p>
-		
+			<p><strong>Suggest at least 3 tags for your idea.</strong> Try to be as precise and consistent as you can, but don't worry too much about it, as the system and other users may improve it over time:</p>
+			
 			<div class="suggestedTags">
 				Suggested tags (click to add): 
-				<div>Suggestions will appear as you type your idea.</div>
+				<div></div>
 			</div>
 
-			<input type="text" name="tagInput" />
+			<input type="text" name="tags" required/>
 
-			<button class="btn floatRight" onclick="submitNewIdea(event)">Submit</button>
-		</div>
+			<a class="btn floatRight" href="#" onclick="submitNewIdea(event);">Submit</a>
+		</form>
 	</div>
 
 	<div class="popupDialog" id="combineIdeas">
@@ -322,7 +323,7 @@
 
 			<textarea name="combinedIdeaInput"></textarea>
 			
-			<p>Suggest tags for your idea. Try to be as precise and consistent as you can, but don't worry too much about it, as the system may improve it over time:</p>
+			<p>Suggest at least 3 tags for your idea. Try to be as precise and consistent as you can, but don't worry too much about it, as the system may improve it over time:</p>
 
 			<input type="text" name="combinedTagInput" />
 
