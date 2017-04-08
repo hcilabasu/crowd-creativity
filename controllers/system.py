@@ -72,6 +72,7 @@ def add_idea():
         if sources:
             sources = sources if isinstance(sources, list) else [sources]
             sources = [int(s) for s in sources]
+        
         # Inserting idea
         idea_id = db.idea.insert(
             userId=user_id, 

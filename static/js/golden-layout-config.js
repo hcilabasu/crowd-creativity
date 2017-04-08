@@ -12,13 +12,15 @@ var config = {
             type: 'column',
             width: 65,
             content: [{
+                id: 'ideaViewer',
                 type: 'component',
                 title: 'Idea viewer',
                 height: 50,
                 isClosable: false,
                 componentName: 'ideaViewer',
                 componentState: { } 
-            },            {
+            }, {
+                id: 'solutionSpace',
                 type: 'component',
                 title: 'Solution space',
                 isClosable: false,
@@ -36,6 +38,7 @@ var config = {
             //     componentName: 'versioning',
             //     componentState: { }
             // },{
+                id: 'suggestedTasks',
                 type: 'component',
                 title: 'Suggested tasks',
                 isClosable: false,

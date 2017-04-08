@@ -2,7 +2,7 @@ class View {
 
     constructor(container){
         this.container = container;
-
+        $(this.container).closest('.lm_stack').addClass('stack_' + this.constructor.name);
         // Handle events
         $(document).on(EVENTS.highlightIdea, (e)=>this.highlightIdeaHandler(e));
         $(document).on(EVENTS.blurIdea, (e)=>this.blurIdeaHandler(e));

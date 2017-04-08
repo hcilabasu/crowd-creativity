@@ -35,6 +35,7 @@ p {
 a {
     color: #097BCF;
     text-decoration: underline;
+    cursor: pointer;
 }
 
 a:hover {
@@ -302,7 +303,7 @@ table th {
 .btn {
     background-color: #DDD;
     color: #333;
-    border-radius: 0;
+    border-radius: 3px;
     box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2);
     text-decoration: none;
 }
@@ -312,7 +313,7 @@ table th {
 }
 
 .navbar .btn-primary {
-    background-color: #1D62A8;
+    background-color: #3093dc;
     color: white;
 }
 
@@ -329,6 +330,12 @@ table th {
 
 .btn-plus {
     background: url(../images/plus.png) no-repeat 12px center;
+    padding-left: 35px;
+    background-size: 16px 16px;
+}
+
+.btn-help {
+    background: url(../images/help-navbar.png) no-repeat 12px center;
     padding-left: 35px;
     background-size: 16px 16px;
 }
@@ -434,6 +441,7 @@ div.w2p_flash.alert {
 }
 
 .navBlock {
+    background: #3AAAFC;
     position: relative;
     height: 46px;
     line-height: 36px;
@@ -443,6 +451,7 @@ div.w2p_flash.alert {
     font-size: 12px;
     transition: background 0.2s;
     z-index: 1000;
+    border-radius: 3px;
 }
 
 .navBlock img {
@@ -455,7 +464,7 @@ div.w2p_flash.alert {
     margin-right: 5px;
 }
 
-.navBlock:hover {
+.navBlock.actionable:hover {
     background: #2E88CA;
     transition: background 0.2s;
     box-shadow: 0 0 5px rgba(0,0,0,0.2);
@@ -842,3 +851,7 @@ div.w2p_flash.alert {
         background: #EEE;
         border: solid 1px #CCC;
     }
+
+#tutorialPopUp img.inline {
+    height: 20px;
+}

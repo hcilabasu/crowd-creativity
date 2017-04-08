@@ -361,3 +361,44 @@ var startTagsSuggestion = function(watchInput, suggestionContainer, tagsInput){
         }, delay);
     });
 };
+
+var startTutorial = function(){
+	
+	ENV.tutorial = new Tutorial(
+		{ // Settings
+			
+		},
+		[ // Steps
+			{
+				title: 'Welcome',
+				html: Mustache.render(TEMPLATES.tutorialWelcomeTemplate)
+			},	
+			{
+				title: 'Idea Viewer',
+				highlight: '.stack_IdeaViewerView',
+				html: Mustache.render(TEMPLATES.tutorialIdeaViewerTemplate),
+				location: {right: 20, top: 0}
+			}, 
+			{
+				title: 'Solution Space',
+				highlight: '.stack_SolutionSpaceView',
+				html: Mustache.render(TEMPLATES.tutorialSolutionSpaceTemplate),
+				location: {right: 20, top: 0}
+			},
+			{
+				title: 'Suggested Tasks',
+				highlight: '.stack_TasksView',
+				html: Mustache.render(TEMPLATES.tutorialSuggestedTasksTemplate),
+				location: {left: 20, top: 0}
+			},
+			{
+				title: 'Organization Level',
+				highlight: '#organizationLevel',
+				html: Mustache.render(TEMPLATES.tutorialOrganizationLevelTemplate),
+				location: {left: -250, bottom: 20}
+			}
+		]);
+	// Start tutorial
+	ENV.tutorial.start();
+
+};
