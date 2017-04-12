@@ -56,7 +56,7 @@
 			idPrefix: 'id_',
 			autoUpdateOrganizationRatioSeconds: 30,
 			minNumberTags: 3,
-			newUser: '{{=str(new_user).lower()}}' === 'true'
+			newUser: '{{=str(new_user).lower()}}' === 'true',
 		},
 		EVENTS = {
 			popOverClose: [],
@@ -293,6 +293,14 @@
 	<div class="navContainer">
 		<button class="btn btn-primary btn-plus" id="addIdeaButton" onclick="openIdeaPopup(event)">Add idea</button>
 
+		<div class="navBlock actionable">
+			<img src="{{=URL('static','images/problem.png')}}" alt="Completely disorganized">
+			<div class="dropDown">
+				<p><strong>Problem description</strong></p>
+				<p>{{=problem}}</p>
+			</div>
+		</div>
+
 		<div class="navBlock actionable" id="organizationLevel">
 			<img src="{{=URL('static','images/messy.png')}}" alt="Completely disorganized">
 			<div class="scale" id="organizationRatio">
@@ -318,7 +326,7 @@
 <div class="navBlock">
 	<button class="btn btn-primary btn-help" id="helpButton" onclick="startTutorial()">Help</button>
 </div>
-<div class="navBlock actionable">
+<div class="navBlock">
 	<img src="{{=URL('static','images/user-navbar.png')}}" alt="{{=user_id}}"> {{=user_id}}
 </div>
 {{end}}

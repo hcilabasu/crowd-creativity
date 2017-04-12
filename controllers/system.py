@@ -50,7 +50,7 @@ def index():
     else:
         # user already has ID. This means it's a page reload. Log it.
         __log_action(user_id, "refresh_page", json.dumps({'condition':session.userCondition}))
-    return dict(user_id=user_id, new_user=new_user)
+    return dict(user_id=user_id, new_user=new_user, problem='This is the problem description')
 
 def add_idea():
     '''

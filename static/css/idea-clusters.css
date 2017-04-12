@@ -87,7 +87,7 @@ input[type=text] {
     font-size: 2.5em;
     line-height: 1.5em;
     display: inline-block;
-    margin-right: 50px;
+    margin-right: 10px;
 }
 
 .navbar {
@@ -315,6 +315,7 @@ table th {
 .navbar .btn-primary {
     background-color: #3093dc;
     color: white;
+    margin: 0 20px;
 }
 
 .navbar .btn:hover {
@@ -441,12 +442,13 @@ div.w2p_flash.alert {
 }
 
 .navBlock {
+    color: white;
     background: #3AAAFC;
     position: relative;
     height: 46px;
     line-height: 36px;
     display: inline-block;
-    margin-left: 20px;
+    margin: 0 10px;
     padding: 5px;
     font-size: 12px;
     transition: background 0.2s;
