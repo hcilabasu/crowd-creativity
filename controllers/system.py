@@ -11,7 +11,7 @@ import random
 DEBUG = True # Add debug mode
 NUKE_KEY = 'blastoise'
 ADD_TO_POOL = True
-TEST_USER_ID = 'testuser1' # Use None if no test ID is needed
+TEST_USER_ID = None #'testuser1' # Use None if no test ID is needed
 TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of tags)
 
@@ -34,7 +34,9 @@ def index():
     if TEST_USER_ID:
         session.user_id = TEST_USER_ID # Force userID for testing
     user_id = session.user_id
+    new_user = False
     if user_id == None:
+        new_user = True
         # Generating new user
         user_id = uuid.uuid4().hex
         session.user_id = user_id
@@ -48,7 +50,7 @@ def index():
     else:
         # user already has ID. This means it's a page reload. Log it.
         __log_action(user_id, "refresh_page", json.dumps({'condition':session.userCondition}))
-    return dict(user_id=user_id)
+    return dict(user_id=user_id, new_user=new_user)
 
 def add_idea():
     '''

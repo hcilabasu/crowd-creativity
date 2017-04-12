@@ -83,6 +83,11 @@ $(function(){
 			}
 		}
 	};
+
+	// If this is a new user, trigger the help menu
+	if(ENV.newUser){
+		startTutorial();
+	}
 });
 
 var startOrganizationRatioScale = function(){

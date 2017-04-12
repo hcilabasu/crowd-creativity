@@ -55,7 +55,8 @@
 			classPrefix: 'cl_',
 			idPrefix: 'id_',
 			autoUpdateOrganizationRatioSeconds: 30,
-			minNumberTags: 3
+			minNumberTags: 3,
+			newUser: '{{=str(new_user).lower()}}' === 'true'
 		},
 		EVENTS = {
 			popOverClose: [],
