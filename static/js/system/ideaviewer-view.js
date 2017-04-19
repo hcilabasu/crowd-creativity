@@ -15,18 +15,22 @@ class IdeaViewerView extends View {
     highlightIdeaHandler(e){
         console.dir('Custom IDEA Highlight idea');
         var id = e.params.id;
+        var source = e.params.source;
         // Highlight
         var ideaBlock = $(this.container + ' .id' + id);
         if(ideaBlock.length > 0) {
             ideaBlock.addClass('ideaHover');
             // If hovering for over a given threshold of time, scroll down to the idea
-            this.hoverTimeout = window.setTimeout(()=>{ // Wait
-                var container = $(this.container); 
-                var scrollTo = ideaBlock.offset().top - container.offset().top + container.scrollTop();
-                container.animate({
-                    scrollTop: scrollTo
-                }, ENV.scrollSpeed);
-            }, ENV.scrollDelay);
+            // But first, checking if source is not the idea viewer itself
+            if(source && !(this instanceof source)){
+                this.hoverTimeout = window.setTimeout(()=>{ // Wait
+                    var container = $(this.container); 
+                    var scrollTo = ideaBlock.offset().top - container.offset().top + container.scrollTop();
+                    container.animate({
+                        scrollTop: scrollTo
+                    }, ENV.scrollSpeed);
+                }, ENV.scrollDelay);
+            }
         }
     }
 
@@ -47,6 +51,7 @@ class IdeaViewerView extends View {
     */
     highlightTagsHandler(e){
         console.dir('Custom IDEA Highlight tags');
+        console.dir('ideaviewer is the source: ')
         var tags = e.params.tags;
         $(this.container + ' ' + tags.join('')).addClass('ideaHover');
     }
@@ -84,7 +89,7 @@ class IdeaViewerView extends View {
     Adds an idea to the view 
     */
     addIdeaToDisplay(idea){
-        var params = {closeable:true, draggable:true, resizable: true, focuseable: true};
+        var params = {closeable:true, draggable:true, resizable: true, focuseable: true, source: this.constructor};
         var ideaElement = new Idea(idea, params);
         var ideaBlock = ideaElement.html();
         $(this.container).append(ideaBlock);

@@ -20,6 +20,7 @@ This is a web2py project. Just download web2py, add this to the applications fol
 - It is possible that two ideas in the versioning panel may be placed in the same location. Implement collision detection and handling.
 
 ## Completed
+- Implement source of events; prevent scroll on view that originates hover
 - Implement categorization tasks
 - Validate input
 - Implement tag suggestions when adding / combining ideas. Possibly remove suggest tasks, simply using user input + automated keyword extraction

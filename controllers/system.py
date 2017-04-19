@@ -14,6 +14,8 @@ ADD_TO_POOL = True
 TEST_USER_ID = None #'testuser1' # Use None if no test ID is needed
 TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of tags)
+SOLUTION_SPACE_MAX_TAGS = 50
+
 
 def nuke(): # Nukes the database to blank.
     if (request.vars.key and request.vars.key == NUKE_KEY) and DEBUG:
@@ -343,7 +345,7 @@ def get_solution_space():
                 if n > max_n:
                     max_n = n
     connections = [v for (k,v) in connections.items()]
-    return json.dumps(dict(tags=tags, connections=connections, max_n=max_n))
+    return json.dumps(dict(tags=tags[:SOLUTION_SPACE_MAX_TAGS], connections=connections, max_n=max_n))
 
 def get_ideas_per_tag():
     '''

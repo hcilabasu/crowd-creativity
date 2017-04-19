@@ -23,19 +23,22 @@ class TasksView extends View {
     highlightIdeaHandler(e){
         console.dir('Custom TASK Highlight idea');
         var id = e.params.id;
+        var source = e.params.source;
         var ideaBlock = $(this.container + ' .id' + id);
         if(ideaBlock.length > 0){
             // Highlight it
             ideaBlock.addClass('ideaHover');
             // If hovering for over a given threshold of time, scroll down to the idea
-            this.hoverTimeout = window.setTimeout(()=>{ // Wait
-                var parentContainer = $(this.container).parent(); // This is the scroll container element
-                var taskBlock = ideaBlock.parent(); // This is the task block that will be scrolled to
-                var scrollTo = taskBlock.offset().top - parentContainer.offset().top + parentContainer.scrollTop();
-                parentContainer.animate({
-                    scrollTop: scrollTo
-                }, ENV.scrollSpeed);
-            }, ENV.scrollDelay);
+            if(source && !(this instanceof source)){
+                this.hoverTimeout = window.setTimeout(()=>{ // Wait
+                    var parentContainer = $(this.container).parent(); // This is the scroll container element
+                    var taskBlock = ideaBlock.parent(); // This is the task block that will be scrolled to
+                    var scrollTo = taskBlock.offset().top - parentContainer.offset().top + parentContainer.scrollTop();
+                    parentContainer.animate({
+                        scrollTop: scrollTo
+                    }, ENV.scrollSpeed);
+                }, ENV.scrollDelay);
+            }
         }
     }
 
@@ -64,7 +67,7 @@ class TasksView extends View {
                 suggestedTags: structure[i].suggested_tags,
                 chosenTags: structure[i].chosen_tags,
             };
-            var params = {closeable: false, focuseable: true}
+            var params = {closeable: false, focuseable: true, source: this.constructor}
             var taskItem;
             var ideaElement = new Idea(idea, params);
             if(type === 'rating'){
