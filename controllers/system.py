@@ -50,7 +50,14 @@ def index():
     else:
         # user already has ID. This means it's a page reload. Log it.
         __log_action(user_id, "refresh_page", json.dumps({'condition':session.userCondition}))
-    return dict(user_id=user_id, new_user=new_user, problem='This is the problem description')
+    # load problem info
+    # TODO retrieve it dynamically
+    problem_id = request.vars.problem
+    problem = db(db.problem.url_id == problem_id).select().first() 
+    if not problem_id or not problem:
+        response.status = 404
+        redirect(URL('static', '404.html'))
+    return dict(user_id=user_id, new_user=new_user, problem=problem)
 
 def add_idea():
     '''
@@ -111,7 +118,7 @@ def get_ideas():
     user_id = session.user_id
     added_by = request.vars.added_by
     print(added_by)
-    query = (db.idea.replacedBy == None) & ((db.idea.id == db.tag_idea.idea) & (db.tag.id == db.tag_idea.tag))
+    query = (db.idea.id == db.tag_idea.idea) & (db.tag.id == db.tag_idea.tag)
     if added_by:
         query = query & (db.idea.userId == user_id)
 
@@ -283,16 +290,7 @@ def submit_categorization_task():
             # All categorize tasks have been done. Finalize processing and recategorize ideas.
             # Run Global Structure Inference (Chilton et al., 2013)
             completed = True
-            # Step 1: remove insignificant categories that have fewer than q items
-            q = 2
-
-            # Step 2: remove duplicate categories (those that share more than p% of their items)
-            # Keep the one that has more items. Break ties randomly.
-            p = 0.75 # percent
-
-            # Step 3: create nested categories
-
-            
+            __run_gsi()            
         # update 
         for t in tasks:
             t.categorizationType = next_type
@@ -307,9 +305,9 @@ def submit_categorization_task():
         __log_action(user_id, "upgrade_categorization_Task", json.dumps({'condition':session.userCondition, 'idea_id': idea_id, 'new_type': next_type}))
             
 def test():
-    structure = dict()
-    tags = db
-    return json.dumps(structure)
+    # Build index of ideas based for each tag
+    
+    return json.dumps(__run_gsi())
 
 def get_solution_space():
     ''' Structure:
@@ -319,7 +317,7 @@ def get_solution_space():
     },
     ...
     ] '''
-    tags = db(db.tag.id > 0).select().as_list()
+    tags = db((db.tag.id > 0) & (db.tag.replacedBy == None)).select().as_list()
     # get ideas with respective tags
     ideas = db((db.idea.id == db.tag_idea.idea) & 
         (db.tag.id == db.tag_idea.tag)
@@ -411,6 +409,68 @@ def get_suggested_tags():
     return json.dumps(tags)
 
 ### PRIVATE FUNCTIONS ###
+def __run_gsi():
+    ''' 
+    Runs Chilton et al.'s (2013) adapted Global Structure Inference algorithm.
+    Dependencies:
+        * __calc_list_similarity(l1, l2)
+        * __merge_tags(tags_ideas, tag_i, tag_j)
+    '''
+    # Build index of ideas based for each tag
+    tags_ideas = defaultdict(list)
+    results = db((db.tag_idea.id > 0)).select(orderby=db.tag_idea.idea)
+    for t in results:
+        tags_ideas[t.tag].append(t.idea)
+    # Step 1: remove insignificant categories that have fewer than q items
+    q = 2
+    for (tag, ideas) in tags_ideas.items():
+        if len(ideas) < q:
+            # delete tag
+            db(db.tag.id == tag).delete()
+            tags_ideas.pop(tag)
+    # Step 2: remove duplicate categories (those that share more than p% of their items).
+    # Keep the one that has more items. Break ties randomly.
+    p = 0.75 # percent 
+    for (tag_i, ideas_i) in tags_ideas.items():
+        for (tag_j, ideas_j) in tags_ideas.items():
+            if tag_i != tag_j:
+                if __calc_list_similarity(ideas_i, ideas_j) >= p:
+                    # There is a large overlap. Merge smaller tag into larger
+                    chosen_tag = __merge_tags(tags_ideas, tag_i, tag_j)
+    # Step 3: Temporarly not implemented (or somewhat implemented in step 2). Paper seemed a bit ambiguous on steps 2 and 3. 
+    # Since we don't care too much hierarchies, I'm just using step 2 for now. We may want to revisit this later.
+    return json.dumps(tags_ideas)
+
+def __merge_tags(tags_ideas, tag_i, tag_j):
+    ''' Merges two tags, both in the dictionary (tags_ideas) as in the db '''
+    merged_ideas = list(set(tags_ideas[tag_i] + tags_ideas[tag_j])) # Build the list with all the ideas
+    chosen_tag, subsumed_tag = (tag_i, tag_j) if len(tags_ideas[tag_i]) > len(tags_ideas[tag_j]) else (tag_j, tag_i)
+    # Update dictionary
+    tags_ideas[chosen_tag] = merged_ideas
+    tags_ideas.pop(subsumed_tag)
+    # Update DB
+    # * Add replacedBy field
+    subsumed_tag_db = db(db.tag.id == subsumed_tag).select().first()
+    subsumed_tag_db.replacedBy = chosen_tag
+    subsumed_tag_db.update_record()
+    # * replace in join table
+    tag_updates = db(db.tag_idea.tag == subsumed_tag).select()
+    for t in tag_updates:
+        t.tag = chosen_tag
+        t.update_record()
+    return chosen_tag
+
+def __calc_list_similarity(l1, l2):
+    ''' Calculates how much overlap there is between a two lists of ints, regardless of order '''
+    total = defaultdict(int)
+    count = 0
+    for i in l1:
+        total[i] += 1
+    for i in l2:
+        if i in total.keys():
+            count += 1
+    return count / float(len(total.keys()))
+
 def __get_rating_tasks(user_id):
     # retrieve tasks already completed
     completed_ratings = [row.idea for row in db(db.idea_rating.completedBy == user_id).select(db.idea_rating.idea)]

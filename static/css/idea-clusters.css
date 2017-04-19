@@ -335,13 +335,6 @@ table th {
     background-size: 16px 16px;
 }
 
-.btn-help {
-    background: url(../images/help-navbar.png) no-repeat 12px center;
-    padding-left: 35px;
-    background-size: 16px 16px;
-}
-
-
 @font-face {
     font-family: 'Chunkfive';
     src: url('../fonts/ChunkFive/Chunkfive.otf'); 
@@ -448,7 +441,7 @@ div.w2p_flash.alert {
     height: 46px;
     line-height: 36px;
     display: inline-block;
-    margin: 0 10px;
+    margin: 0 5px;
     padding: 5px;
     font-size: 12px;
     transition: background 0.2s;
@@ -458,12 +451,12 @@ div.w2p_flash.alert {
 
 .navBlock img {
     height: 22px;
-    margin-right: 5px;
+    margin: 5px;
 }
 
 .navBlock .scale {
     transform: translate(0,5px);
-    margin-right: 5px;
+    margin-right: 2.5px;
 }
 
 .navBlock.actionable:hover {
@@ -479,7 +472,7 @@ div.w2p_flash.alert {
     opacity: 0;
     top: 95%;
     left: 0;
-    width: 200px;
+    width: 100%;
     background: #2E88CA;
     line-height: 1.1em;
     padding: 10px;

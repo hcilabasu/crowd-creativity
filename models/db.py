@@ -59,7 +59,7 @@ service = Service()
 plugins = PluginManager()
 
 ## create all tables needed by auth if not custom tables
-auth.define_tables(username=False, signature=False)
+# auth.define_tables(username=False, signature=False)
 
 ## configure email
 mail = auth.settings.mailer
@@ -89,15 +89,15 @@ auth.settings.reset_password_requires_verification = True
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 
+db.define_table('problem',
+    Field('title', 'string'),
+    Field('url_id', 'string', unique=True),
+    Field('description', 'string'))
+
 db.define_table('user_info',
     Field('userId', 'string'),
     Field('userCondition', 'integer'),
     Field('initialLogin', 'datetime'))
-
-db.define_table('survey',
-    Field('userId', 'string'),
-    Field('inspirationUseful', 'string'),
-    Field('openComments', 'string'))
 
 db.define_table('idea',
     Field('idea','string'), 
@@ -137,15 +137,6 @@ db.define_table('categorization',
     Field('categorized', 'list:string'), # Results from categorize tasks
     Field('completedBy', 'string'))
 
-db.define_table('idea_triplets',
-    Field('seed_idea', 'reference idea'),
-    Field('closer_idea', 'reference idea'),
-    Field('farther_idea', 'reference idea'),
-    Field('confidence', 'integer'),
-    Field('ratingType', 'string'),
-    Field('dateAdded', 'datetime'),
-    Field('userId', 'string'))
-
 db.define_table('action_log',
     Field('actionName', 'string'),
     Field('userId', 'string'),
@@ -156,11 +147,6 @@ db.define_table('sessionCondition',
     Field('conditionNumber', 'integer'),
     Field('conditionName', 'string'),
     Field('conditionCount', 'integer'))
-
-db.define_table('idea_similarity',
-    Field('idea_a', 'reference idea'),
-    Field('idea_b', 'reference idea'), # idea_b should ALWAYS hold the highest ID of the two ideas
-    Field('similarity', 'double'))
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

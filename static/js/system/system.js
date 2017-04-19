@@ -27,7 +27,7 @@ $(function(){
 
 	// Load panels on page load
 	VIEWS['ideasView'] = new IdeaViewerView('#ideasContainer').load();
-	VIEWS['versioningView'] = new VersioningView('#versioningContainer').load();
+	// VIEWS['versioningView'] = new VersioningView('#versioningContainer').load();
 	VIEWS['tasksView'] = new TasksView('#suggestedTasksList').load(); 
 	VIEWS['solutionSpaceView'] = new SolutionSpaceView('#solutionSpaceContainer').load();
 	
@@ -56,6 +56,9 @@ $(function(){
 			},
 			loadAllIdeas:()=>{
 				VIEWS.ideasView.loadIdeasAddedBy();
+			},
+			addNewIdea:()=>{
+				openIdeaPopup();
 			}
 		},
 		versioningView: {
