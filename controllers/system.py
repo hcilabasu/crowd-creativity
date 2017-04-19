@@ -308,17 +308,25 @@ def submit_categorization_task():
             
 def test():
     # Build index of ideas based for each tag
-    
-    return json.dumps(__run_gsi())
+    tags = db(db.tag.id > 0).select()
+    for t in tags:
+        print(t.tag)
+        if ' ' in t.tag: # a change will be necessary
+            t.tag = t.tag.replace(' ', '')
+            # check if there are duplicates
+            conflict = db(db.tag.tag == t.tag).select().first()
+            if conflict:
+                # there is a conflict. Find all connections that involve the current id
+                merge = db(db.tag_idea.tag == t.id).select()
+                for m in merge:
+                    m.tag = conflict.id
+                    m.update_record()
+                db(db.tag.id == t.id).delete()
+            else:
+                # there is no conflict
+                t.update_record()
 
 def get_solution_space():
-    ''' Structure:
-    connections = [{
-        tags: [...]
-        n: number
-    },
-    ...
-    ] '''
     tags = db((db.tag.id > 0) & (db.tag.replacedBy == None)).select().as_list()
     # get ideas with respective tags
     ideas = db((db.idea.id == db.tag_idea.idea) & 
@@ -344,7 +352,6 @@ def get_solution_space():
                 connections[key]['n'] = n
                 if n > max_n:
                     max_n = n
-    connections = [v for (k,v) in connections.items()]
     return json.dumps(dict(tags=tags[:SOLUTION_SPACE_MAX_TAGS], connections=connections, max_n=max_n))
 
 def get_ideas_per_tag():

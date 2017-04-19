@@ -35,6 +35,7 @@ class SolutionSpaceView extends View {
     Build solution space panel
     */
     buildSolutionSpacePanel(structure){
+		var maxN = structure.max_n;
         var container = $(this.container);
         container.html(Mustache.render(TEMPLATES.solutionSpaceStructureTemplate));
         var innerContainer = $('#spaceContainer', container);
@@ -62,19 +63,18 @@ class SolutionSpaceView extends View {
 				var cellClass = 'spCell cl_' + (tags[0] === tags[1] ? tags [0] : tags[0] + ' cl_' + tags[1]); // If this is the diagonal, add only one class.
 				var newCell = $('<div><span></span></div>').addClass(cellClass);
 				newRow.append(newCell);
+				// paint cell
+				var key = (d.tag === e.tag ? d.tag : tags.join('|'));
+				var connection = structure.connections[key];
+				if(connection){
+					var tags = connection.tags.sort();
+					var selector = 'spCell';
+					tags.forEach(function(e,j){
+						selector += ' cl_' + e;
+					});
+					$('[class="' + selector + '"] span').css('background', 'rgba(102,102,102,' + (0.1 + (connection.n / maxN * 0.9)) + ')');
+				}
 			});
-		});
-
-		// Iterate over connections and paint them. TODO possibly optimize by using the previous double loop to already print the cell color
-		// ALternatively, kill inner loop above and only print cells that have content
-		var maxN = structure.max_n;
-		structure.connections.forEach(function(d,i){
-			var selector = 'spCell';
-			var tags = d.tags.sort();
-			tags.forEach(function(e,j){
-				selector += ' cl_' + e;
-			});
-			$('[class="' + selector + '"] span').css('background', 'rgba(102,102,102,' + (0.1 + (d.n / maxN * 0.9)) + ')');
 		});
 
 		// Add interactivity

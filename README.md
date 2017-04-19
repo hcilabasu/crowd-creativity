@@ -6,6 +6,7 @@ This is a web2py project. Just download web2py, add this to the applications fol
 - Deal with scalability issues (in all three views. Possibly do dynamic loading, e.g. infinite scrolling)
 - Fix display of a really long idea by possibly cloning element, expanding it significantly, and adding a scrollbar
 - Implement click action on idea in the task panel
+- Implement minimap for solution space
 
 ## Known issues
 - The bottom of the layout is cutoff by the amount of the navbar
