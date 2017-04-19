@@ -90,8 +90,8 @@ auth.settings.reset_password_requires_verification = True
 #########################################################################
 
 db.define_table('problem',
-    Field('title', 'string'),
-    Field('url_id', 'string', unique=True),
+    Field('title', 'string', length=50),
+    Field('url_id', 'string', unique=True, length=50),
     Field('description', 'string'))
 
 db.define_table('user_info',
