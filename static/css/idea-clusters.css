@@ -573,6 +573,8 @@ div.w2p_flash.alert {
     background: -o-linear-gradient(rgba(255, 222, 120, 0.85), #FFBD5E); /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(rgba(255, 222, 120, 0.85), #FFBD5E); /* For Firefox 3.6 to 15 */
     background: linear-gradient(rgba(255, 222, 120, 0.85), #FFBD5E); /* Standard syntax */
+    opacity: 1;
+    transition: opacity 0.2s;
 }
 
 .ideaBlock.ideaDragHover {
@@ -589,7 +591,8 @@ div.w2p_flash.alert {
 }
 
 .ideaHover span.fade {
-    display: none;
+    opacity: 0;
+    transition: opacity 0.2s;
 }
 
 #overlay {
