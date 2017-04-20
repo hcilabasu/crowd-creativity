@@ -47,7 +47,8 @@ class SolutionSpaceView extends View {
             rightColumn.offset({left:container.prop("clientWidth") - rightColumn.width()});
         });
 
-		structure.tags.forEach(function(d,i){
+		for(var i = 0; i < structure.tags.length; i++){
+			var d = structure.tags[i];
 			var cell = $('<div></div>').addClass('spCell');
 			var stats = $('<div></div>').addClass('spCell');
 			cell.append($('<span></span>').text(d.tag));
@@ -56,13 +57,13 @@ class SolutionSpaceView extends View {
 			$('#solutionSpaceRightColumn').append(stats);
 
 			// Create cells 
-			var newRow = $('<div></div>').addClass('spRow');
-			innerContainer.append(newRow);
-			structure.tags.forEach(function(e,j){
+			// var newRow = $('<div></div>').addClass('spRow');
+			// innerContainer.append(newRow);
+			for(var j = i; j < structure.tags.length; j++){
+				var e = structure.tags[j];
 				var tags = [d.tag, e.tag].sort(); // Make it alphabetical
 				var cellClass = 'spCell cl_' + (tags[0] === tags[1] ? tags [0] : tags[0] + ' cl_' + tags[1]); // If this is the diagonal, add only one class.
 				var newCell = $('<div><span></span></div>').addClass(cellClass);
-				newRow.append(newCell);
 				// paint cell
 				var key = (d.tag === e.tag ? d.tag : tags.join('|'));
 				var connection = structure.connections[key];
@@ -72,10 +73,18 @@ class SolutionSpaceView extends View {
 					tags.forEach(function(e,j){
 						selector += ' cl_' + e;
 					});
-					$('[class="' + selector + '"] span').css('background', 'rgba(102,102,102,' + (0.1 + (connection.n / maxN * 0.9)) + ')');
+					$('span', newCell).css('background', 'rgba(102,102,102,' + (0.1 + (connection.n / maxN * 0.9)) + ')');
+					// Add cell, clone, and add the new one
+					var newCellClone = newCell.clone();
+					newCell.css('left', i * 40 + 'px');
+					newCell.css('top', j * 40 + 'px');
+					newCellClone.css('left', j * 40 + 'px');
+					newCellClone.css('top', i * 40 + 'px');
+					// add to container
+					$('#spaceContainer').append(newCell).append(newCellClone);
 				}
-			});
-		});
+			}
+		}
 
 		// Add interactivity
 		$('.spCell', innerContainer).hover(function(e){
