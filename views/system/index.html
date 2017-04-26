@@ -45,7 +45,8 @@
 			getIdeasPerCategory: "{{=URL('system','get_ideas_per_tag')}}",
 			getOrganizationRatio: "{{=URL('system','get_organization_ratio')}}",
 			getTags: "{{=URL('system','get_tags')}}",
-			getSuggestedTags: "{{=URL('system','get_suggested_tags')}}"
+			getSuggestedTags: "{{=URL('system','get_suggested_tags')}}",
+			tagExists: "{{=URL('system','tag_exists')}}"
 	    },		
 	    ENV = { // Global constants
 			userId: "{{=user_id}}",
@@ -84,11 +85,9 @@
 				<li><a href="#" title="Add a new idea" onclick="TOOLBAR.ideaViewer.addNewIdea()">
 					<img src="{{=URL('static','images/plus-padding.png')}}">
 				</a></li>
-			</ul>
-			<ul>
-				<li><a href="#" title="Open your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
+				<!--<li><a href="#" title="Reload your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
 					<img src="{{=URL('static','images/user.png')}}">
-				</a></li>
+				</a></li>-->
 				<!--<li><a href="#" title="Open all ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
 					<img src="{{=URL('static','images/group.png')}}">
 				</a></li>-->
@@ -359,7 +358,12 @@
 
 			<textarea name='idea' required></textarea>
 
-			<p><strong>Suggest at least 3 tags for your idea.</strong> Try to be as precise and consistent as you can, but don't worry too much about it, as the system and other users may improve it over time:</p>
+			<p>
+				<strong>Suggest at least 3 tags for your idea.</strong> 
+				Try to use as many existing tags as you can (use the autosuggest list!). 
+				Only suggest new tags (marked with <img src="{{=URL('static', 'images/new-tag.png')}}" alt="New tag icon">) if completely necessary.
+				New tags decrease the organization level.
+			</p>
 			
 			<div class="suggestedTags">
 				Suggested tags (click to add): 

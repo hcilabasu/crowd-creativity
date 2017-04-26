@@ -417,6 +417,20 @@ def get_suggested_tags():
     response.headers['Content-Type'] = 'text/json'
     return json.dumps(tags)
 
+def tag_exists():
+    tag = request.vars.tag
+    return str(len(db(db.tag.tag == tag).select()) > 0).lower()
+
+
+
+
+
+
+
+
+
+
+
 ### PRIVATE FUNCTIONS ###
 def __run_gsi():
     ''' 

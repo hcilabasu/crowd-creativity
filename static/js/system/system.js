@@ -16,7 +16,18 @@ $(function(){
 		delimiter: [',', ' ', ';'], // Doesn't seem like I can set the UI delimiters separate from the backend. If you change this, change cleanup on the submit function
 		height: 'auto',
 		width: '100%',
-		autocomplete_url: URL.getTags
+		autocomplete_url: URL.getTags,
+		onAddTag: function(tag){
+			var _this = $(this);
+			tagExists(tag, function(tagExists){
+				if(!tagExists){
+					// Tag does not exist. Update style
+					var container = _this.closest('.tagsinput');
+					var tagElement = _this.siblings('.tagsinput').children('.tag').last();
+					tagElement.addClass('new');
+				}
+			});
+		}
 	};
 	ENV.tagsDelimiter = ',, ,;';
 	$('#addIdea input[name=tags]').tagsInput(ENV.tagConfig);
@@ -408,5 +419,14 @@ var startTutorial = function(){
 		]);
 	// Start tutorial
 	ENV.tutorial.start();
+};
 
+var tagExists = function(tag, callback){
+	$.ajax({
+		url: URL.tagExists,
+		data: {tag:tag},
+		success: function(exists){
+			callback(exists == 'true');
+		}
+	})
 };

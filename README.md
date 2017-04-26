@@ -4,9 +4,10 @@ This is a web2py project. Just download web2py, add this to the applications fol
 
 ## Todo for Study 1
 - Fix display of a really long idea by possibly cloning element, expanding it significantly, and adding a scrollbar
-- Implement click action on idea in the task panel
 - Implement minimap for solution space
 - Highlight headers on solution space when a cell is highlighted
+- Implement tag suggestions based on existing tag + similarity to previous ideas
+- Light tracking of UI actions (what's clicked, when, where user is focusing, etc.)
 
 ## Known issues
 - The bottom of the layout is cutoff by the amount of the navbar
@@ -20,6 +21,7 @@ This is a web2py project. Just download web2py, add this to the applications fol
 - Turn the idea viewer into a generic view. Multiple instances can be opened, allowing for advanced search queries. The solution space would open one such window when a category is clicked.
 - Implement iteration of idea
 - It is possible that two ideas in the versioning panel may be placed in the same location. Implement collision detection and handling.
+- Implement click action on idea in the task panel
 
 ## Completed
 - Add loading symbols when loading views

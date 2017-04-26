@@ -29,6 +29,13 @@ span.tag {
     font-size: 13px
 }
 
+span.tag.new {
+    padding-left: 25px;
+    background-image: url(../images/new-tag.png);
+    background-repeat: no-repeat;
+    background-position: left center;
+}
+
 span.tag a {
     font-weight: 700;
     color: #489de8;
