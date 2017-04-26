@@ -28,7 +28,7 @@ $(function(){
 	// Load panels on page load
 	VIEWS['ideasView'] = new IdeaViewerView('#ideasContainer').load();
 	// VIEWS['versioningView'] = new VersioningView('#versioningContainer').load();
-	VIEWS['tasksView'] = new TasksView('#suggestedTasksList').load(); 
+	VIEWS['tasksView'] = new TasksView('#suggestedTasksContainer').load(); 
 	VIEWS['solutionSpaceView'] = new SolutionSpaceView('#solutionSpaceContainer').load();
 	
 	// Start auto-refresh timers. Uncomment if auto timer should be the default behavior.

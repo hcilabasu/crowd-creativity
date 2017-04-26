@@ -5,7 +5,8 @@ class TasksView extends View {
     load(){
         console.dir('Initializing Tasks view');
         // Clear container
-        $(this.container).empty();
+        $('ul', this.container).empty();
+        this.getParentContainer().addClass('loading');
         // Issue request
         $.ajax({
             type: "GET",
@@ -58,7 +59,7 @@ class TasksView extends View {
     Having the tasks data, this function builds the actual view
     */
     buildView(structure){
-        var tasksList = $(this.container);
+        var tasksList = $('ul', this.container);
         for(var i = 0; i < structure.length; i++){
             var type = structure[i].type;
             var idea = {
@@ -117,6 +118,7 @@ class TasksView extends View {
             // Setup input tag. For some reason, it doesn't work before element is visible. TODO figure better workaround
             $('[name=tagInput]', tasksList).tagsInput(ENV.tagConfig);
         }
+        this.getParentContainer().removeClass('loading');
     }
 
     /*

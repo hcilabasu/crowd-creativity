@@ -89,10 +89,11 @@
 				<li><a href="#" title="Open your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
 					<img src="{{=URL('static','images/user.png')}}">
 				</a></li>
-				<li><a href="#" title="Open all ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
+				<!--<li><a href="#" title="Open all ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
 					<img src="{{=URL('static','images/group.png')}}">
-				</a></li>
+				</a></li>-->
 			</ul>
+			<div class="loadingBadge"></div>
 		</div>
 		<div id="ideasContainer" class="viewContainer"></div>
 	</script>
@@ -107,6 +108,7 @@
 					 <img src="{{=URL('static','images/clock.png')}}"><span id='versioningTimerDisplay'>OFF</span>
 				</a></li>
 			</ul>
+			<div class="loadingBadge"></div>
 		</div>
 		<div id="versioningContainer" class="viewContainer"><svg></svg></div>
 	</script>
@@ -121,6 +123,7 @@
 					<img src="{{=URL('static','images/clock.png')}}"><span id='tasksTimerDisplay'>OFF</span>
 				</a></li>
 			</ul>
+			<div class="loadingBadge"></div>
 		</div>
 		<div id="suggestedTasksContainer" class="viewContainer">
 			<ul id="suggestedTasksList">
@@ -138,6 +141,7 @@
 					<img src="{{=URL('static','images/clock.png')}}"><span id='solutionSpaceTimerDisplay'>OFF</span>
 				</a></li>
 			</ul>
+			<div class="loadingBadge"></div>
 		</div>
 		<div id="solutionSpaceContainer" class="viewContainer">
 		</div>

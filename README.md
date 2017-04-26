@@ -3,24 +3,26 @@
 This is a web2py project. Just download web2py, add this to the applications folder, and you should be good to go!
 
 ## Todo for Study 1
-- Deal with scalability issues (in all three views. Possibly do dynamic loading, e.g. infinite scrolling)
 - Fix display of a really long idea by possibly cloning element, expanding it significantly, and adding a scrollbar
 - Implement click action on idea in the task panel
 - Implement minimap for solution space
+- Highlight headers on solution space when a cell is highlighted
 
 ## Known issues
 - The bottom of the layout is cutoff by the amount of the navbar
 
 ## Future
+- Deal with scalability issues (in all three views. Possibly do dynamic loading, e.g. infinite scrolling)
 - Implement persistance of layout
 - Consolidate prefixes (e.g. cl_, id) into constants (possibly at the ENV variable)
 - Move each mustache template to its own html file
-- Possibly hide the ideas in the task view until hover action is triggered
+- Possibly hide the idea text in the task view until hover action is triggered
 - Turn the idea viewer into a generic view. Multiple instances can be opened, allowing for advanced search queries. The solution space would open one such window when a category is clicked.
 - Implement iteration of idea
 - It is possible that two ideas in the versioning panel may be placed in the same location. Implement collision detection and handling.
 
 ## Completed
+- Add loading symbols when loading views
 - Implement source of events; prevent scroll on view that originates hover
 - Implement categorization tasks
 - Validate input

@@ -5,7 +5,9 @@ class SolutionSpaceView extends View {
     */
     load(){
         console.dir('Initializing View');
-        $(this.container).empty();
+		var container = $(this.container);
+        container.empty();
+		this.getParentContainer().addClass('loading');
         $.ajax({
             type: "GET",
             url: URL.getSolutionSpace,
@@ -111,6 +113,9 @@ class SolutionSpaceView extends View {
 			});
 			openOverlay('tagsView', {tags: classes});
 		});
+
+		// Remove loading status
+		this.getParentContainer().removeClass('loading');
     }
 
 };

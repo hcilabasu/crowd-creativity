@@ -45,6 +45,13 @@ class View {
         console.dir('Blur tags');
     }
 
+    /*
+    Gets the parent container for the view
+    */
+    getParentContainer(){
+        return $(this.container).parent();
+    }
+
 
 };
 

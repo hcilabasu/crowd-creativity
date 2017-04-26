@@ -68,6 +68,7 @@ class IdeaViewerView extends View {
         // Clear panel
         $(this.container).empty();
         // Load ideas
+        this.getParentContainer().addClass('loading');
         var params = {};
         if (userId) {
             params.added_by = userId;
@@ -81,6 +82,7 @@ class IdeaViewerView extends View {
                 for (var i = 0; i < ideas.length; i++) {
                     this.addIdeaToDisplay(ideas[i]);
                 }
+                this.getParentContainer().removeClass('loading');
             }
         });
     }

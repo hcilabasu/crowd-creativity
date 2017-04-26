@@ -14,7 +14,7 @@ ADD_TO_POOL = True
 TEST_USER_ID = None #'testuser1' # Use None if no test ID is needed
 TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of tags)
-SOLUTION_SPACE_MAX_TAGS = 50
+SOLUTION_SPACE_MAX_TAGS = 200
 
 
 def nuke(): # Nukes the database to blank.

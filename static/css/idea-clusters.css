@@ -531,6 +531,11 @@ div.w2p_flash.alert {
     padding: 20px;
 }
 
+#ideasContainer:empty:after {
+    content: 'There are not ideas to be displayed yet.';
+    color: #666;
+}
+
 .ideaBlock {
     position: relative;
     display: inline-block;
@@ -856,4 +861,18 @@ div.w2p_flash.alert {
 
 #tutorialPopUp img.inline {
     height: 20px;
+}
+
+.loading .loadingBadge {
+    display: block;
+}
+
+.loadingBadge {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: url(../images/loading.gif) no-repeat center center;
+    width: 36px;
 }
