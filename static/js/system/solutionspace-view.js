@@ -44,6 +44,8 @@ class SolutionSpaceView extends View {
         var innerContainer = $('#spaceContainer', container);
         // Make sure header columns and minimap stay in place
         container.on('scroll resize',(event)=>{
+			console.dir('scroll / resize handler for solution space...');
+			
             $('#solutionSpaceHeader').offset({top:container.offset().top});
             $('#solutionSpaceLeftColumn').offset({left:container.offset().left});
             var rightColumn = $('#solutionSpaceRightColumn');
@@ -179,9 +181,6 @@ class SolutionSpaceView extends View {
 			pan.css('width', parseInt(panWidth) + 'px');
 			pan.css('height', parseInt(panHeight) + 'px');
 			// Set position
-			console.dir(scrollPosition.top);
-			console.dir(visibleDim.height);
-			console.dir(totalDim.height);
 			pan.css('top', Math.ceil(panHeight * (scrollPosition.top / totalDim.height)) + 'px');
 			pan.css('left', Math.ceil(panWidth * (scrollPosition.left / totalDim.width)) + 'px');
 		}

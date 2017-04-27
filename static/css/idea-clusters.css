@@ -518,8 +518,10 @@ div.w2p_flash.alert {
 }
 
 .viewContainer {
+    display: block;
     position: absolute;
-    overflow: auto;
+    height: calc(100% - 41px);
+    width: 100%;
     top: 41px;
     bottom: 0px;
     right: 0px;

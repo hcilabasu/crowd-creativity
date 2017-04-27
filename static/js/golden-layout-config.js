@@ -66,4 +66,7 @@ LAYOUT.registerComponent( 'suggestedTasks', function( container, componentState 
 
 LAYOUT.registerComponent( 'solutionSpace', function( container, componentState ){
     container.getElement().html(Mustache.render(TEMPLATES.solutionSpaceViewerTemplate));
+    container.on('resize', function(){
+        $('#solutionSpaceContainer').trigger('resize');
+    });
 });

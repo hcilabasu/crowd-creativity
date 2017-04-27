@@ -10,8 +10,7 @@ This is a web2py project. Just download web2py, add this to the applications fol
 - Minimap: implement click to go to; sync with scrollbar scroll; deal with cropping issue.
 
 ## Known issues
-- The bottom of the layout is cutoff by the amount of the navbar
-- Resizing layout elements (e.g. by dragging the dividers) does not trigger a resize event
+...
 
 ## Future
 - Deal with scalability issues (in all three views. Possibly do dynamic loading, e.g. infinite scrolling)
@@ -25,6 +24,8 @@ This is a web2py project. Just download web2py, add this to the applications fol
 - Implement click action on idea in the task panel
 
 ## Completed
+- Resizing layout elements (e.g. by dragging the dividers) does not trigger a resize event
+- The bottom of the layout is cutoff by the amount of the navbar
 - Implement minimap for solution space
 - Add loading symbols when loading views
 - Implement source of events; prevent scroll on view that originates hover

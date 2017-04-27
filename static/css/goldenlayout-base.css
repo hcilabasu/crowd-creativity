@@ -41,8 +41,8 @@
 
 .lm_splitter.lm_vertical .lm_drag_handle{
 	position: absolute;
-	height: 25px;
-	top: -10px;
+	height: 5px;
+	top: 0px;
 	cursor: n-resize;
 	width: 100%;
 }
@@ -54,8 +54,7 @@
 
 .lm_splitter.lm_horizontal .lm_drag_handle{
 	position: absolute;
-	width: 25px;
-	left: -10px;
+	width: 5px;
 	cursor: e-resize;
 	height: 100%;
 }
