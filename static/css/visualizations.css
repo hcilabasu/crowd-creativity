@@ -74,7 +74,6 @@
 	right: 0;
 	top: 40px;
 	z-index: 3;
-	border-left: solid 2px white;
 	min-height: 100%;
 }
 
@@ -187,10 +186,10 @@
 }
 
 #miniMap > #pan {
+	box-sizing: border-box;
 	position: absolute;
 	width: 20px;
 	height: 20px;
-	border: solid 1px #3AAAFC;
 	background: rgba(58,170,252,0.3);
 	cursor: all-scroll;
 }

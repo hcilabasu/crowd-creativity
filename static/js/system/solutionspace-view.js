@@ -44,8 +44,6 @@ class SolutionSpaceView extends View {
         var innerContainer = $('#spaceContainer', container);
         // Make sure header columns and minimap stay in place
         container.on('scroll resize',(event)=>{
-			console.dir('scroll / resize handler for solution space...');
-			
             $('#solutionSpaceHeader').offset({top:container.offset().top});
             $('#solutionSpaceLeftColumn').offset({left:container.offset().left});
             var rightColumn = $('#solutionSpaceRightColumn');
@@ -140,12 +138,13 @@ class SolutionSpaceView extends View {
 				var pan = $(this);
 				var offset = pan.position();
 				var offsetRatio = {
-					left: offset.left / 100, // TODO dynamically load this size
-					top: offset.top / 100
+					left: offset.left / miniMap.innerWidth(),
+					top: offset.top / miniMap.innerHeight()
 				};
 				var scrollContainer = $('#solutionSpaceContainer');
-				var scrollContainerWidth = $('#solutionSpaceHeader').width();
-				scrollContainer.scrollTop(offsetRatio.top * scrollContainerWidth);
+				var scrollContainerWidth = $('#solutionSpaceHeader').innerWidth();
+				var scrollContainerHeight = $('#solutionSpaceLeftColumn').innerHeight() + $('#solutionSpaceHeader').innerHeight();
+				scrollContainer.scrollTop(offsetRatio.top * scrollContainerHeight);
 				scrollContainer.scrollLeft(offsetRatio.left * scrollContainerWidth);
 			},
 			stop: function(e){
@@ -164,8 +163,8 @@ class SolutionSpaceView extends View {
 		if(!pan.hasClass('ondrag')){ // Make sure object is not being dragged
 			// Set pan size based on total width and visible width
 			var scrollPosition = {
-				top: $('#solutionSpaceContainer').scrollTop(),
-				left: $('#solutionSpaceContainer').scrollLeft()
+				left: $('#solutionSpaceContainer').scrollLeft(),
+				top: $('#solutionSpaceContainer').scrollTop()
 			};
 			var visibleDim = {
 				width: $('#solutionSpaceContainer').innerWidth(),
@@ -173,16 +172,16 @@ class SolutionSpaceView extends View {
 			};
 			var totalDim = {
 				width: $('#solutionSpaceHeader').innerWidth(),
-				height: $('#solutionSpaceLeftColumn').innerHeight()
+				height: $('#solutionSpaceLeftColumn').innerHeight() + $('#solutionSpaceHeader').innerHeight()
 			};
 			// Set size
-			var panWidth = (visibleDim.width / parseFloat(totalDim.width)) * miniMap.width();
-			var panHeight = (visibleDim.height / parseFloat(totalDim.height)) * miniMap.height();
-			pan.css('width', parseInt(panWidth) + 'px');
-			pan.css('height', parseInt(panHeight) + 'px');
+			var panWidth = Math.ceil((visibleDim.width / parseFloat(totalDim.width)) * miniMap.innerWidth());
+			var panHeight = Math.ceil((visibleDim.height / parseFloat(totalDim.height)) * miniMap.innerHeight());
+			pan.css('width', (panWidth - 2) + 'px'); // - 2 to accoutn for some excess
+			pan.css('height', (panHeight - 2) + 'px');
 			// Set position
-			pan.css('top', Math.ceil(panHeight * (scrollPosition.top / totalDim.height)) + 'px');
-			pan.css('left', Math.ceil(panWidth * (scrollPosition.left / totalDim.width)) + 'px');
+			pan.css('left', Math.ceil((scrollPosition.left * miniMap.innerWidth()) /  totalDim.width) + 'px');
+			pan.css('top', Math.ceil((scrollPosition.top * miniMap.innerHeight()) /  totalDim.height)  + 'px'); 
 		}
 	}
 
