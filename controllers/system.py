@@ -8,6 +8,11 @@ import rake
 import os
 import random
 
+import base64
+import cStringIO
+from PIL import Image
+
+
 DEBUG = True # Add debug mode
 NUKE_KEY = 'blastoise'
 ADD_TO_POOL = True
@@ -15,6 +20,7 @@ TEST_USER_ID = None #'testuser1' # Use None if no test ID is needed
 TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 SIZE_OVERLAP = 2 # size of permutation to be added for the solution space overview (e.g. when = 2, the structure keep track of the count of pairs of tags)
 SOLUTION_SPACE_MAX_TAGS = 200
+BIRDSEYE_SIZE = 100 # size of the solution space birdseye view
 
 
 def nuke(): # Nukes the database to blank.
@@ -352,7 +358,9 @@ def get_solution_space():
                 connections[key]['n'] = n
                 if n > max_n:
                     max_n = n
-    return json.dumps(dict(tags=tags[:SOLUTION_SPACE_MAX_TAGS], connections=connections, max_n=max_n))
+    tags = tags[:SOLUTION_SPACE_MAX_TAGS]
+    base64_image = __generate_birdseye_solutionspace(tags, connections, max_n=max_n)
+    return json.dumps(dict(tags=tags, connections=connections, max_n=max_n, overview=base64_image))
 
 def get_ideas_per_tag():
     '''
@@ -432,6 +440,41 @@ def tag_exists():
 
 
 ### PRIVATE FUNCTIONS ###
+def __generate_birdseye_solutionspace(tags, connections, max_n):
+    # Create image
+    size = len(tags)
+    img = Image.new('RGBA', (size,size), "white") # create a new black image
+    pixels = img.load() # create the pixel map
+    conn_keys = connections.keys()
+    # Create shading. Basically mimicking the JS algorithm
+    for i, ti in enumerate(tags):
+        for j, tj in enumerate(tags):
+            # Create key
+            key = ti['tag']
+            if ti != tj:
+                key_list = [ti['tag'], tj['tag']]
+                key_list.sort()
+                key = '|'.join(key_list)
+            # Get connection object
+            if key in conn_keys:
+                connection = connections[key]
+                # $('span', newCell).css('background', 'rgba(102,102,102,' + (0.1 + (connection.n / maxN * 0.9)) + ')');
+                level = 255 - int((0.1 + (connection['n'] / float(max_n)) * 0.9) * 255)
+                color = (level,level,level)
+                pixels[i,j] = color
+                pixels[j,i] = color
+    
+    # Convert to correct size
+    img = img.resize((BIRDSEYE_SIZE,BIRDSEYE_SIZE), Image.NEAREST)
+    # Encode into base64
+    buffer = cStringIO.StringIO()
+    img.save(buffer, format="JPEG")
+    img_str = base64.b64encode(buffer.getvalue())
+    return img_str
+
+def __write_pixel_block(i,j,pixel_size):
+    pass
+
 def __run_gsi():
     ''' 
     Runs Chilton et al.'s (2013) adapted Global Structure Inference algorithm.

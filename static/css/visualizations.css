@@ -172,3 +172,26 @@
 .cellHover {
 	background: #DCF0FF;
 }
+
+#miniMap {
+	display: none;
+	width: 100px;
+	height: 100px;
+	background: white;
+	box-shadow: 0 0 5px rgba(0,0,0,0.3);
+	position: absolute;
+	bottom: 10px;
+	right: 65px;
+	z-index: 100;
+	border: solid 1px #CCC;
+	padding: 0 1px 1px 0;
+}
+
+#miniMap > #pan {
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	border: solid 1px #3AAAFC;
+	background: rgba(58,170,252,0.3);
+	cursor: all-scroll;
+}
