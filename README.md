@@ -4,13 +4,14 @@ This is a web2py project. Just download web2py, add this to the applications fol
 
 ## Todo for Study 1
 - Fix display of a really long idea by possibly cloning element, expanding it significantly, and adding a scrollbar
-- Implement minimap for solution space
 - Highlight headers on solution space when a cell is highlighted
 - Implement tag suggestions based on existing tag + similarity to previous ideas
 - Light tracking of UI actions (what's clicked, when, where user is focusing, etc.)
+- Minimap: implement click to go to; sync with scrollbar scroll; deal with cropping issue.
 
 ## Known issues
 - The bottom of the layout is cutoff by the amount of the navbar
+- Resizing layout elements (e.g. by dragging the dividers) does not trigger a resize event
 
 ## Future
 - Deal with scalability issues (in all three views. Possibly do dynamic loading, e.g. infinite scrolling)
@@ -24,6 +25,7 @@ This is a web2py project. Just download web2py, add this to the applications fol
 - Implement click action on idea in the task panel
 
 ## Completed
+- Implement minimap for solution space
 - Add loading symbols when loading views
 - Implement source of events; prevent scroll on view that originates hover
 - Implement categorization tasks

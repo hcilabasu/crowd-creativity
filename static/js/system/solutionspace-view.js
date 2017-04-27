@@ -7,6 +7,7 @@ class SolutionSpaceView extends View {
         console.dir('Initializing View');
 		var container = $(this.container);
         container.empty();
+		$('#miniMap').hide();
 		this.getParentContainer().addClass('loading');
         $.ajax({
             type: "GET",
@@ -42,13 +43,13 @@ class SolutionSpaceView extends View {
         container.html(Mustache.render(TEMPLATES.solutionSpaceStructureTemplate));
         var innerContainer = $('#spaceContainer', container);
         // Make sure header columns and minimap stay in place
-        container.on('scroll resize',function(event){
+        container.on('scroll resize',(event)=>{
             $('#solutionSpaceHeader').offset({top:container.offset().top});
             $('#solutionSpaceLeftColumn').offset({left:container.offset().left});
             var rightColumn = $('#solutionSpaceRightColumn');
             rightColumn.offset({left:container.prop("clientWidth") - rightColumn.width()});
 			// Minimap
-			// $('#miniMap').offset({top: 0, left: 0});
+			this.updatePan();
         });
 
 		for(var i = 0; i < structure.tags.length; i++){
@@ -119,11 +120,21 @@ class SolutionSpaceView extends View {
 		});
 
 		// Setup minimap
+		this.setupMiniMap(structure.overview);
+
+		// Remove loading status
+		this.getParentContainer().removeClass('loading');
+    }
+
+	setupMiniMap(image){
 		var miniMap = $('#miniMap');
 		var pan = $('#miniMap > #pan');
 		pan.draggable({
 			containment: 'parent',
-			drag: function() {
+			start: function(e){
+				$(this).addClass('ondrag');
+			},
+			drag: function(e) {
 				var pan = $(this);
 				var offset = pan.position();
 				var offsetRatio = {
@@ -134,28 +145,46 @@ class SolutionSpaceView extends View {
 				var scrollContainerWidth = $('#solutionSpaceHeader').width();
 				scrollContainer.scrollTop(offsetRatio.top * scrollContainerWidth);
 				scrollContainer.scrollLeft(offsetRatio.left * scrollContainerWidth);
-				console.dir(offsetRatio);
+			},
+			stop: function(e){
+				$(this).removeClass('ondrag');
 			}
 		});
-		miniMap.css('background', 'url(data:image/png;base64,' + structure.overview + ')');
-		// Set pan size based on total width and visible width
-		var visibleDim = {
-			width: $('#solutionSpaceContainer').innerWidth(),
-			height: $('#solutionSpaceContainer').innerHeight()
-		};
-		var totalDim = {
-			width: $('#solutionSpaceHeader').innerWidth(),
-			height: $('#solutionSpaceLeftColumn').innerHeight() + 40 // +40 for the top header
-		};
-		var panWidth = (visibleDim.width / parseFloat(totalDim.width)) * miniMap.width();
-		var panHeight = (visibleDim.height / parseFloat(totalDim.height)) * miniMap.height();
-		pan.css('width', parseInt(panWidth) + 'px');
-		pan.css('height', parseInt(panHeight) + 'px');
+		miniMap.css('background', 'url(data:image/png;base64,' + image + ')');
+		this.updatePan();
 		// Show
 		miniMap.fadeIn('fast');
+	}
 
-		// Remove loading status
-		this.getParentContainer().removeClass('loading');
-    }
+	updatePan(){
+		var miniMap = $('#miniMap');
+		var pan = $('#miniMap > #pan');
+		if(!pan.hasClass('ondrag')){ // Make sure object is not being dragged
+			// Set pan size based on total width and visible width
+			var scrollPosition = {
+				top: $('#solutionSpaceContainer').scrollTop(),
+				left: $('#solutionSpaceContainer').scrollLeft()
+			};
+			var visibleDim = {
+				width: $('#solutionSpaceContainer').innerWidth(),
+				height: $('#solutionSpaceContainer').innerHeight()
+			};
+			var totalDim = {
+				width: $('#solutionSpaceHeader').innerWidth(),
+				height: $('#solutionSpaceLeftColumn').innerHeight()
+			};
+			// Set size
+			var panWidth = (visibleDim.width / parseFloat(totalDim.width)) * miniMap.width();
+			var panHeight = (visibleDim.height / parseFloat(totalDim.height)) * miniMap.height();
+			pan.css('width', parseInt(panWidth) + 'px');
+			pan.css('height', parseInt(panHeight) + 'px');
+			// Set position
+			console.dir(scrollPosition.top);
+			console.dir(visibleDim.height);
+			console.dir(totalDim.height);
+			pan.css('top', Math.ceil(panHeight * (scrollPosition.top / totalDim.height)) + 'px');
+			pan.css('left', Math.ceil(panWidth * (scrollPosition.left / totalDim.width)) + 'px');
+		}
+	}
 
 };

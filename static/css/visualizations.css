@@ -39,6 +39,7 @@
 	position: relative;
 	overflow: auto;
 	min-width: 100%;
+	padding: 0 200px 200px 0;
 }
 
 #solutionSpaceHeader {
@@ -178,12 +179,12 @@
 	width: 100px;
 	height: 100px;
 	background: white;
-	box-shadow: 0 0 5px rgba(0,0,0,0.3);
+	box-shadow: 0 0 5px rgba(0,0,0,0.2);
 	position: absolute;
 	bottom: 10px;
 	right: 65px;
 	z-index: 100;
-	border: solid 1px #CCC;
+	border: solid 1px #666;
 	padding: 0 1px 1px 0;
 }
 
