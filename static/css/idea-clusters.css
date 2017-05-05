@@ -687,7 +687,7 @@ div.w2p_flash.alert {
         list-style-type: none;
         margin: 5px 0 5px 0;
         padding: 0 20px;
-        border-right: solid 1px #CCC;
+        border-left: solid 1px #CCC;
     }
 
     .toolbar ul:last-child {
@@ -696,6 +696,7 @@ div.w2p_flash.alert {
 
     .toolbar ul:first-child {
         padding-left: 10px;
+        border-left: none;
     }
 
         .toolbar ul > li {
