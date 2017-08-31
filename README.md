@@ -2,17 +2,23 @@
 
 This is a web2py project. Just download web2py, add this to the applications folder, and you should be good to go!
 
-## Todo for Study 1
+## Dependencies
+Before running the project, you need to install the following libraries:
+- Pillow (https://python-pillow.org): pip install Pillow
+- Gensim (https://radimrehurek.com/gensim/): pip install --upgrade gensim / http://www.lfd.uci.edu/~gohlke/pythonlibs/
+
+## Pending
+### Todo for Study 1
 - Fix display of a really long idea by possibly cloning element, expanding it significantly, and adding a scrollbar
 - Highlight headers on solution space when a cell is highlighted
 - Implement tag suggestions based on existing tag + similarity to previous ideas
 - Light tracking of UI actions (what's clicked, when, where user is focusing, etc.)
 - Minimap: implement click to go to; sync with scrollbar scroll; deal with cropping issue.
 
-## Known issues
+### Known issues
 ...
 
-## Future
+### Future
 - Deal with scalability issues (in all three views. Possibly do dynamic loading, e.g. infinite scrolling)
 - Implement persistance of layout
 - Consolidate prefixes (e.g. cl_, id) into constants (possibly at the ENV variable)
@@ -23,7 +29,7 @@ This is a web2py project. Just download web2py, add this to the applications fol
 - It is possible that two ideas in the versioning panel may be placed in the same location. Implement collision detection and handling.
 - Implement click action on idea in the task panel
 
-## Completed
+### Completed
 - Resizing layout elements (e.g. by dragging the dividers) does not trigger a resize event
 - The bottom of the layout is cutoff by the amount of the navbar
 - Implement minimap for solution space
