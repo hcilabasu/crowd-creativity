@@ -1,13 +1,13 @@
 # Crowd Creativity
 
-This is a web2py project. Just download web2py, add this to the applications folder, and you should be good to go!
+This is a web2py project. Just download web2py, add this to the applications folder, and run web2py through `python web2py.py` on the root directory.
 
 ## Dependencies
 Before running the project, you need to install the following libraries:
-- Pillow (https://python-pillow.org): pip install Pillow
-- Gensim (https://radimrehurek.com/gensim/): pip install --upgrade gensim / http://www.lfd.uci.edu/~gohlke/pythonlibs/
+- Pillow (https://python-pillow.org) `pip install Pillow`
+- Gensim (https://radimrehurek.com/gensim/): `pip install --upgrade gensim` / http://www.lfd.uci.edu/~gohlke/pythonlibs/
 
-## Pending
+## Future Work
 ### Todo for Study 1
 - Fix display of a really long idea by possibly cloning element, expanding it significantly, and adding a scrollbar
 - Highlight headers on solution space when a cell is highlighted
