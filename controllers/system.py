@@ -468,7 +468,7 @@ def __generate_birdseye_solutionspace(tags, connections, max_n):
     img = img.resize((BIRDSEYE_SIZE,BIRDSEYE_SIZE), Image.NEAREST)
     # Encode into base64
     buffer = cStringIO.StringIO()
-    img.save(buffer, format="JPEG")
+    img.save(buffer, format="PNG")
     img_str = base64.b64encode(buffer.getvalue())
     return img_str
 
