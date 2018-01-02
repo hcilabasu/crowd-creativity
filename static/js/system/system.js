@@ -4,7 +4,7 @@ $(function(){
 	$('script[type$=x-tmpl-mustache]').each(function(i,d){
 		var id = $(d).attr('id');
 		var html = $('#'+id).html()
-		Mustache.parse(html)
+		Mustache.parse(html);
 		TEMPLATES[id] = html;
 	});
 
@@ -38,7 +38,7 @@ $(function(){
 
 	// Load panels on page load
 	VIEWS['ideasView'] = new IdeaViewerView('#ideasContainer').load();
-	// VIEWS['versioningView'] = new VersioningView('#versioningContainer').load();
+	VIEWS['versioningView'] = new VersioningView('#versioningContainer').load();
 	VIEWS['tasksView'] = new TasksView('#suggestedTasksContainer').load(); 
 	VIEWS['solutionSpaceView'] = new SolutionSpaceView('#solutionSpaceContainer').load();
 	
@@ -102,6 +102,8 @@ $(function(){
 	if(ENV.newUser){
 		startTutorial();
 	}
+
+
 });
 
 var startOrganizationRatioScale = function(){

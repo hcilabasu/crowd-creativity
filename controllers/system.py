@@ -121,7 +121,6 @@ def add_idea():
         __log_action(user_id, "add_idea", idea)
     return json.dumps(dict(id=idea_id))
 
-
 def get_ideas():
     user_id = session.user_id
     added_by = request.vars.added_by
@@ -578,8 +577,11 @@ def __insert_tasks_for_idea(idea, user_id):
 def __get_level(ids, levels_map):
     # Gets the level of an idea based on its sources
     max_level = -1
-    for id in ids:
-        max_level = max(max_level, levels_map[id])
+    if ids:
+        for id in ids:
+            max_level = max(max_level, levels_map[id])
+    else:
+        max_level = 0
     return max_level+1
 
 def __log_action(user_id, action_name, extra_info):
