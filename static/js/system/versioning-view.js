@@ -152,7 +152,7 @@ class VersioningView extends View {
 				var connections = structure[i][j].connection.ids; // Parents
 				var connectionType = structure[i][j].connection.type;
 				var ideaPosition = 0;
-				if (connections.length === 0){
+				if (!connections || connections.length === 0){
 					// There are no previous connections. Add to next available space 
 					ideaPosition = {
 						x: levelScale(i) - this.dimensions.smallIdea / 2, 
@@ -165,20 +165,23 @@ class VersioningView extends View {
 						y: midPoint
 					};
 				}
+				// Update ideaMap
 				ideaMap[ideaId] = ideaPosition;
 
 				// Add lines
-				connections.forEach((d)=>{
-					// Set positions
-					var offset = this.dimensions.smallIdea / 2;
-					var lineData = [
-						{x: ideaPosition.x + offset, y: ideaPosition.y + offset },
-						{x: ideaMap[d].x + offset, y: ideaMap[d].y + offset }];
-					// Add it
-					axesContainer.append('path')
-						.attr('d', lineFunction(lineData))
-						.attr('class', 'versioningConnection ' + connectionType);
-				});
+				if(connections && connections.length > 0){
+					connections.forEach((d)=>{
+						// Set positions
+						var offset = this.dimensions.smallIdea / 2;
+						var lineData = [
+							{x: ideaPosition.x + offset, y: ideaPosition.y + offset },
+							{x: ideaMap[d].x + offset, y: ideaMap[d].y + offset }];
+						// Add it
+						axesContainer.append('path')
+							.attr('d', lineFunction(lineData))
+							.attr('class', 'versioningConnection ' + connectionType);
+					});
+				}
 
 				// Add idea blocks
 				var ideaObject = { id: ideaId, position: ideaPosition }

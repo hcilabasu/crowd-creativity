@@ -165,13 +165,13 @@ def get_versioning_structure():
     Return the structure for the versioning panel 
     Structure:
     [
-        [{ <-- Level 1 start
+        [{ <-- Level 0 start
             id:31, connections: [{ids:[43,57], type:'merge'}, ...]
          }, 
          {
             id:..., connections: [...]
          }],     
-        [ <-- Level 2 start
+        [ <-- Level 1 start
             ...
         ],     
         ...
@@ -189,6 +189,7 @@ def get_versioning_structure():
     # Iterate over each result and build the levels array
     for r in results:
         sources = r.idea.sources
+        
         level = __get_level(r.idea.sources, levels_map)
         # add level to dictionary
         levels_map[r.idea.id] = level
@@ -399,10 +400,6 @@ def get_organization_ratio():
         completed += base_weights[c.categorizationType] # base weight. Even if a task is not completed, it may already imply that others have been completed before.
         if c.completed:
             completed += 1
-    print('Ratio:')
-    print(completed)
-    print(total)
-    print('---')
     if total > 0:
         return completed / float(total)
     else:
@@ -580,8 +577,6 @@ def __get_level(ids, levels_map):
     if ids:
         for id in ids:
             max_level = max(max_level, levels_map[id])
-    else:
-        max_level = 0
     return max_level+1
 
 def __log_action(user_id, action_name, extra_info):
