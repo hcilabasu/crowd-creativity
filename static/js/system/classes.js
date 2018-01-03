@@ -32,8 +32,7 @@ class Idea {
             });
         }
 
-        // CURRENTLY DISABLED FOR FIRST STUDY Drag and drop 
-        if(false && typeof params['draggable'] == 'boolean' && params['draggable']){
+        if(typeof params['draggable'] == 'boolean' && params['draggable']){
             ideaBlock.draggable({  
                 appendTo: "parent",
                 helper: "clone",
