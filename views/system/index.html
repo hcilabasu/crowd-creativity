@@ -34,19 +34,23 @@
 		// Set up globals
 	    var URL = { // URLs
 	    	addIdea: "{{=URL('system','add_idea')}}",
-	    	getUserIdeas: "{{=URL('system','get_ideas')}}",
-	    	getAllIdeas: "{{=URL('system','get_all_ideas')}}",
-	    	getVersioningStructure: "{{=URL('system','get_versioning_structure')}}",
-	    	getIdeaById: "{{=URL('system','get_idea_by_id')}}",
-			getSuggestedTasks: "{{=URL('system','get_suggested_tasks')}}",
-			submitRatingTask: "{{=URL('system','submit_rating_task')}}",
-			submitCategorizationTask: "{{=URL('system','submit_categorization_task')}}",
-			getSolutionSpace: "{{=URL('system','get_solution_space')}}",
-			getIdeasPerCategory: "{{=URL('system','get_ideas_per_tag')}}",
-			getOrganizationRatio: "{{=URL('system','get_organization_ratio')}}",
+	    	getOrganizationRatio: "{{=URL('system','get_organization_ratio')}}",
 			getTags: "{{=URL('system','get_tags')}}",
 			getSuggestedTags: "{{=URL('system','get_suggested_tags')}}",
-			tagExists: "{{=URL('system','tag_exists')}}"
+			tagExists: "{{=URL('system','tag_exists')}}",
+			// Idea workspace view
+			getUserIdeas: "{{=URL('ideaworkspaceview','get_ideas')}}",
+	    	getAllIdeas: "{{=URL('ideaworkspaceview','get_all_ideas')}}",
+	    	getIdeaById: "{{=URL('ideaworkspaceview','get_idea_by_id')}}",
+			// Solution space view
+			getSolutionSpace: "{{=URL('solutionspaceview','get_solution_space')}}",
+			getIdeasPerCategory: "{{=URL('solutionspaceview','get_ideas_per_tag')}}",
+			// Versioning view
+			getVersioningStructure: "{{=URL('versioningview','get_versioning_structure')}}",
+			// Tasks view
+			getSuggestedTasks: "{{=URL('tasksview','get_suggested_tasks')}}",
+			submitRatingTask: "{{=URL('tasksview','submit_rating_task')}}",
+			submitCategorizationTask: "{{=URL('tasksview','submit_categorization_task')}}"
 	    },		
 	    ENV = { // Global constants
 			userId: "{{=user_id}}",
