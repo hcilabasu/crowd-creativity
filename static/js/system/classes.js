@@ -68,23 +68,36 @@ class Idea {
         // Resizable
         if(typeof params['resizable'] == 'boolean' && params['resizable']){
             ideaBlock.resizable({
-            maxHeight: 200,
-            maxWidth: 230,
-            minHeight: 100,
-            minWidth: 130
+                maxHeight: 200,
+                maxWidth: 230,
+                minHeight: 100,
+                minWidth: 130
             });
         }
         
         // Focuseable
         if(typeof params['focuseable'] == 'boolean' && params['focuseable']){
+            var getParams = function(that){
+                var id = $(that).attr('id').substring(2); // Get the id (remove the 'id' prefix)
+                // Get tags 
+                var classes = $(that).attr('class').split(' ');
+                var tags = [];
+                for(var i = 0; i < classes.length; i++){
+                    var tag = classes[i];
+                    if(tag.startsWith(ENV.classPrefix)){
+                        tags.push(tag.replace(ENV.classPrefix, ''));
+                    }
+                }
+                return {
+                    id:id, 
+                    tags:tags, 
+                    source:params['source']
+                }
+            };
             ideaBlock.hover(function(){
-                var id = $(this).attr('id').substring(2); // Get the id (remove the 'id' prefix)
-                // Trigger hover event
-                $.event.trigger({type:EVENTS.highlightIdea, params:{id:id, source:params['source']}});
+                $.event.trigger({type:EVENTS.highlightIdea, params:getParams(this)});
             },function(){
-                var id = $(this).attr('id').substring(2); // Get the id (remove the 'id' prefix)
-                // Trigger blur event
-                $.event.trigger({type:EVENTS.blurIdea, params:{id:id, source:params['source']}});
+                $.event.trigger({type:EVENTS.blurIdea, params:getParams(this)});
             });
         }
 

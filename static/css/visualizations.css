@@ -120,7 +120,7 @@
 }
 
 .spRow:hover {
-	background: #DCF0FF;
+	background: rgb(90, 182, 253);
 }
 
 .spRow > .spCell {
@@ -165,10 +165,12 @@
 
 #spaceContainer .spCell {
 	display: inline-block !important;
+	transition: background 0.5s;
 }
 
-.cellHover {
-	background: #DCF0FF;
+.cellHover span {
+	background: rgb(79, 176, 250) !important;
+	transition: background 0.5s;
 }
 
 #miniMap {
@@ -192,4 +194,9 @@
 	height: 20px;
 	background: rgba(58,170,252,0.3);
 	cursor: all-scroll;
+}
+
+#spaceContainer .highlightedCell span {
+    background: blue !important;
+    transition: background 0.7s;
 }

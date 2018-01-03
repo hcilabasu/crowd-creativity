@@ -51,7 +51,7 @@ class IdeaViewerView extends View {
     */
     highlightTagsHandler(e){
         console.dir('Custom IDEA Highlight tags');
-        console.dir('ideaviewer is the source: ')
+        console.dir('ideaviewer is the source: ');
         var tags = e.params.tags;
         $(this.container + ' ' + tags.join('')).addClass('ideaHover');
     }

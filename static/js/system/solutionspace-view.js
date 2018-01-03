@@ -24,14 +24,34 @@ class SolutionSpaceView extends View {
     Highlight a particular idea
     */
     highlightIdeaHandler(e){
-        console.dir('CUSTOM SOLUTIONSPACE Highlight idea');
+		console.dir('CUSTOM SOLUTIONSPACE Highlight idea');
+		var tags = e.params.tags;
+		// Add hover class
+		var classes = '';
+		for (var i = 0; i < tags.length; i++) {
+			for (var j = i; j < tags.length; j++) {
+				if(tags[i] !== tags[j]){
+					classes = ' .' + ENV.classPrefix + tags[i] + '.' + ENV.classPrefix + tags[j];
+				} else {
+					console.dir(classes);
+					classes = ' .single.' + ENV.classPrefix + tags[i];
+				}
+				$(this.container + classes).addClass('cellHover');
+			}	
+		}
     }
 
     /*
     Blur a particular idea
     */
     blurIdeaHandler(e){
-        console.dir('CUSTOM SOLUTIONSPACE Blur idea');
+		console.dir('CUSTOM SOLUTIONSPACE Blur idea');
+		var tags = e.params.tags;
+		// Add class prefix
+		for (var i = 0; i < tags.length; i++) {
+			tags[i] = '.' + ENV.classPrefix + tags[i];
+			$(this.container + ' ' + tags[i]).removeClass('cellHover');
+		}
     }
 
     /*
@@ -67,7 +87,7 @@ class SolutionSpaceView extends View {
 			for(var j = i; j < structure.tags.length; j++){
 				var e = structure.tags[j];
 				var tags = [d.tag, e.tag].sort(); // Make it alphabetical
-				var cellClass = 'spCell cl_' + (tags[0] === tags[1] ? tags [0] : tags[0] + ' cl_' + tags[1]); // If this is the diagonal, add only one class.
+				var cellClass = 'spCell cl_' + (tags[0] === tags[1] ? tags [0] + ' single' : tags[0] + ' cl_' + tags[1]); // If this is the diagonal, add only one class.
 				var newCell = $('<div><span></span></div>').addClass(cellClass);
 				// paint cell
 				var key = (d.tag === e.tag ? d.tag : tags.join('|'));
