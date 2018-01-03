@@ -315,7 +315,8 @@ table th {
 .navbar .btn-primary {
     background-color: #3093dc;
     color: white;
-    margin: 0 20px;
+    margin: 0;
+    padding: 0 10px 0 0;
 }
 
 .navbar .btn:hover {

@@ -82,9 +82,6 @@
 				</a></li>
 			</ul>
 			<ul>
-				<li><a href="#" title="Add a new idea" onclick="TOOLBAR.ideaViewer.addNewIdea()">
-					<img src="{{=URL('static','images/plus-padding.png')}}">
-				</a></li>
 				<li><a href="#" title="Reload your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
 					<img src="{{=URL('static','images/user.png')}}">
 				</a></li>
@@ -256,7 +253,7 @@
 	</script>
 
 	<script id="tutorialWelcomeTemplate" type="text/x-tmpl-mustache">
-		<p>Welcome to the IdeaMix system. Here, you can collaborative generate and organize ideas!</p>
+		<p>Welcome to the IdeaMix system. Here, you can collaboratively generate and organize ideas!</p>
 
 		<p>This very short tutorial will walk you through the core parts of this system.</p>
 	</script>
@@ -322,6 +319,19 @@
 			</div>
 		</div>
 
+		<div class="navBlock">
+			<a href="#" id="newIdeaButton" class="btn btn-primary" onclick="openIdeaPopup()">
+				<img src="{{=URL('static','images/plus-padding.png')}}" alt="New idea"/>
+				New idea
+			</a>
+		</div>
+		<div class="navBlock">
+			<a href="#" id="helpButton" class="btn btn-primary" onclick="alert('Under development...')">
+				<img src="{{=URL('static','images/lightbulb-padding.png')}}" alt="Help!"/>
+				Inspiration
+			</a>
+		</div>
+
 		<div class="navBlock actionable" id="organizationLevel">
 			<img src="{{=URL('static','images/messy.png')}}" alt="Completely disorganized">
 			<div class="scale" id="organizationRatio">
@@ -340,6 +350,7 @@
 				</div>
 			</div>
 		</div>
+		
 	</div>
 {{end}}
 
