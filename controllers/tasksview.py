@@ -196,13 +196,23 @@ def __get_categorization_tasks(user_id):
     tasks_results = db(
         (db.categorization.completed == False) &  # Uncompleted tasks
         (db.categorization.idea == db.idea.id) & # Attach to idea
+        ((db.idea.id == db.tag_idea.idea) & (db.tag.id == db.tag_idea.tag)) & # Link to tags
         ~((db.idea.userId == user_id) & (db.categorization.categorizationType == 'suggest')) & # user has not authored this idea if this is a suggest type
         ~(db.categorization.idea.belongs(completed)) # User has not yet completed it
-    ).select(groupby=db.categorization.idea)
+    ).select(groupby=db.idea.id)
+    # get tags for ideas TODO this can probably be optimized into the previous query
+    tags_results = db(
+        (db.idea.id == 0) &
+        (db.idea.id == db.tag_idea.idea) &
+        (db.tag.id == db.tag_idea.tag)
+    ).select(db.idea.id, db.tag.tag, groupby=db.idea.id)
+    print([t for t in tags_results])
+    # return results
     return [dict(id=r.categorization.id,
         type=r.categorization.categorizationType, 
         suggested_tags=r.categorization.suggestedTags, 
         chosen_tags=r.categorization.chosenTags,
         task_id=r.categorization.id, 
-        idea=r.idea.idea, 
+        idea=r.idea.idea,
+        tags=[tag.tag.tag for tag in r.idea.tag_idea.select()],
         idea_id=r.idea.id) for r in tasks_results]

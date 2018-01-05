@@ -65,6 +65,7 @@ class TasksView extends View {
             var idea = {
                 idea: structure[i].idea, 
                 id: structure[i].idea_id, 
+                tags: structure[i].tags,
                 suggestedTags: structure[i].suggested_tags,
                 chosenTags: structure[i].chosen_tags,
             };

@@ -173,6 +173,21 @@
 	transition: background 0.5s;
 }
 
+.headerCell {
+	transition: background 0.5s, color 0.5s;
+}
+
+.cellHover.headerCell {
+	background: rgb(21, 103, 167) !important;
+	font-weight: bolder;
+	color: white;
+	transition: background 0.5s, color 0.5s;
+}
+
+	.cellHover.headerCell span {
+		background: transparent !important;
+	}
+
 #miniMap {
 	display: none;
 	width: 100px;

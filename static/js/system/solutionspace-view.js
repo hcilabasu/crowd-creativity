@@ -29,6 +29,8 @@ class SolutionSpaceView extends View {
 		// Add hover class
 		var classes = '';
 		for (var i = 0; i < tags.length; i++) {
+			// Highlight header
+			$(this.container + ' .' + ENV.classPrefix + tags[i] + '.headerCell').addClass('cellHover');
 			for (var j = i; j < tags.length; j++) {
 				if(tags[i] !== tags[j]){
 					classes = ' .' + ENV.classPrefix + tags[i] + '.' + ENV.classPrefix + tags[j];
@@ -77,6 +79,8 @@ class SolutionSpaceView extends View {
 			var cell = $('<div></div>').addClass('spCell');
 			var stats = $('<div></div>').addClass('spCell');
 			cell.append($('<span></span>').text(d.tag));
+			cell.addClass(ENV.classPrefix + d.tag);
+			cell.addClass('headerCell');
 			$('#solutionSpaceHeader').append(cell);
 			$('#solutionSpaceLeftColumn').append(cell.clone());
 			$('#solutionSpaceRightColumn').append(stats);

@@ -13,7 +13,7 @@ class Idea {
         var params = this.params;
         var addedBy = idea.userId === ENV.userId ? 'you' : 'someone else';
         // Load template
-        var ideaParameters = {id:idea.id, addedBy:addedBy, idea:idea.idea, tags:idea.tags, closeable:params['closeable']};
+        var ideaParameters = {id:idea.id, addedBy:addedBy, idea:idea.idea, tags:idea.tags, closeable: false /* params['closeable']*/ };
         var ideaBlock = $(Mustache.render(TEMPLATES.ideaBlockTemplate, ideaParameters));
         if(idea.tags){
             idea.tags.forEach(function(d,i){
@@ -22,7 +22,7 @@ class Idea {
         }
 
         // closeable
-        if(params['closeable'] && typeof params['closeable'] == 'boolean'){
+        if(false && params['closeable'] && typeof params['closeable'] == 'boolean'){
             $('.close', ideaBlock).click(()=>{
                 var id = idea.id;
                 // remove this block from the DOM
@@ -66,7 +66,7 @@ class Idea {
         }
         
         // Resizable
-        if(typeof params['resizable'] == 'boolean' && params['resizable']){
+        if(false && typeof params['resizable'] == 'boolean' && params['resizable']){
             ideaBlock.resizable({
                 maxHeight: 200,
                 maxWidth: 230,
