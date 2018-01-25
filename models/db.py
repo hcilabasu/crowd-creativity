@@ -9,6 +9,8 @@
 ## be redirected to HTTPS, uncomment the line below:
 # request.requires_https()
 
+from gluon import current
+
 ## app configuration made easy. Look inside private/appconfig.ini
 from gluon.contrib.appconfig import AppConfig
 ## once in production, remove reload=True to gain full speed
@@ -17,8 +19,8 @@ myconf = AppConfig(reload=True)
 
 if not request.env.web2py_runtime_gae:
     ## if NOT running on Google App Engine use SQLite or other DB
-    db = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['all'])
-    db_scheduler = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['all'])
+    db = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['mysql'])
+    db_scheduler = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['mysql'])
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
     db = DAL('google:datastore+ndb')
@@ -28,6 +30,9 @@ else:
     ## from gluon.contrib.memdb import MEMDB
     ## from google.appengine.api.memcache import Client
     ## session.connect(request, response, db = MEMDB(Client()))
+
+# Add db to current
+current.db = db
 
 ## by default give a view/generic.extension to all actions from localhost
 ## none otherwise. a pattern can be 'controller/function.extension'
@@ -101,7 +106,7 @@ db.define_table('user_info',
 
 db.define_table('idea',
     Field('idea','string'), 
-    Field('userId','string'),
+    Field('userId','reference user_info'),
     Field('userCondition','integer'), 
     Field('ratings','integer'),
     Field('dateAdded','datetime'),
@@ -119,6 +124,30 @@ db.define_table('tag_idea',
     Field('tag', 'reference tag'),
     Field('idea', 'reference idea'))
 
+db.define_table('action_log',
+    Field('actionName', 'string'),
+    Field('userId', 'reference user_info'),
+    Field('extraInfo', 'string'), # any other necessary contextual information
+    Field('dateAdded', 'datetime'))
+
+db.define_table('sessionCondition',
+    Field('conditionNumber', 'integer'),
+    Field('conditionName', 'string'),
+    Field('conditionCount', 'integer'))
+
+db.define_table('task',
+    Field('task_type', 'string'),
+    Field('idea', 'reference idea'),
+    Field('owner', 'reference user_info'), # User who added the idea a task refers to
+    Field('exclude_owner', 'boolean'), # If true, the owner of the task cannot perform it
+    Field('tags', 'list:reference tag'),
+    Field('completed', 'boolean', default=False),
+    Field('completed_by', 'reference user_info'),
+    Field('completed_timestamp', 'datetime'),
+    Field('options', 'string'),
+    Field('answer', 'string'))
+
+# DEPRECATED
 db.define_table('idea_rating',
     Field('idea', 'reference idea'),
     Field('completed', 'boolean'),
@@ -136,17 +165,6 @@ db.define_table('categorization',
     Field('chosenTags', 'list:string'), # Results from selectBest tasks
     Field('categorized', 'list:string'), # Results from categorize tasks
     Field('completedBy', 'string'))
-
-db.define_table('action_log',
-    Field('actionName', 'string'),
-    Field('userId', 'string'),
-    Field('extraInfo', 'string'), # any other necessary contextual information
-    Field('dateAdded', 'datetime'))
-
-db.define_table('sessionCondition',
-    Field('conditionNumber', 'integer'),
-    Field('conditionName', 'string'),
-    Field('conditionCount', 'integer'))
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

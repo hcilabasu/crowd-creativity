@@ -1,21 +1,60 @@
 import json
 import datetime
 from collections import defaultdict
+from gluon.debug import dbg
 
 '''
 Controller for functions related to the tasks view
 '''
 
-def get_suggested_tasks():
+def get_available_tasks():
     user_id = session.user_id
-    # rating tasks
-    rating_tasks = [] #__get_rating_tasks(user_id)
-    # Categorizations tasks
-    categorization_tasks = __get_categorization_tasks(user_id)
-    # Join all tasks
-    tasks = categorization_tasks + rating_tasks
-    return json.dumps(tasks)
+    tasks = __get_tasks(user_id)
+    # set headers
+    response.headers['Content-Type']='application/json'
+    return tasks.as_json()
 
+def submit_task():
+    user_id = session.user_id
+    answer = request.vars['answer']
+    task_id = request.vars['id']
+    task_type = request.vars['type']
+    # Instantiate class
+    module = __import__('microtask')
+    class_ = getattr(module, task_type)
+    task = class_(id=task_id)
+    task.complete(user_id, answer)
+    return str(task)
+
+def reset_tasks():
+    if request.vars['pwd'] == 'blastoise':
+        tasks = db(db.task.id > 0).select()
+        for t in tasks:
+            t.completed = False
+            t.completed_by = None
+            t.completed_timestamp = None
+            t.answer = ''
+            t.update_record()
+
+
+# Private functions
+def __get_tasks(user_id):
+    # retrieve tasks already completed
+    completed_tag_suggestion = [row.idea for row in db((db.task.completed_by == user_id) & (db.task.task_type == 'TagSuggestionTask')).select(db.task.idea)]
+    completed_tag_validation = [row.idea for row in db((db.task.completed_by == user_id) & (db.task.task_type == 'TagValidationTask')).select(db.task.idea)]
+    # retrieve tasks
+    tasks = db(
+        (db.task.completed == False) & 
+        (db.task.owner != user_id) &
+        (db.task.idea == db.idea.id) &
+        (((db.task.task_type == 'TagSuggestionTask') &
+        ~db.task.idea.belongs(completed_tag_suggestion)) |
+        ((db.task.task_type == 'TagValidationTask') &
+        ~db.task.idea.belongs(completed_tag_validation)))
+    ).select(groupby=db.task.idea)
+    return tasks  #[dict(type="rating", task_id=r.idea_rating.id, idea=r.idea.idea, idea_id=r.idea.id) for r in rating_tasks_results]
+
+# DEPRECATED
 def submit_rating_task():
     idea_id = request.vars['idea_id']
     originality = int(request.vars['originality'])

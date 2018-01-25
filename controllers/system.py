@@ -7,6 +7,7 @@ from string import punctuation
 import rake
 import os
 import random
+import microtask
 
 DEBUG = True # Add debug mode
 NUKE_KEY = 'blastoise'
@@ -29,23 +30,31 @@ def nuke(): # Nukes the database to blank.
         response.status = 500
         return 'Nuke is a negative!'            
 
+def logoff():
+    session.user_id = None
+    redirect(URL('system', 'index'))
+
 def index():
     if TEST_USER_ID:
         session.user_id = TEST_USER_ID # Force userID for testing
     user_id = session.user_id
+    user_name = session.user_name
     new_user = False
     if user_id == None:
         new_user = True
         # Generating new user
-        user_id = uuid.uuid4().hex
-        session.user_id = user_id
+        user_name = uuid.uuid4().hex
+        session.user_name = user_name
         # Selecting condition
         session.startTime = datetime.datetime.now()
         session.startTimeUTC = datetime.datetime.utcnow()
         session.userCondition = 2 # TODO randomly select condition
         # add user to DB
-        db.user_info.insert(userId=user_id, userCondition=session.userCondition, initialLogin=session.startTime)
+        user_id = db.user_info.insert(userId=user_name, userCondition=session.userCondition, initialLogin=session.startTime)
+        session.user_id = user_id
+        # Log
         log_action(user_id, "start_session", json.dumps({'condition':session.userCondition}))
+
     else:
         # user already has ID. This means it's a page reload. Log it.
         log_action(user_id, "refresh_page", json.dumps({'condition':session.userCondition}))
@@ -56,7 +65,7 @@ def index():
     if not problem_id or not problem:
         response.status = 404
         redirect(URL('static', '404.html'))
-    return dict(user_id=user_id, new_user=new_user, problem=problem)
+    return dict(user_id=user_id, user_name=user_name, new_user=new_user, problem=problem)
 
 def add_idea():
     '''
@@ -181,10 +190,8 @@ def __insert_tasks_for_idea(idea, user_id):
     # Insert categorization tasks
     for i in range(0,TASKS_PER_IDEA):
         # insert selectBest types. Categorize tasks will be inserted when these are completed
-        db.categorization.insert(idea=idea['id'], completed=False, suggestedTags=idea['tags'], categorizationType='suggest')
-    # Insert rating tasks
-    for i in range(0,TASKS_PER_IDEA):
-        db.idea_rating.insert(idea=idea['id'], completed=False)
+        microtask.TagSuggestionTask(idea=idea['id'])
+            
 
 def __clean_tag(tag):
     tag = tag.replace(' ', '') # remove spaces

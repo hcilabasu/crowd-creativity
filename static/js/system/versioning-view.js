@@ -210,6 +210,7 @@ class VersioningView extends View {
 				// TODO Load idea on click
 				VIEWS.ideasView.loadIdea(d.id);
 			});
+		this.getParentContainer().removeClass('loading');
 	}
 
 };
