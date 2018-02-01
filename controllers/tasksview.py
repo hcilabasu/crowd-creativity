@@ -51,7 +51,7 @@ def __get_tasks(user_id):
         ~db.task.idea.belongs(completed_tag_suggestion)) |
         ((db.task.task_type == 'TagValidationTask') &
         ~db.task.idea.belongs(completed_tag_validation)))
-    ).select(groupby=db.task.idea)
+    ).select(groupby=db.task.idea)[0:3]
     return tasks  #[dict(type="rating", task_id=r.idea_rating.id, idea=r.idea.idea, idea_id=r.idea.id) for r in rating_tasks_results]
 
 # DEPRECATED

@@ -171,7 +171,7 @@
 		<div id="ideaPlaceholder"></div>
 		<p>Suggest tags for this idea<a class="tooltip" href="#" title="Write appropriate tags for this idea">?</a></p>
 		<input type="text" class="tagInput" name="answer" />
-		<a href="#" class="btn">Submit</a>
+		<!-- <a href="#" class="btn">Submit</a> -->
 		<!-- required task data -->
 		<input type="hidden" name="taskId" value="[[id]]"/>
 		<input type="hidden" name="taskType" value="[[type]]"/>
@@ -183,7 +183,7 @@
 		<p>Click on the <strong>one</strong> tag that you think is the most appropriate to describe this idea</p>
 		<ul class="tagsList single"></ul>
 		<input name="taskType" type="hidden" value="selectBest"/>
-		<a href="#" class="btn">Submit</a>
+		<!-- <a href="#" class="btn">Submit</a> -->
 	</script>
 
 	<script id="ideaBlockTemplate" type="text/x-tmpl-mustache">
@@ -291,7 +291,7 @@
 				<img src="{{=URL('static','images/plus-padding.png')}}" alt="New idea"/>
 				New idea
 			</a>
-			<a href="#" id="helpButton" class="btn btn-primary" onclick="alert('Under development...')">
+			<a href="#" id="helpButton" class="btn btn-primary" onclick="openInspirationPopup()">
 				<img src="{{=URL('static','images/lightbulb-padding.png')}}" alt="Help!"/>
 				Inspiration
 			</a>
@@ -338,28 +338,44 @@
 
 	<div class="popupDialog" id="addIdea">
 		<h2>New idea</h2>
-
 		<form>
 			<p><strong>Write your idea in the space below.</strong> Make sure to include as much detail as possible!</p>
-
 			<textarea name='idea' required></textarea>
-
 			<p>
 				<strong>Suggest at least 3 tags for your idea.</strong> 
 				Try to use as many existing tags as you can (use the autosuggest list!). 
 				Only suggest new tags (marked with <img src="{{=URL('static', 'images/new-tag.png')}}" alt="New tag icon">) if completely necessary.
 				New tags decrease the organization level.
 			</p>
-			
 			<div class="suggestedTags">
 				Suggested tags (click to add): 
 				<div></div>
 			</div>
-
 			<input type="text" name="tags" required/>
-
 			<a class="btn floatRight" href="#" onclick="submitNewIdea(event);">Submit</a>
 		</form>
+	</div>
+
+	<div class="popupDialog" id="inspiration">
+		<h2>Get inspired</h2>
+		<p>
+			To get inspired, do the three tasks below. Feel free to use the ideas as inspiration: remix them with your own ideas, expand on them, or use them in anyway you'd like!
+		</p>
+		<ul id="inspirationPanel" class="loading">
+			<li class="selected">
+				<div class="loadingBadge"></div>
+			</li>
+		</ul>
+		<div id="inspirationControls" class="first" style="display: none">
+			<a class="btn previous" href="#" onclick="">&lt;</a>
+			<ul>
+				<li class="selected">1</li>
+				<li>2</li>
+				<li>3</li>
+			</ul>
+			<a class="btn next" href="#" onclick="">&gt;</a>
+		</div>
+
 	</div>
 
 	<div class="popupDialog" id="combineIdeas">

@@ -10,7 +10,7 @@ var config = {
         type: 'row',
         content:[{
             type: 'column',
-            width: 65,
+            width: 70,
             content: [{
                 id: 'ideaViewer',
                 type: 'component',
@@ -33,18 +33,18 @@ var config = {
             content:[{
                 type: 'component',
                 title: 'Versioning',
-                height: 45,
+                //height: 45,
                 isClosable: false,
                 componentName: 'versioning',
                 componentState: { }
-            },{
+            }/*,{
                 id: 'suggestedTasks',
                 type: 'component',
                 title: 'Suggested tasks',
                 isClosable: false,
                 componentName: 'suggestedTasks',
                 componentState: { }
-            }]
+            }*/]
         }]
     }]
 };

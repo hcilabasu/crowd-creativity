@@ -245,6 +245,10 @@ var openIdeaPopup = function(event){
 	openOverlay('addIdea');
 };
 
+var openInspirationPopup = function(event){
+	openOverlay('inspiration');
+};
+
 // Opens up the popup overlay and sets up the popup using the function [popupId]Setup.
 var openOverlay = function(popUpId, params){
 	$('#overlay > div').hide();
@@ -334,6 +338,145 @@ var tagsViewSetup = function(params){
 
 var addIdeaSetup = function(){
 	$('#addIdea textarea').focus();
+}
+
+var inspirationSetup = function(){
+	$.ajax({
+		type: "GET",
+		url: URL.getAvailableTasks,
+		success: (data)=>{
+			buildInspirationPanel(data);
+		}
+	});
+};
+
+var buildInspirationPanel = function(structure){
+	var tasksList = $('#inspirationPanel');
+	tasksList.empty();
+	tasksList.removeClass('loading');
+	var maxHeight = -1;
+	for(var i = 0; i < structure.length; i++){
+		// Preparing data
+		var taskId = structure[i].task.id;
+		var taskType = structure[i].task.task_type;
+		var idea = {
+			idea: structure[i].idea.idea, 
+			id: structure[i].idea.id, 
+			tags: []
+		};
+		// Setting up HTML
+		var params = {closeable: false, focuseable: true, source: this.constructor}
+		var ideaElement = new Idea(idea, params);
+		var templateParams = {id: taskId, type: taskType}
+		var template = $(Mustache.render(TEMPLATES[taskType + 'Template'], templateParams));
+		var innerForm = $('<form></form>').html(template)
+		var taskItem = $("<li></li>").append(innerForm);
+		// Custom processing for each task type
+		taskTypeProcessor(taskType, innerForm).pre();
+		// Finish setting up idea in the template
+		$('#ideaPlaceholder', taskItem).replaceWith(ideaElement.html());
+		$('.ideaBlock', taskItem).css('display', 'block');
+		taskItem.attr('id', 'task-' + structure[i].id);
+		// TODO handle submission
+		// $('.btn', taskItem).click((e)=>{this.submitTask(e)});
+		// Dramatic entrance
+		tasksList.append(taskItem);
+		maxHeight = taskItem.height() > maxHeight ? taskItem.height() : maxHeight;
+		if (i===0){
+			taskItem.addClass('selected');
+		}
+		// Setup input tag. For some reason, it doesn't work before element is visible. TODO figure better workaround
+		$('.tagInput', tasksList).tagsInput(ENV.tagConfig);
+		// Configure max height for tasks
+		tasksList.css('height', maxHeight);
+	}
+	prepareButtons($('#inspirationControls'), tasksList, structure.length);
+};
+
+var prepareButtons = function(container, tasksContainer, n){
+	// Add bullets
+	var bullets = $('ul', container);
+	bullets.empty();
+	for(var i = 0; i < n; i++){
+		var li = $('<li>' + i + '</li>');
+		if (i===0) { li.addClass('selected'); }
+		bullets.append(li);
+	}
+	// Create move function
+	var move = function(fn){
+		var current = $('.selected', tasksContainer);
+		var moveTo = current[fn](); 
+		if(moveTo.length !== 0){
+			// Switch task
+			current.hide('fast');
+			moveTo.show('fast');
+			current.removeClass('selected');
+			moveTo.addClass('selected');
+			// Update bullets
+			var currentBullet = $('.selected', container);
+			var newBullet = currentBullet[fn]();
+			currentBullet.removeClass('selected');
+			newBullet.addClass('selected');
+			// Checker whether this is the first or last item
+			if(moveTo.next().length === 0){
+				// This is the last item
+				container.addClass('last');
+			} else if (moveTo.prev().length === 0) {
+				container.addClass('first');
+			} else {
+				container.removeClass('first').removeClass('last');
+			}
+		}
+	};
+	// Setup buttons
+	var previous = $('.previous', container);
+	var next = $('.next', container);
+	next.click(function(){ move('next') });
+	previous.click(function(){ move('prev') });
+	// Display
+	container.fadeIn('slow');
+};
+
+/*
+This function receives a type of task as parameter, and outputs a function for processing
+either the view compilation (pre) or answer processing (post) of specific task types. 
+pre does not return anything, but can alter the task form as required.
+post must return the final answer in JSON.
+*/
+var taskTypeProcessor = function(type, form){
+	return {
+		'TagSuggestionTask': {
+			'pre': function(){},
+			'post': function(){
+				var rawAnswer = $('[name=answer]', form).val()
+				var answer = rawAnswer.split(ENV.tagsDelimiter);
+				return JSON.stringify(answer);
+			}
+		},
+		'TagValidationTask': {
+			'pre': function(){
+				/*else if(type === 'selectBest' || type === 'categorize'){
+				// select best or categorize tasks
+				var template = $(Mustache.render(TEMPLATES[type + 'TaskTemplate'], idea));
+				var tagsList = type === 'selectBest' ? idea.suggestedTags : idea.chosenTags;
+				taskItem = $("<li></li>").html(template);
+				// Add labels
+				tagsList.forEach(function(d,j){
+					var tag = $(Mustache.render(TEMPLATES.tagTemplate, {tag:d}));
+					$('.tagsList', taskItem).append($("<li></li>").html(tag));
+					tag.click(function(event){
+						var parent = $(this).closest('.tagsList');
+						if (parent.hasClass('single')){
+							// This list supports only one selected tag. Unselect currently selected tags.
+							$('.selected', parent).removeClass('selected');
+						}
+						$(this).toggleClass('selected');
+					});
+				});*/
+			},
+			'post': function(){}
+		}
+	}[type];
 }
 
 var startTagsSuggestion = function(watchInput, suggestionContainer, tagsInput){
