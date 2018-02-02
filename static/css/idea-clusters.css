@@ -615,7 +615,7 @@ div.w2p_flash.alert {
 
 .popupDialog {
     display: none;
-    overflow: auto;
+    overflow: hidden;
     z-index: 99999;
 }
 
@@ -947,6 +947,7 @@ div.w2p_flash.alert {
 
 #inspirationPanel {
     margin-bottom: 50px;
+    width: 2000px;
 }
 
     #inspirationPanel.loading > li {
@@ -956,14 +957,13 @@ div.w2p_flash.alert {
     }
 
     #inspirationPanel > li {
-        width: 100%;
-        /* border: solid 1px #CCC; */
+        width: 480px;
         padding: 20px;
-        /* box-shadow: 0 0 5px rgba(0,0,0,0.2); */
         background: rgb(237, 247, 255);
         float: left;
         display: none;
         border-radius: 10px;
+        margin-right: 20px;
     }
     
     #inspirationPanel > li.selected {

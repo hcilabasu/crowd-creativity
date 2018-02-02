@@ -412,12 +412,32 @@ var prepareButtons = function(container, tasksContainer, n){
 	var move = function(fn){
 		var current = $('li.selected', tasksContainer);
 		var moveTo = current[fn](); 
+		// Setup animation
+		var moveWidth = 550; // TODO calculate dynamically
+		var negativeMargin = '-' + moveWidth + 'px';
+		var neutralMargin = '0px';
+		var animateObject = fn == 'next' ? current : moveTo;
+		// Execute
 		if(moveTo.length !== 0){
-			// Switch task
-			current.hide('fast');
-			moveTo.show('fast');
-			current.removeClass('selected');
-			moveTo.addClass('selected');
+			// Setup first frame
+			if(fn == 'next'){
+				moveTo.show();
+			} else {
+				moveTo.css('margin-left', negativeMargin);
+				moveTo.show()
+			}
+			// Animate
+			animateObject.animate({
+				marginLeft: fn == 'next' ? negativeMargin : neutralMargin
+			}, 
+			500, 
+			function(){
+				current.hide();
+				current.removeClass('selected');
+				moveTo.addClass('selected');
+				// Reset margin
+				current.css('margin-left', '0');
+			});
 			// Update bullets
 			var currentBullet = $('.selected', container);
 			var newBullet = currentBullet[fn]();
