@@ -341,6 +341,8 @@ var addIdeaSetup = function(){
 }
 
 var inspirationSetup = function(){
+	var template = $(Mustache.render(TEMPLATES['inspirationPopupTemplate']));
+	$('#inspiration').html(template);
 	$.ajax({
 		type: "GET",
 		url: URL.getAvailableTasks,
@@ -372,7 +374,7 @@ var buildInspirationPanel = function(structure){
 		var innerForm = $('<form></form>').html(template)
 		var taskItem = $("<li></li>").append(innerForm);
 		// Custom processing for each task type
-		taskTypeProcessor(taskType, innerForm).pre();
+		taskTypeProcessor(taskType, innerForm, structure[i].task).pre();
 		// Finish setting up idea in the template
 		$('#ideaPlaceholder', taskItem).replaceWith(ideaElement.html());
 		$('.ideaBlock', taskItem).css('display', 'block');
@@ -383,13 +385,17 @@ var buildInspirationPanel = function(structure){
 		tasksList.append(taskItem);
 		maxHeight = taskItem.height() > maxHeight ? taskItem.height() : maxHeight;
 		if (i===0){
+			taskItem.hide();
 			taskItem.addClass('selected');
+			taskItem.show('fast');
 		}
 		// Setup input tag. For some reason, it doesn't work before element is visible. TODO figure better workaround
 		$('.tagInput', tasksList).tagsInput(ENV.tagConfig);
 		// Configure max height for tasks
 		tasksList.css('height', maxHeight);
 	}
+	// Show tasks
+	tasksList.show('fast');
 	prepareButtons($('#inspirationControls'), tasksList, structure.length);
 };
 
@@ -404,7 +410,7 @@ var prepareButtons = function(container, tasksContainer, n){
 	}
 	// Create move function
 	var move = function(fn){
-		var current = $('.selected', tasksContainer);
+		var current = $('li.selected', tasksContainer);
 		var moveTo = current[fn](); 
 		if(moveTo.length !== 0){
 			// Switch task
@@ -417,7 +423,7 @@ var prepareButtons = function(container, tasksContainer, n){
 			var newBullet = currentBullet[fn]();
 			currentBullet.removeClass('selected');
 			newBullet.addClass('selected');
-			// Checker whether this is the first or last item
+			// Checke whether this is the first or last item
 			if(moveTo.next().length === 0){
 				// This is the last item
 				container.addClass('last');
@@ -443,7 +449,7 @@ either the view compilation (pre) or answer processing (post) of specific task t
 pre does not return anything, but can alter the task form as required.
 post must return the final answer in JSON.
 */
-var taskTypeProcessor = function(type, form){
+var taskTypeProcessor = function(type, form, task){
 	return {
 		'TagSuggestionTask': {
 			'pre': function(){},
@@ -455,15 +461,13 @@ var taskTypeProcessor = function(type, form){
 		},
 		'TagValidationTask': {
 			'pre': function(){
-				/*else if(type === 'selectBest' || type === 'categorize'){
 				// select best or categorize tasks
-				var template = $(Mustache.render(TEMPLATES[type + 'TaskTemplate'], idea));
-				var tagsList = type === 'selectBest' ? idea.suggestedTags : idea.chosenTags;
-				taskItem = $("<li></li>").html(template);
+				var tags = JSON.parse(task.options);
+				var tagsList = $('.tagsList', form);
 				// Add labels
-				tagsList.forEach(function(d,j){
-					var tag = $(Mustache.render(TEMPLATES.tagTemplate, {tag:d}));
-					$('.tagsList', taskItem).append($("<li></li>").html(tag));
+				for(var i = 0; i < tags.length; i++){
+					var tag = $(Mustache.render(TEMPLATES.tagTemplate, {tag:tags[i]}));
+					tagsList.append($("<li></li>").html(tag));
 					tag.click(function(event){
 						var parent = $(this).closest('.tagsList');
 						if (parent.hasClass('single')){
@@ -472,11 +476,45 @@ var taskTypeProcessor = function(type, form){
 						}
 						$(this).toggleClass('selected');
 					});
-				});*/
+				};
 			},
-			'post': function(){}
+			'post': function(){
+				var selectedTag = $('.tagsList .selected', form).text();
+				return selectedTag;
+			}
 		}
 	}[type];
+}
+
+var submitInspirationTask = function(event){
+	var forms = $('#inspirationPanel form');
+	$.each(forms, function(i, form){
+		// Get data
+		var id = $('[name=taskId]', form).val();
+		var type = $('[name=taskType]', form).val();
+		var answer = taskTypeProcessor(type, form).post();
+		var data = {
+			id:id,
+			type:type,
+			answer:answer
+		};
+		// Submit
+		var _this = this;
+		$.ajax({
+			type: "POST",
+			url: URL.submitTask,
+			data: data,
+			success: function(data){
+				$.web2py.flash('Your tasks have been submitted!', 'ok');
+				// Close overlay
+				closeOverlay();
+			},
+			error: function(){
+				$.web2py.flash('Something went wrong!', 'error');
+			}
+		});
+	});
+	
 }
 
 var startTagsSuggestion = function(watchInput, suggestionContainer, tagsInput){
@@ -489,7 +527,7 @@ var startTagsSuggestion = function(watchInput, suggestionContainer, tagsInput){
 	// Success handler
 	var successHandler = function(data){
 		container.empty();
-		data.forEach(function(d,i){
+		$.each(data, function(i,d){
 			// Create element and bind click handler
 			var tagElement = $('<span></span>').text(d).addClass('tag');
 			tagElement.click(function(){

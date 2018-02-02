@@ -892,20 +892,28 @@ div.w2p_flash.alert {
 
 #inspirationControls a.previous {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 20px;
+    left: 5px;
 }
 
 #inspirationControls a.next {
     position: absolute;
+    top: 20px;
+    right: 5px;
+}
+
+#inspirationControls a.submit {
+    position: absolute;
     top: 0;
     right: 0;
+    display: none;
 }
 
 #inspirationControls ul {
     width: 100%;
     height: 50px;
     padding-top: 5px;
+    margin-bottom: 0px;
     text-align: center;
 }
 
@@ -917,10 +925,12 @@ div.w2p_flash.alert {
     border-radius: 5px;
     font-size: 0;
     margin-right: 2px;
+    transition: background 0.5s;
 }
 
 #inspirationControls li.selected {
     background: #3093DC;
+    transition: background 0.5s;
 }
 
 #inspirationControls.first .previous {
@@ -931,34 +941,39 @@ div.w2p_flash.alert {
     display: none;
 }
 
-#inspirationPanel {
-    margin-bottom: 40px;
+#inspirationControls.last .submit {
+    display: inline-block;
 }
 
-    #inspirationPanel.loading li {
+#inspirationPanel {
+    margin-bottom: 50px;
+}
+
+    #inspirationPanel.loading > li {
         background: white;
         border: none;
         box-shadow: none;
     }
 
-    #inspirationPanel li {
+    #inspirationPanel > li {
         width: 100%;
-        border: solid 1px #CCC;
+        /* border: solid 1px #CCC; */
         padding: 20px;
-        box-shadow: 0 0 5px rgba(0,0,0,0.2);
-        background: #EEE;
+        /* box-shadow: 0 0 5px rgba(0,0,0,0.2); */
+        background: rgb(237, 247, 255);
         float: left;
         display: none;
+        border-radius: 10px;
     }
     
-    #inspirationPanel li.selected {
+    #inspirationPanel > li.selected {
         display: block;
     }
-        #inspirationPanel li .tagsinput {
+        #inspirationPanel > li .tagsinput {
             margin-bottom: 0;
         }
 
-        #inspirationPanel li .ideaBlock {
+        #inspirationPanel > li .ideaBlock {
             display: inline-block !important;
             width: auto;
             min-width: 150px;
@@ -968,8 +983,27 @@ div.w2p_flash.alert {
             transition: padding 0.2s, margin 0.2s;
         }
 
-        #inspirationPanel li .loadingBadge {
+        #inspirationPanel > li .loadingBadge {
             background-position-x: center;
             display: block;
             width:100%;
         }
+
+/* From https://freebiesupply.com/blog/css-arrows/ */
+.arrow {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-top: 4px solid #2E88CA;
+    border-right: 4px solid #2E88CA;
+}
+.arrow:hover {
+    border-top-color: black;
+    border-right-color: black;
+}
+    .arrow-right {
+        transform: rotate(45deg);
+    }
+    .arrow-left {
+        transform: rotate(-135deg);
+    }
