@@ -97,7 +97,7 @@ input[type=text] {
     border-bottom: 0;
     margin-bottom: 0;
     /* box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2); */
-    background: #3AAAFC url('../images/border.png') repeat-x left bottom; 
+    background: #3AAAFC;
 }
 
 .nav.navbar-nav.navbar-right {
