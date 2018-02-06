@@ -199,6 +199,8 @@ class VersioningView extends View {
 			.attr('width', this.dimensions.smallIdea)
 			.attr('x', function(d){ return d.position.x; })
 			.attr('y', function(d){ return d.position.y; })
+			.attr('rx', 3)
+			.attr('ry', 3)
 			// Add hover effects
 			.on('mouseover', function(d){
                 // Trigger highlight event
