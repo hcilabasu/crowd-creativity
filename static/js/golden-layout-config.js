@@ -1,6 +1,6 @@
 var config = {
     settings: {
-        hasHeaders: true,
+        hasHeaders: false,
         clearance: 5
     },
     dimensions: {
