@@ -5,8 +5,6 @@
 
 .smallIdea {
 	fill: #FFDE78;
-	stroke: #FFAF3C;
-	stroke-width: 0.5;
 	cursor: pointer;
 	transition: fill 0.2s;
 }

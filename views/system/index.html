@@ -194,7 +194,7 @@
 			[[#closeable]]
 			<a href="#" title="Close idea" class="close"></a>
 			[[/closeable]]
-			<span class="fade">Added by [[addedBy]]</span>
+			<!-- <span class="fade">Added by [[addedBy]]</span> -->
 			<input type="hidden" name="ideaId" value="[[id]]"></input>
 			<input type="hidden" name="ideaTags" value="[[tags]]"></input>
 		</p>
@@ -302,13 +302,13 @@
 	<div class="navContainer">
 		<!--<button class="btn btn-primary btn-plus" id="addIdeaButton" onclick="openIdeaPopup(event)">Add idea</button>-->
 
-		<div class="navBlock actionable">
-			<img src="{{=URL('static','images/problem.png')}}" alt="Completely disorganized">
+		<!-- <div class="navBlock actionable">
+			<img src="{{=URL('static','images/problem.png')}}" alt="Problem description">
 			{{=problem.title}}
 			<div class="dropDown">
 				<p>{{=problem.description}}</p>
 			</div>
-		</div>
+		</div> -->
 
 		<div class="navBlock">
 			<a href="#" id="newIdeaButton" class="btn btn-primary" onclick="openIdeaPopup()">
@@ -346,25 +346,28 @@
 {{end}}
 
 {{block rightNavMenu}}
-<div class="navBlock actionable">
+<!-- <div class="navBlock actionable">
 	<a href="#" id="helpButton" onclick="startTutorial()">
 		<img src="{{=URL('static','images/help-navbar.png')}}" alt="Help!">
 	</a>
-</div>
-<div class="navBlock">
-	<img src="{{=URL('static','images/user-navbar.png')}}" alt="{{=user_name}}"> {{=user_name}}
+</div> -->
+<div class="navBlock actionable">
+	<img src="{{=URL('static','images/user-navbar.png')}}" alt="{{=user_name}}">
+	<div class="dropDown">
+		<p>Your username is: </p>
+		<p><strong>{{=user_name}}</strong></p>
+	</div>
 </div>
 {{end}}
 
-<div id="overlay">
+{{block overlay}}
 	<div class="popupDialog" id="tagsView">
 	</div>
 
 	<div class="popupDialog" id="addIdea">
 		<h2>New idea</h2>
 		<form>
-			<p><strong>Write your idea in the space below.</strong> Make sure to include as much detail as possible!</p>
-			<textarea name='idea' required></textarea>
+			<textarea name='idea' placeholder="Type your idea in here" required></textarea>
 			<p>
 				<strong>Suggest at least 3 tags for your idea.</strong> 
 				Try to use as many existing tags as you can (use the autosuggest list!). 
@@ -424,5 +427,5 @@
 		</div>
 
 	</div>
-</div>
+{{end}}
 

@@ -419,6 +419,23 @@ var prepareButtons = function(container, tasksContainer, n){
 		var animateObject = fn == 'next' ? current : moveTo;
 		// Execute
 		if(moveTo.length !== 0){
+			var updateBullets = function(){
+				// Update bullets
+				var currentBullet = $('.selected', container);
+				var newBullet = currentBullet[fn]();
+				currentBullet.removeClass('selected');
+				newBullet.addClass('selected');
+				// Check whether this is the first or last item
+				if(moveTo.next().length === 0){
+					// This is the last item
+					container.addClass('last');
+				} else if (moveTo.prev().length === 0) {
+					container.addClass('first');
+				} else {
+					container.removeClass('first').removeClass('last');
+				}
+			};
+			updateBullets();
 			// Setup first frame
 			if(fn == 'next'){
 				moveTo.show();
@@ -438,20 +455,7 @@ var prepareButtons = function(container, tasksContainer, n){
 				// Reset margin
 				current.css('margin-left', '0');
 			});
-			// Update bullets
-			var currentBullet = $('.selected', container);
-			var newBullet = currentBullet[fn]();
-			currentBullet.removeClass('selected');
-			newBullet.addClass('selected');
-			// Checke whether this is the first or last item
-			if(moveTo.next().length === 0){
-				// This is the last item
-				container.addClass('last');
-			} else if (moveTo.prev().length === 0) {
-				container.addClass('first');
-			} else {
-				container.removeClass('first').removeClass('last');
-			}
+			
 		}
 	};
 	// Setup buttons
@@ -606,19 +610,19 @@ var startTutorial = function(){
 				highlight: '.stack_SolutionSpaceView',
 				html: Mustache.render(TEMPLATES.tutorialSolutionSpaceTemplate),
 				location: {right: 20, top: 0}
-			},
-			{
-				title: 'Suggested Tasks',
-				highlight: '.stack_TasksView',
-				html: Mustache.render(TEMPLATES.tutorialSuggestedTasksTemplate),
-				location: {left: 20, top: 0}
-			},
-			{
-				title: 'Organization Level',
-				highlight: '#organizationLevel',
-				html: Mustache.render(TEMPLATES.tutorialOrganizationLevelTemplate),
-				location: {left: -250, bottom: 20}
 			}
+			// {
+			// 	title: 'Suggested Tasks',
+			// 	highlight: '.stack_TasksView',
+			// 	html: Mustache.render(TEMPLATES.tutorialSuggestedTasksTemplate),
+			// 	location: {left: 20, top: 0}
+			// },
+			// {
+			// 	title: 'Organization Level',
+			// 	highlight: '#organizationLevel',
+			// 	html: Mustache.render(TEMPLATES.tutorialOrganizationLevelTemplate),
+			// 	location: {left: -250, bottom: 20}
+			// }
 		]);
 	// Start tutorial
 	ENV.tutorial.start();

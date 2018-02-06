@@ -4,7 +4,7 @@ var config = {
         clearance: 5
     },
     dimensions: {
-        borderWidth: 5
+        borderWidth: 10
     },
     content: [{
         type: 'row',

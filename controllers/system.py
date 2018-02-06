@@ -190,8 +190,7 @@ def __insert_tasks_for_idea(idea, user_id):
     # Insert categorization tasks
     for i in range(0,TASKS_PER_IDEA):
         # insert selectBest types. Categorize tasks will be inserted when these are completed
-        microtask.TagSuggestionTask(idea=idea['id'])
-            
+        microtask.TagSuggestionTask(idea=idea['id'])     
 
 def __clean_tag(tag):
     tag = tag.replace(' ', '') # remove spaces

@@ -4,7 +4,7 @@
 
 .lm_content{
 	background: white;
-	border: 1px solid #ccc;
+	/* border: 1px solid #ccc; */
 }
 
 .lm_dragProxy .lm_content{
