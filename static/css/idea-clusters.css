@@ -537,11 +537,7 @@ div.w2p_flash.alert {
 
 #ideasContainer {
     padding: 20px;
-}
-
-#ideasContainer:empty:after {
-    content: 'There are not ideas to be displayed yet.';
-    color: #666;
+    overflow: auto;
 }
 
 .ideaBlock {
