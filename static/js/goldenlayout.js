@@ -3332,8 +3332,8 @@ lm.utils.copy( lm.items.Root.prototype, {
 	},
 
 	setSize: function() {
-		var width = this._containerElement.width() - 5, // TODO extend this properly, possibly do a PR
-			height = this._containerElement.height() - 87;
+		var width = this._containerElement.width() - 20, // TODO extend this properly, possibly do a PR
+			height = this._containerElement.height() - 70;
 
 		this.element.width( width );
 		this.element.height( height );

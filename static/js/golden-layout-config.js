@@ -1,10 +1,9 @@
 var config = {
     settings: {
         hasHeaders: false,
-        clearance: 5
     },
     dimensions: {
-        borderWidth: 10
+        borderWidth: 8
     },
     content: [{
         type: 'row',
@@ -49,7 +48,6 @@ var config = {
     }]
 };
 
-var layoutContainer = $("#layoutContainer");
 var LAYOUT = new GoldenLayout(config);
 
 LAYOUT.registerComponent( 'ideaViewer', function( container, componentState ){

@@ -1,14 +1,20 @@
 .lm_goldenlayout{
-	background: #EEE;
+	background: #3AAAFC;
+	padding: 0 10px 10px 10px;
+	box-sizing: border-box;
 }
 
 .lm_content{
 	background: white;
-	/* border: 1px solid #ccc; */
+	border-radius: 10px;
+	z-index: 4;
+	position: relative;
+	box-sizing: border-box;
 }
 
 .lm_dragProxy .lm_content{
 	box-shadow: 2px 2px 4px rgba( 0, 0, 0, 0.2 );
+	z-index: 10;
 }
 
 .lm_dropTargetIndicator{
@@ -28,6 +34,7 @@
 	background: #999;
 	opacity: 0.001;
 	transition: opacity 200ms ease;
+	z-index: 5;
 }
 
 .lm_splitter:hover{

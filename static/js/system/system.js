@@ -48,7 +48,7 @@ $(function(){
 	// toggleSolutionSpaceTimer();
 
 	// Start organization ration scale
-	startOrganizationRatioScale();
+	// startOrganizationRatioScale();
 
 	// Start autosuggest tags behavior
 	startTagsSuggestion(

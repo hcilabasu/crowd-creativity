@@ -68,8 +68,8 @@ class SolutionSpaceView extends View {
         container.on('scroll resize',(event)=>{
             $('#solutionSpaceHeader').offset({top:container.offset().top});
             $('#solutionSpaceLeftColumn').offset({left:container.offset().left});
-            var rightColumn = $('#solutionSpaceRightColumn');
-            rightColumn.offset({left:container.prop("clientWidth") - rightColumn.width()});
+            // var rightColumn = $('#solutionSpaceRightColumn');
+            // rightColumn.offset({left:container.prop("clientWidth") - rightColumn.width()});
 			// Minimap
 			this.updatePan();
         });
@@ -83,7 +83,7 @@ class SolutionSpaceView extends View {
 			cell.addClass('headerCell');
 			$('#solutionSpaceHeader').append(cell);
 			$('#solutionSpaceLeftColumn').append(cell.clone());
-			$('#solutionSpaceRightColumn').append(stats);
+			// $('#solutionSpaceRightColumn').append(stats);
 
 			// Create cells 
 			// var newRow = $('<div></div>').addClass('spRow');
