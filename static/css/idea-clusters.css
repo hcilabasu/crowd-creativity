@@ -519,7 +519,6 @@ div.w2p_flash.alert {
 .ideaBlock {
     position: relative;
     display: inline-block;
-    background: #FFDE78;
     border: none;
     border-radius: 10px;
     padding: 20px;
@@ -530,6 +529,11 @@ div.w2p_flash.alert {
     font-size: 0.8em;
     overflow: hidden;
     transition: width 0.2s, height 0.2s, background-color 0.2s, margin 0.2s;
+    background: #FFDE78; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* Standard syntax */
 }
 
 .ideaBlock a.close {
