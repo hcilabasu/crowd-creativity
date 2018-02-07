@@ -80,33 +80,108 @@ input[type=text] {
 }
 
 .logo {
+    margin: 0;
     color: white;
     font-family: 'ChunkFive'; 
     font-weight: normal; 
     font-style: normal;
-    font-size: 2.5em;
-    line-height: 1.5em;
     display: inline-block;
-    margin-right: 10px;
 }
 
-.navbar {
+.topNavbar {
+    text-align: center;
     position: relative;
     height: 82px;
     background: #3AAAFC;
     border-bottom: 0;
     margin-bottom: 0;
-    /* box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2); */
     background: #3AAAFC;
+    z-index: 99;
 }
 
-.nav.navbar-nav.navbar-right {
-    position: absolute;
-    right: 30px;
-    top: 50%;
-    -webkit-transform: translate(0,-50%);
-    transform: translate(0,-50%);
+.topNavbar .btn-primary {
+    background-color: #3093dc;
+    color: white;
+    margin: 0;
+    padding: 0 10px 0 0;
 }
+
+    .topNavbar .btn:hover {
+        background-color: #144C80;
+    }
+
+.navContainer {
+    position: relative;
+    display: inline-block;
+    height: 100%;
+}
+
+.navContainer.right {
+    position: absolute;
+    right: 0;
+}
+
+.navContainer.left {
+    position: absolute;
+    left: 0;
+}
+
+.navContainer > .navBlock {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.navBlock {
+    color: white;
+    background: #3AAAFC;
+    height: 46px;
+    line-height: 36px;
+    display: inline-block;
+    margin: 0 5px;
+    padding: 5px;
+    font-size: 12px;
+    transition: background 0.2s;
+}
+
+.navBlock img {
+    height: 22px;
+    margin: 5px;
+}
+
+.navBlock.actionable:hover {
+    background: #2E88CA;
+    transition: background 0.2s;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.navBlock .dropDown {
+    text-align: left;
+    position: absolute;
+    z-index: 100;
+    visibility: hidden;
+    opacity: 0;
+    top: 95%;
+    right: 0;
+    max-width: 300px;
+    background: #2E88CA;
+    line-height: 1.1em;
+    padding: 10px;
+    color: white;
+    transition: display 0.2s, opacity 0.2s;
+    box-shadow: 0 5px 5px rgba(0,0,0,0.2);
+}
+
+.navbar-right .navBlock .dropDown {
+    left: auto;
+    right: 0;
+}
+
+    .navBlock:hover .dropDown {
+        visibility: visible;
+        opacity: 1;
+        transition: display 0.2s, opacity 0.2s;
+    }
 
 #layoutContainer {
     box-sizing: border-box;
@@ -313,16 +388,7 @@ table th {
     background-color: #144C80;
 }
 
-.navbar .btn-primary {
-    background-color: #3093dc;
-    color: white;
-    margin: 0;
-    padding: 0 10px 0 0;
-}
 
-.navbar .btn:hover {
-    background-color: #144C80;
-}
 
 .btn-plus:active {
     background: url(../images/plus.png) no-repeat 12px center !important;
@@ -423,76 +489,6 @@ div.w2p_flash.alert {
     padding: 20px 10px;
     text-align: center;
 }
-
-.nav {
-    text-transform: none;
-}
-
-.navContainer {
-    display: inline-block;
-    position: relative;
-    top: 50%;
-    -webkit-transform: translateY(-25%);
-    transform: translateY(-25%);
-}
-
-.navBlock {
-    color: white;
-    background: #3AAAFC;
-    position: relative;
-    height: 46px;
-    line-height: 36px;
-    display: inline-block;
-    margin: 0 5px;
-    padding: 5px;
-    font-size: 12px;
-    transition: background 0.2s;
-    z-index: 1000;
-    border-radius: 3px;
-}
-
-.navBlock img {
-    height: 22px;
-    margin: 5px;
-}
-
-.navBlock .scale {
-    transform: translate(0,5px);
-    margin-right: 2.5px;
-}
-
-.navBlock.actionable:hover {
-    background: #2E88CA;
-    transition: background 0.2s;
-    box-shadow: 0 0 5px rgba(0,0,0,0.2);
-}
-
-.navBlock .dropDown {
-    position: absolute;
-    z-index: 100;
-    visibility: hidden;
-    opacity: 0;
-    top: 95%;
-    left: 0;
-    max-width: 300px;
-    background: #2E88CA;
-    line-height: 1.1em;
-    padding: 10px;
-    color: white;
-    transition: display 0.2s, opacity 0.2s;
-    box-shadow: 0 5px 5px rgba(0,0,0,0.2);
-}
-
-.navbar-right .navBlock .dropDown {
-    left: auto;
-    right: 0;
-}
-
-    .navBlock:hover .dropDown {
-        visibility: visible;
-        opacity: 1;
-        transition: display 0.2s, opacity 0.2s;
-    }
 
 #addIdeaPopup {
     display:none;

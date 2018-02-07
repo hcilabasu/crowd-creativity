@@ -300,16 +300,6 @@
 
 {{block navMenu}}
 	<div class="navContainer">
-		<!--<button class="btn btn-primary btn-plus" id="addIdeaButton" onclick="openIdeaPopup(event)">Add idea</button>-->
-
-		<!-- <div class="navBlock actionable">
-			<img src="{{=URL('static','images/problem.png')}}" alt="Problem description">
-			{{=problem.title}}
-			<div class="dropDown">
-				<p>{{=problem.description}}</p>
-			</div>
-		</div> -->
-
 		<div class="navBlock">
 			<a href="#" id="newIdeaButton" class="btn btn-primary" onclick="openIdeaPopup()">
 				<img src="{{=URL('static','images/plus-padding.png')}}" alt="New idea"/>
@@ -320,44 +310,17 @@
 				Inspiration
 			</a>
 		</div>
-
-		<!--
-		<div class="navBlock actionable" id="organizationLevel">
-			<img src="{{=URL('static','images/messy.png')}}" alt="Completely disorganized">
-			<div class="scale" id="organizationRatio">
-				<div class="filling"></div>
-			</div>
-			<img src="{{=URL('static','images/organized.png')}}" alt="Completely organized">
-			<div class="dropDown">
-				<div id="ratioAvailable">
-					<p><strong>Organization level</strong>: <span id="organizationRatioPercentage"></span>%</p>
-					<p>This scale shows how organized the idea space is.</p>
-					<p>To improve this, do some tasks on the <strong>Suggested Tasks</strong> view.</p>
-				</div>
-				<div id="ratioUnavailable">
-					<p>This metric can't be calculated because no ideas have been added yet. 
-						Once someone adds an idea, this scale will be updated.</p>
-				</div>
-			</div>
-		</div>
-		-->
-		
 	</div>
 {{end}}
 
 {{block rightNavMenu}}
-<!-- <div class="navBlock actionable">
-	<a href="#" id="helpButton" onclick="startTutorial()">
-		<img src="{{=URL('static','images/help-navbar.png')}}" alt="Help!">
-	</a>
-</div> -->
-<div class="navBlock actionable">
-	<img src="{{=URL('static','images/user-navbar.png')}}" alt="{{=user_name}}">
-	<div class="dropDown">
-		<p>Your username is: </p>
-		<p><strong>{{=user_name}}</strong></p>
+	<div class="navBlock actionable">
+		<img src="{{=URL('static','images/user-navbar.png')}}" alt="{{=user_name}}">
+		<div class="dropDown">
+			<p>Your username is: </p>
+			<p><strong>{{=user_name}}</strong></p>
+		</div>
 	</div>
-</div>
 {{end}}
 
 {{block overlay}}
