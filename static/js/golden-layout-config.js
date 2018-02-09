@@ -3,13 +3,13 @@ var config = {
         hasHeaders: false,
     },
     dimensions: {
-        borderWidth: 8
+        borderWidth: 5
     },
     content: [{
         type: 'row',
         content:[{
             type: 'column',
-            width: 70,
+            width: 69,
             content: [{
                 id: 'ideaViewer',
                 type: 'component',
@@ -26,7 +26,6 @@ var config = {
                 componentName: 'solutionSpace',
                 componentState: { } 
             }]
-            
         },{
             type: 'column',
             content:[{

@@ -1,7 +1,7 @@
 .lm_goldenlayout{
 	background: #3AAAFC;
-	padding: 0 10px 10px 10px;
 	box-sizing: border-box;
+	padding-left: 5px;
 }
 
 .lm_content{
@@ -31,15 +31,13 @@
 }
 
 .lm_splitter{
-	background: #999;
-	opacity: 0.001;
-	transition: opacity 200ms ease;
+	background: #3AAAFC;
 	z-index: 5;
 }
 
 .lm_splitter:hover{
 	opacity: 1;
-	background: #bbb;
+	background: #3AAAFC;
 }
 
 .lm_header{

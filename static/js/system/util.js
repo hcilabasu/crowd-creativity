@@ -120,7 +120,7 @@ var UTIL = {
 	insertErrorMessage: function(element, message, errorId) {
 		var messageContainer = $('#' + errorId);
 		if(messageContainer.length === 0){
-			$(element).after(
+			$(element).first().after(
 				$('<label>'+ message +'</label>')
 					.attr('id',errorId)
 					.addClass('error'));

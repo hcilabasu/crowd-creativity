@@ -24,6 +24,7 @@
 	    	addIdea: "{{=URL('system','add_idea')}}",
 	    	getOrganizationRatio: "{{=URL('system','get_organization_ratio')}}",
 			getTags: "{{=URL('system','get_tags')}}",
+			getAllTags: "{{=URL('system','get_all_tags')}}",
 			tagExists: "{{=URL('system','tag_exists')}}",
 			// Idea workspace view
 			getUserIdeas: "{{=URL('ideaworkspaceview','get_ideas')}}",
@@ -47,7 +48,8 @@
 			classPrefix: 'cl_',
 			idPrefix: 'id_',
 			autoUpdateOrganizationRatioSeconds: 30,
-			minNumberTags: 3,
+			minNumberTags: 1,
+			maxNumberTags: 2,
 			newUser: '{{=str(new_user).lower()}}' === 'true',
 		},
 		EVENTS = {
@@ -85,7 +87,7 @@
 				</a></li>
 			</ul>
 			<ul>
-				<li><a href="#" title="Reload your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
+				<li><a href="#" title="Open only your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
 					<img src="{{=URL('static','images/user.png')}}">
 				</a></li>
 				<li><a href="#" title="Open all ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
@@ -201,18 +203,23 @@
 	</script>
 
 	<script id="tagsViewTemplate" type="text/x-tmpl-mustache">
+		<span class="close"></span>
 		<h2>Tags view</h2>
 		<p>See ideas that have the tags you selected. If you see ideas you like, drag and drop to combine or merge them.</p>
 
 		<div class="twoCategoryIdeasList">
 			<div class="cl_[[category1]]">
 				<h3>[[category1]]</h3>
-				<ul></ul>
+				<ul>
+					<li class="loading"><div class="loadingBadge"></div></li>
+				</ul>
 			</div>
 
-			<div class="cl_[[category2]]">
+			<div class="cl_[[category2]] loading">
 				<h3>[[category2]]</h3>
-				<ul></ul>
+				<ul>
+					<li class="loading"><div class="loadingBadge"></div></li>
+				</ul>
 			</div>
 		</div>
 	</script>
@@ -276,6 +283,7 @@
 	</script>
 
 	<script id="inspirationPopupTemplate" type="text/x-tmpl-mustache">
+		<span class="close"></span>
 		<h2>Get inspired</h2>
 		<p>
 			To get inspired, do the three tasks below. Feel free to use the ideas as inspiration: remix them with your own ideas, expand on them, or use them in anyway you'd like!
@@ -328,21 +336,43 @@
 	</div>
 
 	<div class="popupDialog" id="addIdea">
+		<span class="close"></span>
 		<h2>New idea</h2>
 		<form>
 			<textarea name='idea' placeholder="Type your idea in here" required></textarea>
-			<p>
-				<strong>Suggest at least 3 tags for your idea.</strong> 
-				Try to use as many existing tags as you can (use the autosuggest list!). 
-				Only suggest new tags (marked with <img src="{{=URL('static', 'images/new-tag.png')}}" alt="New tag icon">) if completely necessary.
-				New tags decrease the organization level.
-			</p>
-			<div class="suggestedTags">
-				Suggested tags (click to add): 
-				<div></div>
+			
+			<div class="panel">
+				<p>Pick <strong>at most 2 tags</strong> that best summarize your idea</p>
+				<div class="tagPicker">
+					<input type="text" class="search" placeholder="Filter tags" disabled/>
+					<ul class="tags loading">
+						<!-- <li class="t_example">Example</li> -->
+						<li>
+							<div class="loadingBadge"></div>
+						</li>
+					</ul>
+					<div class="tagPlaceholder empty">
+						<span class="text"></span>
+						<span class="empty">tag 1</span> 
+						<span class="close">x</span>
+					</div>
+					<div class="tagPlaceholder empty">
+						<span class="text"></span>
+						<span class="empty">tag 2 (opt.)</span> 
+						<span class="close">x</span>
+					</div>
+					<input type="hidden" name="pickTags" value="" />
+					<a class="alternative" href="#">None of these tags represent your idea?</a>
+				</div>
 			</div>
-			<input type="text" name="tags" required/>
+			<div class="panel" style="display: none">
+				<p>Suggest <strong>at most 2 tags</strong> that best summarize your idea</p>
+				<input type="text" placeholder="Separate tags with a space or comma" name="suggestTags"/>
+				<a class="alternative" href="#"><strong>&lsaquo;</strong> Go back to tag picker</a>
+			</div>
 			<a class="btn floatRight" href="#" onclick="submitNewIdea(event);">Submit</a>
+			<input type="hidden" name="customTag" value="false"/> <!-- This input reflects whether the user picked a tag or created a custom one -->
+			
 		</form>
 	</div>
 
@@ -350,7 +380,7 @@
 	</div>
 
 	<div class="popupDialog" id="combineIdeas">
-
+		<span class="close"></span>
 		<h2>Idea Mixing</h2>
 
 		<div class="combineIdeasShowIdeas">

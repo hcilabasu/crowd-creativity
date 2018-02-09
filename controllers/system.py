@@ -144,6 +144,12 @@ def get_organization_ratio():
         # There is no data yet to calculate this.
         return -1
 
+def get_all_tags():
+    tags = db(db.tag.id > 0).select(db.tag.tag, orderby=db.tag.tag)
+    tags = [t.tag for t in tags]
+    response.headers['Content-Type'] = 'text/json'
+    return json.dumps(tags) 
+
 def get_tags():
     term = '%%%s%%' % (request.vars.term.lower())
     tags = db(db.tag.tag.like(term)).select(db.tag.tag)

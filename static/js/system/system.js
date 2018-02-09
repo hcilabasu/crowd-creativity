@@ -1,4 +1,13 @@
 $(function(){
+	// Enable tooltips
+	$( document ).tooltip({
+		position: {
+			my: 'center top+15',
+			at: "center bottom",
+			collision: 'flipfit'
+		}
+	});
+
 	// Parse templates
 	Mustache.tags = ['[[',']]']
 	$('script[type$=x-tmpl-mustache]').each(function(i,d){
@@ -16,21 +25,21 @@ $(function(){
 		delimiter: [',', ' ', ';'], // Doesn't seem like I can set the UI delimiters separate from the backend. If you change this, change cleanup on the submit function
 		height: 'auto',
 		width: '100%',
-		autocomplete_url: URL.getTags,
-		onAddTag: function(tag){
-			var _this = $(this);
-			tagExists(tag, function(tagExists){
-				if(!tagExists){
-					// Tag does not exist. Update style
-					var container = _this.closest('.tagsinput');
-					var tagElement = _this.siblings('.tagsinput').children('.tag').last();
-					tagElement.addClass('new');
-				}
-			});
-		}
+		// autocomplete_url: URL.getTags,
+		// onAddTag: function(tag){
+		// 	var _this = $(this);
+		// 	tagExists(tag, function(tagExists){
+		// 		if(!tagExists){
+		// 			// Tag does not exist. Update style
+		// 			var container = _this.closest('.tagsinput');
+		// 			var tagElement = _this.siblings('.tagsinput').children('.tag').last();
+		// 			tagElement.addClass('new');
+		// 		}
+		// 	});
+		// }
 	};
 	ENV.tagsDelimiter = ',, ,;';
-	$('#addIdea input[name=tags]').tagsInput(ENV.tagConfig);
+	$('#addIdea input[name=suggestTags]').tagsInput(ENV.tagConfig);
 	$('#combineIdeas input[name=combinedTagInput]').tagsInput(ENV.tagConfig);
 
 	// Load windowed layout
@@ -51,10 +60,12 @@ $(function(){
 	// startOrganizationRatioScale();
 
 	// Start autosuggest tags behavior
-	startTagsSuggestion(
-		'#addIdea textarea', 
-		'#addIdea .suggestedTags > div', 
-		'#addIdea input[name=tags]');
+	// startTagsSuggestion(
+	// 	'#addIdea textarea', 
+	// 	'#addIdea .suggestedTags > div', 
+	// 	'#addIdea input[name=tags]');
+
+	setupTagPicker('#addIdea');
 
 	/* Toolbar button handlers */
 	TOOLBAR = {
@@ -105,6 +116,121 @@ $(function(){
 
 
 });
+
+var setupTagPicker = function(selector){
+	var tagPicker = $(selector);
+	var tags = $('.tags', tagPicker);
+	// Setup switcher
+	$('.alternative', tagPicker).click(function(){
+		switchPanel(tagPicker);
+	});
+
+	// Setup filter
+	$('.search', tagPicker).on('keyup paste', function(e){
+		var text = $(this).val().toLowerCase();
+		console.dir(text);
+		var show = $('li[class*="t_' + text + '"]', tags);
+		var hide = $('li:not([class*="' + text + '"])', tags);
+		hide.hide();
+		show.show();
+	});
+
+	// Setup remove tag
+	$('.tagPlaceholder .close').click(function(e){
+		var pressedButton = $(this);
+		var placeholder = pressedButton.closest('.tagPlaceholder');
+		// Check if this is placeholder1
+		var isPlaceholder1 = placeholder.is('.tagPlaceholder:first');
+		if(isPlaceholder1){
+			// Check if placeholder 2 is used
+			var placeholder2 = $('.tagPlaceholder:eq(1)', tagPicker);
+			var isPlaceholder2Empty = placeholder2.hasClass('empty');
+			if (isPlaceholder2Empty) {
+				// Ph2 is not being used. It's ok to empty Ph1
+				removeTag(placeholder);
+			} else {
+				// Placeholder 1 is being deleted and 2 is used. Move ph2 to ph1 and delete ph2
+				var text = $('.text', placeholder2).text();
+				removeTag(placeholder2);
+				removeTag(placeholder);
+				setTag(placeholder, text);
+			}
+		} else {
+			// Ph2 being deleted needs no checks
+			removeTag(placeholder);
+		}
+	});
+};
+
+/*
+	If toTagPicker == true, this will switch to (or remain on) the tagPicker.
+	If undefined, it will just flip
+*/
+var switchPanel = function(tagPicker, toTagPicker){
+	var customTagInput = $('#addIdea input[name=customTag]');
+	var isAtCustomTag = customTagInput.val() === 'true';
+	var changeNeeded = true;
+	if(toTagPicker !== undefined){
+		changeNeeded = toTagPicker && isAtCustomTag;
+	}
+	if(changeNeeded){
+		$('#addIdea .panel').toggle('slow');
+		customTagInput.val(!isAtCustomTag);
+	}
+};
+
+var teardownTagPicker = function(tagPicker){
+	var tagsContainer = $('.tags', tagPicker);
+	// Refresh tagPicker
+	$('.search', tagPicker).prop('disabled', true);
+	tagsContainer.empty()
+	tagsContainer.html('<li><div class="loadingBadge"></div></li>');
+	tagsContainer.addClass('loading');
+	// Empty tag placeholders
+	var placeholders = $('.tagPlaceholder', tagPicker);
+	placeholders.each(function(i,d){
+		removeTag($(d));
+	});
+	// Empty tag suggestion
+	$('#addIdea input[name=suggestTags]').importTags(''); 
+	// Revert back to tagPicker
+	switchPanel(tagPicker, true);
+};
+
+var setTag = function(placeholder, tag){
+	$('.text', placeholder).text(tag);
+	placeholder.removeClass('empty');
+	// Add tag to hidden input
+	var input = $('input[name=pickTags]');
+	var current = input.val();
+	var tags = current.split(ENV.tagsDelimiter);
+	if(tags.indexOf(tag) < 0){ // Tag may already be in there
+		if(tags.length===1 && tags[0]===''){
+			// input is empty
+			input.val(tag);
+		} else {
+			input.val(current + ENV.tagsDelimiter + tag);
+		}
+	}
+};
+
+var removeTag = function(placeholder){
+	var text = $('.text', placeholder);
+	var currentTag = text.text();
+	text.text('');
+	placeholder.addClass('empty');
+	// Remove tag from hidden input
+	var input = $('input[name=pickTags]');
+	var current = input.val();
+	var tags = current.split(ENV.tagsDelimiter);
+	var newVal = '';
+	if(tags.length > 1){
+		var removeIndex = tags.indexOf(currentTag);
+		tags.splice(removeIndex, 1);
+		newVal = tags[0];
+	}
+	input.val(newVal);
+}
 
 var startOrganizationRatioScale = function(){
 	// Attach refresh function to events
@@ -165,26 +291,35 @@ var refreshOrganizationRatio = function(){
 var submitNewIdea = function(event){
 	// Serialize form data
 	var formElement = $(event.target).closest('form');
-	var form = UTIL.objectifyForm(formElement.serializeArray(), {
-		tags: function(value){
+	var parseTags = function(value){
+		if (value === ''){
+			return [];
+		} else {
 			return value.split(ENV.tagsDelimiter);
 		}
+	};
+	var form = UTIL.objectifyForm(formElement.serializeArray(), {
+		suggestTags: parseTags,
+		pickTags: parseTags
 	});
+	var tags = form.customTag == 'true' ? form.suggestTags : form.pickTags;
 	// Validate tags. For some reason, the jQuery validator does not pick it up.
-	if (form.tags.length < ENV.minNumberTags | !formElement.valid()){ 
-		if (form.tags.length < ENV.minNumberTags){
+	if (tags.length < ENV.minNumberTags | tags.length > ENV.maxNumberTags  | !formElement.valid()){ 
+		if (tags.length < ENV.minNumberTags){
 			// Not enough tags. Throw a tantrum. 
-			UTIL.insertErrorMessage('#addIdea .tagsinput', 'Insert at least 3 tags', 'errorTags');
+			UTIL.insertErrorMessage('#addIdea form', 'Insert at least ' + ENV.minNumberTags + ' tag', 'errorTags');
+		} else if(tags.length > ENV.maxNumberTags) {
+			UTIL.insertErrorMessage('#addIdea form', 'Insert at most ' + ENV.maxNumberTags + ' tags', 'errorTags');
 		} else {
 			// Clean any tags errors
-			$('#error-tags').remove();
+			$('#errorTags').remove();
 		}
 	} else {
 		// Submit
-		submitIdea(form.idea, form.tags, 'original', [], function(data){
+		submitIdea(form.idea, tags, 'original', [], function(data){
 			var _id = JSON.parse(data).id;
 			var _idea = form.idea;
-			var _tags = form.tags;
+			var _tags = tags;
 			// Add to UI
 			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
 			// Clearing up inputs and giving feedback to the user
@@ -254,12 +389,14 @@ var openOverlay = function(popUpId, params){
 	$('#overlay > div').hide();
 	$('#overlay').fadeIn('fast');
 	$('#' + popUpId).fadeIn('fast');
+	// Set click on close button
+	$('#' + popUpId + ' > .close').click(closeOverlay);
 	// Call setup function for the ID
 	window[popUpId + 'Setup'](params);
 };
 
 var closeOverlay = function(event){
-	if(!event || $(event.target).is('#overlay')){
+	if(!event || $(event.target).is('#overlay, .popupDialog > .close')){
 		$('#overlay').fadeOut('fast');
 
 		// Call event handlers
@@ -312,6 +449,9 @@ var tagsViewSetup = function(params){
 	$('#tagsView').html(Mustache.render(TEMPLATES.tagsViewTemplate, templateParams));
 
 	var addIdeasToContainer = function(container, ideas){
+		// Remove loading badge
+		container.empty();
+		// Add ideas
 		ideas.forEach(function(d,i){
 			var li = $('<li></li>');
 			var ideaElement = new Idea(d, {closeable:false, draggable:true, resizable: false, focuseable: false});
@@ -330,6 +470,7 @@ var tagsViewSetup = function(params){
 			data: {tag: d},
 			success: function(data){
 				var ideas = JSON.parse(data);
+				// Add ideas
 				addIdeasToContainer($('#tagsView .' + ENV.classPrefix + d + ' ul'), ideas);
 			}
 		});
@@ -337,7 +478,46 @@ var tagsViewSetup = function(params){
 }
 
 var addIdeaSetup = function(){
+	// Set focus for immediate typing
 	$('#addIdea textarea').focus();
+	var tagPicker = $('#addIdea .tagPicker');
+	var tagsContainer = $('.tags', tagPicker);
+	// Load available tags
+	$.ajax({
+		type: 'GET',
+		url: URL.getAllTags,
+		success: function(data){
+			// Load tags
+			tagsContainer.removeClass('loading');
+			tagsContainer.empty();
+			data.forEach(function(d,i){
+				let li = $('<li></li>').addClass('t_' + d).text(d);
+				tagsContainer.append(li);
+			});
+			// Setup click on tag
+			$('li',tagPicker).click(function(){
+				var tag = $(this).text();
+				var placeholder = $('.tagPlaceholder.empty:first', tagPicker);
+				if(placeholder.length > 0){
+					// Check if a placeholder already holds this tag
+					var placeholders = $('.tagPlaceholder', tagPicker);
+					for (let i = 0; i < placeholders.length; i++) {
+						const ph = placeholders[i];
+						if($('.text', ph).text() === tag){
+							return false;
+						}
+					}
+					setTag(placeholder, tag);
+				}
+			});
+			// Enable filter
+			$('.search', tagPicker).prop('disabled', false);
+		}
+	});
+	// Revert tagPicker panel
+	EVENTS.popOverClose.push(function(){
+		teardownTagPicker(tagPicker);
+	});
 }
 
 var inspirationSetup = function(){
@@ -387,12 +567,14 @@ var buildInspirationPanel = function(structure){
 		if (i===0){
 			taskItem.hide();
 			taskItem.addClass('selected');
-			taskItem.show('fast');
+			taskItem.show(500, function(){
+				tasksList.css('height', maxHeight);
+			});
 		}
 		// Setup input tag. For some reason, it doesn't work before element is visible. TODO figure better workaround
 		$('.tagInput', tasksList).tagsInput(ENV.tagConfig);
 		// Configure max height for tasks
-		tasksList.css('height', maxHeight);
+		
 	}
 	// Show tasks
 	tasksList.show('fast');
