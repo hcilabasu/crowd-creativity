@@ -37,13 +37,17 @@ var UTIL = {
 	Starts a timer, displaying the countdown on timerDisplay, and executing endFn at every duration seconds.
 	*/
 	setTimer: function(timerDisplay, endFn, duration, repeat){
-		timerDisplay.text(duration);
+		// Setup formatter and parser
+		var formatter = UTIL.formatTimer;
+		var parser = UTIL.parseTimer;
+		// Go through update logic
+		timerDisplay.text(formatter(duration));
 		var _duration = duration;
 		var interval = window.setInterval(function(){
-			var seconds = parseInt(timerDisplay.text());
+			var seconds = parser(timerDisplay.text());
 			if(!isNaN(seconds)) {
 				// Display is on. Continue timer from there
-				timerDisplay.text(seconds);
+				timerDisplay.text(formatter(seconds));
 				if(seconds <= 0){
 					seconds = _duration;
 					endFn();
@@ -51,11 +55,11 @@ var UTIL = {
 						// Do not repeat. Stop timer
 						clearInterval(interval);
 					} else {
-						timerDisplay.text(_duration);
+						timerDisplay.text(formatter(_duration));
 					}
 				} else {
 					// Decrease timer
-					timerDisplay.text(seconds - 1);
+					timerDisplay.text(formatter(seconds - 1));
 				}
 			} else {
 				// Display was turned off. Stop interval
@@ -75,6 +79,46 @@ var UTIL = {
 			// It is currently on. Turn it off
 			display.text('OFF');
 		}	
+	},
+	/* 
+	Formats time in seconds into hh:mm:ss 
+	Original code by powtac from: https://stackoverflow.com/questions/6312993/javascript-seconds-to-time-string-with-format-hhmmss
+	*/
+	formatTimer: function(time, showHours){
+		var sec_num = time; // don't forget the second param
+		var hours   = Math.floor(sec_num / 3600);
+		var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+		var seconds = sec_num - (hours * 3600) - (minutes * 60);
+	
+		if (hours   < 10) {hours   = "0"+hours;}
+		if (minutes < 10) {minutes = "0"+minutes;}
+		if (seconds < 10) {seconds = "0"+seconds;}
+		var output = minutes+':'+seconds;
+		if(showHours){
+			output = hours+':'+output;
+		}
+		return output;
+	},
+	/*
+	Parses the time in the format hh:mm:ss, mm:ss, or just ss to seconds in int
+	*/
+	parseTimer: function(time){
+		var components = time.split(':');
+		var seconds = {
+			1: function(){
+				// ss
+				return parseInt(components[0]);
+			},
+			2: function(){
+				// mm:ss
+				return parseInt(components[0]) * 60 + parseInt(components[1]);
+			},
+			3: function(){
+				// hh:mm:ss
+				return parseInt(components[0]) * 3600 + parseInt(components[1]) * 60 + parseInt(components[2]);
+			}
+		}[components.length]();
+		return seconds;
 	},
 	/*
 	Returns a function, that, as long as it continues to be invoked, will not

@@ -39,6 +39,10 @@ class Tutorial {
             $(this).remove();
             $('#tutorialHighlightClone').remove();
         });
+        // Execute on close function if exists
+        if (this.settings.onclose !== undefined){
+            this.settings.onclose();
+        }
     }
 
     /* 
@@ -76,9 +80,14 @@ class Tutorial {
         // A clone is necessary to avoid issues with stacking context
         // that can appear if you just change the z-index
         if('highlight' in step){
-            var highlightClone = $(step.highlight).clone(); 
+            var highlightOriginal = $(step.highlight);
+            var highlightClone = highlightOriginal.clone(); 
+            // Put all styles into the new object
+            highlightClone[0].style.cssText = document.defaultView.getComputedStyle(highlightOriginal[0], '').cssText;
+            // Update required styles
             highlightClone.css({
                 'z-index': 3000,
+                'box-shadow': '0 0 5px rgba(0,0,0,0.2);',
                 'position':'absolute',
                 'left':$(step.highlight).offset().left + 'px',
                 'top':$(step.highlight).offset().top + 'px',
@@ -130,8 +139,9 @@ class Tutorial {
         if (!('highlight' in step)){
             // No element is supposed to be highlighted
             popup.css('width', this.nonHighlightPopUpWidth + 'px');
-            popup.css('margin', '30px auto');
+            popup.addClass('noHighlight');
         } else {
+            popup.removeClass('noHighlight');
             // There is an element being highlighted. Set the location specified by the user
             var highlighElement = $(step.highlight);
             var setPosition = (loc, stepLocation)=>{

@@ -51,6 +51,8 @@
 			minNumberTags: 1,
 			maxNumberTags: 2,
 			newUser: '{{=str(new_user).lower()}}' === 'true',
+			currentPhase: 1, // Keeps track of the current ideation phase
+			aloneIdeationTime: 0.05 // Duration of time, in minutes, before other views are opened
 		},
 		EVENTS = {
 			popOverClose: [],
@@ -80,7 +82,7 @@
 
 	<!-- Mustache templates -->
 	<script id="ideaViewerTemplate" type="text/x-tmpl-mustache">
-		<div class="toolbar">
+		<div class="toolbar phase1_bl">
 			<ul>
 				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.ideaViewer.reload()">
 					<img src="{{=URL('static','images/reload.png')}}">
@@ -234,6 +236,14 @@
 		<p>This very short tutorial will walk you through the core parts of this system.</p>
 	</script>
 
+	<script id="tutorialAddIdeaTemplate" type="text/x-tmpl-mustache">
+		<p>You can add a new idea by clicking this button</p>
+	</script>
+
+	<script id="tutorialInspirationTemplate" type="text/x-tmpl-mustache">
+		<p>Whenever you need some extra inspiration, just click here</p>
+	</script>
+
 	<script id="tutorialIdeaViewerTemplate" type="text/x-tmpl-mustache">
 		<p>This is the idea viewer. Every idea you add (through the "Add Idea" button above) will appear here.</p>
 
@@ -260,18 +270,12 @@
 		<p>If you hover over a cell, the ideas that belong to the tags you're pointing to will be highlighted in the idea viewer.</p>
 	</script>
 
-	<script id="tutorialSuggestedTasksTemplate" type="text/x-tmpl-mustache">
-		<p>This is the suggested tasks panel. While only generating ideas is exciting, those ideas need to be organized as well.</p>
-
-		<p>Instead of having you organize all of the numerous ideas that have been generated in a long, complicated, and error-prone process, 
-			we broke that down into very small tasks that can be done in a few seconds.</p>
-
+	<script id="tutorialVersioningViewTemplate" type="text/x-tmpl-mustache">
 		<p>
-			Doing these tasks not only helps everyone with the organization of ideas, but can also inspire you, since you'll be
-			seeing what other people have developed!
+			This is the versioning view. It allows you to see where an idea came from: has it been combined or merged from ther ideas? 
+			What are its older versions?
 		</p>
 
-		<p>So whenever you're out of ideas or just feel like helping out with organizing the ideas, do a few of these tasks.</p>
 	</script>
 
 	<script id="tutorialOrganizationLevelTemplate" type="text/x-tmpl-mustache">
@@ -313,10 +317,15 @@
 				<img src="{{=URL('static','images/plus-padding.png')}}" alt="New idea"/>
 				New idea
 			</a>
-			<a href="#" id="helpButton" class="btn btn-primary" onclick="openInspirationPopup()">
-				<img src="{{=URL('static','images/lightbulb-padding.png')}}" alt="Help!"/>
+			<a href="#" id="helpButton" class="btn btn-primary phase1_bl" onclick="openInspirationPopup()">
+				<img src="{{=URL('static','images/lightbulb-padding.png')}}" alt="Get inspiration"/>
 				Inspiration
 			</a>
+			<a href="#" id="openViews" class="btn btn-primary phase1_bl phase2_bl glowWhite" onclick="openAllViews()">
+				<img src="{{=URL('static','images/open-all.png')}}" alt="Open all views"/>
+				Open all views
+			</a>
+			<span id="sessionTimer" class="phase2_bl" title="Countdown before the other system views are available">00:00</span>
 		</div>
 	</div>
 {{end}}
@@ -370,7 +379,7 @@
 				<input type="text" placeholder="Separate tags with a space or comma" name="suggestTags"/>
 				<a class="alternative" href="#"><strong>&lsaquo;</strong> Go back to tag picker</a>
 			</div>
-			<a class="btn floatRight" href="#" onclick="submitNewIdea(event);">Submit</a>
+			<a class="btn floatRight submit" href="#" onclick="submitNewIdea(event);">Submit</a>
 			<input type="hidden" name="customTag" value="false"/> <!-- This input reflects whether the user picked a tag or created a custom one -->
 			
 		</form>

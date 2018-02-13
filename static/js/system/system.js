@@ -1,13 +1,4 @@
 $(function(){
-	// Enable tooltips
-	$( document ).tooltip({
-		position: {
-			my: 'center top+15',
-			at: "center bottom",
-			collision: 'flipfit'
-		}
-	});
-
 	// Parse templates
 	Mustache.tags = ['[[',']]']
 	$('script[type$=x-tmpl-mustache]').each(function(i,d){
@@ -15,6 +6,62 @@ $(function(){
 		var html = $('#'+id).html()
 		Mustache.parse(html);
 		TEMPLATES[id] = html;
+	});
+
+	// Define tutorials
+	ENV.firstTutorial = new Tutorial(
+		{ // Settings
+			onclose: function(){
+				// When the first tutorial is closed, start the timer
+				startViewSequencing();
+			}
+		},
+		[ // Steps
+			{
+				title: 'Welcome',
+				html: Mustache.render(TEMPLATES.tutorialWelcomeTemplate)
+			},	
+			{
+				title: 'Add a new Idea',
+				highlight: '#newIdeaButton',
+				html: Mustache.render(TEMPLATES.tutorialAddIdeaTemplate),
+				location: {left: -200, bottom: 20}
+			}
+		]
+	);
+	ENV.secondTutorial = new Tutorial(
+		{ // Settings
+			
+		},
+		[ // Steps
+			{
+				title: 'Solution space view',
+				highlight: '.stack_SolutionSpaceView',
+				html: Mustache.render(TEMPLATES.tutorialSolutionSpaceTemplate),
+				location: {right: 20, top: 0}
+			},
+			{
+				title: 'Versioning view',
+				highlight: '.stack_VersioningView',
+				html: Mustache.render(TEMPLATES.tutorialVersioningViewTemplate),
+				location: {left: 20, top: 0}
+			},
+			{
+				title: 'Inspiration button',
+				highlight: '#helpButton',
+				html: Mustache.render(TEMPLATES.tutorialInspirationTemplate),
+				location: {left: -200, bottom: 20}
+			}
+		]
+	);
+
+	// Enable tooltips
+	$( document ).tooltip({
+		position: {
+			my: 'center top+15',
+			at: "center bottom",
+			collision: 'flipfit'
+		}
 	});
 
 	// Close overlay on click
@@ -109,13 +156,61 @@ $(function(){
 		}
 	};
 
-	// If this is a new user, trigger the help menu
+	// If this is a new user, start the process
 	if(ENV.newUser){
-		startTutorial();
+		// Maximize first view
+		setPhase(1);
+		LAYOUT.root.getItemsById('ideaViewer')[0].toggleMaximise();
+		// Start first tutorial
+		startTutorial(ENV.firstTutorial);
+	} else {
+		setPhase(2);
 	}
 
-
+	// FInished loading page
+	$('#loadingOverlay').fadeOut(1000, function(){
+		$('body').removeClass('loading');
+	});
 });
+
+var startViewSequencing = function(){
+	// Maximize idea workspace and hide step2 objects
+	UTIL.setTimer($('#sessionTimer'), function(){
+		$('#sessionTimer').fadeOut(500, function(){
+			$('#openViews').fadeIn(500);
+		});
+	}, ENV.aloneIdeationTime * 60, false);
+};
+
+var openAllViews = function(){
+	var maximizedPanel = $('.lm_maximised .lm_content');
+	maximizedPanel.animate({
+		// These values come from the golden-layout.config.js
+		height: maximizedPanel.height() * 0.5,
+		width: maximizedPanel.width() * 0.69
+	}, 200, function(){
+		// Maximize other views
+		LAYOUT.root.getItemsById('ideaViewer')[0].toggleMaximise();
+		// Start tutorial for those views
+		startTutorial(ENV.secondTutorial);
+		// Set new phase
+		incrementPhase();
+	});
+};
+
+var setPhase = function(phase){
+	// Increment phase
+	var previousPhase = ENV.currentPhase;
+	ENV.currentPhase = phase;
+	// Show blacklisted elements from previous phase
+	$('.phase' + previousPhase + '_bl').show();
+	// hide blacklisted elements from current phase
+	$('.phase' + ENV.currentPhase + '_bl').hide();
+};
+
+var incrementPhase = function(){
+	setPhase(ENV.currentPhase + 1);
+};
 
 var setupTagPicker = function(selector){
 	var tagPicker = $(selector);
@@ -179,13 +274,15 @@ var switchPanel = function(tagPicker, toTagPicker){
 	}
 };
 
-var teardownTagPicker = function(tagPicker){
+var teardownTagPicker = function(tagPicker, reloadList){
 	var tagsContainer = $('.tags', tagPicker);
 	// Refresh tagPicker
-	$('.search', tagPicker).prop('disabled', true);
-	tagsContainer.empty()
-	tagsContainer.html('<li><div class="loadingBadge"></div></li>');
-	tagsContainer.addClass('loading');
+	if(reloadList){
+		$('.search', tagPicker).prop('disabled', true);
+		tagsContainer.empty()
+		tagsContainer.html('<li><div class="loadingBadge"></div></li>');
+		tagsContainer.addClass('loading');
+	}
 	// Empty tag placeholders
 	var placeholders = $('.tagPlaceholder', tagPicker);
 	placeholders.each(function(i,d){
@@ -289,6 +386,11 @@ var refreshOrganizationRatio = function(){
 };
 
 var submitNewIdea = function(event){
+	if($('#addIdea').hasClass('loading')){
+		// It's in submission state, so don't submit again
+		return false;
+	}
+	console.dir('Submitting');
 	// Serialize form data
 	var formElement = $(event.target).closest('form');
 	var parseTags = function(value){
@@ -316,6 +418,7 @@ var submitNewIdea = function(event){
 		}
 	} else {
 		// Submit
+		$('#addIdea').addClass('loading');
 		submitIdea(form.idea, tags, 'original', [], function(data){
 			var _id = JSON.parse(data).id;
 			var _idea = form.idea;
@@ -328,6 +431,10 @@ var submitNewIdea = function(event){
 			$('#addIdea textarea').focus();
 			$('#addIdea .suggestedTags > div').html('');
 			$.web2py.flash('Your idea has been added!', 'ok');
+			// Remove loading
+			$('#addIdea').removeClass('loading');
+			// Reset tag picker
+			teardownTagPicker($('#addIdea'), false);
 		});
 	}
 };
@@ -516,7 +623,7 @@ var addIdeaSetup = function(){
 	});
 	// Revert tagPicker panel
 	EVENTS.popOverClose.push(function(){
-		teardownTagPicker(tagPicker);
+		teardownTagPicker(tagPicker, true);
 	});
 }
 
@@ -770,44 +877,9 @@ var startTagsSuggestion = function(watchInput, suggestionContainer, tagsInput){
     });
 };
 
-var startTutorial = function(){
-	
-	ENV.tutorial = new Tutorial(
-		{ // Settings
-			
-		},
-		[ // Steps
-			{
-				title: 'Welcome',
-				html: Mustache.render(TEMPLATES.tutorialWelcomeTemplate)
-			},	
-			{
-				title: 'Idea Viewer',
-				highlight: '.stack_IdeaViewerView',
-				html: Mustache.render(TEMPLATES.tutorialIdeaViewerTemplate),
-				location: {right: 20, top: 0}
-			}, 
-			{
-				title: 'Solution Space',
-				highlight: '.stack_SolutionSpaceView',
-				html: Mustache.render(TEMPLATES.tutorialSolutionSpaceTemplate),
-				location: {right: 20, top: 0}
-			}
-			// {
-			// 	title: 'Suggested Tasks',
-			// 	highlight: '.stack_TasksView',
-			// 	html: Mustache.render(TEMPLATES.tutorialSuggestedTasksTemplate),
-			// 	location: {left: 20, top: 0}
-			// },
-			// {
-			// 	title: 'Organization Level',
-			// 	highlight: '#organizationLevel',
-			// 	html: Mustache.render(TEMPLATES.tutorialOrganizationLevelTemplate),
-			// 	location: {left: -250, bottom: 20}
-			// }
-		]);
+var startTutorial = function(tutorial){
 	// Start tutorial
-	ENV.tutorial.start();
+	tutorial.start();
 };
 
 var tagExists = function(tag, callback){

@@ -954,8 +954,8 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		contentItem.element.addClass( 'lm_maximised' );
 		contentItem.element.after( this._maximisePlaceholder );
 		this.root.element.prepend( contentItem.element );
-		contentItem.element.width( this.container.width() );
-		contentItem.element.height( this.container.height() );
+		contentItem.element.width( this.container.width() - 10);
+		contentItem.element.height( this.container.height() - 60);
 		contentItem.callDownwards( 'setSize' );
 		this._maximisedItem.emit( 'maximised' );
 		this.emit( 'stateChanged' );
