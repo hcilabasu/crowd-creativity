@@ -34,7 +34,7 @@ var UTIL = {
 		return filtered;
 	},
 	/*
-	Starts a timer, displaing the countdown on timerDisplay, and executing endFn at every duration seconds.
+	Starts a timer, displaying the countdown on timerDisplay, and executing endFn at every duration seconds.
 	*/
 	setTimer: function(timerDisplay, endFn, duration, repeat){
 		timerDisplay.text(duration);
