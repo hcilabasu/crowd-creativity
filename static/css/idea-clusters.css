@@ -276,6 +276,7 @@ table th {
     background: url(../images/loading.gif) no-repeat center center;
     background-color: #1D62A8;
     background-size: 36px;
+    display: none;
 }
 
 body.loading #loadingOverlay {
@@ -565,6 +566,14 @@ div.w2p_flash.alert {
     background: linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* Standard syntax */
 }
 
+.ideaBlock.favorite {
+    background: #FFB5B5;
+    background: -webkit-linear-gradient(#FFB5B5, #FF8282); /* Standard syntax */
+    background: -o-linear-gradient(#FFB5B5, #FF8282); /* Standard syntax */
+    background: -moz-linear-gradient(#FFB5B5, #FF8282); /* Standard syntax */
+    background: linear-gradient(#FFB5B5, #FF8282); /* Standard syntax */
+}
+
 .ideaBlock a.close {
     background: url(../images/close-24.png) no-repeat center center;
     position: absolute;
@@ -575,8 +584,32 @@ div.w2p_flash.alert {
     right: 0;
 }
 
+.ideaBlock a.favoriteBtn {
+    height: 16px;
+    width: 16px;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background: url('../images/heart.png') no-repeat center center;
+    background-size: 16px 16px;
+    opacity: 0;
+    transition: opacity 0.5s;
+    cursor: pointer;
+    z-index: 4;
+}
+    .ideaBlock:hover a.favoriteBtn {
+        opacity: 1;
+        transition: opacity 0.5s;
+    }
+
+    .ideaBlock.favorite a.favoriteBtn {
+        background-image: url('../images/heart-red.png') !important;
+    }
+
 .ideaBlock span.fade {
+    z-index: 3;
     opacity: 1;
+    border-radius: 10px;
     color: #bd7b1e;
     display: inline-block;
     position: absolute;
@@ -587,13 +620,22 @@ div.w2p_flash.alert {
     text-indent: 10px;
     width: 100%;
     background: #FFDE78; /* For browsers that do not support gradients */
-    background: -webkit-linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* Standard syntax */
+    background: -webkit-linear-gradient(rgba(253, 202, 113, 0), rgb(252, 189, 101)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(rgba(253, 202, 113, 0), rgb(252, 189, 101)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(rgba(253, 202, 113, 0), rgb(252, 189, 101)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(rgba(253, 202, 113, 0), rgb(252, 189, 101)); /* Standard syntax */
     opacity: 1;
     transition: opacity 0.2s;
 }
+
+.ideaBlock.favorite span.fade {
+    background: #FF9292;
+    background: -webkit-linear-gradient(rgba(255, 146, 146, 0), #FF8282); /* Standard syntax */
+    background: -o-linear-gradient(rgba(255, 146, 146, 0), #FF8282); /* Standard syntax */
+    background: -moz-linear-gradient(rgba(255, 146, 146, 0), #FF8282); /* Standard syntax */
+    background: linear-gradient(rgba(255, 146, 146, 0), #FF8282); /* Standard syntax */
+}
+
 
 .ideaBlock.ideaDragHover {
     border: solid 1px #FF6E3C;

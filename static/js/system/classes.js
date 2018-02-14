@@ -13,7 +13,14 @@ class Idea {
         var params = this.params;
         var addedBy = idea.userId === ENV.userId ? 'you' : 'someone else';
         // Load template
-        var ideaParameters = {id:idea.id, addedBy:addedBy, idea:idea.idea, tags:idea.tags, closeable: false /* params['closeable']*/ };
+        var isFavorite = idea.favorite ? 'favorite' : '';
+        var ideaParameters = {
+            id:idea.id, 
+            addedBy:addedBy, 
+            idea:idea.idea, 
+            tags:idea.tags, 
+            favorite:isFavorite, 
+            closeable: false /* params['closeable']*/ };
         var ideaBlock = $(Mustache.render(TEMPLATES.ideaBlockTemplate, ideaParameters));
         if(idea.tags){
             idea.tags.forEach(function(d,i){
@@ -100,6 +107,25 @@ class Idea {
                 $.event.trigger({type:EVENTS.blurIdea, params:getParams(this)});
             });
         }
+
+        // Setup favorites button
+        $('.favoriteBtn', ideaBlock).click(function(){
+            // Proactively change appearance
+            var toggleBlock = $('.' + ENV.idPrefix + idea.id + '.ideaBlock');
+            toggleBlock.toggleClass('favorite');
+            // Send request to server
+            $.ajax({
+                method: 'POST',
+                url: URL.addToFavorites,
+                data: {id:idea.id},
+                success: function(){
+                }, error: function(){
+                    $.web2py.flash('Something went wrong!', 'error');
+                    // Remove class if fail
+                    toggleBlock.toggleClass('favorite');
+                }
+            })
+        });
 
         return ideaBlock;
     }

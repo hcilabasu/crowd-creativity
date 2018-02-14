@@ -123,11 +123,11 @@ $(function(){
 			loadUserIdeas:()=>{
 				VIEWS.ideasView.load();
 			},
+			loadFavoriteIdeas:()=>{
+				VIEWS.ideasView.loadFavoriteIdeas();
+			},
 			loadAllIdeas:()=>{
 				VIEWS.ideasView.loadIdeasAddedBy();
-			},
-			addNewIdea:()=>{
-				openIdeaPopup();
 			}
 		},
 		versioningView: {
@@ -651,7 +651,8 @@ var buildInspirationPanel = function(structure){
 		var idea = {
 			idea: structure[i].idea.idea, 
 			id: structure[i].idea.id, 
-			tags: []
+			tags: [],
+			favorite: structure[i].idea.favorite
 		};
 		// Setting up HTML
 		var params = {closeable: false, focuseable: true, source: this.constructor}

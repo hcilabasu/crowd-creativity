@@ -52,6 +52,13 @@ def __get_tasks(user_id):
         ((db.task.task_type == 'TagValidationTask') &
         ~db.task.idea.belongs(completed_tag_validation)))
     ).select(groupby=db.task.idea)[0:3]
+    # Add favorite field
+    favorites = __get_favorites(user_id)
+    for t in tasks:
+        if t.idea.id in favorites:
+            t.idea.favorite = True
+        else:
+            t.idea.favorite = False
     return tasks  #[dict(type="rating", task_id=r.idea_rating.id, idea=r.idea.idea, idea_id=r.idea.id) for r in rating_tasks_results]
 
 # DEPRECATED
@@ -255,3 +262,7 @@ def __get_categorization_tasks(user_id):
         idea=r.idea.idea,
         tags=[tag.tag.tag for tag in r.idea.tag_idea.select()],
         idea_id=r.idea.id) for r in tasks_results]
+
+def __get_favorites(user_id):
+    favorites_rows = db(db.favorite.user_info == user_id).select(db.favorite.idea)
+    return [i.idea for i in favorites_rows]

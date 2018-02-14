@@ -64,6 +64,25 @@ class IdeaViewerView extends View {
         $(this.container + ' .ideaHover').removeClass('ideaHover');
     }
 
+    loadFavoriteIdeas(){
+        // Clear panel
+        $(this.container).empty();
+        // Load ideas
+        this.getParentContainer().addClass('loading');
+        $.ajax({
+            type: "GET",
+            url: URL.getUserIdeas,
+            data: {is_favorite: true},
+            success: (data)=>{
+                var ideas = JSON.parse(data);
+                for (var i = 0; i < ideas.length; i++) {
+                    this.addIdeaToDisplay(ideas[i]);
+                }
+                this.getParentContainer().removeClass('loading');
+            }
+        });
+    }
+
     loadIdeasAddedBy(userId){
         // Clear panel
         $(this.container).empty();

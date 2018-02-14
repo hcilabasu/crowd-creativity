@@ -30,6 +30,7 @@
 			getUserIdeas: "{{=URL('ideaworkspaceview','get_ideas')}}",
 	    	getAllIdeas: "{{=URL('ideaworkspaceview','get_all_ideas')}}",
 	    	getIdeaById: "{{=URL('ideaworkspaceview','get_idea_by_id')}}",
+			addToFavorites: "{{=URL('ideaworkspaceview','add_to_favorites')}}",
 			// Solution space view
 			getSolutionSpace: "{{=URL('solutionspaceview','get_solution_space')}}",
 			getIdeasPerCategory: "{{=URL('solutionspaceview','get_ideas_per_tag')}}",
@@ -46,7 +47,7 @@
 			scrollDelay: 500, // Delay before a view scrolls to an idea on hover
 			scrollSpeed: 200, // Speed in which the scroll happens,
 			classPrefix: 'cl_',
-			idPrefix: 'id_',
+			idPrefix: 'id',
 			autoUpdateOrganizationRatioSeconds: 30,
 			minNumberTags: 1,
 			maxNumberTags: 2,
@@ -89,10 +90,13 @@
 				</a></li>
 			</ul>
 			<ul>
-				<li><a href="#" title="Open only your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
+				<li><a href="#" title="Load your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
 					<img src="{{=URL('static','images/user.png')}}">
 				</a></li>
-				<li><a href="#" title="Open all ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
+				<li><a href="#" title="Load your favorite ideas" onclick="TOOLBAR.ideaViewer.loadFavoriteIdeas()">
+					<img src="{{=URL('static','images/heart-black.png')}}">
+				</a></li>
+				<li><a href="#" title="Load all ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
 					<img src="{{=URL('static','images/group.png')}}">
 				</a></li>
 			</ul>
@@ -193,12 +197,13 @@
 	</script>
 
 	<script id="ideaBlockTemplate" type="text/x-tmpl-mustache">
-		<p class="ideaBlock id[[id]]" id="id[[id]]" style="display:none">
+		<p class="ideaBlock id[[id]] [[favorite]]" id="id[[id]]" style="display:none">
 			[[idea]]
 			[[#closeable]]
 			<a href="#" title="Close idea" class="close"></a>
 			[[/closeable]]
-			<!-- <span class="fade">Added by [[addedBy]]</span> -->
+			<a href="#" class="favoriteBtn" title="Toggle favorites"></a>
+			<span class="fade"></span>
 			<input type="hidden" name="ideaId" value="[[id]]"></input>
 			<input type="hidden" name="ideaTags" value="[[tags]]"></input>
 		</p>

@@ -115,6 +115,11 @@ db.define_table('idea',
     Field('origin', 'string'),
     Field('replacedBy', 'reference idea'),
     Field('sources', 'list:reference idea'))
+
+db.define_table('favorite',
+    Field('user_info', 'reference user_info'),
+    Field('idea', 'reference idea'),
+    Field('timestamp', 'datetime'))
     
 db.define_table('tag',
     Field('tag', 'string', unique=True),
