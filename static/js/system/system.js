@@ -690,18 +690,14 @@ var buildInspirationPanel = function(structure){
 };
 
 var prepareButtons = function(container, tasksContainer, n){
-	// Add bullets
-	var bullets = $('ul', container);
-	bullets.empty();
-	for(var i = 0; i < n; i++){
-		var li = $('<li>' + i + '</li>');
-		if (i===0) { li.addClass('selected'); }
-		bullets.append(li);
-	}
+	// Set stages
+	var stages = $('span.stages', container);
+	stages.text('1/' + n);
 	// Create move function
 	var move = function(fn){
 		var current = $('li.selected', tasksContainer);
-		var moveTo = current[fn](); 
+		var moveTo = current[fn]();
+		var nextCount = current[fn + 'All']().length;
 		// Setup animation
 		var moveWidth = 550; // TODO calculate dynamically
 		var negativeMargin = '-' + moveWidth + 'px';
@@ -709,30 +705,18 @@ var prepareButtons = function(container, tasksContainer, n){
 		var animateObject = fn == 'next' ? current : moveTo;
 		// Execute
 		if(moveTo.length !== 0){
-			var updateBullets = function(){
-				// Update bullets
-				var currentBullet = $('.selected', container);
-				var newBullet = currentBullet[fn]();
-				currentBullet.removeClass('selected');
-				newBullet.addClass('selected');
-				// Check whether this is the first or last item
-				if(moveTo.next().length === 0){
-					// This is the last item
-					container.addClass('last');
-				} else if (moveTo.prev().length === 0) {
-					container.addClass('first');
-				} else {
-					container.removeClass('first').removeClass('last');
-				}
-			};
-			updateBullets();
+			var counter = 1;
 			// Setup first frame
 			if(fn == 'next'){
+				counter = (n - nextCount + 1);
 				moveTo.show();
 			} else {
+				counter = nextCount;
 				moveTo.css('margin-left', negativeMargin);
 				moveTo.show()
 			}
+			// Update countner
+			stages.text(counter + '/' + n);
 			// Animate
 			animateObject.animate({
 				marginLeft: fn == 'next' ? negativeMargin : neutralMargin
@@ -744,8 +728,16 @@ var prepareButtons = function(container, tasksContainer, n){
 				moveTo.addClass('selected');
 				// Reset margin
 				current.css('margin-left', '0');
-			});
-			
+			});	
+		}
+		// Update first or last classes
+		if(moveTo.next().length === 0){
+			// This is the last item
+			container.addClass('last');
+		} else if (moveTo.prev().length === 0) {
+			container.addClass('first');
+		} else {
+			container.removeClass('first').removeClass('last');
 		}
 	};
 	// Setup buttons

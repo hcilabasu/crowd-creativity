@@ -294,9 +294,6 @@
 	<script id="inspirationPopupTemplate" type="text/x-tmpl-mustache">
 		<span class="close"></span>
 		<h2>Get inspired</h2>
-		<p>
-			To get inspired, do the three tasks below. Feel free to use the ideas as inspiration: remix them with your own ideas, expand on them, or use them in anyway you'd like!
-		</p>
 		<ul id="inspirationPanel" class="loading">
 			<li class="selected">
 				<div class="loadingBadge"></div>
@@ -304,11 +301,7 @@
 		</ul>
 		<div id="inspirationControls" class="first" style="display: none">
 			<a class="arrow arrow-left previous" href="#" onclick=""></a>
-			<ul>
-				<li class="selected">1</li>
-				<li>2</li>
-				<li>3</li>
-			</ul>
+			<span class="stages">0/0</span>
 			<a class="arrow arrow-right next" href="#" onclick=""></a>
 			<a class="btn submit" href="#" onclick="submitInspirationTask(event);">Submit</a>
 		</div>
