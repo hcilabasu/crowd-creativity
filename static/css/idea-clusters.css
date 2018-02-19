@@ -567,11 +567,11 @@ div.w2p_flash.alert {
 }
 
 .ideaBlock.favorite {
-    background: #FFB5B5;
-    background: -webkit-linear-gradient(#FFB5B5, #FF8282); /* Standard syntax */
-    background: -o-linear-gradient(#FFB5B5, #FF8282); /* Standard syntax */
-    background: -moz-linear-gradient(#FFB5B5, #FF8282); /* Standard syntax */
-    background: linear-gradient(#FFB5B5, #FF8282); /* Standard syntax */
+    background: #FDC4BB;
+    background: -webkit-linear-gradient(#FDC4BB, #FAA799); /* Standard syntax */
+    background: -o-linear-gradient(#FDC4BB, #FAA799); /* Standard syntax */
+    background: -moz-linear-gradient(#FDC4BB, #FAA799); /* Standard syntax */
+    background: linear-gradient(#FDC4BB, #FAA799); /* Standard syntax */
 }
 
 .ideaBlock a.close {
@@ -629,11 +629,11 @@ div.w2p_flash.alert {
 }
 
 .ideaBlock.favorite span.fade {
-    background: #FF9292;
-    background: -webkit-linear-gradient(rgba(255, 146, 146, 0), #FF8282); /* Standard syntax */
-    background: -o-linear-gradient(rgba(255, 146, 146, 0), #FF8282); /* Standard syntax */
-    background: -moz-linear-gradient(rgba(255, 146, 146, 0), #FF8282); /* Standard syntax */
-    background: linear-gradient(rgba(255, 146, 146, 0), #FF8282); /* Standard syntax */
+    background: #f8998a;
+    background: -webkit-linear-gradient(rgba(251, 187, 177, 0), #f8998a); /* Standard syntax */
+    background: -o-linear-gradient(rgba(251, 187, 177, 0), #f8998a); /* Standard syntax */
+    background: -moz-linear-gradient(rgba(251, 187, 177, 0), #f8998a); /* Standard syntax */
+    background: linear-gradient(rgba(251, 187, 177, 0), #f8998a); /* Standard syntax */
 }
 
 
@@ -1001,28 +1001,13 @@ div.w2p_flash.alert {
     display: none;
 }
 
-#inspirationControls ul {
+#inspirationControls span.stages {
+    display: block;
     width: 100%;
     height: 50px;
     padding-top: 5px;
     margin-bottom: 0px;
     text-align: center;
-}
-
-#inspirationControls li {
-    display: inline-block;
-    height: 10px;
-    width: 10px;
-    background: #CCC;
-    border-radius: 5px;
-    font-size: 0;
-    margin-right: 2px;
-    transition: background 0.5s;
-}
-
-#inspirationControls li.selected {
-    background: #3093DC;
-    transition: background 0.5s;
 }
 
 #inspirationControls.first .previous {
