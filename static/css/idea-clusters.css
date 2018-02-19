@@ -75,6 +75,13 @@ input[type=text]:disabled {
     opacity: 0.5;
 }
 
+#problem {
+    text-align: center;
+    color: white;
+    height: 30px;
+    line-height: 30px;
+}
+
 .logo {
     margin: 0;
     color: white;
@@ -87,16 +94,16 @@ input[type=text]:disabled {
 .topNavbar {
     text-align: center;
     position: relative;
-    height: 55px; /* the goldenlayout.js depends on this metric (line 3335 and 3336) */
-    background: #3AAAFC;
+    height: 80px; /* the goldenlayout.js depends on this metric (lines 3335, 3336, 957, and 958) */
     border-bottom: 0;
     margin-bottom: 0;
     background: #3AAAFC;
+    background: linear-gradient(rgba(80, 48, 220, 0.3), #3AAAFC);
     z-index: 99;
 }
 
 .topNavbar .btn-primary {
-    background-color: #3093dc;
+    background-color: rgb(58, 128, 209);
     color: white;
     margin: 0;
     padding: 0 10px 0 0;
@@ -109,28 +116,26 @@ input[type=text]:disabled {
 .navContainer {
     position: relative;
     display: inline-block;
-    height: 100%;
 }
 
 .navContainer.right {
     position: absolute;
     right: 0;
+    top: 30px;
 }
 
 .navContainer.left {
     position: absolute;
     left: 0;
+    top: 30px;
 }
 
 .navContainer > .navBlock {
     position: relative;
-    top: 50%;
-    transform: translateY(-50%);
 }
 
 .navBlock {
     color: white;
-    background: #3AAAFC;
     height: 46px;
     line-height: 36px;
     display: inline-block;
@@ -145,10 +150,8 @@ input[type=text]:disabled {
     margin: 5px;
 }
 
-.navBlock.actionable:hover {
-    background: #2E88CA;
-    transition: background 0.2s;
-    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+.navBlock.actionable {
+    border-radius: 10px;
 }
 
 .navBlock .dropDown {
@@ -160,12 +163,13 @@ input[type=text]:disabled {
     top: 95%;
     right: 0;
     max-width: 300px;
-    background: #2E88CA;
-    line-height: 1.1em;
+    background: white;
+    color: black;
+    border-radius: 10px;
+    line-height: 1em;
     padding: 10px;
-    color: white;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
     transition: display 0.2s, opacity 0.2s;
-    box-shadow: 0 5px 5px rgba(0,0,0,0.2);
 }
 
 .navbar-right .navBlock .dropDown {
@@ -274,7 +278,7 @@ table th {
     left: 0;
     top: 0;
     background: url(../images/loading.gif) no-repeat center center;
-    background-color: #1D62A8;
+    background-color: #4087F3;
     background-size: 36px;
     display: none;
 }

@@ -713,7 +713,7 @@ var prepareButtons = function(container, tasksContainer, n){
 			} else {
 				counter = nextCount;
 				moveTo.css('margin-left', negativeMargin);
-				moveTo.show()
+				moveTo.show();
 			}
 			// Update countner
 			stages.text(counter + '/' + n);

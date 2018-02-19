@@ -955,7 +955,7 @@ lm.utils.copy( lm.LayoutManager.prototype, {
 		contentItem.element.after( this._maximisePlaceholder );
 		this.root.element.prepend( contentItem.element );
 		contentItem.element.width( this.container.width() - 10);
-		contentItem.element.height( this.container.height() - 60);
+		contentItem.element.height( this.container.height() - 85);
 		contentItem.callDownwards( 'setSize' );
 		this._maximisedItem.emit( 'maximised' );
 		this.emit( 'stateChanged' );
@@ -3333,7 +3333,7 @@ lm.utils.copy( lm.items.Root.prototype, {
 
 	setSize: function() {
 		var width = this._containerElement.width() - 10, // TODO extend this properly, possibly do a PR
-			height = this._containerElement.height() - 60;
+			height = this._containerElement.height() - 85;
 
 		this.element.width( width );
 		this.element.height( height );
