@@ -97,6 +97,16 @@ input[type=text]:disabled {
         color: #FDCD75;
     }
 
+a.logo {
+    text-decoration: none;
+    font-size: 3em;
+}
+a.logo:hover,
+a.logo:active,
+a.logo:focus {
+    color: inherit;
+}
+
 .topNavbar {
     text-align: center;
     position: relative;
@@ -1208,7 +1218,7 @@ body.welcome {
     
         #welcome ul > li {
             width: 100%;
-            border-bottom: solid 1px rgb(188, 227, 255);
+            border-bottom: solid 1px #EEE;
         }
         #welcome ul > li:last-child { border-bottom: none; }
 

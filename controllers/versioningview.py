@@ -22,9 +22,11 @@ def get_versioning_structure():
     ]
 
     '''
+    problem_id = session.problem_id
     # get all ideas
     results = db((db.idea.id == db.tag_idea.idea) & 
-               (db.tag.id == db.tag_idea.tag)
+               (db.tag.id == db.tag_idea.tag) & 
+               (db.idea.problem == problem_id)
     ).select(orderby=db.idea.id, groupby=db.idea.id)
     
     # start aux variables

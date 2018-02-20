@@ -4,7 +4,7 @@ from gluon import current
 
 # Classes
 class Task:
-    def __init__(self, id=None, idea=None, tags=[], task=None, options=None):
+    def __init__(self, id=None, idea=None, tags=[], task=None, options=None, problem=None):
         # Get the db object
         db = current.db
         # Set parameters
@@ -13,6 +13,7 @@ class Task:
         self.tags = tags
         self.task = task
         self.options = options
+        self.problem = problem
         if id: # If the task id was provided, load it
             # TODO implement lazy loading
             # TODO throw error if task not found
@@ -28,6 +29,7 @@ class Task:
                 task_type=self.task_type(),
                 idea=idea,
                 tags=tags,
+                problem=problem,
                 owner=owner_id,
                 options=options)
 
@@ -73,6 +75,7 @@ class Task:
         db = current.db
         results = db(
             (db.task.task_type == self.task_type()) & 
+            (db.problem == self.problem) &
             (db.task.idea == self.idea) &
             (db.task.completed == False)).select()
         return len(results) == 0
@@ -93,7 +96,7 @@ class TagSuggestionTask(Task):
         if self.is_completed():
             db = current.db
             # Get options from all tasks
-            tasks = db((db.task.task_type == self.task_type()) & (db.task.idea == self.task.idea)).select(db.task.answer)
+            tasks = db((db.task.task_type == self.task_type()) & (db.task.idea == self.task.idea) & (db.task.problem == self.problem)).select(db.task.answer)
             answers = set()
             for t in tasks:
                 answer = json.loads(t.answer)

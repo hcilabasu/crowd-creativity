@@ -107,6 +107,7 @@ db.define_table('user_info',
 db.define_table('idea',
     Field('idea','string'), 
     Field('userId','reference user_info'),
+    Field('problem', 'reference problem'),
     Field('userCondition','integer'), 
     Field('ratings','integer'),
     Field('dateAdded','datetime'),
@@ -123,6 +124,7 @@ db.define_table('favorite',
     
 db.define_table('tag',
     Field('tag', 'string', unique=True),
+    Field('problem', 'reference problem'),
     Field('replacedBy', 'reference tag'))
     
 db.define_table('tag_idea',
@@ -142,6 +144,7 @@ db.define_table('sessionCondition',
 
 db.define_table('task',
     Field('task_type', 'string'),
+    Field('problem', 'reference problem'),
     Field('idea', 'reference idea'),
     Field('owner', 'reference user_info'), # User who added the idea a task refers to
     Field('exclude_owner', 'boolean'), # If true, the owner of the task cannot perform it

@@ -13,7 +13,8 @@ SOLUTION_SPACE_MAX_TAGS = 200
 BIRDSEYE_SIZE = 100 # size of the solution space birdseye view
 
 def get_solution_space():
-    tags = db((db.tag.id > 0) & (db.tag.replacedBy == None)).select().as_list()
+    problem_id = session.problem_id
+    tags = db((db.tag.id > 0) & (db.tag.replacedBy == None) & (db.tag.problem == problem_id)).select().as_list()
     # get ideas with respective tags
     ideas = db((db.idea.id == db.tag_idea.idea) & 
         (db.tag.id == db.tag_idea.tag)

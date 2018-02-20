@@ -64,6 +64,8 @@ def index():
     problem = db(db.problem.url_id == problem_id).select().first() 
     if not problem_id or not problem:
         redirect(URL('default', 'problems'))
+    # Prepare to deliver page
+    session.problem_id = problem.id
     return dict(user_id=user_id, user_name=user_name, new_user=new_user, problem=problem)
 
 def problems():
@@ -76,6 +78,7 @@ def add_idea():
     '''
     user_id = session.user_id
     userCondition = session.userCondition
+    problem_id = session.problem_id
     idea_id = 0
     # Get variables from request
     idea = str(request.vars['idea'])
@@ -99,6 +102,7 @@ def add_idea():
             idea=idea, 
             dateAdded=dateAdded, 
             userCondition=userCondition, 
+            problem=problem_id,
             ratings=0, 
             pool=ADD_TO_POOL,
             origin=origin,
@@ -109,7 +113,7 @@ def add_idea():
             tag_id = __insert_or_retrieve_tag_id(tag)
             # Inserting relationships
             db.tag_idea.insert(tag=tag_id, idea=idea_id)
-        # If idea was marged, update replacedBy on the original ideas
+        # If idea was merged, update replacedBy on the original ideas
         if origin == 'merge':
             for source in sources:
                 idea = db(db.idea.id == source).select().first()
@@ -117,7 +121,7 @@ def add_idea():
                 idea.update_record()
         idea = dict(id=idea_id, idea=idea, tags=tags)
         # Insert tasks
-        __insert_tasks_for_idea(idea, user_id)
+        __insert_tasks_for_idea(idea, user_id, problem_id)
         # TODO Update reverse index
         # __update_reverse_index()
         # Log
@@ -148,14 +152,15 @@ def get_organization_ratio():
         return -1
 
 def get_all_tags():
-    tags = db(db.tag.id > 0).select(db.tag.tag, orderby=db.tag.tag)
+    problem_id = session.problem_id
+    tags = db((db.tag.id > 0) & (db.tag.problem == problem_id)).select(db.tag.tag, orderby=db.tag.tag)
     tags = [t.tag for t in tags]
     response.headers['Content-Type'] = 'text/json'
     return json.dumps(tags) 
 
 def get_tags():
     term = '%%%s%%' % (request.vars.term.lower())
-    tags = db(db.tag.tag.like(term)).select(db.tag.tag)
+    tags = db(db.tag.tag.like(term) & (db.tag.problem == problem_id)).select(db.tag.tag)
     tags = [t.tag for t in tags]
     return json.dumps(tags)
 
@@ -170,36 +175,17 @@ def get_suggested_tags():
 
 def tag_exists():
     tag = request.vars.tag
-    return str(len(db(db.tag.tag == tag).select()) > 0).lower()
+    return str(len(db((db.tag.tag == tag) & (db.tag.problem == problem_id)).select()) > 0).lower()
 
-def test():
-    # Build index of ideas based for each tag
-    tags = db(db.tag.id > 0).select()
-    for t in tags:
-        print(t.tag)
-        if ' ' in t.tag: # a change will be necessary
-            t.tag = t.tag.replace(' ', '')
-            # check if there are duplicates
-            conflict = db(db.tag.tag == t.tag).select().first()
-            if conflict:
-                # there is a conflict. Find all connections that involve the current id
-                merge = db(db.tag_idea.tag == t.id).select()
-                for m in merge:
-                    m.tag = conflict.id
-                    m.update_record()
-                db(db.tag.id == t.id).delete()
-            else:
-                # there is no conflict
-                t.update_record()
 
 
 ### PRIVATE FUNCTIONS
 
-def __insert_tasks_for_idea(idea, user_id):
+def __insert_tasks_for_idea(idea, user_id, problem_id):
     # Insert categorization tasks
     for i in range(0,TASKS_PER_IDEA):
         # insert selectBest types. Categorize tasks will be inserted when these are completed
-        microtask.TagSuggestionTask(idea=idea['id'])     
+        microtask.TagSuggestionTask(idea=idea['id'], problem=problem_id)     
 
 def __clean_tag(tag):
     tag = tag.replace(' ', '') # remove spaces
@@ -208,11 +194,12 @@ def __clean_tag(tag):
     return tag
 
 def __insert_or_retrieve_tag_id(tag):
-    tagResult = db(db.tag.tag == tag).select(db.tag.id)
+    problem_id = session.problem_id
+    tagResult = db((db.tag.tag == tag) & (db.tag.problem == problem_id)).select(db.tag.id)
     if tagResult:
         return tagResult[0].id
     else:
-        return db.tag.insert(tag=tag)
+        return db.tag.insert(tag=tag, problem=problem_id)
 
 # keyword extraction
 def __rake(text):

@@ -7,11 +7,12 @@ Controller for functions realted to idea workspace view
 
 def get_ideas():
     user_id = session.user_id
+    problem_id = session.problem_id
     added_by = request.vars.added_by
     is_favorite = request.vars.is_favorite
     favorites = __get_favorites(user_id)
     # Build query
-    query = (db.idea.id == db.tag_idea.idea) & (db.tag.id == db.tag_idea.tag)
+    query = (db.idea.id == db.tag_idea.idea) & (db.tag.id == db.tag_idea.tag) & (db.idea.problem == problem_id)
     if added_by:
         query = query & (db.idea.userId == user_id)
     if is_favorite:
@@ -65,7 +66,8 @@ def get_all_ideas():
     favorites = __get_favorites(user_id)
     # Get ideas
     ideas = db((db.idea.id == db.tag_idea.idea) & 
-               (db.tag.id == db.tag_idea.tag)
+               (db.tag.id == db.tag_idea.tag) &
+               (db.idea.problem == problem_id)
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
     clean_ideas = [dict(
         id=i.idea.id, 

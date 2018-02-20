@@ -39,14 +39,16 @@ def reset_tasks():
 
 # Private functions
 def __get_tasks(user_id):
+    problem_id = session.problem_id
     # retrieve tasks already completed
-    completed_tag_suggestion = [row.idea for row in db((db.task.completed_by == user_id) & (db.task.task_type == 'TagSuggestionTask')).select(db.task.idea)]
-    completed_tag_validation = [row.idea for row in db((db.task.completed_by == user_id) & (db.task.task_type == 'TagValidationTask')).select(db.task.idea)]
+    completed_tag_suggestion = [row.idea for row in db((db.task.completed_by == user_id) & (db.task.task_type == 'TagSuggestionTask') & (db.task.problem == problem_id)).select(db.task.idea)]
+    completed_tag_validation = [row.idea for row in db((db.task.completed_by == user_id) & (db.task.task_type == 'TagValidationTask') & (db.task.problem == problem_id)).select(db.task.idea)]
     # retrieve tasks
     tasks = db(
         (db.task.completed == False) & 
         (db.task.owner != user_id) &
         (db.task.idea == db.idea.id) &
+        (db.task.problem == problem_id) &
         (((db.task.task_type == 'TagSuggestionTask') &
         ~db.task.idea.belongs(completed_tag_suggestion)) |
         ((db.task.task_type == 'TagValidationTask') &
