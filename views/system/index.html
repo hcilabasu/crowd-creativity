@@ -1,4 +1,4 @@
-{{extend 'layout.html'}}
+{{extend 'systemlayout.html'}}
 
 {{block page_js}}
 	
@@ -175,9 +175,8 @@
 	</script>
 
 	<script id="TagSuggestionTaskTemplate" type="text/x-tmpl-mustache">
-		<h3>Suggest tags</h3>
 		<div id="ideaPlaceholder"></div>
-		<p>Suggest tags for this idea<a class="tooltip" href="#" title="Write appropriate tags for this idea">?</a></p>
+		<p>Suggest tags for this idea</p>
 		<input type="text" class="tagInput" name="answer" />
 		<!-- <a href="#" class="btn">Submit</a> -->
 		<!-- required task data -->
@@ -186,7 +185,6 @@
 	</script>
 
 	<script id="TagValidationTaskTemplate" type="text/x-tmpl-mustache">
-		<h3>Select the best tag</h3>
 		<div id="ideaPlaceholder"></div>
 		<p>Click on the <strong>one</strong> tag that you think is the most appropriate to describe this idea</p>
 		<ul class="tagsList single"></ul>
