@@ -1176,3 +1176,51 @@ span.tag {
     border: none !important;
     border-radius: 10px !important;
 }
+
+body.welcome {
+    background: #3AAAFC;
+    background: linear-gradient(#437BF0, #3AAAFC);
+}
+
+#welcome {
+    position: absolute;
+    width: 100%;
+    margin: 0 auto;
+    color: white;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-60%);
+}
+
+    #welcome .logo {
+        font-size: 5em;
+        margin-bottom: 20px;
+    }
+    #welcome ul {
+        background: rgba(255,255,255,0.9);
+        width: 300px;
+        text-align: left;
+        margin: 0 auto;
+        border-radius: 10px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        overflow: hidden;
+    }
+    
+        #welcome ul > li {
+            width: 100%;
+            border-bottom: solid 1px rgb(188, 227, 255);
+        }
+        #welcome ul > li:last-child { border-bottom: none; }
+
+            #welcome ul > li a {
+                padding: 10px;
+                display: block;
+                color: black;
+                text-transform: capitalize;
+                text-decoration: none;
+                transition: background-color 0.5s;
+            }
+
+            #welcome ul > li a:hover {
+                background: rgb(188, 227, 255);
+            }

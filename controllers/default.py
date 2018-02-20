@@ -1,201 +1,226 @@
 import uuid
 import datetime
 import json
+from collections import defaultdict
+import itertools
+from string import punctuation
+import rake
+import os
 import random
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+import microtask
 
+DEBUG = True # Add debug mode
+NUKE_KEY = 'blastoise'
+ADD_TO_POOL = True
+TEST_USER_ID = None #'testuser1' # Use None if no test ID is needed
+TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 
-# -*- coding: utf-8 -*-
-# this file is released under public domain and you can use without limitations
+def nuke(): # Nukes the database to blank.
+    if (request.vars.key and request.vars.key == NUKE_KEY) and DEBUG:
+        # nuke!
+        db(db.tag.id > 0).delete()
+        db(db.tag_idea.id > 0).delete()
+        db(db.idea.id > 0).delete()
+        db(db.categorization.id > 0).delete()
+        db(db.user_info.id > 0).delete()
+        db(db.idea_rating.id > 0).delete()
+        db(db.action_log.id > 0).delete()
+        return 'Nuke is a GO'
+    else:
+        response.status = 500
+        return 'Nuke is a negative!'            
 
-#########################################################################
-## This is a sample controller
-## - index is the default action of any application
-## - user is required for authentication and authorization
-## - download is for downloading files uploaded in the db (does streaming)
-#########################################################################
-
+def logoff():
+    session.user_id = None
+    redirect(URL('system', 'index'))
 
 def index():
-    userId = session.userId
-    # initialize categories list in session
-    if not session.categories:
-        session.categories = []
-    if userId == None:
+    if TEST_USER_ID:
+        session.user_id = TEST_USER_ID # Force userID for testing
+    user_id = session.user_id
+    user_name = session.user_name
+    new_user = False
+    if user_id == None:
+        new_user = True
         # Generating new user
-        userId = uuid.uuid4().hex
-        print("New user: " + userId)
-        session.userId = userId
+        user_name = uuid.uuid4().hex
+        session.user_name = user_name
         # Selecting condition
-        session.userCondition = 3 # TODO randomly select condition
-    userCondition = session.userCondition
+        session.startTime = datetime.datetime.now()
+        session.startTimeUTC = datetime.datetime.utcnow()
+        session.userCondition = 2 # TODO randomly select condition
+        # add user to DB
+        user_id = db.user_info.insert(userId=user_name, userCondition=session.userCondition, initialLogin=session.startTime)
+        session.user_id = user_id
+        # Log
+        log_action(user_id, "start_session", json.dumps({'condition':session.userCondition}))
 
-    # get user ideas
-    ideas = db(db.idea.userId == userId).select()
-    # get user categories
-    category_idea = db((db.idea.id==db.category_idea.idea) & (db.category.id==db.category_idea.category))
-    category_results = category_idea(db.idea.userId==userId).select(db.category.category)
-    categories = [d.category for d in category_results] 
-    for cat in session.categories:
-        categories.append(cat)
-    return dict(userCondition=userCondition, ideas=ideas, categories=categories)
+    else:
+        # user already has ID. This means it's a page reload. Log it.
+        log_action(user_id, "refresh_page", json.dumps({'condition':session.userCondition}))
+    # load problem info
+    # TODO retrieve it dynamically
+    problem_id = request.vars.problem
+    problem = db(db.problem.url_id == problem_id).select().first() 
+    if not problem_id or not problem:
+        redirect(URL('default', 'problems'))
+    return dict(user_id=user_id, user_name=user_name, new_user=new_user, problem=problem)
 
-def test():
-    return db(db.idea.userId == session.userId).select()
+def problems():
+    problems = db(db.problem.id > 0).select()
+    return dict(problems=problems)
 
 def add_idea():
     '''
     Endpoint for adding a new idea.
     '''
-    userId = session.userId
+    user_id = session.user_id
     userCondition = session.userCondition
-    if userId != None:
-        idea = request.vars['idea']
-        category1 = request.vars['category1']
-        category2 = request.vars['category2']
-        dateAdded = datetime.datetime.now()
-        ideaId = db.idea.insert(userId=userId, idea=idea, dateAdded=dateAdded, userCondition=userCondition)
-        # Get category Ids
-        category1_id = __insert_or_retrieve_category_id(category1)
-        if category2: # category 2 is optional
-            category2_id = __insert_or_retrieve_category_id(category2)
-        # insert relationship
-        db.category_idea.insert(category=category1_id, idea=ideaId)
-        if category2: # insert only if there was one
-            db.category_idea.insert(category=category2_id, idea=ideaId)
+    idea_id = 0
+    # Get variables from request
+    idea = str(request.vars['idea'])
+    tags = request.vars['tags[]']
+    origin = str(request.vars['origin'])
+    sources = request.vars['sources[]']
+    dateAdded = datetime.datetime.now()
 
-def get_category():
-    # calculate the least used category
-    category_idea = db((db.idea.id==db.category_idea.idea) & (db.category.id==db.category_idea.category))
-    idea_categories = category_idea(db.idea.userCondition == 3).select(db.category.category, db.category.id)
-    count = dict()
-    # get all user categories
-    used_categories = session.categories # get hint categories
-    category_idea = db((db.idea.id==db.category_idea.idea) & (db.category.id==db.category_idea.category))
-    category_results = category_idea(db.idea.userId==session.userId).select(db.category.category) # get user generated categories
-    for cat in category_results:
-        used_categories.append(cat.category)
-    # Count categories to find least used ones
-    for cat in idea_categories:
-        if not cat.category in session.categories:
-            if not cat.category in count.keys():
-                count[cat.category] = 0
-            count[cat.category] += 1
-    if len(count.keys()):
-        min_value = min(count.itervalues())
-        min_cat = [k for k, v in count.iteritems() if v == min_value]
-        category = random.choice(min_cat)
-        cat_id = [d.id for d in idea_categories if d.category == category][0] # getting category id
-        session.categories.append(category)
-        return json.dumps(dict(category=category, id=cat_id)) # randomly choose an element if there's a tie
-    else:
-        return json.dumps(dict())
-
-def matrix():
-    # get categories
-    categories_result = db(db.category.id > 0).select()
-    categories = [d.category for d in categories_result]
-    ids = [d.id for d in categories_result]
-    # this maps a category id to a matrix cell
-    cat_map = {d.id : n for (d,n) in zip(categories_result, range(0, len(categories_result)))}
-
-    # get map between ideas and categories
-    idea_categories_results = db(db.category_idea.id > 0).select()
-    idea_categories = [(d.idea, d.category) for d in idea_categories_results]
-    idea_category_map = __build_idea_category_map(idea_categories)
-
-    # build matrix
-    connections = db(db.category_idea.id > 0)
-    matrix = [[0 for x in xrange(len(categories))] for x in xrange(len(categories))]
-    for idea in idea_category_map.keys():
-        cell = idea_category_map[idea]
-        print(cat_map[cell[0]])
-        if len(cell) == 1:
-            matrix[cat_map[cell[0]]][cat_map[cell[0]]] += 1
-        else:
-            matrix[cat_map[cell[0]]][cat_map[cell[1]]] += 1
-            matrix[cat_map[cell[1]]][cat_map[cell[0]]] += 1
-    return json.dumps(dict(categories=categories, matrix=matrix, ids=ids))
-
-def __build_idea_category_map(idea_category):
-    ic_map = dict()
-    for t in idea_category:
-        if not t[0] in ic_map:
-            ic_map[t[0]] = []
-        ic_map[t[0]].append(t[1])
-    return ic_map
-
-
-def __insert_or_retrieve_category_id(category):
-    categoryResults = db(db.category.category == category).select(db.category.id)
-    if categoryResults:
-        return categoryResults[0].id
-    else:
-        return db.category.insert(category=category)
-
-def new_ideas():
-    '''
-    Endpoint for retrieving most recent ideas (given a timestamp)
-    '''
-    # Get last update time
-    rawLastUpdateTime = request.vars["lastUpdateTime"]
-    print("Last: " + str(rawLastUpdateTime))
-    if rawLastUpdateTime == None or not rawLastUpdateTime:
-        lastUpdateTime = datetime.datetime.min
-    else:
-        lastUpdateTime = datetime.datetime.strptime(rawLastUpdateTime, '%Y-%m-%d %H:%M:%S.%f') #"2016-02-09 16:15:59.497000
-        # Subtract a couple of seconds to account for any conflicts
-        lastUpdateTime = lastUpdateTime - datetime.timedelta(seconds=2)
-        print("Last (offset): " + str(lastUpdateTime))
+    if user_id != None:
+        # Clean up
+        idea = idea.strip()
+        tags = tags if isinstance(tags, list) else [tags]
+        tags = [str(t) for t in tags]
+        if sources:
+            sources = sources if isinstance(sources, list) else [sources]
+            sources = [int(s) for s in sources]
         
-    # Retrieving new ideas
-    rows = db((db.idea.dateAdded > lastUpdateTime) &  
-              (db.idea.userCondition == session.userCondition) & 
-              (db.idea.userId != session.userId)).select()
-    print("Returned results: " + str(len(rows)))
-    ideas = []
-    for row in rows: 
-        ideas.append(row.idea)
-    
-    current_time = datetime.datetime.now()
-    return json.dumps(dict(ideas=ideas, lastUpdate=str(current_time)))
+        # Inserting idea
+        idea_id = db.idea.insert(
+            userId=user_id, 
+            idea=idea, 
+            dateAdded=dateAdded, 
+            userCondition=userCondition, 
+            ratings=0, 
+            pool=ADD_TO_POOL,
+            origin=origin,
+            sources=sources)
+        # Inserting tags
+        for tag in tags:
+            tag = __clean_tag(tag)
+            tag_id = __insert_or_retrieve_tag_id(tag)
+            # Inserting relationships
+            db.tag_idea.insert(tag=tag_id, idea=idea_id)
+        # If idea was marged, update replacedBy on the original ideas
+        if origin == 'merge':
+            for source in sources:
+                idea = db(db.idea.id == source).select().first()
+                idea.replacedBy = idea_id
+                idea.update_record()
+        idea = dict(id=idea_id, idea=idea, tags=tags)
+        # Insert tasks
+        __insert_tasks_for_idea(idea, user_id)
+        # TODO Update reverse index
+        # __update_reverse_index()
+        # Log
+        log_action(user_id, "add_idea", idea)
+    return json.dumps(dict(id=idea_id))
 
-def user():
-    """
-    exposes:
-    http://..../[app]/default/user/login
-    http://..../[app]/default/user/logout
-    http://..../[app]/default/user/register
-    http://..../[app]/default/user/profile
-    http://..../[app]/default/user/retrieve_password
-    http://..../[app]/default/user/change_password
-    http://..../[app]/default/user/bulk_register
-    use @auth.requires_login()
-        @auth.requires_membership('group name')
-        @auth.requires_permission('read','table name',record_id)
-    to decorate functions that need access control
-    also notice there is http://..../[app]/appadmin/manage/auth to allow administrator to manage users
-    """
-    return dict(form=auth())
+def get_organization_ratio():
+    # TODO standardize this into a single variable, perhaps together with 'next_task' (see submit_categorization_task)
+    base_weights = dict(
+        suggest=0,
+        selectBest=1,
+        categorize=2
+    ) 
+    completed = 0
+    total = 0
+    # Categorization tasks
+    categorization_tasks = db(db.categorization.id > 0).select()
+    for c in categorization_tasks:
+        total += len(base_weights.keys())
+        # Update number of completed tasks
+        completed += base_weights[c.categorizationType] # base weight. Even if a task is not completed, it may already imply that others have been completed before.
+        if c.completed:
+            completed += 1
+    if total > 0:
+        return completed / float(total)
+    else:
+        # There is no data yet to calculate this.
+        return -1
+
+def get_all_tags():
+    tags = db(db.tag.id > 0).select(db.tag.tag, orderby=db.tag.tag)
+    tags = [t.tag for t in tags]
+    response.headers['Content-Type'] = 'text/json'
+    return json.dumps(tags) 
+
+def get_tags():
+    term = '%%%s%%' % (request.vars.term.lower())
+    tags = db(db.tag.tag.like(term)).select(db.tag.tag)
+    tags = [t.tag for t in tags]
+    return json.dumps(tags)
+
+def get_suggested_tags():
+    text = request.vars.text
+    # Get suggested tags
+    tags = __rake(text)
+    tags = [__clean_tag(t[0]) for t in tags]
+    # Submit response
+    response.headers['Content-Type'] = 'text/json'
+    return json.dumps(tags)
+
+def tag_exists():
+    tag = request.vars.tag
+    return str(len(db(db.tag.tag == tag).select()) > 0).lower()
+
+def test():
+    # Build index of ideas based for each tag
+    tags = db(db.tag.id > 0).select()
+    for t in tags:
+        print(t.tag)
+        if ' ' in t.tag: # a change will be necessary
+            t.tag = t.tag.replace(' ', '')
+            # check if there are duplicates
+            conflict = db(db.tag.tag == t.tag).select().first()
+            if conflict:
+                # there is a conflict. Find all connections that involve the current id
+                merge = db(db.tag_idea.tag == t.id).select()
+                for m in merge:
+                    m.tag = conflict.id
+                    m.update_record()
+                db(db.tag.id == t.id).delete()
+            else:
+                # there is no conflict
+                t.update_record()
 
 
-@cache.action()
-def download():
-    """
-    allows downloading of uploaded files
-    http://..../[app]/default/download/[filename]
-    """
-    return response.download(request, db)
+### PRIVATE FUNCTIONS
 
+def __insert_tasks_for_idea(idea, user_id):
+    # Insert categorization tasks
+    for i in range(0,TASKS_PER_IDEA):
+        # insert selectBest types. Categorize tasks will be inserted when these are completed
+        microtask.TagSuggestionTask(idea=idea['id'])     
 
-def call():
-    """
-    exposes services. for example:
-    http://..../[app]/default/call/jsonrpc
-    decorate with @services.jsonrpc the functions to expose
-    supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv
-    """
-    return service()
+def __clean_tag(tag):
+    tag = tag.replace(' ', '') # remove spaces
+    tag = tag.lower() # lower case
+    tag = ''.join(c for c in tag if c not in punctuation) # remove punctuation
+    return tag
 
+def __insert_or_retrieve_tag_id(tag):
+    tagResult = db(db.tag.tag == tag).select(db.tag.id)
+    if tagResult:
+        return tagResult[0].id
+    else:
+        return db.tag.insert(tag=tag)
 
+# keyword extraction
+def __rake(text):
+    file = os.path.join(request.folder,'static','SmartStoplist.txt')
+    r = rake.Rake(file)
+    keywords = r.run(text)
+    return keywords
+
+def __update_reverse_index():
+    keywords = __rake('A Python module implementation of the Rapid Automatic Keyword Extraction (RAKE) algorithm as described in: Rose, S., Engel, D., Cramer, N., & Cowley, W. (2010). Automatic Keyword Extraction from Individual Documents. In M. W. Berry & J. Kogan (Eds.), Text Mining: Theory and Applications: John Wiley & Sons. Initially by @aneesha, packaged by @tomaspinho')
+    return json.dumps(keywords)

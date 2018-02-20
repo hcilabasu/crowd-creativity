@@ -1,96 +1,428 @@
-{{extend 'layout.html'}}
+{{extend 'systemlayout.html'}}
 
-<script>
-    var URL = {};
-    URL.addIdea = "{{=URL('default','add_idea')}}";
-    URL.getNewIdeas = "{{=URL('default','new_ideas')}}";
-    URL.getMatrix = "{{=URL('default','matrix')}}";
-    URL.getCategory = "{{=URL('default','get_category')}}"
+{{block page_js}}
+	
+	<!-- Load JS libraries -->
+	<script type="text/javascript" src="{{=URL('static','js/jquery-ui.min.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/goldenlayout.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/mustache.min.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/d3.v4.min.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/jquery.tagsinput.min.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/jquery.validate.min.js')}}"></script>
 
-    var DATA = {};
-    DATA.userCategories = new Set();
+	<!-- Load styles -->
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/goldenlayout-base.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/goldenlayout-light-theme.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/visualizations.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/tutorial.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/jquery-ui.min.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/jquery.tagsinput.min.css')}}" />
 
-    var ENV = {};
-    ENV.condition = {{=userCondition}};
+	<script>
+		// Set up globals
+	    var URL = { // URLs
+	    	addIdea: "{{=URL('default','add_idea')}}",
+	    	getOrganizationRatio: "{{=URL('default','get_organization_ratio')}}",
+			getTags: "{{=URL('default','get_tags')}}",
+			getAllTags: "{{=URL('default','get_all_tags')}}",
+			tagExists: "{{=URL('default','tag_exists')}}",
+			// Idea workspace view
+			getUserIdeas: "{{=URL('ideaworkspaceview','get_ideas')}}",
+	    	getAllIdeas: "{{=URL('ideaworkspaceview','get_all_ideas')}}",
+	    	getIdeaById: "{{=URL('ideaworkspaceview','get_idea_by_id')}}",
+			addToFavorites: "{{=URL('ideaworkspaceview','add_to_favorites')}}",
+			// Solution space view
+			getSolutionSpace: "{{=URL('solutionspaceview','get_solution_space')}}",
+			getIdeasPerCategory: "{{=URL('solutionspaceview','get_ideas_per_tag')}}",
+			// Versioning view
+			getVersioningStructure: "{{=URL('versioningview','get_versioning_structure')}}",
+			// Tasks view
+			getAvailableTasks: "{{=URL('tasksview','get_available_tasks')}}",
+			submitTask: "{{=URL('tasksview','submit_task')}}"
+	    },		
+	    ENV = { // Global constants
+			userId: "{{=user_id}}",
+			userName: "{{=user_name}}",
+			autoReloadTimer: 15, // seconds or 'OFF' to disable
+			scrollDelay: 500, // Delay before a view scrolls to an idea on hover
+			scrollSpeed: 200, // Speed in which the scroll happens,
+			classPrefix: 'cl_',
+			idPrefix: 'id',
+			autoUpdateOrganizationRatioSeconds: 30,
+			minNumberTags: 1,
+			maxNumberTags: 2,
+			newUser: '{{=str(new_user).lower()}}' === 'true',
+			currentPhase: 1, // Keeps track of the current ideation phase
+			aloneIdeationTime: 0.05 // Duration of time, in minutes, before other views are opened
+		},
+		EVENTS = {
+			popOverClose: [],
+			ideaSubmitted: 'ideaSubmitted',
+			taskSubmitted: 'taskSubmitted',
+			highlightIdea: 'highlightIdea',
+			blurIdea: 'blurIdea',
+			highlightTags: 'highlightTags',
+			blurTags: 'blurTags'
+		},
+		TEMPLATES = {}, // Mustache templates (dynamically loaded on page load)
+		VIEWS = {}, // View objects
+		TOOLBAR = {}; // Toolbar event handlers
+	</script>
 
-    {{if categories:}}
-        {{for category in categories:}}
-        DATA.userCategories.add("{{=category}}");
-        {{pass}}
-    {{pass}}
-</script>
+	<!-- Load JS custom code -->
+	<script type="text/javascript" src="{{=URL('static','js/golden-layout-config.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/tutorial.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/classes.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/view.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/ideaviewer-view.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/tasks-view.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/versioning-view.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/solutionspace-view.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/util.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/system.js')}}"></script>
 
-<div class="container">
+	<!-- Mustache templates -->
+	<script id="ideaViewerTemplate" type="text/x-tmpl-mustache">
+		<div class="toolbar phase1_bl">
+			<ul>
+				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.ideaViewer.reload()">
+					<img src="{{=URL('static','images/reload.png')}}">
+				</a></li>
+			</ul>
+			<ul>
+				<li><a href="#" title="Load your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
+					<img src="{{=URL('static','images/user.png')}}">
+				</a></li>
+				<li><a href="#" title="Load your favorite ideas" onclick="TOOLBAR.ideaViewer.loadFavoriteIdeas()">
+					<img src="{{=URL('static','images/heart-black.png')}}">
+				</a></li>
+				<li><a href="#" title="Load all ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
+					<img src="{{=URL('static','images/group.png')}}">
+				</a></li>
+			</ul>
+			<div class="loadingBadge"></div>
+		</div>
+		<div id="ideasContainer" class="viewContainer"></div>
+	</script>
 
-    <div class="row top-buffer top-row">
-        <div class="col-md-4">
-            <div class="row">
-                <textarea id="idea-input" placeholder="Type in your idea in here..."></textarea>
-            </div>
-            <div class="row top-buffer">
-                <div class="col-md-4 category">
-                    <input type="text" class="tooltip-toggle" placeholder="Tag 1" id="category1" title="Also, please add a tag for your idea. Tags should be concise and summarize the concept behind your idea in at most 20 characters. If you're using 2 main concepts, feel free to add a second tag."></input>
-                </div>
-                <div class="col-md-4 category">
-                    <input type="text" placeholder="Tag 2 (optional)" id="category2"></input>
-                </div>
-                <div class="col-md-4">
-                    <button class="btn btn-primary" id="idea-submit">Post Idea</button>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <h3>Give ideas to address the following problem</h3>
-            <p>
-                Imagine you are in a social setting and you've forgotten the name of someone you know. How might you recall their name without
-                directly asking them? Be as specific as possible in your descriptions.
-            </p>
-        </div>
-    </div>
-    
-    <div class="row top-buffer">
-        <div class="{{= 'col-md-4' if userCondition != 1 else 'col-md-12' }}"> <!-- class="col-md-12" if condition == c1 -->
-            <h3>Your Ideas</h3>
-            <ul class="list-group" id="user-ideas">
-                <!-- dynamic list -->
-                {{if ideas:}}
-                    {{for idea in ideas:}}
-                    <li class="list-group-item">
-                        <p>{{=idea.idea}}</p>
-                    </li>
-                    {{pass}}
-                {{else:}}
-                <li class="list-group-item" id="no-user-idea">
-                    <h3>No ideas have been submitted yet!</h3>
-                    <p>Use the form above to submit an idea</p>
-                </li>
-                {{pass}}
-            </ul>
-        </div>
-        {{if userCondition == 2:}}
-        <div class="col-md-8"> <!-- only visible if C == c2 -->
-            <h3>Everyone Else's Ideas</h3>
-            <ul class="list-group"  id="group-ideas">
-                <!-- dynamic list -->
-                <li class="list-group-item" id="no-group-idea">
-                    <h3>No ideas have been submitted yet!</h3>
-                    <p>When someone else submits an idea, it will appear here</p>
-                </li>
-            </ul>
-        </div>
-        {{elif userCondition == 3:}}
-        <div class="col-md-8 matrix-container"> <!-- Only show when condition == c3 -->
-            <h3>
-                Idea Matrix <a href="#" class="tooltip-toggle" title="Below, you will see a matrix showing how many ideas have been generated for each tag by everyone, not just you. You will only see the tags for the categories to which you contribute. The darker the color, the more ideas have been generated for that particular tag.">?</a>
-                <button class="btn btn-sm tooltip-toggle" id="getHint" title="This will reveal one tag that you haven't explored yet. Think about it and try to generate ideas based on it.">Out of ideas?</button>
-            </h3>
-            <table id="matrix">
-            </table>
-        </div>
-        {{pass}}
-    </div>
-</div>
+	<script id="versioningViewerTemplate" type="text/x-tmpl-mustache">
+		<div class="toolbar">
+			<ul>
+				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.versioningView.reload()">
+					<img src="{{=URL('static','images/reload.png')}}">
+				</a></li>
+				<li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.versioningView.toggleAutoReload()">
+					 <img src="{{=URL('static','images/clock.png')}}"><span id='versioningTimerDisplay'>OFF</span>
+				</a></li>
+			</ul>
+			<div class="loadingBadge"></div>
+		</div>
+		<div id="versioningContainer" class="viewContainer"><svg></svg></div>
+	</script>
 
-{{if userCondition == 3:}}
-    <script type="text/javascript" src="{{=URL('static/js', 'matrix.js')}}"></script>
-{{pass}}
+	<script id="suggestedTasksViewerTemplate" type="text/x-tmpl-mustache">
+		<div class="toolbar">
+			<ul>
+				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.suggestedTasks.reload()">
+					<img src="{{=URL('static','images/reload.png')}}">
+				</a></li>
+				<li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.suggestedTasks.toggleAutoReload()">
+					<img src="{{=URL('static','images/clock.png')}}"><span id='tasksTimerDisplay'>OFF</span>
+				</a></li>
+			</ul>
+			<div class="loadingBadge"></div>
+		</div>
+		<div id="suggestedTasksContainer" class="viewContainer">
+			<ul id="suggestedTasksList">
+			</ul>
+		</div>
+	</script>
+
+	<script id="solutionSpaceViewerTemplate" type="text/x-tmpl-mustache">
+		<div class="toolbar">
+			<ul>
+				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.solutionSpaceView.reload()">
+					<img src="{{=URL('static','images/reload.png')}}">
+				</a></li>
+				<li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.solutionSpaceView.toggleAutoReload()">
+					<img src="{{=URL('static','images/clock.png')}}"><span id='solutionSpaceTimerDisplay'>OFF</span>
+				</a></li>
+			</ul>
+			<div class="loadingBadge"></div>
+		</div>
+		
+		<div id="solutionSpaceContainer" class="viewContainer">
+		</div>
+		
+		<div id="miniMap">
+			<div id="pan"></div>
+		</div>
+	</script>
+	
+	
+	<script id="solutionSpaceStructureTemplate" type="text/x-tmpl-mustache">
+		<div id="solutionSpaceHeader">
+		</div>
+
+		<div id="solutionSpaceLeftColumn">
+		</div>
+
+		<!-- <div id="solutionSpaceRightColumn">
+		</div> -->
+
+		<div id="spaceContainer">
+		</div>
+	</script>
+
+	<script id="TagSuggestionTaskTemplate" type="text/x-tmpl-mustache">
+		<div id="ideaPlaceholder"></div>
+		<p>Suggest tags for this idea</p>
+		<input type="text" class="tagInput" name="answer" />
+		<!-- <a href="#" class="btn">Submit</a> -->
+		<!-- required task data -->
+		<input type="hidden" name="taskId" value="[[id]]"/>
+		<input type="hidden" name="taskType" value="[[type]]"/>
+	</script>
+
+	<script id="TagValidationTaskTemplate" type="text/x-tmpl-mustache">
+		<div id="ideaPlaceholder"></div>
+		<p>Click on the <strong>one</strong> tag that you think is the most appropriate to describe this idea</p>
+		<ul class="tagsList single"></ul>
+		<!-- <a href="#" class="btn">Submit</a> -->
+		<!-- required task data -->
+		<input type="hidden" name="taskId" value="[[id]]"/>
+		<input type="hidden" name="taskType" value="[[type]]"/>
+	</script>
+
+	<script id="ideaBlockTemplate" type="text/x-tmpl-mustache">
+		<p class="ideaBlock id[[id]] [[favorite]]" id="id[[id]]" style="display:none">
+			[[idea]]
+			[[#closeable]]
+			<a href="#" title="Close idea" class="close"></a>
+			[[/closeable]]
+			<a href="#" class="favoriteBtn" title="Toggle favorites"></a>
+			<span class="fade"></span>
+			<input type="hidden" name="ideaId" value="[[id]]"></input>
+			<input type="hidden" name="ideaTags" value="[[tags]]"></input>
+		</p>
+	</script>
+
+	<script id="tagsViewTemplate" type="text/x-tmpl-mustache">
+		<span class="close"></span>
+		<h2>Tags view</h2>
+		<p>See ideas that have the tags you selected. If you see ideas you like, drag and drop to combine or merge them.</p>
+
+		<div class="twoCategoryIdeasList">
+			<div class="cl_[[category1]]">
+				<h3>[[category1]]</h3>
+				<ul>
+					<li class="loading"><div class="loadingBadge"></div></li>
+				</ul>
+			</div>
+
+			<div class="cl_[[category2]] loading">
+				<h3>[[category2]]</h3>
+				<ul>
+					<li class="loading"><div class="loadingBadge"></div></li>
+				</ul>
+			</div>
+		</div>
+	</script>
+
+	<script id="tagTemplate" type="text/x-tmpl-mustache">
+		<span class="tag"><a href="#">[[tag]]</a></span>
+	</script>
+
+	<script id="tutorialWelcomeTemplate" type="text/x-tmpl-mustache">
+		<p>Welcome to the IdeaMix system. Here, you can collaboratively generate and organize ideas!</p>
+
+		<p>This very short tutorial will walk you through the core parts of this system.</p>
+	</script>
+
+	<script id="tutorialAddIdeaTemplate" type="text/x-tmpl-mustache">
+		<p>You can add a new idea by clicking this button</p>
+	</script>
+
+	<script id="tutorialInspirationTemplate" type="text/x-tmpl-mustache">
+		<p>Whenever you need some extra inspiration, just click here</p>
+	</script>
+
+	<script id="tutorialIdeaViewerTemplate" type="text/x-tmpl-mustache">
+		<p>This is the idea viewer. Every idea you add (through the "Add Idea" button above) will appear here.</p>
+
+		<p>
+			You can add a new idea by clicking the "add idea" button 
+			(<img src="{{=URL('static','images/plus-padding.png')}}" alt="See all ideas" class="inline">)
+		</p>
+
+		<p>
+			You can also open every idea that has been generated by clicking the "See all ideas" 
+			button (<img src="{{=URL('static','images/group.png')}}" alt="See all ideas" class="inline">) on the toolbar. 
+		</p>
+		<p>
+			To see only your ideas again, click on "See my ideas" button 
+			(<img src="{{=URL('static','images/user.png')}}" alt="See all ideas" class="inline">).
+		</p>
+	</script>
+
+	<script id="tutorialSolutionSpaceTemplate" type="text/x-tmpl-mustache">
+		<p>This is the solution space. Each row and column represents a distinct tag related to the ideas that have been generated.</p>
+
+		<p>The darker the cell, the more ideas have been generated at the intersection between two tags.</p>
+
+		<p>If you hover over a cell, the ideas that belong to the tags you're pointing to will be highlighted in the idea viewer.</p>
+	</script>
+
+	<script id="tutorialVersioningViewTemplate" type="text/x-tmpl-mustache">
+		<p>
+			This is the versioning view. It allows you to see where an idea came from: has it been combined or merged from ther ideas? 
+			What are its older versions?
+		</p>
+
+	</script>
+
+	<script id="tutorialOrganizationLevelTemplate" type="text/x-tmpl-mustache">
+		<p>This is the organization metric. It shows you how organized the solution space is.</p>
+
+		<p>Adding ideas will decrease the organization level, since the new idea hasn't been appropriately classified yet.</p>
+
+		<p>Doing tasks in the suggested panel will increase this level, since it helps to organize the solution space.</p>
+	</script>
+
+	<script id="inspirationPopupTemplate" type="text/x-tmpl-mustache">
+		<span class="close"></span>
+		<h2>Get inspired</h2>
+		<ul id="inspirationPanel" class="loading">
+			<li class="selected">
+				<div class="loadingBadge"></div>
+			</li>
+		</ul>
+		<div id="inspirationControls" class="first" style="display: none">
+			<a class="arrow arrow-left previous" href="#" onclick=""></a>
+			<span class="stages">0/0</span>
+			<a class="arrow arrow-right next" href="#" onclick=""></a>
+			<a class="btn submit" href="#" onclick="submitInspirationTask(event);">Submit</a>
+		</div>
+	</script>
+{{end}}
+
+{{block navMenu}}
+	<div class="navContainer">
+		<div class="navBlock">
+			<a href="#" id="newIdeaButton" class="btn btn-primary" onclick="openIdeaPopup()">
+				<img src="{{=URL('static','images/plus-padding.png')}}" alt="New idea"/>
+				New idea
+			</a>
+			<a href="#" id="helpButton" class="btn btn-primary phase1_bl" onclick="openInspirationPopup()">
+				<img src="{{=URL('static','images/lightbulb-padding.png')}}" alt="Get inspiration"/>
+				Inspiration
+			</a>
+			<a href="#" id="openViews" class="btn btn-primary phase1_bl phase2_bl glowWhite" onclick="openAllViews()">
+				<img src="{{=URL('static','images/open-all.png')}}" alt="Open all views"/>
+				Open all views
+			</a>
+			<span id="sessionTimer" class="phase2_bl" title="Countdown before the other system views are available">00:00</span>
+		</div>
+	</div>
+{{end}}
+
+{{block rightNavMenu}}
+	<div class="navBlock actionable">
+		<img src="{{=URL('static','images/user-navbar.png')}}" alt="{{=user_name}}">
+		<div class="dropDown">
+			<p>Your username is: </p>
+			<p><strong>{{=user_name}}</strong></p>
+		</div>
+	</div>
+{{end}}
+
+{{block overlay}}
+	<div class="popupDialog" id="tagsView">
+	</div>
+
+	<div class="popupDialog" id="addIdea">
+		<span class="close"></span>
+		<h2>New idea</h2>
+		<form>
+			<textarea name='idea' placeholder="Type your idea in here" required></textarea>
+			
+			<div class="panel">
+				<p>Pick <strong>at most 2 tags</strong> that best summarize your idea</p>
+				<div class="tagPicker">
+					<input type="text" class="search" placeholder="Filter tags" disabled/>
+					<ul class="tags loading">
+						<!-- <li class="t_example">Example</li> -->
+						<li>
+							<div class="loadingBadge"></div>
+						</li>
+					</ul>
+					<div class="tagPlaceholder empty">
+						<span class="text"></span>
+						<span class="empty">tag 1</span> 
+						<span class="close">x</span>
+					</div>
+					<div class="tagPlaceholder empty">
+						<span class="text"></span>
+						<span class="empty">tag 2 (opt.)</span> 
+						<span class="close">x</span>
+					</div>
+					<input type="hidden" name="pickTags" value="" />
+					<a class="alternative" href="#">None of these tags represent your idea?</a>
+				</div>
+			</div>
+			<div class="panel" style="display: none">
+				<p>Suggest <strong>at most 2 tags</strong> that best summarize your idea</p>
+				<input type="text" placeholder="Separate tags with a space or comma" name="suggestTags"/>
+				<a class="alternative" href="#"><strong>&lsaquo;</strong> Go back to tag picker</a>
+			</div>
+			<a class="btn floatRight submit" href="#" onclick="submitNewIdea(event);">Submit</a>
+			<input type="hidden" name="customTag" value="false"/> <!-- This input reflects whether the user picked a tag or created a custom one -->
+			
+		</form>
+	</div>
+
+	<div class="popupDialog" id="inspiration">
+	</div>
+
+	<div class="popupDialog" id="combineIdeas">
+		<span class="close"></span>
+		<h2>Idea Mixing</h2>
+
+		<div class="combineIdeasShowIdeas">
+			<p class="ideaBlock"><span></span></p>
+			<p class="ideaBlock"><span></span></p>
+		</div>
+
+		<div class="choices">
+			<p>Choose an action:</p>
+
+			<ul>
+				<li class="clickEnabled" onclick="replaceCombineIdeasOptions(event,'merge')">
+					<img src="{{=URL('static','images/merge.gif')}}" class="sideImage" />
+					<h3>Merge ideas</h3>
+					<p>Use this when two ideas are virtually the same. This will eliminate the two ideas in favor of your merged idea.</p>
+				</li>
+				<li class="clickEnabled" onclick="replaceCombineIdeasOptions(event,'combine')">
+					<img src="{{=URL('static','images/combine.gif')}}" class="sideImage" />
+					<h3>Combine ideas</h3>
+					<p>Use this to combine two different ideas into a new, original idea. This will keep the two ideas and add your new idea. </p>
+				</li>
+			</ul>
+		</div>
+		<div class="ideaInput">
+			<p>Please, write down your <span class='combinationType'></span> idea in the textarea below. Make sure to include as much detail as possible!</p>
+
+			<textarea name="combinedIdeaInput"></textarea>
+			
+			<p>Suggest at least 3 tags for your idea. Try to be as precise and consistent as you can, but don't worry too much about it, as the system may improve it over time:</p>
+
+			<input type="text" name="combinedTagInput" />
+
+			<input type="hidden" name="combineTypeInput">
+			<input type="hidden" name="combinedIdeaIds">
+
+			<button class="btn floatRight" onclick="submitCombinedIdea(event)">Submit</button>
+		</div>
+
+	</div>
+{{end}}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CrowdMuse</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Concert+One|Lato" rel="stylesheet">
+    <link rel="stylesheet" href="{{=URL('static','css/bootstrap.min.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/web2py-bootstrap3.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/idea-clusters.css')}}"/>
+    <link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
+</head>
+<body class="welcome">
+
+    <div id="welcome">
+        <h1 class="logo">Crowd<span>Muse</span></h1>
+
+        <p>Available brainstorming sessions:</p>
+        <ul>
+            {{for p in problems:}}
+                <li>
+                    <a href="{{=URL('default','?problem=' + p.url_id)}}">{{=p.title}}</a>
+                </li>
+            {{pass}}
+        </ul>
+    </div>
+    
+</body>
+</html>
