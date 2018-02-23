@@ -515,6 +515,32 @@ var closeOverlay = function(event){
 	
 };
 
+var editIdeaSetup = function(params){
+	$.ajax({
+		method: 'GET',
+		url: URL.getIdeaById,
+		data: {id: params.id},
+		success: function(data){
+			$('#editIdea').removeClass('loading');
+			// Update view
+			var data = JSON.parse(data);
+			var ideaText = $('#editIdea .ideaText');
+			var tags = $('#editIdea .tags');
+			// Add idea text
+			ideaText.text(data.idea);
+			// Add tags
+			data.tags.forEach(function(d,i){
+				let tag = $('<li></li>').text(d);
+				tags.append(tag);
+			});
+			// Setup teardown
+			EVENTS.popOverClose.push(function(){
+				$('#editIdea').addClass('loading');
+			});
+		}
+	});
+}
+
 var combineIdeasSetup = function(params){
 	// Add the idea text to the blocks
 	ids = []

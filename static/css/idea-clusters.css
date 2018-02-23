@@ -694,22 +694,30 @@ div.w2p_flash.alert {
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
     padding: 20px 20px 20px 20px;
-    background: white !important;
+    background: white;
     border-radius: 10px;    
     /* border: solid 1px #CCC; */
     box-shadow: 0 0 5px rgba(0,0,0,0.2);
     transition: height 0.5s;
 }
 
-    #overlay .popupDialog.loading .submit {
-        text-indent: -9999px;
-        background: url(../images/loading.gif) no-repeat center center white;
-        background-size: 36px;
-        box-shadow: none;
-        cursor: auto;
-    }
+#overlay .popupDialog.loading .submit {
+    text-indent: -9999px;
+    background: url(../images/loading.gif) no-repeat center center white;
+    background-size: 36px;
+    box-shadow: none;
+    cursor: auto;
+}
 
-    #overlay .popupDialog > .close {
+#overlay .popupDialog.ideaPopup {
+    background: #FFDE78; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* Standard syntax */
+}
+
+#overlay .popupDialog > .close {
         position: absolute;
         top: 20px;
         right: 15px;
@@ -753,6 +761,31 @@ div.w2p_flash.alert {
     #combineIdeas .ideaInput {
         display: none;
     }
+
+.ideaPopup .ideaText {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 30px;
+}
+
+.ideaPopup.loading .ideaText,
+.ideaPopup.loading .tags {
+    display: none;
+}
+
+.ideaPopup.loading .loadingBadge {
+    display: block;
+}
+
+.ideaPopup .tags li {
+    display: inline-block;
+    padding: 10px;
+    background: #A0D3FF;
+    color: #3083CC;
+    border-radius: 10px;
+    border: solid 1px rgb(129, 177, 219);
+    margin: 0 5px 5px 0;
+}
 
 #versioningContainer {
     overflow: auto;

@@ -108,6 +108,13 @@ class Idea {
             });
         }
 
+        // Editable
+        if(typeof params['editable'] == 'boolean' && params['editable']){
+            ideaBlock.click(function(){
+                openOverlay('editIdea', {id: idea.id});
+            })
+        }
+
         // Setup favorites button
         $('.favoriteBtn', ideaBlock).click(function(){
             // Proactively change appearance

@@ -110,7 +110,14 @@ class IdeaViewerView extends View {
     Adds an idea to the view 
     */
     addIdeaToDisplay(idea){
-        var params = {closeable:true, draggable:true, resizable: true, focuseable: true, source: this.constructor};
+        var params = {
+            closeable:true, 
+            draggable:true, 
+            resizable: true, 
+            focuseable: true, 
+            editable: true, 
+            source: this.constructor
+        };
         var ideaElement = new Idea(idea, params);
         var ideaBlock = ideaElement.html();
         $(this.container).append(ideaBlock);
