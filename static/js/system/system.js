@@ -8,6 +8,17 @@ $(function(){
 		TEMPLATES[id] = html;
 	});
 
+	// Make sure validator trims values
+	// From: https://stackoverflow.com/questions/1827483/jquery-validate-plugin-how-to-trim-values-before-form-validation
+	$.each($.validator.methods, function (key, value) {
+        $.validator.methods[key] = function () {           
+            if(arguments.length > 0) {
+                arguments[0] = $.trim(arguments[0]);
+            }
+            return value.apply(this, arguments);
+        };
+    });
+
 	// Define tutorials
 	ENV.firstTutorial = new Tutorial(
 		{ // Settings
@@ -21,6 +32,13 @@ $(function(){
 				title: 'Welcome',
 				html: Mustache.render(TEMPLATES.tutorialWelcomeTemplate)
 			},	
+			{
+				title: 'Brainstorming topic',
+				highlight: '#problem',
+				html: '<p>This is the problem you\'re ideating on</p>',
+				location: {left: -200, bottom: 20}
+
+			},
 			{
 				title: 'Add a new Idea',
 				highlight: '#newIdeaButton',
