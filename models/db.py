@@ -123,7 +123,7 @@ db.define_table('favorite',
     Field('timestamp', 'datetime'))
     
 db.define_table('tag',
-    Field('tag', 'string', unique=True),
+    Field('tag', 'string', unique=True, length=255),
     Field('problem', 'reference problem'),
     Field('replacedBy', 'reference tag'))
     
