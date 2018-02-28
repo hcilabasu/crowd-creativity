@@ -143,6 +143,7 @@ var UTIL = {
 	},
 	/*
 	This function returns a JSON object based on jQuery's form.serializeArray() method
+	If value is undefined, it will not be assigned.
 	- formArray: output from serializeArray() method
 	- customProcessing: this is a dictionary of processing functions for particular form elements
 	*/
@@ -150,11 +151,24 @@ var UTIL = {
 		var returnArray = {};
 		for (var i = 0; i < formArray.length; i++){
 			var name = formArray[i]['name'];
-			var value = formArray[i]['value']
+			var value = formArray[i]['value'];
 			if (customProcessing && customProcessing[name]){
 				value = customProcessing[name](value);
 			}
-			returnArray[name] = value;
+			if (value == undefined){continue;}
+			if (returnArray.hasOwnProperty(name)) {
+				// This form has more than one item with the same name. Turn it into array
+				var repeatedValue = returnArray[name];
+				if (!(repeatedValue.constructor === Array)){
+					// Value is not yet an array. Turn it.
+					returnArray[name] = [returnArray[name]];
+				} 
+				// Add value;
+				returnArray[name].push(value);
+			} else {
+				// First time this key is being used. Add value.
+				returnArray[name] = value;
+			}
 		}
 		return returnArray;
 	},

@@ -104,7 +104,7 @@ $(function(){
 		// }
 	};
 	ENV.tagsDelimiter = ',, ,;';
-	$('#addIdea input[name=suggestTags]').tagsInput(ENV.tagConfig);
+	// $('#addIdea input[name=suggestTags]').tagsInput(ENV.tagConfig);
 	$('#combineIdeas input[name=combinedTagInput]').tagsInput(ENV.tagConfig);
 
 	// Load windowed layout
@@ -306,8 +306,8 @@ var teardownTagPicker = function(tagPicker, reloadList){
 	placeholders.each(function(i,d){
 		removeTag($(d));
 	});
-	// Empty tag suggestion
-	$('#addIdea input[name=suggestTags]').importTags(''); 
+	// Empty suggest tags
+	$('.suggestTags [name=suggestTags]').val('');
 	// Revert back to tagPicker
 	switchPanel(tagPicker, true);
 };
@@ -411,18 +411,25 @@ var submitNewIdea = function(event){
 	console.dir('Submitting');
 	// Serialize form data
 	var formElement = $(event.target).closest('form');
-	var parseTags = function(value){
-		if (value === ''){
-			return [];
-		} else {
-			return value.split(ENV.tagsDelimiter);
-		}
-	};
 	var form = UTIL.objectifyForm(formElement.serializeArray(), {
-		suggestTags: parseTags,
-		pickTags: parseTags
+		pickTags: function(value){
+			if (value === ''){
+				return [];
+			} else {
+				return value.split(ENV.tagsDelimiter);
+			}
+		},
+		suggestTags: function(value){
+			if(value.trim() === ''){ return undefined;}
+			return value;
+		}
 	});
 	var tags = form.customTag == 'true' ? form.suggestTags : form.pickTags;
+	if (tags === undefined){
+		tags = [];
+	} else if (!(tags.constructor === Array)){
+		tags = [tags];
+	}
 	// Validate tags. For some reason, the jQuery validator does not pick it up.
 	if (tags.length < ENV.minNumberTags | tags.length > ENV.maxNumberTags  | !formElement.valid()){ 
 		if (tags.length < ENV.minNumberTags){
@@ -444,7 +451,6 @@ var submitNewIdea = function(event){
 			// Add to UI
 			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
 			// Clearing up inputs and giving feedback to the user
-			$('#addIdea input').importTags(''); 
 			$('#addIdea textarea').val('');
 			$('#addIdea textarea').focus();
 			$('#addIdea .suggestedTags > div').html('');

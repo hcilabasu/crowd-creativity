@@ -321,7 +321,7 @@
 				<img src="{{=URL('static','images/open-all.png')}}" alt="Open all views"/>
 				Open all views
 			</a>
-			<span id="sessionTimer" class="phase2_bl" title="Countdown before the other system views are available">00:00</span>
+			<span id="sessionTimer" class="phase2_bl" title="Countdown before you can see other people's ideas. Try to come up with as many ideas as you can by yourself!">00:00</span>
 		</div>
 	</div>
 {{end}}
@@ -370,9 +370,12 @@
 					<a class="alternative" href="#">None of these tags represent your idea?</a>
 				</div>
 			</div>
-			<div class="panel" style="display: none">
+			<div class="panel suggestTags" style="display: none">
 				<p>Suggest <strong>at most 2 tags</strong> that best summarize your idea</p>
-				<input type="text" placeholder="Separate tags with a space or comma" name="suggestTags"/>
+				<div>
+					<input type="text" placeholder="tag 1" name="suggestTags"/>
+					<input type="text" placeholder="tag 2 (opt.)" name="suggestTags"/>
+				</div>
 				<a class="alternative" href="#"><strong>&lsaquo;</strong> Go back to tag picker</a>
 			</div>
 			<a class="btn floatRight submit" href="#" onclick="submitNewIdea(event);">Submit</a>

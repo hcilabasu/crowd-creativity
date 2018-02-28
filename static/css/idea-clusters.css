@@ -1208,10 +1208,29 @@ div.w2p_flash.alert {
 
 .tagPicker .alternative {
     float: right;
+    clear: both;
 }
 
 .tagPicker .panel.hide {
     display: none;
+}
+
+.suggestTags div {
+    position: relative;
+    height: 42px;
+    margin-bottom: 10px;
+}
+
+.suggestTags div input {
+    position: absolute;
+    width: 49%;
+}
+
+.suggestTags div input:first-child {
+    left: 0;
+}
+.suggestTags div input:last-child {
+    right: 0;
 }
 
 /* For the tag inputs */
