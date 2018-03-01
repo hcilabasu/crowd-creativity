@@ -116,7 +116,8 @@ class Idea {
         }
 
         // Setup favorites button
-        $('.favoriteBtn', ideaBlock).click(function(){
+        $('.favoriteBtn', ideaBlock).click(function(e){
+            e.stopPropagation();
             // Proactively change appearance
             var toggleBlock = $('.' + ENV.idPrefix + idea.id + '.ideaBlock');
             toggleBlock.toggleClass('favorite');
