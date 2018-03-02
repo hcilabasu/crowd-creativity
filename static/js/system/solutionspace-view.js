@@ -10,6 +10,7 @@ class SolutionSpaceView extends View {
 		$('#miniMap').hide();
 		this.getParentContainer().addClass('loading');
 		this.getParentContainer().removeClass('empty');
+		this.setNeedsUpdate(false);
         $.ajax({
             type: "GET",
             url: URL.getSolutionSpace,

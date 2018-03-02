@@ -49,7 +49,11 @@ $(function(){
 	);
 	ENV.secondTutorial = new Tutorial(
 		{ // Settings
-			
+			onclose: function(){
+				// Reload other views
+				VIEWS.solutionSpaceView.load();
+				VIEWS.versioningView.load();
+			}
 		},
 		[ // Steps
 			{
@@ -189,6 +193,23 @@ $(function(){
 	$('#loadingOverlay').fadeOut(1000, function(){
 		$('body').removeClass('loading');
 	});
+
+	// Start periodically checking for updates
+	var lastCheck = new Date().getTime();
+	window.setInterval(function(){
+		$.ajax({
+			method: 'GET',
+			url: URL.checkUpdates,
+			data: {timestamp: lastCheck},
+			success: function(needsUpdate){
+				if (needsUpdate.toLowerCase() === 'true') {
+					VIEWS.versioningView.setNeedsUpdate(true);
+					VIEWS.solutionSpaceView.setNeedsUpdate(true);
+				}
+				lastCheck = new Date().getTime();
+			}
+		})
+	}, 10000);
 });
 
 var startViewSequencing = function(){
@@ -201,6 +222,7 @@ var startViewSequencing = function(){
 };
 
 var openAllViews = function(){
+	// Show other views
 	var maximizedPanel = $('.lm_maximised .lm_content');
 	maximizedPanel.animate({
 		// These values come from the golden-layout.config.js

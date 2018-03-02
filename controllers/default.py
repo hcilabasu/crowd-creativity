@@ -1,5 +1,7 @@
 import uuid
 import datetime
+import pytz
+from tzlocal import get_localzone
 import json
 from collections import defaultdict
 import itertools
@@ -150,6 +152,23 @@ def get_organization_ratio():
     else:
         # There is no data yet to calculate this.
         return -1
+
+def check_updates():
+    ''' This function checks if new ideas have been added since a given timestamp '''
+    # Get timestamp
+    client_timestamp = float(request.vars['timestamp'])
+    epoch = datetime.datetime(1970,1,1)
+    timestamp = epoch + datetime.timedelta(milliseconds=client_timestamp)
+    # Adjust to server timezone
+    local_tz = get_localzone() 
+    timestamp = timestamp.replace(tzinfo=pytz.utc).astimezone(local_tz)
+    # Get last idea timestamp
+    ideas_post_timestamp = db(db.idea.dateAdded > timestamp).count()
+    # print('Ideas post timestamp (%s): %d' % (timestamp, ideas_post_timestamp))
+    if ideas_post_timestamp > 0:
+        return True
+    else:
+        return False
 
 def get_all_tags():
     problem_id = session.problem_id

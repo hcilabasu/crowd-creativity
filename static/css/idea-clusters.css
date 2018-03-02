@@ -827,6 +827,7 @@ div.w2p_flash.alert {
         .toolbar ul > li {
             display: inline-block;
             margin-left: -1px;
+            position: relative;
         }
 
         .toolbar ul > li > a {
@@ -850,6 +851,26 @@ div.w2p_flash.alert {
                 height: 32px;
                 margin-top: -3px;
             }
+
+    .toolbar .notificationBadge {
+        display: none;
+        background: red;
+        height: 15px;
+        width: 15px;
+        border-radius: 8px;
+        position: absolute;
+        top: -3px;
+        right: -3px;
+        z-index: 10;
+        font-weight: bolder;
+        color: white;
+        text-align: center;
+        font-size: 0.8em;
+    }
+
+    .update .toolbar .notificationBadge {
+        display: block;
+    }
 
 @keyframes glow {
     0%   {box-shadow: 0 0 0px #3AAAFC;}

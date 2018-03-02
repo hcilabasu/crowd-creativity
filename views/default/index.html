@@ -26,6 +26,7 @@
 			getTags: "{{=URL('default','get_tags')}}",
 			getAllTags: "{{=URL('default','get_all_tags')}}",
 			tagExists: "{{=URL('default','tag_exists')}}",
+			checkUpdates: "{{=URL('default','check_updates')}}",
 			// Idea workspace view
 			getUserIdeas: "{{=URL('ideaworkspaceview','get_ideas')}}",
 	    	getAllIdeas: "{{=URL('ideaworkspaceview','get_all_ideas')}}",
@@ -53,7 +54,8 @@
 			maxNumberTags: 2,
 			newUser: '{{=str(new_user).lower()}}' === 'true',
 			currentPhase: 1, // Keeps track of the current ideation phase
-			aloneIdeationTime: 0.05 // Duration of time, in minutes, before other views are opened
+			aloneIdeationTime: 0.05, // Duration of time, in minutes, before other views are opened
+			checkUpdateFrequency: 10000 // How often should the system check for new ideas
 		},
 		EVENTS = {
 			popOverClose: [],
@@ -111,10 +113,10 @@
 			<ul>
 				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.versioningView.reload()">
 					<img src="{{=URL('static','images/reload.png')}}">
-				</a></li>
-				<li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.versioningView.toggleAutoReload()">
+				</a><span class="notificationBadge">!</span></li>
+				<!-- <li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.versioningView.toggleAutoReload()">
 					 <img src="{{=URL('static','images/clock.png')}}"><span id='versioningTimerDisplay'>OFF</span>
-				</a></li>
+				</a></li> -->
 			</ul>
 			<div class="loadingBadge"></div>
 		</div>
@@ -144,10 +146,10 @@
 			<ul>
 				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.solutionSpaceView.reload()">
 					<img src="{{=URL('static','images/reload.png')}}">
-				</a></li>
-				<li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.solutionSpaceView.toggleAutoReload()">
+				</a><span class="notificationBadge">!</span></li>
+				<!-- <li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.solutionSpaceView.toggleAutoReload()">
 					<img src="{{=URL('static','images/clock.png')}}"><span id='solutionSpaceTimerDisplay'>OFF</span>
-				</a></li>
+				</a></li> -->
 			</ul>
 			<div class="loadingBadge"></div>
 		</div>

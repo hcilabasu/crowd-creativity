@@ -52,6 +52,16 @@ class View {
         return $(this.container).parent();
     }
 
-
+    /*
+    Toggles the update badge in the view
+    */
+   setNeedsUpdate(needsUpdate){
+        var container = this.getParentContainer();
+        if(needsUpdate){
+            container.addClass('update');
+        } else {
+            container.removeClass('update');
+        }
+   }
 };
 

@@ -18,6 +18,7 @@ class VersioningView extends View {
 		$(this.container).html('<svg></svg>');
 		this.getParentContainer().addClass('loading');
 		this.getParentContainer().removeClass('empty');
+		this.setNeedsUpdate(false);
         // Load panel
         $.ajax({
             type: "GET",
