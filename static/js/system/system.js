@@ -195,18 +195,18 @@ $(function(){
 	});
 
 	// Start periodically checking for updates
-	var lastCheck = new Date().getTime();
+	ENV.lastCheck = new Date().getTime();
 	window.setInterval(function(){
 		$.ajax({
 			method: 'GET',
 			url: URL.checkUpdates,
-			data: {timestamp: lastCheck},
+			data: {timestamp: ENV.lastCheck},
 			success: function(needsUpdate){
 				if (needsUpdate.toLowerCase() === 'true') {
 					VIEWS.versioningView.setNeedsUpdate(true);
 					VIEWS.solutionSpaceView.setNeedsUpdate(true);
 				}
-				lastCheck = new Date().getTime();
+				ENV.lastCheck = new Date().getTime();
 			}
 		})
 	}, 10000);
@@ -481,6 +481,10 @@ var submitNewIdea = function(event){
 			$('#addIdea').removeClass('loading');
 			// Reset tag picker
 			teardownTagPicker($('#addIdea'), false);
+			// Reset other views and reset check timer
+			VIEWS.solutionSpaceView.load();
+			VIEWS.versioningView.load();
+			ENV.lastCheck = new Date().getTime();
 		});
 	}
 };
