@@ -449,7 +449,7 @@ var submitNewIdea = function(event){
 			var _idea = form.idea;
 			var _tags = tags;
 			// Add to UI
-			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
+			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
 			// Clearing up inputs and giving feedback to the user
 			$('#addIdea textarea').val('');
 			$('#addIdea textarea').focus();

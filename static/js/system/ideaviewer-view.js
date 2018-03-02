@@ -75,6 +75,7 @@ class IdeaViewerView extends View {
             data: {is_favorite: true},
             success: (data)=>{
                 var ideas = JSON.parse(data);
+                this.updateIdeaCounter(ideas.length);
                 for (var i = 0; i < ideas.length; i++) {
                     this.addIdeaToDisplay(ideas[i]);
                 }
@@ -98,6 +99,7 @@ class IdeaViewerView extends View {
             data: params,
             success: (data)=>{
                 var ideas = JSON.parse(data);
+                this.updateIdeaCounter(ideas.length);
                 for (var i = 0; i < ideas.length; i++) {
                     this.addIdeaToDisplay(ideas[i]);
                 }
@@ -106,10 +108,29 @@ class IdeaViewerView extends View {
         });
     }
 
+    /* Updates the idea counter */
+    updateIdeaCounter(count){
+        var text = '<span>1</span> idea loaded';
+        if(count !== 1){
+            text = '<span>' + count + '</span> ideas loaded';
+        }
+        $('#ideasContainerCounter').html(text);
+    }
+
+    /* Retrieves the counter number */
+    getIdeasCounterNumber(){
+        var value = $('#ideasContainerCounter > span').text();
+        if(isNaN(value)){
+            return 0;
+        } else {
+            return parseInt(value);
+        }
+    }
+
     /* 
     Adds an idea to the view 
     */
-    addIdeaToDisplay(idea){
+    addIdeaToDisplay(idea, updateCounter){
         var params = {
             closeable:true, 
             draggable:true, 
@@ -122,6 +143,9 @@ class IdeaViewerView extends View {
         var ideaBlock = ideaElement.html();
         $(this.container).append(ideaBlock);
         ideaBlock.fadeIn('slow');
+        if(updateCounter){
+            this.updateIdeaCounter(this.getIdeasCounterNumber() + 1);
+        }
     };
 
     closeIdea(id){
@@ -140,6 +164,7 @@ class IdeaViewerView extends View {
                 url: URL.getIdeaById,
                 success: function(data){
                     var idea = JSON.parse(data);
+                    this.updateIdeaCounter(this.getIdeasCounterNumber() + 1);
                     VIEWS.ideasView.addIdeaToDisplay(idea);
                 }
             });

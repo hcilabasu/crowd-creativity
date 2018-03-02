@@ -560,6 +560,18 @@ div.w2p_flash.alert {
         cursor: pointer;
     }
 
+#ideasContainerCounter {
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.loading #ideasContainerCounter {
+    display: none;
+}
+
 .ideaBlock {
     position: relative;
     display: inline-block;
@@ -785,11 +797,6 @@ div.w2p_flash.alert {
     border-radius: 10px;
     border: solid 1px rgb(129, 177, 219);
     margin: 0 5px 5px 0;
-}
-
-#versioningContainer {
-    overflow: auto;
-    height: 100%;
 }
 
 .toolbar {

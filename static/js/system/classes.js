@@ -132,9 +132,8 @@ class Idea {
                     // Remove class if fail
                     toggleBlock.toggleClass('favorite');
                 }
-            })
+            });
         });
-
         return ideaBlock;
     }
 }

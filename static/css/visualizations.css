@@ -1,4 +1,10 @@
 
+/* Versioning view */
+#versioningContainer {
+    overflow: auto;
+    height: 100%;
+}
+
 .tick {
 	display: none;
 }
@@ -30,13 +36,13 @@
 	stroke: #DF6464;
 }
 
-
 /* SOLUTION SPACE */
 #solutionSpaceContainer {
 	position: relative;
 	overflow: auto;
 	min-width: 100%;
 }
+
 
 #solutionSpaceHeader {
 	background: #DCF0FF;
@@ -213,4 +219,11 @@
 #spaceContainer .highlightedCell span {
     background: blue !important;
     transition: background 0.7s;
+}
+
+/* Empty views */
+.empty #solutionSpaceContainer,
+.empty #versioningContainer {
+	background: #EEE url(../images/noideas.png) center center no-repeat;
+	background-size: 200px;
 }
