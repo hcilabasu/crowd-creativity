@@ -550,6 +550,7 @@ var editIdeaSetup = function(params){
 			var data = JSON.parse(data);
 			var ideaText = $('#editIdea .ideaText');
 			var tags = $('#editIdea .tags');
+			tags.empty();
 			// Add idea text
 			ideaText.text(data.idea);
 			// Add tags
