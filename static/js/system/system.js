@@ -714,6 +714,25 @@ var inspirationSetup = function(){
 			buildInspirationPanel(data);
 		}
 	});
+	// Handle inspiration tutorial and buttons
+	var closeHelp = function(){
+		$('#inspiration .helpPanel').hide();
+		$('#inspiration .tasksPanel').show();
+		$('#inspiration .help').css('display','inline-block');
+		ENV.doneInspirationTutorial = true;
+	};
+	var openHelp = function(){
+		$('#inspiration .helpPanel').show();
+		$('#inspiration .tasksPanel').hide();
+		$('#inspiration .help').css('display','none');
+	};
+	// Set click handlers
+	$('#finishInspirationTutorial').click(closeHelp);
+	$('#inspiration .help').click(openHelp);
+	// Set initial state
+	if(ENV.doneInspirationTutorial){
+		closeHelp();
+	}
 };
 
 var buildInspirationPanel = function(structure){

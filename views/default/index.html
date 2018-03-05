@@ -53,6 +53,7 @@
 			minNumberTags: 1,
 			maxNumberTags: 2,
 			newUser: '{{=str(new_user).lower()}}' === 'true',
+			doneInspirationTutorial: '{{=str(new_user).lower()}}' === 'true' ? false : true,
 			currentPhase: 1, // Keeps track of the current ideation phase
 			aloneIdeationTime: 0.05, // Duration of time, in minutes, before other views are opened
 			checkUpdateFrequency: 10000 // How often should the system check for new ideas
@@ -294,17 +295,35 @@
 
 	<script id="inspirationPopupTemplate" type="text/x-tmpl-mustache">
 		<span class="close"></span>
-		<h2>Get inspired</h2>
-		<ul id="inspirationPanel" class="loading">
-			<li class="selected">
-				<div class="loadingBadge"></div>
-			</li>
-		</ul>
-		<div id="inspirationControls" class="first" style="display: none">
-			<a class="arrow arrow-left previous" href="#" onclick=""></a>
-			<span class="stages">0/0</span>
-			<a class="arrow arrow-right next" href="#" onclick=""></a>
-			<a class="btn submit" href="#" onclick="submitInspirationTask(event);">Submit</a>
+
+		<h2>Get inspired <a class="help">?</a> </h2>
+		<div class="helpPanel">
+			<img src='{{=URL('static','images/insp-tut1.png')}}' />
+			<p>
+				To inspire you, we'll show you three ideas from other users
+			</p>
+			<img src='{{=URL('static','images/insp-tut2.png')}}' />
+			<p>
+				We'll also ask you to answer simple questions about them
+			</p>
+			<img src='{{=URL('static','images/insp-tut3.png')}}' />
+			<p>
+				Answering those questions can help you get more inspired, while helping us to organize the ideas better
+			</p>
+			<p><a id="finishInspirationTutorial">Got it!</a></p>
+		</div>
+		<div class="tasksPanel">
+			<ul id="inspirationPanel" class="loading">
+				<li class="selected">
+					<div class="loadingBadge"></div>
+				</li>
+			</ul>
+			<div id="inspirationControls" class="first" style="display: none">
+				<a class="arrow arrow-left previous" href="#" onclick=""></a>
+				<span class="stages">0/0</span>
+				<a class="arrow arrow-right next" href="#" onclick=""></a>
+				<a class="btn submit" href="#" onclick="submitInspirationTask(event);">Submit</a>
+			</div>
 		</div>
 	</script>
 {{end}}
