@@ -199,16 +199,20 @@
 	</script>
 
 	<script id="ideaBlockTemplate" type="text/x-tmpl-mustache">
-		<p class="ideaBlock id[[id]] [[favorite]]" id="id[[id]]" style="display:none">
+		<div class="ideaBlock id[[id]] [[favorite]]" id="id[[id]]" style="display:none">
 			[[idea]]
 			[[#closeable]]
 			<a href="#" title="Close idea" class="close"></a>
 			[[/closeable]]
-			<a href="#" class="favoriteBtn" title="Toggle favorites"></a>
-			<span class="fade"></span>
+			<div class="popOut">
+				<a href="#" class="expandBtn">View</a>
+				<a href="#" class="refineBtn">Refine</a>
+				<a href="#" class="favoriteBtn">Favorite</a>
+			</div>
+			<!-- <span class="fade"></span> -->
 			<input type="hidden" name="ideaId" value="[[id]]"></input>
 			<input type="hidden" name="ideaTags" value="[[tags]]"></input>
-		</p>
+		</div>
 	</script>
 
 	<script id="tagsViewTemplate" type="text/x-tmpl-mustache">

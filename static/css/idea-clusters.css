@@ -1,3 +1,24 @@
+@keyframes glow {
+    0%   {box-shadow: 0 0 0px #3AAAFC;}
+    50%  {box-shadow: 0 0 20px #3AAAFC;}
+    100% {box-shadow: 0 0 0px #3AAAFC;}
+}
+
+@keyframes glowWhite {
+    0%   {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 0px white;}
+    40%  {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 20px white;}
+    80%  {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 0px white;}
+    100% {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 0px white;}
+}
+
+/* Adapted from https://www.tutorialspoint.com/css/css_animation_shake.htm */
+@keyframes shake {
+    0% {transform: rotate(0);} 
+    10%, 30%, 50%, 70%, 90% {transform: rotate(2deg);} 
+    20%, 40%, 60%, 80% {transform: rotate(-2deg);} 
+    100% {transform: rotate(1deg)};
+ } 
+
 body,html {
     padding: 0;
     margin: 0;
@@ -557,7 +578,7 @@ div.w2p_flash.alert {
 }
 
     #ideasContainer .ideaBlock {
-        cursor: pointer;
+        cursor: move;
     }
 
 #ideasContainerCounter {
@@ -586,18 +607,10 @@ div.w2p_flash.alert {
     overflow: hidden;
     transition: width 0.2s, height 0.2s, background-color 0.2s, margin 0.2s;
     background: #FFDE78; /* For browsers that do not support gradients */
-    background: -webkit-linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(rgba(255, 222, 120, 0.85), rgb(252, 189, 101)); /* Standard syntax */
 }
 
 .ideaBlock.favorite {
     background: #FDC4BB;
-    background: -webkit-linear-gradient(#FDC4BB, #FAA799); /* Standard syntax */
-    background: -o-linear-gradient(#FDC4BB, #FAA799); /* Standard syntax */
-    background: -moz-linear-gradient(#FDC4BB, #FAA799); /* Standard syntax */
-    background: linear-gradient(#FDC4BB, #FAA799); /* Standard syntax */
 }
 
 .ideaBlock a.close {
@@ -610,27 +623,85 @@ div.w2p_flash.alert {
     right: 0;
 }
 
-.ideaBlock a.favoriteBtn {
-    height: 16px;
-    width: 16px;
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    background: url('../images/heart.png') no-repeat center center;
-    background-size: 16px 16px;
-    opacity: 0;
-    transition: opacity 0.5s;
-    cursor: pointer;
-    z-index: 4;
+.ideaBlock:hover {
+    color: transparent;
+    text-shadow: none;
+    background: url(../images/drag.png) 15px center no-repeat;
+    background-color: #FCBD65;
+    background-size: 24px 24px;
 }
-    .ideaBlock:hover a.favoriteBtn {
+
+.ideaBlock.ui-draggable-dragging {
+    color: black;
+    text-shadow: 0 1px rgba(255,255,255,0.4);
+    background-image: none;
+}
+
+.ideaBlock.ui-draggable-dragging .popOut {
+    height: 0 !important;
+    display: none !important;
+}
+
+.ideaBlock.favorite:hover {
+    background-color: #F89A8B;
+}
+
+.ideaBlock .popOut {
+    display: block;
+    position: absolute;
+    right: 50px;
+    bottom: -5px;
+    z-index: 4; 
+    padding: 0 0 0 10px;
+    transition: right 0.2s, bottom 0.2s;
+}
+
+.ideaBlock:hover .popOut {
+    display: block;
+    right: 10px;
+    bottom: 5px;
+    transition: right 0.2s, bottom 0.2s;
+}
+
+    .ideaBlock .popOut a {
+        width: auto;
+        cursor: pointer;
+        display: block;
+        margin: 0;
+        padding: 0;
+        border-radius: 10px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        text-decoration: none;
+        color: black;
+        opacity: 0;
+        transition: opacity 0.5s;
+        margin-bottom: 5px;
+        padding: 5px 5px 5px 30px;
+        background: #DCF0FF no-repeat 10px center;
+        background-size: 16px 16px;
+    }
+
+        .ideaBlock .popOut a:hover {
+            background-color: rgb(182, 221, 252);    
+        }
+
+    .ideaBlock:hover .popOut a {
         opacity: 1;
         transition: opacity 0.5s;
     }
-
-    .ideaBlock.favorite a.favoriteBtn {
-        background-image: url('../images/heart-red.png') !important;
+    
+    .ideaBlock .popOut .expandBtn {
+        background-image: url('../images/expand.png');
     }
+    .ideaBlock .popOut .refineBtn {
+        background-image: url('../images/refine.png');
+    }
+    .ideaBlock .popOut a.favoriteBtn {
+        background-image: url('../images/heart.png');
+    }
+        .ideaBlock.favorite a.favoriteBtn {
+            background-image: url('../images/heart-red.png') !important;
+        }
 
 .ideaBlock span.fade {
     z-index: 3;
@@ -641,7 +712,7 @@ div.w2p_flash.alert {
     position: absolute;
     bottom: 0;
     left: 0;
-    height: 30px;
+    height: 20px;
     line-height: 30px;
     text-indent: 10px;
     width: 100%;
@@ -664,7 +735,33 @@ div.w2p_flash.alert {
 
 
 .ideaBlock.ideaDragHover {
-    border: solid 1px #FF6E3C;
+    animation-name: glow;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-out;
+    padding: 10px;
+    margin: 10px;
+    width: 130px;
+    height: 100px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,1) !important;
+}
+
+    .ideaBlock.ideaDragHover .popOut {
+        display: none;
+    }
+
+.ui-droppable-active {
+    animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+    animation-iteration-count: infinite;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+    .ui-droppable-active .popOut {
+        display: none;
+    }
+
+.ideaDragHandle {
+    box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
 }
 
 .ideaHover {
@@ -886,19 +983,6 @@ div.w2p_flash.alert {
         display: block;
     }
 
-@keyframes glow {
-    0%   {box-shadow: 0 0 0px #3AAAFC;}
-    50%  {box-shadow: 0 0 20px #3AAAFC;}
-    100% {box-shadow: 0 0 0px #3AAAFC;}
-}
-
-@keyframes glowWhite {
-    0%   {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 0px white;}
-    40%  {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 20px white;}
-    80%  {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 0px white;}
-    100% {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 0px white;}
-}
-
 .glow {
     animation-name: glow;
     animation-duration: 0.5s;
@@ -1105,6 +1189,11 @@ div.w2p_flash.alert {
         height: auto;
         margin: 30px 0 10px 0;
     }
+
+#finishInspirationTutorial {
+    font-weight: bolder;
+    font-size: 1.2em;
+}
 
 #inspiration .tasksPanel {
     display: none;

@@ -47,6 +47,7 @@ class Idea {
                 start: function(event, ui){
                     event.stopPropagation();
                     $(this).css('opacity', 0);
+                    $(ui.helper).addClass('ideaDragHandle');
                 },
                 stop: function(event, ui){
                     event.stopPropagation();
@@ -66,6 +67,7 @@ class Idea {
                     event.stopPropagation();
                     openOverlay('combineIdeas', {ideas: [idea1, idea2]});
                 },
+                tolerance: 'pointer',
                 classes: {
                     'ui-droppable-hover': 'ideaDragHover'
                 }
@@ -110,7 +112,7 @@ class Idea {
 
         // Editable
         if(typeof params['editable'] == 'boolean' && params['editable']){
-            ideaBlock.click(function(){
+            $('.expandBtn', ideaBlock).click(function(){
                 openOverlay('editIdea', {id: idea.id});
             })
         }
