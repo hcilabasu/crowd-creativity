@@ -11,12 +11,10 @@
     100% {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 0px white;}
 }
 
-/* Adapted from https://www.tutorialspoint.com/css/css_animation_shake.htm */
 @keyframes shake {
-    0% {transform: rotate(0);} 
-    10%, 30%, 50%, 70%, 90% {transform: rotate(2deg);} 
-    20%, 40%, 60%, 80% {transform: rotate(-2deg);} 
-    100% {transform: rotate(1deg)};
+    0% {transform: rotate(-2deg);}
+    50% {transform: rotate(2deg);} 
+    100% {transform: rotate(-2deg)};
  } 
 
 body,html {
@@ -623,7 +621,7 @@ div.w2p_flash.alert {
     right: 0;
 }
 
-.ideaBlock:hover {
+.ideaBlock.ui-draggable:hover {
     color: transparent;
     text-shadow: none;
     background: url(../images/drag.png) 15px center no-repeat;
@@ -751,7 +749,7 @@ div.w2p_flash.alert {
     }
 
 .ui-droppable-active {
-    animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+    animation: shake 0.2s both;
     animation-iteration-count: infinite;
     box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
@@ -850,6 +848,11 @@ div.w2p_flash.alert {
         background-size: 30px 30px;
     }
 
+#editIdea .editElement { display:none; }
+#editIdea .viewElement { display:none; }
+#editIdea.view .viewElement { display:inherit; }
+#editIdea.edit .editElement { display:inherit; }
+
 .clickEnabled {
     cursor: pointer;
     padding: 10px;
@@ -892,8 +895,10 @@ div.w2p_flash.alert {
 }
 
 .ideaPopup.loading .ideaText,
-.ideaPopup.loading .tags {
-    display: none;
+.ideaPopup.loading .tags,
+.ideaPopup.loading form,
+.ideaPopup.loading a {
+    display: none !important;
 }
 
 .ideaPopup.loading .loadingBadge {

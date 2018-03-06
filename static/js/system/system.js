@@ -117,25 +117,8 @@ $(function(){
 	// Load panels on page load
 	VIEWS['ideasView'] = new IdeaViewerView('#ideasContainer').load();
 	VIEWS['versioningView'] = new VersioningView('#versioningContainer').load();
-	VIEWS['tasksView'] = new TasksView('#suggestedTasksContainer').load(); 
 	VIEWS['solutionSpaceView'] = new SolutionSpaceView('#solutionSpaceContainer').load();
 	
-	// Start auto-refresh timers. Uncomment if auto timer should be the default behavior.
-	// toggleVersioningTimer();
-	// toggleTasksTimer();
-	// toggleSolutionSpaceTimer();
-
-	// Start organization ration scale
-	// startOrganizationRatioScale();
-
-	// Start autosuggest tags behavior
-	// startTagsSuggestion(
-	// 	'#addIdea textarea', 
-	// 	'#addIdea .suggestedTags > div', 
-	// 	'#addIdea input[name=tags]');
-
-	setupTagPicker('#addIdea');
-
 	/* Toolbar button handlers */
 	TOOLBAR = {
 		ideaViewer: {
@@ -252,179 +235,6 @@ var incrementPhase = function(){
 	setPhase(ENV.currentPhase + 1);
 };
 
-var setupTagPicker = function(selector){
-	var tagPicker = $(selector);
-	var tags = $('.tags', tagPicker);
-	// Setup switcher
-	$('.alternative', tagPicker).click(function(){
-		switchPanel(tagPicker);
-	});
-
-	// Setup filter
-	$('.search', tagPicker).on('keyup paste', function(e){
-		var text = $(this).val().toLowerCase();
-		console.dir(text);
-		var show = $('li[class*="t_' + text + '"]', tags);
-		var hide = $('li:not([class*="' + text + '"])', tags);
-		hide.hide();
-		show.show();
-	});
-
-	// Setup remove tag
-	$('.tagPlaceholder .close').click(function(e){
-		var pressedButton = $(this);
-		var placeholder = pressedButton.closest('.tagPlaceholder');
-		// Check if this is placeholder1
-		var isPlaceholder1 = placeholder.is('.tagPlaceholder:first');
-		if(isPlaceholder1){
-			// Check if placeholder 2 is used
-			var placeholder2 = $('.tagPlaceholder:eq(1)', tagPicker);
-			var isPlaceholder2Empty = placeholder2.hasClass('empty');
-			if (isPlaceholder2Empty) {
-				// Ph2 is not being used. It's ok to empty Ph1
-				removeTag(placeholder);
-			} else {
-				// Placeholder 1 is being deleted and 2 is used. Move ph2 to ph1 and delete ph2
-				var text = $('.text', placeholder2).text();
-				removeTag(placeholder2);
-				removeTag(placeholder);
-				setTag(placeholder, text);
-			}
-		} else {
-			// Ph2 being deleted needs no checks
-			removeTag(placeholder);
-		}
-	});
-};
-
-/*
-	If toTagPicker == true, this will switch to (or remain on) the tagPicker.
-	If undefined, it will just flip
-*/
-var switchPanel = function(tagPicker, toTagPicker){
-	var customTagInput = $('#addIdea input[name=customTag]');
-	var isAtCustomTag = customTagInput.val() === 'true';
-	var changeNeeded = true;
-	if(toTagPicker !== undefined){
-		changeNeeded = toTagPicker && isAtCustomTag;
-	}
-	if(changeNeeded){
-		$('#addIdea .panel').toggle('slow');
-		customTagInput.val(!isAtCustomTag);
-	}
-};
-
-var teardownTagPicker = function(tagPicker, reloadList){
-	var tagsContainer = $('.tags', tagPicker);
-	// Refresh tagPicker
-	if(reloadList){
-		$('.search', tagPicker).prop('disabled', true);
-		tagsContainer.empty()
-		tagsContainer.html('<li><div class="loadingBadge"></div></li>');
-		tagsContainer.addClass('loading');
-	}
-	// Empty tag placeholders
-	var placeholders = $('.tagPlaceholder', tagPicker);
-	placeholders.each(function(i,d){
-		removeTag($(d));
-	});
-	// Empty suggest tags
-	$('.suggestTags [name=suggestTags]').val('');
-	// Revert back to tagPicker
-	switchPanel(tagPicker, true);
-};
-
-var setTag = function(placeholder, tag){
-	$('.text', placeholder).text(tag);
-	placeholder.removeClass('empty');
-	// Add tag to hidden input
-	var input = $('input[name=pickTags]');
-	var current = input.val();
-	var tags = current.split(ENV.tagsDelimiter);
-	if(tags.indexOf(tag) < 0){ // Tag may already be in there
-		if(tags.length===1 && tags[0]===''){
-			// input is empty
-			input.val(tag);
-		} else {
-			input.val(current + ENV.tagsDelimiter + tag);
-		}
-	}
-};
-
-var removeTag = function(placeholder){
-	var text = $('.text', placeholder);
-	var currentTag = text.text();
-	text.text('');
-	placeholder.addClass('empty');
-	// Remove tag from hidden input
-	var input = $('input[name=pickTags]');
-	var current = input.val();
-	var tags = current.split(ENV.tagsDelimiter);
-	var newVal = '';
-	if(tags.length > 1){
-		var removeIndex = tags.indexOf(currentTag);
-		tags.splice(removeIndex, 1);
-		newVal = tags[0];
-	}
-	input.val(newVal);
-}
-
-var startOrganizationRatioScale = function(){
-	// Attach refresh function to events
-	$(document).on([
-		EVENTS.ideaSubmitted,
-		EVENTS.taskSubmitted
-	].join(' '), (e)=>{
-		refreshOrganizationRatio();
-	});
-	// Run first timer
-	refreshOrganizationRatio();
-	// Start auto update timer
-	window.setInterval(()=>refreshOrganizationRatio(), ENV.autoUpdateOrganizationRatioSeconds * 1000);
-};
-
-var refreshOrganizationRatio = function(){
-	console.dir('Updating organization scale');
-	// Refreshes the organization ratio
-	$.ajax({
-		url: URL.getOrganizationRatio,
-		success: (data)=>{
-			// Calculate width
-			var ratio = parseFloat(data);
-			if (ratio >= 0){ 
-				var percent = ratio * 100;
-				// Calculate color
-				// Extremes: low: #DF6464 (223,100,100), high: #3AAAFC (58,170,252)
-				var color = function(ratio){
-					var low = {r:223,g:100,b:100};
-					var high = {r:58,g:170,b:252};
-					return [
-						parseInt(low.r + (high.r - low.r) * ratio),
-						parseInt(low.g + (high.g - low.g) * ratio),
-						parseInt(low.b + (high.b - low.b) * ratio)
-					]
-				}(Math.pow(ratio, 3)); // We want blue to be mostly at the real high end
-				// Update scale
-				$('#organizationRatio .filling')
-					.css('visibility', 'visible')
-					.css('width', percent + '%')
-					.css('background', 'rgb(' + color.join(',') + ')');
-				// Display correct text
-				$('#ratioUnavailable').hide();
-				$('#ratioAvailable').show();
-				// Update percent
-				$('#organizationRatioPercentage').text(parseInt(percent));
-			} else {
-				// There is no data yet
-				$('#organizationRatio .filling')
-					.css('visibility', 'hidden');
-				$('#ratioUnavailable').show();
-				$('#ratioAvailable').hide();
-			}
-		}
-	});
-};
-
 var submitNewIdea = function(event){
 	if($('#addIdea').hasClass('loading')){
 		// It's in submission state, so don't submit again
@@ -487,6 +297,30 @@ var submitNewIdea = function(event){
 			ENV.lastCheck = new Date().getTime();
 		});
 	}
+};
+
+var submitRefinedIdea = function(event){
+	var idea = $('#editIdea [name=refinedIdea]').val();
+	var tags = $('#editIdea [name=tags]').val().split(ENV.tagsDelimiter);
+	var originalId = $('#editIdea [name=originalId]').val();
+	console.dir(idea);
+	console.dir(tags);
+	console.dir(originalId);
+	submitIdea(idea, tags, type='refinement', [originalId], function(data){
+		var _id = JSON.parse(data).id;
+		var _idea = idea;
+		var _tags = tags;
+		// Add to UI
+		VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
+		// Giving feedback to user
+		$.web2py.flash('Your idea has been added!', 'ok');
+		// Reset other views and reset check timer
+		VIEWS.solutionSpaceView.load();
+		VIEWS.versioningView.load();
+		ENV.lastCheck = new Date().getTime();
+		// Close overlay
+		closeOverlay();
+	});
 };
 
 var submitCombinedIdea = function(event){
@@ -566,6 +400,12 @@ var closeOverlay = function(event){
 };
 
 var editIdeaSetup = function(params){
+	var type = 'view';
+	if(params.edit){
+		type = 'edit';
+	}
+	$('#editIdea').addClass(type);
+
 	$.ajax({
 		method: 'GET',
 		url: URL.getIdeaById,
@@ -575,18 +415,27 @@ var editIdeaSetup = function(params){
 			// Update view
 			var data = JSON.parse(data);
 			var ideaText = $('#editIdea .ideaText');
+			var ideaTextarea = $('#editIdea textarea');
 			var tags = $('#editIdea .tags');
+			var tagsHidden = $('#editIdea [name=tags]');
+			var originalId = $('#editIdea [name=originalId]');
 			tags.empty();
 			// Add idea text
 			ideaText.text(data.idea);
+			ideaTextarea.val(data.idea);
 			// Add tags
+			var tagsString = data.tags.join(ENV.tagsDelimiter);
+			tagsHidden.val(tagsString);
 			data.tags.forEach(function(d,i){
 				let tag = $('<li></li>').text(d);
 				tags.append(tag);
 			});
+			// Setup other hidden fields
+			originalId.val(params.id);
 			// Setup teardown
 			EVENTS.popOverClose.push(function(){
 				$('#editIdea').addClass('loading');
+				$('#editIdea').removeClass(type);
 			});
 		}
 	});
@@ -664,40 +513,9 @@ var tagsViewSetup = function(params){
 var addIdeaSetup = function(){
 	// Set focus for immediate typing
 	$('#addIdea textarea').focus();
+	setupTagPicker('#newIdeaTagPicker');
 	var tagPicker = $('#addIdea .tagPicker');
 	var tagsContainer = $('.tags', tagPicker);
-	// Load available tags
-	$.ajax({
-		type: 'GET',
-		url: URL.getAllTags,
-		success: function(data){
-			// Load tags
-			tagsContainer.removeClass('loading');
-			tagsContainer.empty();
-			data.forEach(function(d,i){
-				let li = $('<li></li>').addClass('t_' + d).text(d);
-				tagsContainer.append(li);
-			});
-			// Setup click on tag
-			$('li',tagPicker).click(function(){
-				var tag = $(this).text();
-				var placeholder = $('.tagPlaceholder.empty:first', tagPicker);
-				if(placeholder.length > 0){
-					// Check if a placeholder already holds this tag
-					var placeholders = $('.tagPlaceholder', tagPicker);
-					for (let i = 0; i < placeholders.length; i++) {
-						const ph = placeholders[i];
-						if($('.text', ph).text() === tag){
-							return false;
-						}
-					}
-					setTag(placeholder, tag);
-				}
-			});
-			// Enable filter
-			$('.search', tagPicker).prop('disabled', false);
-		}
-	});
 	// Revert tagPicker panel
 	EVENTS.popOverClose.push(function(){
 		teardownTagPicker(tagPicker, true);

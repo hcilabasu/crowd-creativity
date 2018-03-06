@@ -113,8 +113,11 @@ class Idea {
         // Editable
         if(typeof params['editable'] == 'boolean' && params['editable']){
             $('.expandBtn', ideaBlock).click(function(){
-                openOverlay('editIdea', {id: idea.id});
+                openOverlay('editIdea', {id: idea.id, edit:false});
             })
+            $('.refineBtn', ideaBlock).click(function(){
+                openOverlay('editIdea', {id: idea.id, edit:true});
+            });
         }
 
         // Setup favorites button

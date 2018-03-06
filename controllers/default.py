@@ -116,7 +116,7 @@ def add_idea():
             # Inserting relationships
             db.tag_idea.insert(tag=tag_id, idea=idea_id)
         # If idea was merged, update replacedBy on the original ideas
-        if origin == 'merge':
+        if origin == 'merge' or origin == 'refinement':
             for source in sources:
                 idea = db(db.idea.id == source).select().first()
                 idea.replacedBy = idea_id

@@ -82,6 +82,7 @@
 	<script type="text/javascript" src="{{=URL('static','js/system/versioning-view.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/system/solutionspace-view.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/system/util.js')}}"></script>
+	<script type="text/javascript" src="{{=URL('static','js/system/tagpicker.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/system/system.js')}}"></script>
 
 	<!-- Mustache templates -->
@@ -330,6 +331,42 @@
 			</div>
 		</div>
 	</script>
+
+	<script id="tagPickerTemplate" type="text/x-tmpl-mustache">
+		<div class="panel">
+			<p>Pick <strong>at most 2 tags</strong> that best summarize your idea</p>
+			<div class="tagPicker">
+				<input type="text" class="search" placeholder="Filter tags" disabled/>
+				<ul class="tags loading">
+					<!-- <li class="t_example">Example</li> -->
+					<li>
+						<div class="loadingBadge"></div>
+					</li>
+				</ul>
+				<div class="tagPlaceholder empty">
+					<span class="text"></span>
+					<span class="empty">tag 1</span> 
+					<span class="close">x</span>
+				</div>
+				<div class="tagPlaceholder empty">
+					<span class="text"></span>
+					<span class="empty">tag 2 (opt.)</span> 
+					<span class="close">x</span>
+				</div>
+				<input type="hidden" name="pickTags" value="" />
+				<a class="alternative" href="#">None of these tags represent your idea?</a>
+			</div>
+		</div>
+		<div class="panel suggestTags" style="display: none">
+			<p>Suggest <strong>at most 2 tags</strong> that best summarize your idea</p>
+			<div>
+				<input type="text" placeholder="tag 1" name="suggestTags"/>
+				<input type="text" placeholder="tag 2 (opt.)" name="suggestTags"/>
+			</div>
+			<a class="alternative" href="#"><strong>&lsaquo;</strong> Go back to tag picker</a>
+		</div>
+		<input type="hidden" name="customTag" value="false"/> <!-- This input reflects whether the user picked a tag or created a custom one -->
+	</script>
 {{end}}
 
 {{block navMenu}}
@@ -372,51 +409,27 @@
 		<form>
 			<textarea name='idea' placeholder="Type your idea in here" required></textarea>
 			
-			<div class="panel">
-				<p>Pick <strong>at most 2 tags</strong> that best summarize your idea</p>
-				<div class="tagPicker">
-					<input type="text" class="search" placeholder="Filter tags" disabled/>
-					<ul class="tags loading">
-						<!-- <li class="t_example">Example</li> -->
-						<li>
-							<div class="loadingBadge"></div>
-						</li>
-					</ul>
-					<div class="tagPlaceholder empty">
-						<span class="text"></span>
-						<span class="empty">tag 1</span> 
-						<span class="close">x</span>
-					</div>
-					<div class="tagPlaceholder empty">
-						<span class="text"></span>
-						<span class="empty">tag 2 (opt.)</span> 
-						<span class="close">x</span>
-					</div>
-					<input type="hidden" name="pickTags" value="" />
-					<a class="alternative" href="#">None of these tags represent your idea?</a>
-				</div>
-			</div>
-			<div class="panel suggestTags" style="display: none">
-				<p>Suggest <strong>at most 2 tags</strong> that best summarize your idea</p>
-				<div>
-					<input type="text" placeholder="tag 1" name="suggestTags"/>
-					<input type="text" placeholder="tag 2 (opt.)" name="suggestTags"/>
-				</div>
-				<a class="alternative" href="#"><strong>&lsaquo;</strong> Go back to tag picker</a>
-			</div>
+			<div id="newIdeaTagPicker"></div>
+
 			<a class="btn floatRight submit" href="#" onclick="submitNewIdea(event);">Submit</a>
-			<input type="hidden" name="customTag" value="false"/> <!-- This input reflects whether the user picked a tag or created a custom one -->
 			
 		</form>
 	</div>
 
 	<div class="popupDialog ideaPopup loading" id="editIdea">
 		<span class="close"></span>
-		<h2>View Idea</h2>
-		<p class="ideaText">
+		<h2 class="viewElement">View Idea</h2>
+		<h2 class="editElement">Refine Idea</h2>
+		<p class="ideaText viewElement">
 		</p>
+		<form class="editElement">
+			<textarea name='refinedIdea' placeholder="Type your idea in here" required></textarea>
+			<input type="hidden" name="tags" />
+			<input type="hidden" name="originalId">
+		</form>
 		<ul class="tags">
 		</ul>
+		<a class="btn floatRight submit editElement" href="#" onclick="submitRefinedIdea(event)">Submit</a>
 		<div class="loadingBadge"></div>
 	</div>
 
