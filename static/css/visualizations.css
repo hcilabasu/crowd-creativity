@@ -90,8 +90,13 @@
 		background-color: #DF6464;
 	}
 
+.loading .treeView {
+	visibility: hidden;
+}
+
 .treeView {
-	position: absolute;
+	visibility: visible;
+	/* position: absolute; */
 	display: block;
 	height: calc(100% - 87px);
 	width: 100%;

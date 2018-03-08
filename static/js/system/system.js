@@ -558,55 +558,63 @@ var buildInspirationPanel = function(structure){
 	tasksList.empty();
 	tasksList.removeClass('loading');
 	var maxHeight = -1;
-	for(var i = 0; i < structure.length; i++){
-		// Preparing data
-		var taskId = structure[i].task.id;
-		var taskType = structure[i].task.task_type;
-		var idea = {
-			idea: structure[i].idea.idea, 
-			id: structure[i].idea.id, 
-			tags: [],
-			favorite: structure[i].idea.favorite
-		};
-		// Setting up HTML
-		var params = {closeable: false, focuseable: true, source: this.constructor}
-		var ideaElement = new Idea(idea, params);
-		var templateParams = {id: taskId, type: taskType}
-		var template = $(Mustache.render(TEMPLATES[taskType + 'Template'], templateParams));
-		var innerForm = $('<form></form>').html(template)
-		var taskItem = $("<li></li>").append(innerForm);
-		// Custom processing for each task type
-		taskTypeProcessor(taskType, innerForm, structure[i].task).pre();
-		// Finish setting up idea in the template
-		$('#ideaPlaceholder', taskItem).replaceWith(ideaElement.html());
-		$('.ideaBlock', taskItem).css('display', 'block');
-		taskItem.attr('id', 'task-' + structure[i].id);
-		// TODO handle submission
-		// $('.btn', taskItem).click((e)=>{this.submitTask(e)});
-		// Dramatic entrance
-		tasksList.append(taskItem);
-		maxHeight = taskItem.height() > maxHeight ? taskItem.height() : maxHeight;
-		if (i===0){
-			taskItem.hide();
-			taskItem.addClass('selected');
-			taskItem.show(500, function(){
-				tasksList.css('height', maxHeight);
-			});
+	if(structure.length > 0){
+		for(var i = 0; i < structure.length; i++){
+			// Preparing data
+			var taskId = structure[i].task.id;
+			var taskType = structure[i].task.task_type;
+			var idea = {
+				idea: structure[i].idea.idea, 
+				id: structure[i].idea.id, 
+				tags: [],
+				favorite: structure[i].idea.favorite
+			};
+			// Setting up HTML
+			var params = {closeable: false, focuseable: true, source: this.constructor}
+			var ideaElement = new Idea(idea, params);
+			var templateParams = {id: taskId, type: taskType}
+			var template = $(Mustache.render(TEMPLATES[taskType + 'Template'], templateParams));
+			var innerForm = $('<form></form>').html(template)
+			var taskItem = $("<li></li>").append(innerForm);
+			// Custom processing for each task type
+			taskTypeProcessor(taskType, innerForm, structure[i].task).pre();
+			// Finish setting up idea in the template
+			$('#ideaPlaceholder', taskItem).replaceWith(ideaElement.html());
+			$('.ideaBlock', taskItem).css('display', 'block');
+			taskItem.attr('id', 'task-' + structure[i].id);
+			// TODO handle submission
+			// $('.btn', taskItem).click((e)=>{this.submitTask(e)});
+			// Dramatic entrance
+			tasksList.append(taskItem);
+			maxHeight = taskItem.height() > maxHeight ? taskItem.height() : maxHeight;
+			if (i===0){
+				taskItem.hide();
+				taskItem.addClass('selected');
+				taskItem.show(500, function(){
+					tasksList.css('height', maxHeight);
+				});
+			}
+			// Setup input tag. For some reason, it doesn't work before element is visible. TODO figure better workaround
+			$('.tagInput', tasksList).tagsInput(ENV.tagConfig);
+			// Configure max height for tasks
+			
 		}
-		// Setup input tag. For some reason, it doesn't work before element is visible. TODO figure better workaround
-		$('.tagInput', tasksList).tagsInput(ENV.tagConfig);
-		// Configure max height for tasks
-		
+		// Show tasks
+		tasksList.show('fast');
+		prepareButtons($('#inspirationControls'), tasksList, structure.length);
+	} else {
+		$('.tasksPanel').text('No one else has added any ideas yet. Check back later! :)');
 	}
-	// Show tasks
-	tasksList.show('fast');
-	prepareButtons($('#inspirationControls'), tasksList, structure.length);
 };
 
 var prepareButtons = function(container, tasksContainer, n){
 	// Set stages
 	var stages = $('span.stages', container);
 	stages.text('1/' + n);
+	if(n == 1) {
+		// There's only one inspiration
+		container.addClass('last');
+	}
 	// Create move function
 	var move = function(fn){
 		var current = $('li.selected', tasksContainer);

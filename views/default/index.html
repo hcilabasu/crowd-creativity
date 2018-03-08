@@ -89,18 +89,18 @@
 	<script id="ideaViewerTemplate" type="text/x-tmpl-mustache">
 		<div class="toolbar phase1_bl">
 			<ul>
-				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.ideaViewer.reload()">
+				<li><a title="Reload this panel" onclick="TOOLBAR.ideaViewer.reload()">
 					<img src="{{=URL('static','images/reload.png')}}">
 				</a></li>
 			</ul>
 			<ul>
-				<li><a href="#" title="Load your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
+				<li><a title="Load your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
 					<img src="{{=URL('static','images/user.png')}}">
 				</a></li>
-				<li><a href="#" title="Load your favorite ideas" onclick="TOOLBAR.ideaViewer.loadFavoriteIdeas()">
+				<li><a title="Load your favorite ideas" onclick="TOOLBAR.ideaViewer.loadFavoriteIdeas()">
 					<img src="{{=URL('static','images/heart-black.png')}}">
 				</a></li>
-				<li><a href="#" title="Load all ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
+				<li><a title="Load all ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
 					<img src="{{=URL('static','images/group.png')}}">
 				</a></li>
 			</ul>
@@ -113,10 +113,10 @@
 	<script id="versioningViewerTemplate" type="text/x-tmpl-mustache">
 		<div class="toolbar">
 			<ul>
-				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.versioningView.reload()">
+				<li><a title="Reload this panel" onclick="TOOLBAR.versioningView.reload()">
 					<img src="{{=URL('static','images/reload.png')}}">
 				</a><span class="notificationBadge">!</span></li>
-				<!-- <li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.versioningView.toggleAutoReload()">
+				<!-- <li><a title="Auto-reload toggle" onclick="TOOLBAR.versioningView.toggleAutoReload()">
 					 <img src="{{=URL('static','images/clock.png')}}"><span id='versioningTimerDisplay'>OFF</span>
 				</a></li> -->
 			</ul>
@@ -154,10 +154,10 @@
 	<script id="suggestedTasksViewerTemplate" type="text/x-tmpl-mustache">
 		<div class="toolbar">
 			<ul>
-				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.suggestedTasks.reload()">
+				<li><a title="Reload this panel" onclick="TOOLBAR.suggestedTasks.reload()">
 					<img src="{{=URL('static','images/reload.png')}}">
 				</a></li>
-				<li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.suggestedTasks.toggleAutoReload()">
+				<li><a title="Auto-reload toggle" onclick="TOOLBAR.suggestedTasks.toggleAutoReload()">
 					<img src="{{=URL('static','images/clock.png')}}"><span id='tasksTimerDisplay'>OFF</span>
 				</a></li>
 			</ul>
@@ -172,10 +172,10 @@
 	<script id="solutionSpaceViewerTemplate" type="text/x-tmpl-mustache">
 		<div class="toolbar">
 			<ul>
-				<li><a href="#" title="Reload this panel" onclick="TOOLBAR.solutionSpaceView.reload()">
+				<li><a title="Reload this panel" onclick="TOOLBAR.solutionSpaceView.reload()">
 					<img src="{{=URL('static','images/reload.png')}}">
 				</a><span class="notificationBadge">!</span></li>
-				<!-- <li><a href="#" title="Auto-reload toggle" onclick="TOOLBAR.solutionSpaceView.toggleAutoReload()">
+				<!-- <li><a title="Auto-reload toggle" onclick="TOOLBAR.solutionSpaceView.toggleAutoReload()">
 					<img src="{{=URL('static','images/clock.png')}}"><span id='solutionSpaceTimerDisplay'>OFF</span>
 				</a></li> -->
 			</ul>
@@ -209,7 +209,7 @@
 		<div id="ideaPlaceholder"></div>
 		<p>Suggest tags for this idea</p>
 		<input type="text" class="tagInput" name="answer" />
-		<!-- <a href="#" class="btn">Submit</a> -->
+		<!-- <a class="btn">Submit</a> -->
 		<!-- required task data -->
 		<input type="hidden" name="taskId" value="[[id]]"/>
 		<input type="hidden" name="taskType" value="[[type]]"/>
@@ -219,7 +219,7 @@
 		<div id="ideaPlaceholder"></div>
 		<p>Click on the <strong>one</strong> tag that you think is the most appropriate to describe this idea</p>
 		<ul class="tagsList single"></ul>
-		<!-- <a href="#" class="btn">Submit</a> -->
+		<!-- <a class="btn">Submit</a> -->
 		<!-- required task data -->
 		<input type="hidden" name="taskId" value="[[id]]"/>
 		<input type="hidden" name="taskType" value="[[type]]"/>
@@ -229,12 +229,12 @@
 		<div class="ideaBlock id[[id]] [[favorite]]" id="id[[id]]" style="display:none">
 			[[idea]]
 			[[#closeable]]
-			<a href="#" title="Close idea" class="close"></a>
+			<a title="Close idea" class="close"></a>
 			[[/closeable]]
 			<div class="popOut">
-				<a href="#" class="expandBtn">View</a>
-				<a href="#" class="refineBtn">Refine</a>
-				<a href="#" class="favoriteBtn">Favorite</a>
+				<a class="expandBtn">View</a>
+				<a class="refineBtn">Refine</a>
+				<a class="favoriteBtn">Favorite</a>
 			</div>
 			<!-- <span class="fade"></span> -->
 			<input type="hidden" name="ideaId" value="[[id]]"></input>
@@ -265,7 +265,7 @@
 	</script>
 
 	<script id="tagTemplate" type="text/x-tmpl-mustache">
-		<span class="tag"><a href="#">[[tag]]</a></span>
+		<span class="tag"><a>[[tag]]</a></span>
 	</script>
 
 	<script id="tutorialWelcomeTemplate" type="text/x-tmpl-mustache">
@@ -350,10 +350,10 @@
 				</li>
 			</ul>
 			<div id="inspirationControls" class="first" style="display: none">
-				<a class="arrow arrow-left previous" href="#" onclick=""></a>
+				<a class="arrow arrow-left previous" onclick=""></a>
 				<span class="stages">0/0</span>
-				<a class="arrow arrow-right next" href="#" onclick=""></a>
-				<a class="btn submit" href="#" onclick="submitInspirationTask(event);">Submit</a>
+				<a class="arrow arrow-right next" onclick=""></a>
+				<a class="btn submit" onclick="submitInspirationTask(event);">Submit</a>
 			</div>
 		</div>
 	</script>
@@ -380,7 +380,7 @@
 					<span class="close">x</span>
 				</div>
 				<input type="hidden" name="pickTags" value="" />
-				<a class="alternative" href="#">None of these tags represent your idea?</a>
+				<a class="alternative">None of these tags represent your idea?</a>
 			</div>
 		</div>
 		<div class="panel suggestTags" style="display: none">
@@ -389,7 +389,7 @@
 				<input type="text" placeholder="tag 1" name="suggestTags"/>
 				<input type="text" placeholder="tag 2 (opt.)" name="suggestTags"/>
 			</div>
-			<a class="alternative" href="#"><strong>&lsaquo;</strong> Go back to tag picker</a>
+			<a class="alternative"><strong>&lsaquo;</strong> Go back to tag picker</a>
 		</div>
 		<input type="hidden" name="customTag" value="false"/> <!-- This input reflects whether the user picked a tag or created a custom one -->
 	</script>
@@ -398,15 +398,15 @@
 {{block navMenu}}
 	<div class="navContainer">
 		<div class="navBlock">
-			<a href="#" id="newIdeaButton" class="btn btn-primary" onclick="openIdeaPopup()">
+			<a id="newIdeaButton" class="btn btn-primary" onclick="openIdeaPopup()">
 				<img src="{{=URL('static','images/plus-padding.png')}}" alt="New idea"/>
 				New idea
 			</a>
-			<a href="#" id="helpButton" class="btn btn-primary phase1_bl" onclick="openInspirationPopup()">
+			<a id="helpButton" class="btn btn-primary phase1_bl" onclick="openInspirationPopup()">
 				<img src="{{=URL('static','images/lightbulb-padding.png')}}" alt="Get inspiration"/>
 				Inspiration
 			</a>
-			<a href="#" id="openViews" class="btn btn-primary phase1_bl phase2_bl glowWhite" onclick="openAllViews()">
+			<a id="openViews" class="btn btn-primary phase1_bl phase2_bl glowWhite" onclick="openAllViews()">
 				<img src="{{=URL('static','images/open-all.png')}}" alt="Open all views"/>
 				Open all views
 			</a>
@@ -437,7 +437,7 @@
 			
 			<div id="newIdeaTagPicker"></div>
 
-			<a class="btn floatRight submit" href="#" onclick="submitNewIdea(event);">Submit</a>
+			<a class="btn floatRight submit" onclick="submitNewIdea(event);">Submit</a>
 			
 		</form>
 	</div>
@@ -455,7 +455,7 @@
 		</form>
 		<ul class="tags">
 		</ul>
-		<a class="btn floatRight submit editElement" href="#" onclick="submitRefinedIdea(event)">Submit</a>
+		<a class="btn floatRight submit editElement" onclick="submitRefinedIdea(event)">Submit</a>
 		<div class="loadingBadge"></div>
 	</div>
 
