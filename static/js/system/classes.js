@@ -43,6 +43,7 @@ class Idea {
             ideaBlock.draggable({  
                 appendTo: "parent",
                 helper: "clone",
+                scope: 'ideas',
                 revert: true,
                 start: function(event, ui){
                     event.stopPropagation();
@@ -58,16 +59,17 @@ class Idea {
                     var idea1Element = ui.draggable;
                     var idea2Element = $(this);
 
-                    var idea1 = {idea: idea1Element.text(), 
+                    var idea1 = {idea: idea1Element.clone().children().remove().end().text(), 
                                 id: $('input[name=ideaId]', idea1Element).val(),
                                 tags: $('input[name=ideaTags]', idea1Element).val().split(',')};
-                    var idea2 = {idea: idea2Element.text(), 
+                    var idea2 = {idea: idea2Element.clone().children().remove().end().text(), 
                                 id: $('input[name=ideaId]', idea2Element).val(),
                                 tags: $('input[name=ideaTags]', idea2Element).val().split(',')};
                     event.stopPropagation();
                     openOverlay('combineIdeas', {ideas: [idea1, idea2]});
                 },
                 tolerance: 'pointer',
+                scope: 'ideas',
                 classes: {
                     'ui-droppable-hover': 'ideaDragHover'
                 }

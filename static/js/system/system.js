@@ -452,7 +452,7 @@ var combineIdeasSetup = function(params){
 	});
 	// Set the values
 	$('#combineIdeas input[name=combinedIdeaIds]').val(JSON.stringify(ids));
-	$('#combineIdeas input[name=combinedTagInput]').importTags(tags.join(ENV.tagsDelimiter));
+	setupTagPicker('#combineIdeas .combinedTagInput');
 
 	// Set up tear down function
 	EVENTS.popOverClose.push(function(){
@@ -467,11 +467,16 @@ var combineIdeasSetup = function(params){
 }
 
 var replaceCombineIdeasOptions = function(event, type){
-	$('#combineIdeas .choices').hide('fast');
-	$('#combineIdeas .ideaInput').show('fast');
-	// Sets the text in the paragraph
-	$('.combinationType').text(type + 'd');
-	$('#combineIdeas input[name=combineTypeInput]').val(type)
+	if(type == 'back'){
+		$('#combineIdeas .choices').show('fast');
+		$('#combineIdeas .ideaInput').hide('fast');
+	} else {
+		$('#combineIdeas .choices').hide('fast');
+		$('#combineIdeas .ideaInput').show('fast');
+		// Sets the text in the paragraph
+		$('.combinationType').text(type + 'd');
+		$('#combineIdeas input[name=combineTypeInput]').val(type);
+	}
 };
 
 var tagsViewSetup = function(params){

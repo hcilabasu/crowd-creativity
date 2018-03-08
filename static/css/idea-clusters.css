@@ -876,6 +876,12 @@ div.w2p_flash.alert {
     margin-bottom: 20px;
 }
 
+#combineIdeas > .combineIdeasShowIdeas .ideaBlock {
+    text-align: left;
+    overflow: auto;
+    width: 44%;
+}
+
     #combineIdeas p {
         margin-bottom: 10px;
     }
@@ -887,6 +893,10 @@ div.w2p_flash.alert {
     #combineIdeas .ideaInput {
         display: none;
     }
+
+.combinationType {
+    font-weight: bolder;
+}
 
 .ideaPopup .ideaText {
     max-height: 400px;

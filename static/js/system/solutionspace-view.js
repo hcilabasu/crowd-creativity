@@ -164,6 +164,7 @@ class SolutionSpaceView extends View {
 		var pan = $('#miniMap > #pan');
 		pan.draggable({
 			containment: 'parent',
+			scope: 'miniMap',
 			start: function(e){
 				$(this).addClass('ondrag');
 			},
