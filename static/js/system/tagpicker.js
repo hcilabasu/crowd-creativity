@@ -154,3 +154,62 @@ var removeTag = function(placeholder){
 	}
 	input.val(newVal);
 }
+
+/*
+	Params:
+	* tagPickerRoot: selector string
+		- selector for base of tag picker (same as was used to create the tag picker)
+	* displayErrorMessage: function
+		- function used to display the error message
+	* hideErrorMessage: function
+		- opposite of the displayErrorMessage param
+	
+
+	Returns:
+	{
+		valid: boolean,
+		tags: []
+	}
+*/
+var validateTagPicker = function(params){
+	var tagPicker = $(params.tagPickerRoot);
+	// Clean any tags errors
+	params.hideErrorMessage(tagPicker);
+	// Get values
+	var pickTags = function(value){
+		if (value === ''){
+			return [];
+		} else {
+			return value.split(ENV.tagsDelimiter);
+		}
+	}($('[name=pickTags]', tagPicker).val());
+
+	var suggestTags = function(value){
+		if(value.trim() === ''){ 
+			return undefined;
+		}
+		return value;
+	}($('[name=suggestTags]', tagPicker).val());
+	
+	var customTag = function(value){
+		return value === 'true';
+	}($('[name=customTag]', tagPicker).val());
+	
+	// Validate
+	var tags = customTag ? suggestTags : pickTags;
+	if (tags === undefined){
+		tags = [];
+	} else if (!(tags.constructor === Array)){
+		tags = [tags];
+	}
+	var valid = true;
+	if(tags.length < 1){
+		params.displayErrorMessage(tagPicker);
+		valid = false;
+	}
+	// Return values
+	return {
+		valid: valid,
+		tags: tags
+	};
+};

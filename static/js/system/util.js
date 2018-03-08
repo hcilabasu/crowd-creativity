@@ -181,7 +181,7 @@ var UTIL = {
 			$(element).first().after(
 				$('<label>'+ message +'</label>')
 					.attr('id',errorId)
-					.addClass('error'));
+					.addClass('utilError'));
 		} else {
 			messageContainer.text(message);
 			$('#' + errorId).show();

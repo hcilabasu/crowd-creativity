@@ -235,7 +235,8 @@ a.logo:focus {
     color: white !important;
 }
 
-.error {
+.error,
+.utilError {
     color: indianred;
     margin-bottom: 20px;
 }

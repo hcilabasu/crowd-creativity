@@ -243,37 +243,20 @@ var submitNewIdea = function(event){
 	console.dir('Submitting');
 	// Serialize form data
 	var formElement = $(event.target).closest('form');
-	var form = UTIL.objectifyForm(formElement.serializeArray(), {
-		pickTags: function(value){
-			if (value === ''){
-				return [];
-			} else {
-				return value.split(ENV.tagsDelimiter);
-			}
+	var form = UTIL.objectifyForm(formElement.serializeArray());
+	// Validate tag picker
+	var tagsValidation = validateTagPicker({
+		tagPickerRoot: '#newIdeaTagPicker',
+		displayErrorMessage: function(tagPicker){
+			UTIL.insertErrorMessage('#newIdeaTagPicker .tagPicker', 'Insert at least ' + ENV.minNumberTags + ' tag', 'errorTags');
 		},
-		suggestTags: function(value){
-			if(value.trim() === ''){ return undefined;}
-			return value;
+		hideErrorMessage: function(tagPicker){
+			$('.utilError', tagPicker).remove();
 		}
 	});
-	var tags = form.customTag == 'true' ? form.suggestTags : form.pickTags;
-	if (tags === undefined){
-		tags = [];
-	} else if (!(tags.constructor === Array)){
-		tags = [tags];
-	}
 	// Validate tags. For some reason, the jQuery validator does not pick it up.
-	if (tags.length < ENV.minNumberTags | tags.length > ENV.maxNumberTags  | !formElement.valid()){ 
-		if (tags.length < ENV.minNumberTags){
-			// Not enough tags. Throw a tantrum. 
-			UTIL.insertErrorMessage('#addIdea form', 'Insert at least ' + ENV.minNumberTags + ' tag', 'errorTags');
-		} else if(tags.length > ENV.maxNumberTags) {
-			UTIL.insertErrorMessage('#addIdea form', 'Insert at most ' + ENV.maxNumberTags + ' tags', 'errorTags');
-		} else {
-			// Clean any tags errors
-			$('#errorTags').remove();
-		}
-	} else {
+	if (formElement.valid() & tagsValidation.valid){ 
+		var tags = tagsValidation.tags;
 		// Submit
 		$('#addIdea').addClass('loading');
 		submitIdea(form.idea, tags, 'original', [], function(data){
@@ -300,52 +283,57 @@ var submitNewIdea = function(event){
 };
 
 var submitRefinedIdea = function(event){
-	var idea = $('#editIdea [name=refinedIdea]').val();
-	var tags = $('#editIdea [name=tags]').val().split(ENV.tagsDelimiter);
-	var originalId = $('#editIdea [name=originalId]').val();
-	console.dir(idea);
-	console.dir(tags);
-	console.dir(originalId);
-	submitIdea(idea, tags, type='refinement', [originalId], function(data){
-		var _id = JSON.parse(data).id;
-		var _idea = idea;
-		var _tags = tags;
-		// Add to UI
-		VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
-		// Giving feedback to user
-		$.web2py.flash('Your idea has been added!', 'ok');
-		// Reset other views and reset check timer
-		VIEWS.solutionSpaceView.load();
-		VIEWS.versioningView.load();
-		ENV.lastCheck = new Date().getTime();
-		// Close overlay
-		closeOverlay();
-	});
+	// Validate
+	if($('form.editElement').valid()){
+		var idea = $('#editIdea [name=refinedIdea]').val();
+		var tags = $('#editIdea [name=tags]').val().split(ENV.tagsDelimiter);
+		var originalId = $('#editIdea [name=originalId]').val();
+		console.dir(idea);
+		console.dir(tags);
+		console.dir(originalId);
+		submitIdea(idea, tags, type='refinement', [originalId], function(data){
+			var _id = JSON.parse(data).id;
+			var _idea = idea;
+			var _tags = tags;
+			// Add to UI
+			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
+			// Giving feedback to user
+			$.web2py.flash('Your idea has been added!', 'ok');
+			// Reset other views and reset check timer
+			VIEWS.solutionSpaceView.load();
+			VIEWS.versioningView.load();
+			ENV.lastCheck = new Date().getTime();
+			// Close overlay
+			closeOverlay();
+		});
+	}
 };
 
 var submitCombinedIdea = function(event){
-	var idea = $('#combineIdeas textarea').val();
-	var type = $('#combineIdeas input[name=combineTypeInput]').val();
-	var tags = $('#combineIdeas input[name=combinedTagInput]').val().split(ENV.tagsDelimiter);
-	var sources = JSON.parse($('#combineIdeas input[name=combinedIdeaIds]').val());
-	submitIdea(idea, tags, type, sources, function(data){
-		var _id = JSON.parse(data).id;
-		var _idea = idea;
-		var _type = type;
-		var _sources = sources;
-		var _tags = tags;
-		// If idea is merged, remove previous two and add merged. Otherwise, add new idea
-		if (type == 'merge'){
-			// Remove two ideas
-			for(var i = 0; i < _sources.length; i++){
-				$('#id' + _sources[i]).remove();
+	if($('#combineIdeas .ideaInput').valid()){
+		var idea = $('#combineIdeas textarea').val();
+		var type = $('#combineIdeas input[name=combineTypeInput]').val();
+		var tags = $('#combineIdeas input[name=combinedTagInput]').val().split(ENV.tagsDelimiter);
+		var sources = JSON.parse($('#combineIdeas input[name=combinedIdeaIds]').val());
+		submitIdea(idea, tags, type, sources, function(data){
+			var _id = JSON.parse(data).id;
+			var _idea = idea;
+			var _type = type;
+			var _sources = sources;
+			var _tags = tags;
+			// If idea is merged, remove previous two and add merged. Otherwise, add new idea
+			if (type == 'merge'){
+				// Remove two ideas
+				for(var i = 0; i < _sources.length; i++){
+					$('#id' + _sources[i]).remove();
+				}
 			}
-		}
-		// Add idea
-		VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
-		// Close overlay
-		closeOverlay();
-	});
+			// Add idea
+			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
+			// Close overlay
+			closeOverlay();
+		});
+	}
 };
 
 var submitIdea = function(idea, tags, origin, sources, successCallback){
