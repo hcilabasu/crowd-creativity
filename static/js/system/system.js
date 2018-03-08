@@ -310,10 +310,19 @@ var submitRefinedIdea = function(event){
 };
 
 var submitCombinedIdea = function(event){
-	if($('#combineIdeas .ideaInput').valid()){
+	var tagsValidation = validateTagPicker({
+		tagPickerRoot: '#combineIdeas .ideaInput',
+		displayErrorMessage: function(tagPicker){
+			UTIL.insertErrorMessage('#combineIdeas .tagPicker', 'Insert at least ' + ENV.minNumberTags + ' tag', 'errorTags');
+		},
+		hideErrorMessage: function(tagPicker){
+			$('.utilError', tagPicker).remove();
+		}
+	});
+	if($('#combineIdeas .ideaInput').valid() & tagsValidation.valid){
 		var idea = $('#combineIdeas textarea').val();
 		var type = $('#combineIdeas input[name=combineTypeInput]').val();
-		var tags = $('#combineIdeas input[name=combinedTagInput]').val().split(ENV.tagsDelimiter);
+		var tags = tagsValidation.tags;
 		var sources = JSON.parse($('#combineIdeas input[name=combinedIdeaIds]').val());
 		submitIdea(idea, tags, type, sources, function(data){
 			var _id = JSON.parse(data).id;
@@ -330,6 +339,10 @@ var submitCombinedIdea = function(event){
 			}
 			// Add idea
 			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
+			// Reset other views and reset check timer
+			VIEWS.solutionSpaceView.load();
+			VIEWS.versioningView.load();
+			ENV.lastCheck = new Date().getTime();
 			// Close overlay
 			closeOverlay();
 		});
