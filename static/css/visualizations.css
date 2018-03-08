@@ -2,44 +2,172 @@
 /* Versioning view */
 #versioningContainer {
     overflow: auto;
-    height: 100%;
+	height: 100%;
+	background: url(../images/versioning-bg.png) repeat-y left top;
+	background-size: 50px;
+	font-size: 0.8em;
+	position: relative;
 }
 
-.tick {
+/* #versioningContainer .dummy {
+	display: block;
+	height: calc(100% - 87px);
+	overflow: scroll;
+} */
+
+.loading #versioningContainer {
+	background: white;
+}
+
+	#versioningContainer .header {
+		width: 100%;
+		background: rgba(255,255,255,0.8) url(../images/versioning-bg.png) repeat-y left top;
+		background-size: 50px;
+		z-index: 20;
+		text-align: center;
+	}
+
+	.empty #versioningContainer .header,
+	.loading #versioningContainer .header{
+		display: none;
+	}
+
+	#versioningContainer h3 {
+		font-size: 12px;
+		font-weight: normal;
+		display: inline-block;
+		text-align: center;
+		margin-top: 10px;
+	}
+	#versioningContainer h3:first-child {
+		width: 50px;
+		float: left;
+	}
+	#versioningContainer h3:last-child {
+		width: 60px;
+		padding-left: 5px;
+	}
+
+#versioningContainer .legend {
+	position: absolute;
+	bottom: 65px;
+	right: 25px;
+	box-shadow: 0 0 5px rgba(0,0,0,0.2);
+	border: solid 1px #CCC;
+	border-radius: 10px;
+	padding: 5px;	
+	z-index: 20;
+	background: white;
+}
+
+.loading #versioningContainer .legend,
+.empty #versioningContainer .legend {
 	display: none;
 }
 
-.smallIdea {
-	fill: #FFDE78;
-	cursor: pointer;
-	transition: fill 0.2s;
-}
-
-	.smallIdea.smallIdeaHover {
-		fill: #FFBD5E;
-		transition: fill 0.2s;
+	#versioningContainer .legend ul {
+		margin: 0;
+	}
+	#versioningContainer .legend li {
+		padding: 5px;
+	}
+	
+	#versioningContainer .legend li span {
+		display: inline-block;
+		background: blue;
+		height: 4px;
+		width: 15px;
+		margin-right: 10px;
 	}
 
-.axis {
-	stroke: #CCC;
+	#versioningContainer .legend li.refinement span {
+		background-color: #70AD47;
+	}
+	#versioningContainer .legend li.combine span {
+		background-color: #4472C4;
+	}
+	#versioningContainer .legend li.merge span {
+		background-color: #DF6464;
+	}
+
+.treeView {
+	position: absolute;
+	display: block;
+	height: calc(100% - 87px);
+	width: 100%;
+	overflow: scroll;
+	z-index: 15;
 }
 
-.versioningConnection {
-	stroke-width: 4;
+.smallIdea {
+	display: inline-block;
+	height: 25px;
+	width: 25px;
+	background: #FFDE78;
+	border-radius: 5px;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	left: 10px;
+	transition: width 0.2s, height 0.2s, transform 0.2s;
+	z-index: 10;
 }
 
-.versioningConnection.combine {
-	stroke: #4747D5;
+.smallIdea.hover,
+.smallIdea:hover {
+	background: #FCBD65;
+	height: 30px;
+	width: 30px;
+	transform: translate(-2.5px, -50%);
+	transition: width 0.2s, height 0.2s, transform 0.2s;
+	box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
 
-.versioningConnection.merge {
-	stroke: #DF6464;
+.node {
+	display: table;
+	width: auto;
+	position: relative;
+	padding: 0;
+	padding-left: 55px;
+	min-height: 50px;
 }
+
+	.node > .line {
+		height: 4px;
+		width: 50px;
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 5;
+	}
+
+	.node.refinement > .line {background-color: #70AD47;}
+	.node.combine > .line {background-color: #4472C4;}
+	.node.merge > .line {background-color: #DF6464;}
+
+.treeView > .node {
+	margin-bottom: 20px;
+}
+
+.node > .children {
+	float: right;
+}
+
+.children > .node {
+	display: table;
+}
+
+.node:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
 
 /* SOLUTION SPACE */
 #solutionSpaceContainer {
 	position: relative;
-	overflow: auto;
+	overflow: scroll;
 	min-width: 100%;
 }
 
@@ -200,11 +328,13 @@
 	background: white;
 	box-shadow: 0 0 5px rgba(0,0,0,0.2);
 	position: absolute;
-	bottom: 20px;
-	right: 40px;
+	bottom: 25px;
+	right: 25px;
 	z-index: 50;
-	border: solid 1px #666;
+	border: solid 1px #CCC;
 	padding: 0 1px 1px 0;
+	border-radius: 10px;
+	overflow: hidden;
 }
 
 #miniMap > #pan {
