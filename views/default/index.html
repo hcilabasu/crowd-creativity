@@ -128,10 +128,6 @@
 	</script>
 
 	<script id="innerVersioningViewerTemplate" type="text/x-tmpl-mustache">
-		<div class="header">
-			<h3>Latest version</h3>
-			<h3>Previous versions</h3>
-		</div>
 		<div class="legend">
 			<ul>
 				<li class="refinement"><span></span>Refinement</li>
@@ -139,7 +135,8 @@
 				<li class="merge"><span></span>Merging</li>
 			</ul>
 		</div>
-		<div class="treeView"></div>
+		<div class="treeView">
+		</div>
 	</script>
 
 	<script id="versioningViewNodeTemplate" type="text/x-tmpl-mustache">
@@ -344,6 +341,7 @@
 			<p><a id="finishInspirationTutorial">Got it!</a></p>
 		</div>
 		<div class="tasksPanel">
+			<p>Look at the following ideas suggested by other users and use them as inspiration.</p>
 			<ul id="inspirationPanel" class="loading">
 				<li class="selected">
 					<div class="loadingBadge"></div>

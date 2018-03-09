@@ -87,7 +87,10 @@ class VersioningView extends View {
     */
     buildVersioningPanel(structure){
 		if(structure.length > 0){
-			var html = '';
+			var html = '<div class="header">\
+				<h3>Latest version</h3>\
+				<h3>Previous versions</h3>\
+			</div>';
 			// Build view
 			for(var i = 0; i < structure.length; i++){
 				var nodeHtml = this.buildTree(structure[i]);
@@ -170,10 +173,10 @@ class VersioningView extends View {
 				// Calculate midPoint and place line there
 				var childCenter = getCenter(child);
 				var midPoint = {
-					top: childCenter.top + ((baseCenter.top - childCenter.top) / 2),
+					top: childCenter.top + ((baseCenter.top - childCenter.top) / 2)
 				}
 				line.offset({
-					top: midPoint.top, 
+					top: baseCenter.top, 
 					left: baseCenter.left
 				});
 				// Calculate length of line
@@ -185,7 +188,7 @@ class VersioningView extends View {
 				var opposite = b;
 				var hypotenuse = length;
 				var angle = (Math.asin(opposite / hypotenuse) * 180 / Math.PI) * -1;
-				line.css('transform', 'rotate('+angle+'deg)');
+				line.css('transform', 'rotate('+angle+'deg)').css('transform-origin', 'center left');
 			} else {
 				line.hide();
 			}		

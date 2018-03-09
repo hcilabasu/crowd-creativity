@@ -1,19 +1,11 @@
 
 /* Versioning view */
 #versioningContainer {
-    overflow: auto;
+    overflow: hidden;
 	height: 100%;
-	background: url(../images/versioning-bg.png) repeat-y left top;
-	background-size: 50px;
 	font-size: 0.8em;
 	position: relative;
 }
-
-/* #versioningContainer .dummy {
-	display: block;
-	height: calc(100% - 87px);
-	overflow: scroll;
-} */
 
 .loading #versioningContainer {
 	background: white;
@@ -21,10 +13,11 @@
 
 	#versioningContainer .header {
 		width: 100%;
-		background: rgba(255,255,255,0.8) url(../images/versioning-bg.png) repeat-y left top;
-		background-size: 50px;
 		z-index: 20;
 		text-align: center;
+		background: url(../images/versioning-bg.png) repeat-y;
+		background-position: 0 0;
+		background-size: 50px;
 	}
 
 	.empty #versioningContainer .header,
@@ -57,7 +50,7 @@
 	border-radius: 10px;
 	padding: 5px;	
 	z-index: 20;
-	background: white;
+	background: rgba(255,255,255,0.8);
 }
 
 .loading #versioningContainer .legend,
@@ -91,15 +84,15 @@
 	}
 
 .loading .treeView {
-	visibility: hidden;
+	/* visibility: hidden; */
 }
 
 .treeView {
 	visibility: visible;
-	/* position: absolute; */
 	display: block;
-	height: calc(100% - 87px);
-	width: 100%;
+	position: absolute;
+	height: calc(100% - 41px);
+	width: 100%;	
 	overflow: scroll;
 	z-index: 15;
 }
@@ -151,7 +144,11 @@
 	.node.merge > .line {background-color: #DF6464;}
 
 .treeView > .node {
-	margin-bottom: 20px;
+	padding-bottom: 10px;
+	padding-top: 10px;
+	background: url(../images/versioning-bg.png) repeat-y;
+	background-position: 0 0;
+	background-size: 50px;
 }
 
 .node > .children {
