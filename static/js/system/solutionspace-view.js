@@ -4,7 +4,6 @@ class SolutionSpaceView extends View {
     Empties the container and initializes the view inside of it
     */
     load(){
-        console.dir('Initializing View');
 		var container = $(this.container);
         container.empty();
 		$('#miniMap').hide();
@@ -26,7 +25,6 @@ class SolutionSpaceView extends View {
     Highlight a particular idea
     */
     highlightIdeaHandler(e){
-		console.dir('CUSTOM SOLUTIONSPACE Highlight idea');
 		var tags = e.params.tags;
 		// Add hover class
 		var classes = '';
@@ -37,7 +35,6 @@ class SolutionSpaceView extends View {
 				if(tags[i] !== tags[j]){
 					classes = ' .' + ENV.classPrefix + tags[i] + '.' + ENV.classPrefix + tags[j];
 				} else {
-					console.dir(classes);
 					classes = ' .single.' + ENV.classPrefix + tags[i];
 				}
 				$(this.container + classes).addClass('cellHover');
@@ -49,7 +46,6 @@ class SolutionSpaceView extends View {
     Blur a particular idea
     */
     blurIdeaHandler(e){
-		console.dir('CUSTOM SOLUTIONSPACE Blur idea');
 		var tags = e.params.tags;
 		// Add class prefix
 		for (var i = 0; i < tags.length; i++) {

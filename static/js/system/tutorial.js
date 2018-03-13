@@ -145,7 +145,6 @@ class Tutorial {
             // There is an element being highlighted. Set the location specified by the user
             var highlighElement = $(step.highlight);
             var setPosition = (loc, stepLocation)=>{
-                console.dir('Setting popup location');
                 var location = stepLocation
                 var key; // This can only be left or top.
                 switch(loc){

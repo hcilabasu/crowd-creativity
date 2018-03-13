@@ -13,37 +13,27 @@ class View {
     /*
     Empties the container and initializes the view inside of it
     */
-    load(){
-        console.dir('Initializing View');
-    }
+    load(){}
 
     /*
     Highlight a particular idea
     */
-    highlightIdeaHandler(e){
-        console.dir('Highlight idea');
-    }
+    highlightIdeaHandler(e){}
 
     /*
     Blur a particular idea
     */
-    blurIdeaHandler(e){
-        console.dir('Blur idea');
-    }
+    blurIdeaHandler(e){}
 
     /*
     Highlight ideas that have particular tags
     */
-    highlightTagsHandler(e){
-        console.dir('Highlight tags');
-    }
+    highlightTagsHandler(e){}
 
     /*
     Blur ideas that have particular tags
     */
-    blurTagsHandler(e){
-        console.dir('Blur tags');
-    }
+    blurTagsHandler(e){}
 
     /*
     Gets the parent container for the view

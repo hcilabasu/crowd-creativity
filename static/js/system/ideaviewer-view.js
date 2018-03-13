@@ -4,7 +4,6 @@ class IdeaViewerView extends View {
     Empties the container and initializes the view inside of it
     */
     load(){
-        console.dir('Initializing View');
         this.loadIdeasAddedBy(ENV.userId);
         return this;
     }
@@ -13,7 +12,6 @@ class IdeaViewerView extends View {
     Highlight a particular idea
     */
     highlightIdeaHandler(e){
-        console.dir('Custom IDEA Highlight idea');
         var id = e.params.id;
         var source = e.params.source;
         // Highlight
@@ -38,7 +36,6 @@ class IdeaViewerView extends View {
     Blur a particular idea
     */
     blurIdeaHandler(e){
-        console.dir('Custom IDEA Blur idea');
         var id = e.params.id;
         // Remove highlight
         $(this.container + ' .id' + id).removeClass('ideaHover');
@@ -50,8 +47,6 @@ class IdeaViewerView extends View {
     Highlight ideas that have particular tags
     */
     highlightTagsHandler(e){
-        console.dir('Custom IDEA Highlight tags');
-        console.dir('ideaviewer is the source: ');
         var tags = e.params.tags;
         $(this.container + ' ' + tags.join('')).addClass('ideaHover');
     }
@@ -60,7 +55,6 @@ class IdeaViewerView extends View {
     Blur ideas that have particular tags
     */
     blurTagsHandler(e){
-        console.dir('Custom IDEA Blur tags');
         $(this.container + ' .ideaHover').removeClass('ideaHover');
     }
 

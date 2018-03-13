@@ -10,7 +10,6 @@ var setupTagPicker = function(container){
 	// Setup filter
 	$('.search', tagPicker).on('keyup paste', function(e){
 		var text = $(this).val().toLowerCase();
-		console.dir(text);
 		var show = $('li[class*="t_' + text + '"]', tags);
 		var hide = $('li:not([class*="' + text + '"])', tags);
 		hide.hide();

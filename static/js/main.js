@@ -119,8 +119,6 @@ $(function(){
             othersIndex++; // Increment global idea index
             $("#group-ideas").prepend("<li class='list-group-item'><p>" + idea + "</p></li>");
         }
-        
-        console.dir(lastUpdateTime);
     };
     
     if(ENV.condition !== 3){

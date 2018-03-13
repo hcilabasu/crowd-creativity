@@ -13,7 +13,6 @@ class VersioningView extends View {
     Empties the container and initializes the view inside of it
     */
     load(){
-        console.dir('Initializing Versioning View');
         // Clear Panel
 		$(this.container).html(Mustache.render(TEMPLATES.innerVersioningViewerTemplate));
 		this.getParentContainer().addClass('loading');
@@ -34,7 +33,6 @@ class VersioningView extends View {
     Highlight a particular idea
     */
     highlightIdeaHandler(e){
-        console.dir('Custom VERSIONING Highlight idea');
 		var id = e.params.id; 
 		var ideas = $('.' + ENV.idPrefix + id, this.getParentContainer());
 		ideas.addClass('hover');
@@ -55,7 +53,6 @@ class VersioningView extends View {
     Blur a particular idea
     */
     blurIdeaHandler(e){
-        console.dir('Custom VERSIONING Blur idea');
         var id = e.params.id;
         var ideas = $('.' + ENV.idPrefix + id, this.getParentContainer());
 		ideas.removeClass('hover');
@@ -67,7 +64,6 @@ class VersioningView extends View {
     Highlight ideas that have particular tags
     */
 	highlightTagsHandler(e){
-		console.dir('Custom VERSIONING Highlight tags');
 		var tags = e.params.tags; 
 		var ideas = $(tags.join(''), this.getParentContainer());
 		ideas.addClass('hover');
@@ -77,7 +73,6 @@ class VersioningView extends View {
 	Blur ideas that have particular tags
 	*/
 	blurTagsHandler(e){
-		console.dir('Custom VERSIONING Blur tags'); 
 		var ideas = $('.hover', this.getParentContainer());
 		ideas.removeClass('hover');
 	}
@@ -112,7 +107,6 @@ class VersioningView extends View {
 					tags: tags
 				}});
 			}, function(e){
-				console.dir('>>>> BLUR');
 				var idea = $(e.target);
 				var id = idea.data('id');
 				var tags = idea.data('tags').split(',');

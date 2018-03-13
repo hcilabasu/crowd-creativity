@@ -240,7 +240,6 @@ var submitNewIdea = function(event){
 		// It's in submission state, so don't submit again
 		return false;
 	}
-	console.dir('Submitting');
 	// Serialize form data
 	var formElement = $(event.target).closest('form');
 	var form = UTIL.objectifyForm(formElement.serializeArray());
@@ -288,9 +287,6 @@ var submitRefinedIdea = function(event){
 		var idea = $('#editIdea [name=refinedIdea]').val();
 		var tags = $('#editIdea [name=tags]').val().split(ENV.tagsDelimiter);
 		var originalId = $('#editIdea [name=originalId]').val();
-		console.dir(idea);
-		console.dir(tags);
-		console.dir(originalId);
 		submitIdea(idea, tags, type='refinement', [originalId], function(data){
 			var _id = JSON.parse(data).id;
 			var _idea = idea;
@@ -752,7 +748,7 @@ var submitInspirationTask = function(event){
 }
 
 var startTagsSuggestion = function(watchInput, suggestionContainer, tagsInput){
-	console.dir('start tags sugg');
+
 	var textarea = $(watchInput);
 	var container = $(suggestionContainer);
 	var delay = 250;

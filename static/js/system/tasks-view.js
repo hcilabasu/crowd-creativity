@@ -3,7 +3,6 @@ class TasksView extends View {
     Empties the container and initializes the view inside of it
     */
     load(){
-        console.dir('Initializing Tasks view');
         // Clear container
         $('ul', this.container).empty();
         this.getParentContainer().addClass('loading');
@@ -22,7 +21,6 @@ class TasksView extends View {
     Highlight a particular idea
     */
     highlightIdeaHandler(e){
-        console.dir('Custom TASK Highlight idea');
         var id = e.params.id;
         var source = e.params.source;
         var ideaBlock = $(this.container + ' .id' + id);
@@ -47,7 +45,6 @@ class TasksView extends View {
     Blur a particular idea
     */
     blurIdeaHandler(e){
-        console.dir('Custom TASK Blur idea');
         var id = e.params.id;
         // Remove highlight
         $(this.container + ' .id' + id).removeClass('ideaHover');
@@ -108,7 +105,6 @@ class TasksView extends View {
             type:type,
             answer:answer
         };
-        console.dir('>>> DATA' + JSON.stringify(data))
         // Submit
         var _this = this;
         $.ajax({
