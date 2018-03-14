@@ -52,7 +52,7 @@
 			autoUpdateOrganizationRatioSeconds: 30,
 			minNumberTags: 1,
 			maxNumberTags: 2,
-			newUser: true,//'{{=str(new_user).lower()}}' === 'true',
+			newUser: '{{=str(new_user).lower()}}' === 'true',
 			doneInspirationTutorial: '{{=str(new_user).lower()}}' === 'true' ? false : true,
 			currentPhase: 1, // Keeps track of the current ideation phase
 			aloneIdeationTime: 0.05, // Duration of time, in minutes, before other views are opened
