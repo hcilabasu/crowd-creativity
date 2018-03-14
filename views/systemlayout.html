@@ -61,7 +61,9 @@
     <div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>
     <!-- Navbar ======================================= -->
     <nav class="topNavbar" role="navigation">
-      <div id="problem">{{=problem.description}}</div>
+      <div id="problem">
+        <span>{{=problem.description}}</span>
+      </div>
       <div class="navContainer left">
         <div class="navBlock">
           <a class="logo" href="{{=URL('default','problems')}}">Crowd<span>Muse</span></a>

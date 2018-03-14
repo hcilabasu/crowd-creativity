@@ -52,7 +52,7 @@
 			autoUpdateOrganizationRatioSeconds: 30,
 			minNumberTags: 1,
 			maxNumberTags: 2,
-			newUser: '{{=str(new_user).lower()}}' === 'true',
+			newUser: true,//'{{=str(new_user).lower()}}' === 'true',
 			doneInspirationTutorial: '{{=str(new_user).lower()}}' === 'true' ? false : true,
 			currentPhase: 1, // Keeps track of the current ideation phase
 			aloneIdeationTime: 0.05, // Duration of time, in minutes, before other views are opened
@@ -414,6 +414,9 @@
 {{end}}
 
 {{block rightNavMenu}}
+	<div class="navBlock actionable phase1_bl">
+		<a onclick="openHelp()"><img src="{{=URL('static','images/help-navbar.png')}}"></a>
+	</div>
 	<div class="navBlock actionable">
 		<img src="{{=URL('static','images/user-navbar.png')}}" alt="{{=user_name}}">
 		<div class="dropDown">

@@ -19,6 +19,47 @@ $(function(){
         };
     });
 
+	var firstTutorialSteps = [ // Steps
+		{
+			title: 'Welcome',
+			html: Mustache.render(TEMPLATES.tutorialWelcomeTemplate)
+		},	
+		{
+			title: 'Brainstorming topic',
+			highlight: '#problem > span',
+			html: '<p>This is the problem you\'re ideating on</p>',
+			location: {left: 'center', bottom: 20}
+
+		},
+		{
+			title: 'Add a new Idea',
+			highlight: '#newIdeaButton',
+			html: Mustache.render(TEMPLATES.tutorialAddIdeaTemplate),
+			location: {left: 'center', bottom: 20}
+		}
+	];
+
+	var secondTutorialSteps = [ // Steps
+		{
+			title: 'Solution space view',
+			highlight: '.stack_SolutionSpaceView',
+			html: Mustache.render(TEMPLATES.tutorialSolutionSpaceTemplate),
+			location: {right: 20, top: 0},
+		},
+		{
+			title: 'Versioning view',
+			highlight: '.stack_VersioningView',
+			html: Mustache.render(TEMPLATES.tutorialVersioningViewTemplate),
+			location: {left: 20, top: 0},
+		},
+		{
+			title: 'Inspiration button',
+			highlight: '#helpButton',
+			html: Mustache.render(TEMPLATES.tutorialInspirationTemplate),
+			location: {left: 'center', bottom: 20}
+		}
+	];
+
 	// Define tutorials
 	ENV.firstTutorial = new Tutorial(
 		{ // Settings
@@ -27,25 +68,7 @@ $(function(){
 				startViewSequencing();
 			}
 		},
-		[ // Steps
-			{
-				title: 'Welcome',
-				html: Mustache.render(TEMPLATES.tutorialWelcomeTemplate)
-			},	
-			{
-				title: 'Brainstorming topic',
-				highlight: '#problem',
-				html: '<p>This is the problem you\'re ideating on</p>',
-				location: {left: -200, bottom: 20}
-
-			},
-			{
-				title: 'Add a new Idea',
-				highlight: '#newIdeaButton',
-				html: Mustache.render(TEMPLATES.tutorialAddIdeaTemplate),
-				location: {left: -200, bottom: 20}
-			}
-		]
+		firstTutorialSteps
 	);
 	ENV.secondTutorial = new Tutorial(
 		{ // Settings
@@ -55,26 +78,11 @@ $(function(){
 				VIEWS.versioningView.load();
 			}
 		},
-		[ // Steps
-			{
-				title: 'Solution space view',
-				highlight: '.stack_SolutionSpaceView',
-				html: Mustache.render(TEMPLATES.tutorialSolutionSpaceTemplate),
-				location: {right: 20, top: 0}
-			},
-			{
-				title: 'Versioning view',
-				highlight: '.stack_VersioningView',
-				html: Mustache.render(TEMPLATES.tutorialVersioningViewTemplate),
-				location: {left: 20, top: 0}
-			},
-			{
-				title: 'Inspiration button',
-				highlight: '#helpButton',
-				html: Mustache.render(TEMPLATES.tutorialInspirationTemplate),
-				location: {left: -200, bottom: 20}
-			}
-		]
+		secondTutorialSteps
+	);
+	ENV.fullTutorial = new Tutorial(
+		{},
+		firstTutorialSteps.concat(secondTutorialSteps)
 	);
 
 	// Enable tooltips
@@ -793,6 +801,10 @@ var startTagsSuggestion = function(watchInput, suggestionContainer, tagsInput){
         }, delay);
     });
 };
+
+var openHelp = function(){
+	startTutorial(ENV.fullTutorial);
+}
 
 var startTutorial = function(tutorial){
 	// Start tutorial

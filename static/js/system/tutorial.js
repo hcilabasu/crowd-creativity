@@ -14,18 +14,6 @@ class Tutorial {
     Starts the tutorial
     */
     start(){
-        // Add overlay 
-        var overlay = $('<div></div>').attr({
-            id: 'tutorialOverlay'
-        });
-        $('body').append(overlay);
-        overlay.fadeIn('fast');
-        // Bind click on overlay to stop method
-        overlay.click((e)=>{
-            if($(e.target).attr('id') == 'tutorialOverlay'){
-                this.stop();
-            }
-        });
         // Load step 0
         this.currentStep = 0;
         this.loadStep();
@@ -37,6 +25,7 @@ class Tutorial {
     stop() {
         $('#tutorialOverlay').fadeOut('fast', function(){
             $(this).remove();
+            $('.tutorialHighlightElement').removeClass('tutorialHighlightElement');
             $('#tutorialHighlightClone').remove();
         });
         // Execute on close function if exists
@@ -67,38 +56,81 @@ class Tutorial {
     }
 
     /*
+
+    */
+   addOverlay(root) {
+        // Remove previous overlay
+        var prevOverlay = $('#tutorialOverlay');
+        var overlayExisted = false;
+        if(prevOverlay.length > 0){
+            prevOverlay.remove();
+            overlayExisted = true;
+
+        }
+        // Add overlay 
+        var overlay = $('<div></div>').attr({
+            id: 'tutorialOverlay'
+        });
+        root.after(overlay);
+        if(overlayExisted){
+            overlay.show();
+        } else {
+            overlay.fadeIn('fast');
+        }
+        // Bind click on overlay to stop method
+        overlay.click((e)=>{
+            if($(e.target).attr('id') == 'tutorialOverlay'){
+                this.stop();
+            }
+        });
+   }
+
+    /*
     Loads the step
     */
     loadStep() {
         var step = this.steps[this.currentStep];
-        // Remove temporary styles
-        // this.clearStyles();
+        var overlayTarget = $('body');
+        var postOverlayActions = function(){};
+        // Remove temporary styles and destroy clone
+        $('.tutorialHighlightElement').removeClass('tutorialHighlightElement');
         $('#tutorialHighlightClone').fadeOut('fast', function(){ $(this).remove(); });
         // Removes previous popup
         this.destroyPopup();
-        // Create clone for positioning above overlay.
-        // A clone is necessary to avoid issues with stacking context
-        // that can appear if you just change the z-index
         if('highlight' in step){
             var highlightOriginal = $(step.highlight);
-            var highlightClone = highlightOriginal.clone(); 
-            // Put all styles into the new object
-            highlightClone[0].style.cssText = document.defaultView.getComputedStyle(highlightOriginal[0], '').cssText;
-            // Update required styles
-            highlightClone.css({
-                'z-index': 3000,
-                'box-shadow': '0 0 5px rgba(0,0,0,0.2);',
-                'position':'absolute',
-                'left':$(step.highlight).offset().left + 'px',
-                'top':$(step.highlight).offset().top + 'px',
-                'margin': 0,
-                'display':'none'
-            }).attr({
-                id: 'tutorialHighlightClone'
-            });
-            $('#tutorialOverlay').append(highlightClone);
-            highlightClone.fadeIn('fast');
+            overlayTarget = highlightOriginal;
+            if('clone' in step && step.clone === true){
+                // Create clone for positioning above overlay.
+                // A clone is necessary to avoid issues with stacking context
+                // that can appear if you just change the z-index
+                var highlightClone = highlightOriginal.clone(); 
+                // Put all styles into the new object
+                highlightClone[0].style.cssText = document.defaultView.getComputedStyle(highlightOriginal[0], '').cssText;
+                // Update required styles
+                highlightClone.css({
+                    'z-index': 3000,
+                    'box-shadow': '0 0 5px rgba(0,0,0,0.2);',
+                    'position':'absolute',
+                    'left':highlightOriginal.offset().left + 'px',
+                    'top':highlightOriginal.offset().top + 'px',
+                    'height': highlightOriginal.height() + 'px',
+                    'width': highlightOriginal.width() + 'px',
+                    'display':'none'
+                }).attr({
+                    id: 'tutorialHighlightClone'
+                });
+                postOverlayActions = function(){
+                    $('#tutorialOverlay').append(highlightClone);
+                    highlightClone.fadeIn('fast');
+                }
+            } else {
+                // This element does not need a clone. Simply change its z-index
+                highlightOriginal.addClass('tutorialHighlightElement');
+            }
         }
+        this.addOverlay(overlayTarget);
+        postOverlayActions();
         this.createPopup();
     }
 
@@ -145,12 +177,16 @@ class Tutorial {
             // There is an element being highlighted. Set the location specified by the user
             var highlighElement = $(step.highlight);
             var setPosition = (loc, stepLocation)=>{
-                var location = stepLocation
+                var location = stepLocation;
                 var key; // This can only be left or top.
                 switch(loc){
                     case 'left':
                         key = 'left';
-                        location = highlighElement.offset().left - (location + this.highlightPopUpWidth);
+                        if(isNaN(location)){ // TODO make this more generalizable for the other conditions
+                            location = highlighElement.offset().left - (this.highlightPopUpWidth - highlighElement.outerWidth()) / 2 
+                        } else {
+                            location = highlighElement.offset().left - (location + this.highlightPopUpWidth);
+                        }
                         break;
                     case 'right':
                         key = 'left';
