@@ -156,7 +156,7 @@ class IdeaViewerView extends View {
                 type: "GET",
                 data: {id:id},
                 url: URL.getIdeaById,
-                success: function(data){
+                success: (data)=>{
                     var idea = JSON.parse(data);
                     this.updateIdeaCounter(this.getIdeasCounterNumber() + 1);
                     VIEWS.ideasView.addIdeaToDisplay(idea);

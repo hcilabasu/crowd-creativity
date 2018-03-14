@@ -95,9 +95,10 @@ class VersioningView extends View {
 			var nodes = $('.treeView .node');
 			var _this = this;
 			nodes.each(function(i,d){
+				// Setup lines
 				_this.setupLines($(d));
 			});
-			// Attach hover event handlers
+			// Attach event handlers
 			$('.treeView .smallIdea').hover(function(e){
 				var idea = $(e.target);
 				var id = idea.data('id');
@@ -114,6 +115,10 @@ class VersioningView extends View {
 					id: id,
 					tags: tags
 				}});
+			}).click(function(e){
+				// Open idea on click
+				var ideaId = $(this).data('id');
+				VIEWS['ideasView'].loadIdea(ideaId);
 			});
 		} else {
 			this.getParentContainer().addClass('empty');
