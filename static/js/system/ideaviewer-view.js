@@ -149,7 +149,7 @@ class IdeaViewerView extends View {
     loadIdea(id){
         if($(this.container + ' #id' + id).length){
             // Idea is already in pane. Focus
-            $(this.container + ' #id' + id).addClass('glow').delay(3000).queue(function(next){ $(this).removeClass('glow'); next(); });
+            $(this.container + ' #id' + id).addClass('shake').delay(1000).queue(function(next){ $(this).removeClass('shake'); next(); });
         } else {
             // Idea is not in the pane. Retrieve and display.
             $.ajax({

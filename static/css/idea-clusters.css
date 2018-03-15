@@ -12,9 +12,10 @@
 }
 
 @keyframes shake {
-    0% {transform: rotate(-2deg);}
-    50% {transform: rotate(2deg);} 
-    100% {transform: rotate(-2deg)};
+    0% {transform: rotate(0);}
+    25% {transform: rotate(2deg);} 
+    75% {transform: rotate(-2deg);} 
+    100% {transform: rotate(0)};
  } 
 
 body,html {
@@ -618,6 +619,7 @@ div.w2p_flash.alert {
     overflow: hidden;
     transition: width 0.2s, height 0.2s, background-color 0.2s, margin 0.2s;
     background: #FFDE78; /* For browsers that do not support gradients */
+    transform: rotate(0);
 }
 
 .ideaBlock.favorite {
@@ -1018,6 +1020,11 @@ div.w2p_flash.alert {
     animation-duration: 0.5s;
     animation-iteration-count: 2;
     animation-timing-function: ease-out;
+}
+
+.shake {
+    animation: shake 0.1s both;
+    animation-iteration-count: 10;
 }
 
 .glowWhite {
