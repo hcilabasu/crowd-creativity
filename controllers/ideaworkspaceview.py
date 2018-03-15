@@ -8,11 +8,16 @@ Controller for functions realted to idea workspace view
 def get_ideas():
     user_id = session.user_id
     problem_id = session.problem_id
+    current_only = True if request.vars.current_only == 'true' else False
     added_by = request.vars.added_by
     is_favorite = request.vars.is_favorite
     favorites = __get_favorites(user_id)
     # Build query
-    query = (db.idea.id == db.tag_idea.idea) & (db.tag.id == db.tag_idea.tag) & (db.idea.problem == problem_id)
+    query = (db.idea.id == db.tag_idea.idea) & \
+        (db.tag.id == db.tag_idea.tag) & \
+        (db.idea.problem == problem_id)
+    if current_only:
+        query = query & (db.idea.replacedBy == None)
     if added_by:
         query = query & (db.idea.userId == user_id)
     if is_favorite:
