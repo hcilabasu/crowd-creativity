@@ -20,7 +20,9 @@ class Idea {
             idea:idea.idea, 
             tags:idea.tags, 
             favorite:isFavorite, 
-            closeable: false /* params['closeable']*/ };
+            closeable: false /* params['closeable']*/,
+            editable: params['editable']
+        };
         var ideaBlock = $(Mustache.render(TEMPLATES.ideaBlockTemplate, ideaParameters));
         if(idea.tags){
             idea.tags.forEach(function(d,i){

@@ -644,6 +644,12 @@ div.w2p_flash.alert {
     background-size: 24px 24px;
 }
 
+.ideaBlock.ui-droppable-active:hover {
+    color: black;
+    background: #FFDE78;
+    width: 130px;
+}
+
 .ideaBlock.ui-draggable-dragging {
     color: black;
     text-shadow: 0 1px rgba(255,255,255,0.4);
@@ -663,7 +669,7 @@ div.w2p_flash.alert {
     display: block;
     position: absolute;
     right: 50px;
-    bottom: -5px;
+    top: 10px;
     z-index: 4; 
     padding: 0 0 0 10px;
     transition: right 0.2s, bottom 0.2s;
@@ -775,6 +781,10 @@ div.w2p_flash.alert {
 
 .ideaDragHandle {
     box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
+    z-index: 9999;
+    background: #FFDE78 !important; /* For browsers that do not support gradients */
+    color: black !important;
+    width: 130px !important;
 }
 
 .ideaHover {
@@ -1081,6 +1091,10 @@ div.w2p_flash.alert {
     margin-top: 0;
 }
 
+.twoCategoryIdeasList {
+    text-align: center;
+}
+
 .twoCategoryIdeasList > div {
     display: inline-block;
     width: 49%;
@@ -1100,6 +1114,15 @@ div.w2p_flash.alert {
             .twoCategoryIdeasList > div > ul > li > p {
                 text-align: left;
             }
+
+.twoCategoryIdeasList .ideaBlock {
+    cursor: move;
+}
+
+.twoCategoryIdeasList .ideaBlock:hover {
+    width: 150px;
+}
+
 .tagsList {
     display: block;
     margin-bottom: 10px;
@@ -1121,6 +1144,7 @@ div.w2p_flash.alert {
     .tag.selected a {
         color: white;
     }
+
 
 .scale {
     display: inline-block;

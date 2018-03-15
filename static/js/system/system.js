@@ -497,7 +497,7 @@ var tagsViewSetup = function(params){
 		// Add ideas
 		ideas.forEach(function(d,i){
 			var li = $('<li></li>');
-			var ideaElement = new Idea(d, {closeable:false, draggable:true, resizable: false, focuseable: false});
+			var ideaElement = new Idea(d, {closeable:false, draggable:true, resizable: false, focuseable: false, expandable: false});
 			var ideaBlock = ideaElement.html();
 			li.html(ideaBlock);
 			container.append(li);
@@ -518,6 +518,7 @@ var tagsViewSetup = function(params){
 			}
 		});
 	});
+	$('#tagsView .cl_').remove();
 }
 
 var addIdeaSetup = function(){
