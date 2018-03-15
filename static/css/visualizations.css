@@ -152,10 +152,13 @@
 	background-size: 55px;
 }
 
-.treeView > .node:last-child {
-	background: linear-gradient(#DCF0FF, white);
-	background-position: 0 0;
-	background-size: 50px 100%;
+.treeView > .fade {
+	background: url(../images/versioning-fade.png) repeat-y;
+	background-position: top left;
+	background-size: 55px;
+	height: 35px;
+	width: 55px;
+	opacity: 1;
 }
 
 .node > .children {

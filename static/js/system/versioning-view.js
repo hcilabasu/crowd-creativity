@@ -120,6 +120,9 @@ class VersioningView extends View {
 				var ideaId = $(this).data('id');
 				VIEWS['ideasView'].loadIdea(ideaId);
 			});
+			$('.treeView').append($('<div></div>', {
+				class: 'fade'
+			}));
 		} else {
 			this.getParentContainer().addClass('empty');
 		}
