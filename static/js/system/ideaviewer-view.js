@@ -137,7 +137,18 @@ class IdeaViewerView extends View {
         };
         var ideaElement = new Idea(idea, params);
         var ideaBlock = ideaElement.html();
-        $(this.container).append(ideaBlock);
+        // Remove invisible padding elements (fix for flex box last row)
+        $(this.container + ' .invisibleIdeaBlock').remove();
+        // Add element
+        $(this.container).append(ideaBlock);        
+        // Add new invisible padding elements
+        var ideaBlockWidth = ideaBlock.outerWidth();
+        var containerWidth = $(this.container).innerWidth();
+        var numberOfFillers = containerWidth / ideaBlockWidth;
+        for(var i = 0; i < numberOfFillers; i++){
+            $(this.container).append($('<div></div>',{class:'invisibleIdeaBlock'}));
+        }
+        // Update view
         ideaBlock.fadeIn('slow');
         if(updateCounter){
             this.updateIdeaCounter(this.getIdeasCounterNumber() + 1);
