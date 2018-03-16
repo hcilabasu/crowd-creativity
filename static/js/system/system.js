@@ -166,8 +166,9 @@ $(function(){
 			toggleAutoReload: ()=>{
 				UTIL.toggleTimer($('#solutionSpaceTimerDisplay'), ()=>VIEWS.solutionSpaceView.load());
 			},
-			toggleMinimap: ()=>{
-				VIEWS.solutionSpaceView.toggleMinimap();
+			toggleMinimap: function(){
+				var button = $('#toggleMinimap');
+				VIEWS.solutionSpaceView.toggleMinimap(button);
 			}
 		}
 	};

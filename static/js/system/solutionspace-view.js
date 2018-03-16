@@ -183,6 +183,8 @@ class SolutionSpaceView extends View {
 		});
 		miniMap.css('background', 'url(data:image/png;base64,' + image + ')');
 		this.updatePan();
+		// Make sure button matches this state
+		$('#toggleMinimap').stop().addClass('active');
 		// Show
 		miniMap.fadeIn('fast');
 	}
@@ -215,8 +217,12 @@ class SolutionSpaceView extends View {
 		}
 	}
 
-	toggleMinimap(){
-		$('#miniMap').stop().toggle('fast');
+	toggleMinimap(button){
+		// Only execute if not loading
+		if(!this.getParentContainer().hasClass('loading')){
+			$('#miniMap').stop().toggle('fast');
+			button.stop().toggleClass('active');
+		}
 	}
 
 };
