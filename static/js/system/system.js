@@ -165,6 +165,9 @@ $(function(){
 			},
 			toggleAutoReload: ()=>{
 				UTIL.toggleTimer($('#solutionSpaceTimerDisplay'), ()=>VIEWS.solutionSpaceView.load());
+			},
+			toggleMinimap: ()=>{
+				VIEWS.solutionSpaceView.toggleMinimap();
 			}
 		}
 	};

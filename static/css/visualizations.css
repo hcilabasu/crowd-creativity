@@ -51,6 +51,7 @@
 	padding: 5px;	
 	z-index: 20;
 	background: rgba(255,255,255,0.8);
+	display: block;
 }
 
 .loading #versioningContainer .legend,

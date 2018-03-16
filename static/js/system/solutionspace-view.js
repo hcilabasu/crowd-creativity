@@ -215,4 +215,8 @@ class SolutionSpaceView extends View {
 		}
 	}
 
+	toggleMinimap(){
+		$('#miniMap').stop().toggle('fast');
+	}
+
 };
