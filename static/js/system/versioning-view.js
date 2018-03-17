@@ -102,7 +102,7 @@ class VersioningView extends View {
 			$('.treeView .smallIdea').hover(function(e){
 				var idea = $(e.target);
 				var id = idea.data('id');
-				var tags = idea.data('tags').split(',');
+				var tags = idea.data('tags').toString().split(',');
 				$.event.trigger({type:EVENTS.highlightIdea, params:{
 					id: id,
 					tags: tags
@@ -110,7 +110,7 @@ class VersioningView extends View {
 			}, function(e){
 				var idea = $(e.target);
 				var id = idea.data('id');
-				var tags = idea.data('tags').split(',');
+				var tags = idea.data('tags').toString().split(',');
 				$.event.trigger({type:EVENTS.blurIdea, params:{
 					id: id,
 					tags: tags
@@ -129,10 +129,8 @@ class VersioningView extends View {
 		this.getParentContainer().removeClass('loading');
 		// Hide legend on hover
 		$(this.container).hover(()=>{
-			console.dir('hover')
 			$(this.container + ' .legend').stop().hide('fast');
 		},()=>{
-			console.dir('hover out')
 			$(this.container + ' .legend').stop().show('fast');
 		});
 	}
