@@ -589,7 +589,7 @@ div.w2p_flash.alert {
     overflow: auto;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: space-evenly;
 }
 
     #ideasContainer .ideaBlock {
