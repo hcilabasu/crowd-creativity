@@ -14,6 +14,14 @@ var setupTagPicker = function(container){
 		var hide = $('li:not([class*="' + text + '"])', tags);
 		hide.hide();
 		show.show();
+		// Toggle create new option
+		var createNew = $('.createNew', tags);
+		if(show.length === 0){
+			createNew.text(text);
+			createNew.show();
+		} else {
+			createNew.hide();
+		};
 	});
 
 	// Setup remove tag
@@ -60,6 +68,8 @@ var loadTags = function(tagsContainer){
 				let li = $('<li></li>').addClass('t_' + d).text(d);
 				tagPicker.append(li);
 			});
+			// Add "create new" item
+			tagPicker.append($('<li></li>').addClass('createNew'));
 			// Setup click on tag
 			$('li',tagPicker).click(function(){
 				var tag = $(this).text();

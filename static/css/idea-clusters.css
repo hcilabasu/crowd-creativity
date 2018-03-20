@@ -1418,11 +1418,11 @@ div.w2p_flash.alert {
     .tagPicker .tags > li {
         padding: 5px 10px;
         cursor: pointer;
-        text-transform: capitalize;
+        text-transform: lowercase;
     }
 
     .tagPicker .tags > li:hover {
-        background: #DCF0FF;
+        background-color: #DCF0FF;
     }
 
     .tagPicker .tags.loading > li {
@@ -1469,6 +1469,16 @@ div.w2p_flash.alert {
 
 .tagPicker .panel.hide {
     display: none;
+}
+
+.tagPicker .createNew {
+    display: none;
+    text-indent: 12px;
+    background: url(../images/new-tag.png) no-repeat left center;
+}
+.tagPicker .createNew:before {
+    content: 'Add new tag: ';
+    font-weight: bolder;
 }
 
 .suggestTags div {
