@@ -130,6 +130,8 @@ var teardownTagPicker = function(tagPicker, reloadList){
 };
 
 var setTag = function(placeholder, tag){
+	// trim tag
+	tag = tag.replace(/\s/g,'');
 	$('.text', placeholder).text(tag);
 	placeholder.removeClass('empty');
 	// Add tag to hidden input
@@ -193,12 +195,16 @@ var validateTagPicker = function(params){
 		}
 	}($('[name=pickTags]', tagPicker).val());
 
-	var suggestTags = function(value){
-		if(value.trim() === ''){ 
-			return undefined;
-		}
-		return value;
-	}($('[name=suggestTags]', tagPicker).val());
+	var suggestTags = function(inputs){
+		var tags = []
+		$.each(inputs, function(i,d){
+			var input = $(d);
+			if(input.val().trim() !== ''){ 
+				tags.push(input.val().replace(/\s/g,''));
+			}
+		});
+		return tags;
+	}($('[name=suggestTags]', tagPicker));
 	
 	var customTag = function(value){
 		return value === 'true';
