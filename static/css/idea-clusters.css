@@ -233,9 +233,10 @@ a.logo:focus {
 
 .w2p_flash {
     border: none !important;
-    border-radius: 0 !important;
+    border-radius: 10px !important;
     right: 10px !important;
     padding: 15px !important;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2) !important;
 }
 
 .w2p_flash.ok {
