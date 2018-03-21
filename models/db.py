@@ -5,6 +5,9 @@
 ## File is released under public domain and you can use without limitations
 #########################################################################
 
+# Track module changes
+from gluon.custom_import import track_changes; track_changes(True)
+
 ## if SSL/HTTPS is properly configured and you want all HTTP requests to
 ## be redirected to HTTPS, uncomment the line below:
 # request.requires_https()
@@ -154,6 +157,15 @@ db.define_table('task',
     Field('completed_timestamp', 'datetime'),
     Field('options', 'string'),
     Field('answer', 'string'))
+
+db.define_table('user_model',
+    Field('user', 'reference user_info'),
+    Field('problem', 'reference problem'),
+    Field('last_cat', 'string'),
+    Field('count_pair', 'integer'),
+    Field('count_transition_pairs', 'integer'),
+    Field('transition_graph', 'string'),
+    Field('category_matrix', 'string'))
 
 # DEPRECATED
 db.define_table('idea_rating',

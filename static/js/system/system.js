@@ -289,6 +289,9 @@ var submitNewIdea = function(event){
 			VIEWS.solutionSpaceView.load();
 			VIEWS.versioningView.load();
 			ENV.lastCheck = new Date().getTime();
+		}, function(data){
+			// Remove loading
+			$('#addIdea').removeClass('loading');
 		});
 	}
 };
@@ -357,7 +360,7 @@ var submitCombinedIdea = function(event){
 	}
 };
 
-var submitIdea = function(idea, tags, origin, sources, successCallback){
+var submitIdea = function(idea, tags, origin, sources, successCallback, errorCallBack){
 	// Send to server
     $.ajax({
         type: "POST",
@@ -372,6 +375,11 @@ var submitIdea = function(idea, tags, origin, sources, successCallback){
 			successCallback(data);
 			// Trigger event
 			$.event.trigger({type:EVENTS.ideaSubmitted, params:{idea:idea}});
+		},
+		error: function(data){
+			if(errorCallBack){
+				errorCallBack(data);
+			}
 		}
     });
 };
