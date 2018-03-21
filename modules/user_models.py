@@ -69,8 +69,35 @@ class TransitionGraph(Model):
                 from_node['edges'].append(edge)
             # Update count
             edge['count'] += 1
-            
         return self
+
+    def format_graph(self):
+        '''
+        Formats the graph in the following format:
+        {
+            nodes: [
+                {tag: ''}
+            ],
+            edges: [
+                {source:i, target:j, count:n} // where i and j are indexes in the nodes array
+            ]
+        }
+        '''
+        nodes = []
+        nodes_index = dict()
+        edges = []
+        # Iterate through the nodes
+        for i, node in enumerate(self.model):
+            # deal with nodes
+            nodes.append(dict(tag=node['tag']))
+            nodes_index[node['tag']] = i
+            # deal with edges
+            for edge in node['edges']:
+                edges.append(dict(source=i, target=edge['tag'], count=edge['count']))
+        # switch edge target names to index
+        for edge in edges:
+            edge['target'] = nodes_index[edge['target']]
+        return json.dumps(dict(nodes=nodes,edges=edges))
 
 class CategoryMatrix(Model):
     '''

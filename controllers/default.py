@@ -35,7 +35,7 @@ def nuke(): # Nukes the database to blank.
 
 def logoff():
     session.user_id = None
-    redirect(URL('system', 'index'))
+    redirect(URL('default', 'index'))
 
 def index():
     if TEST_USER_ID:
@@ -69,6 +69,8 @@ def index():
         redirect(URL('default', 'problems'))
     # Prepare to deliver page
     session.problem_id = problem.id
+    # Update page title
+    response.title = problem.title
     return dict(user_id=user_id, user_name=user_name, new_user=new_user, problem=problem)
 
 def problems():

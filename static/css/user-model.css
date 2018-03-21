@@ -1,0 +1,53 @@
+body {
+    background: #3AAAFC;
+    background: linear-gradient(#437BF0, #3AAAFC) fixed;
+    padding: 20px;
+    color: white;
+}
+
+    body > div {
+        margin-bottom: 20px;
+    }
+
+h2 {
+    color: #DCF0FF;
+    margin-bottom: 5px;
+}
+
+ul {
+    display: inline-block;
+}
+
+    li {
+        border-bottom: dotted 1px white;
+        width: auto;
+    }
+
+        li > strong {
+            display: inline-block;
+            width: 200px;
+        }
+
+table {
+    border-radius: 10px;
+    overflow: hidden;
+    border: none;
+    border-collapse: collapse;
+    color: #666;
+}
+
+    table th {
+        background: #DCF0FF;
+        border: solid 1px white;
+    }
+    table td {
+        background: white;
+        border: solid 1px white;
+    }
+
+#graph-canvas {
+    height: 500px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
