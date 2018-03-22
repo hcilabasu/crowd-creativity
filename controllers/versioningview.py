@@ -35,12 +35,13 @@ def get_versioning_structure():
     # build idea map
     complete_idea_map = dict()
     filtered_idea_list = []
-    for r in results:
+    for i,r in enumerate(results):
         tags = [t.tag.tag for t in r.idea.tag_idea.select()]
         complete_idea_map[r.idea.id] = dict(
             tags=tags,
             type=r.idea.origin,
-            id=r.idea.id
+            id=r.idea.id,
+            i=i
         )
         children = []
         if r.idea.sources:
@@ -48,6 +49,7 @@ def get_versioning_structure():
         complete_idea_map[r.idea.id]['children'] = children
         if not r.idea.replacedBy:
             filtered_idea_list.append(complete_idea_map[r.idea.id])
+    filtered_idea_list.sort(key=lambda idea: idea['i'], reverse=True)
     # return
     response.headers['Content-Type'] = 'application/json'
     return json.dumps(filtered_idea_list)
