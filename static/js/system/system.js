@@ -474,8 +474,9 @@ var combineIdeasSetup = function(params){
 	// Set up tear down function
 	EVENTS.popOverClose.push(function(){
 		// Empty fields
-		$('#combineIdeas input[name=combineTypeInput]').val();
-		$('#combineIdeas input[name=ideaIds]').val();
+		$('#combineIdeas textarea').val('');
+		$('#combineIdeas input[name=combineTypeInput]').val('');
+		$('#combineIdeas input[name=ideaIds]').val('');
 		// Switch back options panel
 		$('#combineIdeas .choices').show();
 		$('#combineIdeas .ideaInput').hide();
