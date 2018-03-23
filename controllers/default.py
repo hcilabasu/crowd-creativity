@@ -71,7 +71,16 @@ def index():
     session.problem_id = problem.id
     # Update page title
     response.title = problem.title
-    return dict(user_id=user_id, user_name=user_name, new_user=new_user, problem=problem)
+    return dict(
+        user_id=user_id, 
+        user_name=user_name, 
+        new_user=new_user, 
+        problem=problem,
+        validation=dict(
+            data_max = DATA_MAX,
+            text_max = TEXT_MAX,
+            short_string_max = SHORT_STRING_MAX
+        ))
 
 def problems():
     problems = db(db.problem.id > 0).select()
@@ -204,10 +213,11 @@ def tag_exists():
 ### PRIVATE FUNCTIONS
 
 def __insert_tasks_for_idea(idea, user_id, problem_id):
-    # Insert categorization tasks
     for i in range(0,TASKS_PER_IDEA):
         # insert selectBest types. Categorize tasks will be inserted when these are completed
-        microtask.TagSuggestionTask(idea=idea['id'], problem=problem_id)     
+        # microtask.TagSuggestionTask(idea=idea['id'], problem=problem_id)     
+        # Insert combination tasks
+        microtask.CombinationTask(idea=idea['id'], problem=problem_id)
 
 def __clean_tag(tag):
     tag = tag.replace(' ', '') # remove spaces

@@ -1,24 +1,22 @@
 # -*- coding: utf-8 -*-
 
-#########################################################################
-## This scaffolding model makes your app work on Google App Engine too
-## File is released under public domain and you can use without limitations
-#########################################################################
-
 # Track module changes
 from gluon.custom_import import track_changes; track_changes(True)
-
-## if SSL/HTTPS is properly configured and you want all HTTP requests to
-## be redirected to HTTPS, uncomment the line below:
-# request.requires_https()
-
 from gluon import current
-
-## app configuration made easy. Look inside private/appconfig.ini
 from gluon.contrib.appconfig import AppConfig
-## once in production, remove reload=True to gain full speed
-myconf = AppConfig(reload=True)
 
+# Adjust settings depending on environment
+settings = dict()
+if request.env.http_host == '127.0.0.1:8000' or request.env.http_host == 'localhost:8000':
+    settings['is_development'] = True
+    myconf = AppConfig(reload=True)
+else:
+    # Production settings
+    settings['is_development'] = False
+    myconf = AppConfig()
+    request.requires_https()
+    # response.optimize_css = 'concat,minify,inline'
+    # response.optimize_js = 'concat,minify,inline'
 
 if not request.env.web2py_runtime_gae:
     ## if NOT running on Google App Engine use SQLite or other DB
@@ -44,10 +42,6 @@ response.generic_patterns = ['*'] if request.is_local else []
 response.formstyle = myconf.take('forms.formstyle')  # or 'bootstrap3_stacked' or 'bootstrap2' or other
 response.form_label_separator = myconf.take('forms.separator')
 
-
-## (optional) optimize handling of static files
-# response.optimize_css = 'concat,minify,inline'
-# response.optimize_js = 'concat,minify,inline'
 ## (optional) static assets folder versioning
 # response.static_version = '0.0.0'
 #########################################################################
@@ -97,18 +91,22 @@ auth.settings.reset_password_requires_verification = True
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 
+DATA_MAX = myconf.take('db.data_max') # Used for fields that store things such as json code
+TEXT_MAX = myconf.take('db.text_max')
+SHORT_STRING_MAX = myconf.take('db.short_string_max')
+
 db.define_table('problem',
-    Field('title', 'string', length=50),
-    Field('url_id', 'string', unique=True, length=50),
-    Field('description', 'string'))
+    Field('title', 'string', length=SHORT_STRING_MAX),
+    Field('url_id', 'string', unique=True, length=SHORT_STRING_MAX),
+    Field('description', 'text', length=TEXT_MAX))
 
 db.define_table('user_info',
-    Field('userId', 'string'),
+    Field('userId', 'string', length=SHORT_STRING_MAX),
     Field('userCondition', 'integer'),
     Field('initialLogin', 'datetime'))
 
 db.define_table('idea',
-    Field('idea','string'), 
+    Field('idea','text', length=TEXT_MAX), 
     Field('userId','reference user_info'),
     Field('problem', 'reference problem'),
     Field('userCondition','integer'), 
@@ -126,7 +124,7 @@ db.define_table('favorite',
     Field('timestamp', 'datetime'))
     
 db.define_table('tag',
-    Field('tag', 'string'),
+    Field('tag', 'string', length=SHORT_STRING_MAX),
     Field('problem', 'reference problem'),
     Field('replacedBy', 'reference tag'))
     
@@ -135,9 +133,9 @@ db.define_table('tag_idea',
     Field('idea', 'reference idea'))
 
 db.define_table('action_log',
-    Field('actionName', 'string'),
+    Field('actionName', 'string', length=SHORT_STRING_MAX),
     Field('userId', 'reference user_info'),
-    Field('extraInfo', 'string'), # any other necessary contextual information
+    Field('extraInfo', 'text', length=DATA_MAX), # any other necessary contextual information
     Field('dateAdded', 'datetime'))
 
 db.define_table('sessionCondition',
@@ -146,7 +144,7 @@ db.define_table('sessionCondition',
     Field('conditionCount', 'integer'))
 
 db.define_table('task',
-    Field('task_type', 'string'),
+    Field('task_type', 'string', length=SHORT_STRING_MAX),
     Field('problem', 'reference problem'),
     Field('idea', 'reference idea'),
     Field('owner', 'reference user_info'), # User who added the idea a task refers to
@@ -155,17 +153,17 @@ db.define_table('task',
     Field('completed', 'boolean', default=False),
     Field('completed_by', 'reference user_info'),
     Field('completed_timestamp', 'datetime'),
-    Field('options', 'string'),
-    Field('answer', 'string'))
+    Field('options', 'text', length=DATA_MAX),
+    Field('answer', 'text', length=DATA_MAX))
 
 db.define_table('user_model',
     Field('user', 'reference user_info'),
     Field('problem', 'reference problem'),
-    Field('last_cat', 'string'),
+    Field('last_cat', 'string', length=SHORT_STRING_MAX),
     Field('count_pair', 'integer'),
     Field('count_transition_pairs', 'integer'),
-    Field('transition_graph', 'string'),
-    Field('category_matrix', 'string'))
+    Field('transition_graph', 'text', length=DATA_MAX),
+    Field('category_matrix', 'text', length=DATA_MAX))
 
 # DEPRECATED
 db.define_table('idea_rating',

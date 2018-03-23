@@ -391,8 +391,8 @@
 		<div class="panel suggestTags" style="display: none">
 			<p>Suggest <strong>at most 2 tags</strong> that best summarize your idea</p>
 			<div>
-				<input type="text" placeholder="tag 1" name="suggestTags"/>
-				<input type="text" placeholder="tag 2 (opt.)" name="suggestTags"/>
+				<input type="text" placeholder="tag 1" name="suggestTags" maxlength="{{=validation['short_string_max']}}"/>
+				<input type="text" placeholder="tag 2 (opt.)" name="suggestTags" maxlength="{{=validation['short_string_max']}}"/>
 			</div>
 			<a class="alternative"><strong>&lsaquo;</strong> Go back to tag picker</a>
 		</div>
@@ -441,7 +441,7 @@
 		<span class="close"></span>
 		<h2>New idea</h2>
 		<form>
-			<textarea name='idea' placeholder="Type your idea in here" required></textarea>
+			<textarea name='idea' placeholder="Type your idea in here" required maxlength="{{=validation['text_max']}}"></textarea>
 			
 			<div id="newIdeaTagPicker"></div>
 
@@ -457,7 +457,7 @@
 		<p class="ideaText viewElement">
 		</p>
 		<form class="editElement">
-			<textarea name='refinedIdea' placeholder="Type your idea in here" required></textarea>
+			<textarea name='refinedIdea' placeholder="Type your idea in here" required maxlength="{{=validation['text_max']}}"></textarea>
 			<input type="hidden" name="tags" />
 			<input type="hidden" name="originalId">
 		</form>
@@ -499,7 +499,7 @@
 			<p> <a onclick="replaceCombineIdeasOptions(event, 'back')">&lt; Back</a> </p>
 			<p>Please, write down your <span class='combinationType'></span> idea in the textarea below. Make sure to include as much detail as possible!</p>
 
-			<textarea name="combinedIdeaInput" required></textarea>
+			<textarea name="combinedIdeaInput" required maxlength="{{=validation['text_max']}}"></textarea>
 
 			<div class="combinedTagInput"></div>
 
