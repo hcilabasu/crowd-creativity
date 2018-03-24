@@ -226,6 +226,54 @@
 		<input type="hidden" name="taskId" value="[[id]]"/>
 		<input type="hidden" name="taskType" value="[[type]]"/>
 	</script>
+	
+	<script id="RatingTaskTemplate" type="text/x-tmpl-mustache">
+		<div id="ideaPlaceholder"></div>
+		
+		<div class="ratingWrapper">
+			<h4>How original is this idea?</h4>
+			<p>i.e. How surprising, novel, unusual, or creative this idea is.</p>
+			<div class="ratingScale">
+				<div class="selectors">
+					<div class="line"></div>
+					<input type="radio" name="originality" value="1"/>
+					<input type="radio" name="originality" value="2"/>
+					<input type="radio" name="originality" value="3"/>
+					<input type="radio" name="originality" value="4"/>
+					<input type="radio" name="originality" value="5"/>
+					<input type="radio" name="originality" value="6"/>
+				</div>
+				<div class="ends">
+					<span>Extremely unoriginal</span>
+					<span>Extremely original</span>
+				</div>
+			</div>
+		</div>
+		
+		<div class="ratingWrapper">
+			<h4>How useful is this idea?</h4>
+			<p>i.e. How practical and feasible the idea is if it were to be implemented</p>
+			<div class="ratingScale">
+				<div class="selectors">
+					<div class="line"></div>
+					<input type="radio" name="usefulness" value="1"/>
+					<input type="radio" name="usefulness" value="2"/>
+					<input type="radio" name="usefulness" value="3"/>
+					<input type="radio" name="usefulness" value="4"/>
+					<input type="radio" name="usefulness" value="5"/>
+					<input type="radio" name="usefulness" value="6"/>
+				</div>
+				<div class="ends">
+					<span>Extremely useless</span>
+					<span>Extremely useful</span>
+				</div>
+			</div>
+		</div>
+		
+		<!-- required task data -->
+		<input type="hidden" name="taskId" value="[[id]]"/>
+		<input type="hidden" name="taskType" value="[[type]]"/>
+	</script>
 
 	<script id="ideaBlockTemplate" type="text/x-tmpl-mustache">
 		<div class="ideaBlock id[[id]] [[favorite]]" id="id[[id]]" style="display:none">

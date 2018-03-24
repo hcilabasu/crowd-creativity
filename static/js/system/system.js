@@ -699,11 +699,11 @@ var prepareButtons = function(container, tasksContainer, n){
 This function receives a type of task as parameter, and outputs a function for processing
 either the view compilation (pre) or answer processing (post) of specific task types. 
 pre does not return anything, but can alter the task form as required.
-post must return the final answer in JSON.
+post must return the final answer in JSON for storage in the DB.
 */
 var taskTypeProcessor = function(type, form, task){
 	return {
-		'TagSuggestionTask': {
+		TagSuggestionTask: {
 			'pre': function(){},
 			'post': function(){
 				var rawAnswer = $('[name=answer]', form).val()
@@ -711,7 +711,7 @@ var taskTypeProcessor = function(type, form, task){
 				return JSON.stringify(answer);
 			}
 		},
-		'TagValidationTask': {
+		TagValidationTask: {
 			'pre': function(){
 				// select best or categorize tasks
 				var tags = JSON.parse(task.options);
@@ -733,6 +733,15 @@ var taskTypeProcessor = function(type, form, task){
 			'post': function(){
 				var selectedTag = $('.tagsList .selected', form).text();
 				return selectedTag;
+			}
+		},
+		RatingTask: {
+			pre: function(){},
+			post: function(){
+				// TODO validate
+				var originality = $('[name=originality]:checked', form).val();
+				var usefulness = $('[name=usefulness]:checked', form).val();
+				return JSON.stringify({originality: originality, usefulness:usefulness});
 			}
 		}
 	}[type];

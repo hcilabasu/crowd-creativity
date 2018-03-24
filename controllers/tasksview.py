@@ -40,21 +40,28 @@ def reset_tasks():
 # Private functions
 def __get_tasks(user_id):
     problem_id = session.problem_id
-    # retrieve tasks already completed
-    completed_tag_suggestion = [row.idea for row in db((db.task.completed_by == user_id) & (db.task.task_type == 'TagSuggestionTask') & (db.task.problem == problem_id)).select(db.task.idea)]
-    completed_tag_validation = [row.idea for row in db((db.task.completed_by == user_id) & (db.task.task_type == 'TagValidationTask') & (db.task.problem == problem_id)).select(db.task.idea)]
-    # retrieve tasks
-    tasks = db(
-        (db.task.completed == False) & 
-        (db.task.owner != user_id) &
+    task_types = (
+        # 'TagSuggestionTask',
+        # 'TagValidationTask',
+        'RatingTask'
+    )
+    completed_tasks = dict()
+    all_query = ((db.task.completed == False) & # Holds the query to retrieve all available tasks
+        (db.task.owner != user_id) & 
         (db.task.idea == db.idea.id) &
-        (db.task.problem == problem_id) &
-        (((db.task.task_type == 'TagSuggestionTask') &
-        ~db.task.idea.belongs(completed_tag_suggestion)) |
-        ((db.task.task_type == 'TagValidationTask') &
-        ~db.task.idea.belongs(completed_tag_validation)))
-    ).select(groupby=db.task.idea)[0:3]
-    # Add favorite field
+        (db.task.problem == problem_id))
+    completed_query = None # Holds the query to avoid all repeated tasks
+    # retrieve tasks already completed and build query to avoid them
+    retrieve_tasks = lambda task_type: [row.idea for row in db((db.task.completed_by == user_id) & (db.task.task_type == task_type) & (db.task.problem == problem_id)).select(db.task.idea)]
+    for t in task_types:
+        completed_tasks[t] = retrieve_tasks(t) # retrieve completed tasks for type t
+        query = ((db.task.task_type == t) & ~db.task.idea.belongs(completed_tasks[t])) # build query to ignore completed tasks
+        completed_query = (completed_query) | query if completed_query != None else completed_query # append to completed query
+    # Append completed query to all query
+    all_query = all_query & db.task.id
+    # retrieve all tasks
+    tasks =  db(all_query).select(groupby=db.task.idea, orderby='<random>')[0:3]   
+    # Add favorite field to return structure
     favorites = __get_favorites(user_id)
     for t in tasks:
         if t.idea.id in favorites:

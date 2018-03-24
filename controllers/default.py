@@ -16,7 +16,7 @@ DEBUG = False # Add debug mode
 NUKE_KEY = 'blastoise'
 ADD_TO_POOL = True
 TEST_USER_ID = None #'testuser1' # Use None if no test ID is needed
-TASKS_PER_IDEA = 2 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
+TASKS_PER_IDEA = 4 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 
 def nuke(): # Nukes the database to blank.
     if (request.vars.key and request.vars.key == NUKE_KEY) and DEBUG:
@@ -217,7 +217,7 @@ def __insert_tasks_for_idea(idea, user_id, problem_id):
         # insert selectBest types. Categorize tasks will be inserted when these are completed
         # microtask.TagSuggestionTask(idea=idea['id'], problem=problem_id)     
         # Insert combination tasks
-        microtask.CombinationTask(idea=idea['id'], problem=problem_id)
+        microtask.RatingTask(idea=idea['id'], problem=problem_id)
 
 def __clean_tag(tag):
     tag = tag.replace(' ', '') # remove spaces

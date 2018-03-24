@@ -2,6 +2,19 @@ import datetime
 import json
 from gluon import current
 
+'''
+This class is the backbone of the microtask model.
+
+ADDING A NEW TYPE OF MICROTASK
+If you want to add a new task type, follow the following steps:
+
+1. Add a new child class of task on this file (e.g. class RatingTask(Task): ...)
+2. Implement the next_step method according to the logic required when all tasks of this type are completed
+3. Make sure tasks of this type are inserted, probably when a new idea is added (default.py > __insert_tasks_for_idea())
+4. Make sure the MustacheTemplate is defined (at this moment they're defined on index.html) with the name RatingTaskTemplate
+5. Add a property with the name of task type (e.g. RatingTask) to the taskTypeProcessor function on system.js and implement the submission logic
+'''
+
 # Classes
 class Task:
     def __init__(self, id=None, idea=None, tags=[], task=None, options=None, problem=None):
@@ -81,6 +94,7 @@ class Task:
         return len(results) == 0
 
     # Abstract methods--must be implemented by subclasses
+    # This method is called whenever all added tasks of a given type are completed
     def next_step(self): print('Run generic next_step...')
 
 class TagSuggestionTask(Task):
@@ -109,12 +123,13 @@ class TagSuggestionTask(Task):
                 TagValidationTask(idea=self.task.idea, options=json.dumps(list(answers)))
 
 class TagValidationTask(Task):
-    # How many tasks are added
-    COUNT=2
-    # Processes the next step
     def next_step(self):
         print('Next step Category VALIDATION Task')
 
 class TagMergeTask(Task):
     def next_step(self):
         print('Next step Category MERGE Task')
+
+class RatingTask(Task):
+    def next_step(self):
+        print('Next step Rating Task')

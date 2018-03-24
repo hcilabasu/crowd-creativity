@@ -96,6 +96,10 @@ input[type=text]:disabled {
     opacity: 0.5;
 }
 
+input[type=radio] {
+    cursor: pointer;
+}
+
 #problem {
     text-align: center;
     color: white;
@@ -584,6 +588,11 @@ div.w2p_flash.alert {
     left: 0px;
     padding: 0;
 }
+
+    .lm_maximised .viewContainer {
+        top: 10px;
+        height: calc(100% - 10px);
+    }
 
 #ideasContainer {
     padding: 5px;
@@ -1553,3 +1562,75 @@ body.welcome {
             #welcome ul > li a:hover {
                 background: rgb(188, 227, 255);
             }
+
+.ratingWrapper {
+    margin-bottom: 30px;
+}
+
+.ratingWrapper:last-child {
+    margin-bottom: 0;
+}
+
+    .ratingWrapper h4 {
+        margin-bottom: 0;
+    }
+
+        .ratingWrapper .ratingScale {
+            border-radius: 10px;
+        }
+
+            .ratingWrapper .ratingScale .selectors {
+                /* text-align: justify; */
+                padding: 5px 15px 0 15px;
+                display: flex;
+                justify-content: space-between;
+                position: relative;
+            }
+
+                .ratingWrapper .ratingScale .selectors input[type=radio] {
+                    z-index: 999;   
+                }
+
+                .ratingWrapper .ratingScale .selectors .line {
+                    border-bottom: dashed 2px #C3E5FF;
+                    position: absolute;
+                    left: 0;
+                    top: 68%;
+                    z-index: 1;
+                    width: 100%;
+                }
+
+            .ratingWrapper .ratingScale .ends {
+                position: relative;
+                height: 40px;
+                margin-top: 15px;
+            }
+                    .ratingWrapper .ratingScale .ends > span {
+                        position: absolute;
+                        padding: 10px;
+                        left: 0px; 
+                        top: 0;
+                        border-radius: 10px;
+                        background: rgb(195, 229, 255);
+                    }
+                    .ratingWrapper .ratingScale .ends > span:before {
+                        border: 10px solid transparent;
+                        border-bottom-color: rgb(195, 229, 255);
+                        content: ' ';
+                        height: 0;
+                        width: 0;
+                        position: absolute;
+                        top: 0;
+                        left: 12px; /* Based on .ratingWrapper .ratingScale .selectors padding value */
+                        z-index: 2;
+                        transform: translatey(-100%);
+                    }
+                    
+                    .ratingWrapper .ratingScale .ends > span:last-child {
+                        left: initial;
+                        right: 0px;
+                    }
+                    .ratingWrapper .ratingScale .ends > span:last-child:before {
+                        left: initial;
+                        right: 16px; /* Based on .ratingWrapper .ratingScale .selectors padding value */
+                    }
