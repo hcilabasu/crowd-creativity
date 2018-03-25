@@ -642,6 +642,8 @@ var prepareButtons = function(container, tasksContainer, n){
 	// Create move function
 	var move = function(fn){
 		var current = $('li.selected', tasksContainer);
+		var currentForm = $('form', current);
+		var taskType = $('[name=taskType]', currentForm).val();
 		var moveTo = current[fn]();
 		var nextCount = current[fn + 'All']().length;
 		// Setup animation
@@ -650,40 +652,42 @@ var prepareButtons = function(container, tasksContainer, n){
 		var neutralMargin = '0px';
 		var animateObject = fn == 'next' ? current : moveTo;
 		// Execute
-		if(moveTo.length !== 0){
-			var counter = 1;
-			// Setup first frame
-			if(fn == 'next'){
-				counter = (n - nextCount + 1);
-				moveTo.show();
-			} else {
-				counter = nextCount;
-				moveTo.css('margin-left', negativeMargin);
-				moveTo.show();
+		if(taskTypeProcessor(taskType, currentForm).isValid()){ // Validate
+			if(moveTo.length !== 0){
+				var counter = 1;
+				// Setup first frame
+				if(fn == 'next'){
+					counter = (n - nextCount + 1);
+					moveTo.show();
+				} else {
+					counter = nextCount;
+					moveTo.css('margin-left', negativeMargin);
+					moveTo.show();
+				}
+				// Update countner
+				stages.text(counter + '/' + n);
+				// Animate
+				animateObject.animate({
+					marginLeft: fn == 'next' ? negativeMargin : neutralMargin
+				}, 
+				500, 
+				function(){
+					current.hide();
+					current.removeClass('selected');
+					moveTo.addClass('selected');
+					// Reset margin
+					current.css('margin-left', '0');
+				});	
 			}
-			// Update countner
-			stages.text(counter + '/' + n);
-			// Animate
-			animateObject.animate({
-				marginLeft: fn == 'next' ? negativeMargin : neutralMargin
-			}, 
-			500, 
-			function(){
-				current.hide();
-				current.removeClass('selected');
-				moveTo.addClass('selected');
-				// Reset margin
-				current.css('margin-left', '0');
-			});	
-		}
-		// Update first or last classes
-		if(moveTo.next().length === 0){
-			// This is the last item
-			container.addClass('last');
-		} else if (moveTo.prev().length === 0) {
-			container.addClass('first');
-		} else {
-			container.removeClass('first').removeClass('last');
+			// Update first or last classes
+			if(moveTo.next().length === 0){
+				// This is the last item
+				container.addClass('last');
+			} else if (moveTo.prev().length === 0) {
+				container.addClass('first');
+			} else {
+				container.removeClass('first').removeClass('last');
+			}
 		}
 	};
 	// Setup buttons
@@ -704,15 +708,16 @@ post must return the final answer in JSON for storage in the DB.
 var taskTypeProcessor = function(type, form, task){
 	return {
 		TagSuggestionTask: {
-			'pre': function(){},
-			'post': function(){
+			pre: function(){},
+			post: function(){
 				var rawAnswer = $('[name=answer]', form).val()
 				var answer = rawAnswer.split(ENV.tagsDelimiter);
 				return JSON.stringify(answer);
-			}
+			},
+			isValid: function() { return true; }
 		},
 		TagValidationTask: {
-			'pre': function(){
+			pre: function(){
 				// select best or categorize tasks
 				var tags = JSON.parse(task.options);
 				var tagsList = $('.tagsList', form);
@@ -730,10 +735,11 @@ var taskTypeProcessor = function(type, form, task){
 					});
 				};
 			},
-			'post': function(){
+			post: function(){
 				var selectedTag = $('.tagsList .selected', form).text();
 				return selectedTag;
-			}
+			},
+			isValid: function() { return true; }
 		},
 		RatingTask: {
 			pre: function(){},
@@ -742,6 +748,9 @@ var taskTypeProcessor = function(type, form, task){
 				var originality = $('[name=originality]:checked', form).val();
 				var usefulness = $('[name=usefulness]:checked', form).val();
 				return JSON.stringify({originality: originality, usefulness:usefulness});
+			},
+			isValid: function(){
+				return form.valid();
 			}
 		}
 	}[type];
@@ -749,32 +758,36 @@ var taskTypeProcessor = function(type, form, task){
 
 var submitInspirationTask = function(event){
 	var forms = $('#inspirationPanel form');
-	$.each(forms, function(i, form){
-		// Get data
-		var id = $('[name=taskId]', form).val();
-		var type = $('[name=taskType]', form).val();
-		var answer = taskTypeProcessor(type, form).post();
-		var data = {
-			id:id,
-			type:type,
-			answer:answer
-		};
-		// Submit
-		var _this = this;
-		$.ajax({
-			type: "POST",
-			url: URL.submitTask,
-			data: data,
-			success: function(data){
-				$.web2py.flash('Your tasks have been submitted!', 'ok');
-				// Close overlay
-				closeOverlay();
-			},
-			error: function(){
-				$.web2py.flash('Something went wrong!', 'error');
-			}
+	var lastForm = $('#inspirationPanel form').last();
+	if(lastForm.valid()){
+		$.each(forms, function(i, form){
+			// Validate last form. All others have been validated on move
+				// Get data
+				var id = $('[name=taskId]', form).val();
+				var type = $('[name=taskType]', form).val();
+				var answer = taskTypeProcessor(type, form).post();
+				var data = {
+					id:id,
+					type:type,
+					answer:answer
+				};
+				// Submit
+				var _this = this;
+				$.ajax({
+					type: "POST",
+					url: URL.submitTask,
+					data: data,
+					success: function(data){
+						$.web2py.flash('Your tasks have been submitted!', 'ok');
+						// Close overlay
+						closeOverlay();
+					},
+					error: function(){
+						$.web2py.flash('Something went wrong!', 'error');
+					}
+				});
 		});
-	});
+	}
 	
 }
 

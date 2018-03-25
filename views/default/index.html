@@ -232,16 +232,16 @@
 		
 		<div class="ratingWrapper">
 			<h4>How original is this idea?</h4>
-			<p>i.e. How surprising, novel, unusual, or creative this idea is.</p>
+			<p>How surprising, novel, unusual, or creative this idea is.</p>
 			<div class="ratingScale">
 				<div class="selectors">
 					<div class="line"></div>
-					<input type="radio" name="originality" value="1"/>
-					<input type="radio" name="originality" value="2"/>
-					<input type="radio" name="originality" value="3"/>
-					<input type="radio" name="originality" value="4"/>
-					<input type="radio" name="originality" value="5"/>
-					<input type="radio" name="originality" value="6"/>
+					<input type="radio" name="originality" value="1" required/>
+					<input type="radio" name="originality" value="2" required/>
+					<input type="radio" name="originality" value="3" required/>
+					<input type="radio" name="originality" value="4" required/>
+					<input type="radio" name="originality" value="5" required/>
+					<input type="radio" name="originality" value="6" required/>
 				</div>
 				<div class="ends">
 					<span>Extremely unoriginal</span>
@@ -252,16 +252,16 @@
 		
 		<div class="ratingWrapper">
 			<h4>How useful is this idea?</h4>
-			<p>i.e. How practical and feasible the idea is if it were to be implemented</p>
+			<p>How practical and feasible the idea is if it were to be implemented.</p>
 			<div class="ratingScale">
 				<div class="selectors">
 					<div class="line"></div>
-					<input type="radio" name="usefulness" value="1"/>
-					<input type="radio" name="usefulness" value="2"/>
-					<input type="radio" name="usefulness" value="3"/>
-					<input type="radio" name="usefulness" value="4"/>
-					<input type="radio" name="usefulness" value="5"/>
-					<input type="radio" name="usefulness" value="6"/>
+					<input type="radio" name="usefulness" value="1" required/>
+					<input type="radio" name="usefulness" value="2" required/>
+					<input type="radio" name="usefulness" value="3" required/>
+					<input type="radio" name="usefulness" value="4" required/>
+					<input type="radio" name="usefulness" value="5" required/>
+					<input type="radio" name="usefulness" value="6" required/>
 				</div>
 				<div class="ends">
 					<span>Extremely useless</span>
@@ -269,7 +269,7 @@
 				</div>
 			</div>
 		</div>
-		
+		<p class="summary"></p>
 		<!-- required task data -->
 		<input type="hidden" name="taskId" value="[[id]]"/>
 		<input type="hidden" name="taskType" value="[[type]]"/>

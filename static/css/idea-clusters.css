@@ -1567,7 +1567,7 @@ body.welcome {
     margin-bottom: 30px;
 }
 
-.ratingWrapper:last-child {
+.ratingWrapper:last-of-type {
     margin-bottom: 0;
 }
 
@@ -1598,6 +1598,12 @@ body.welcome {
                     top: 68%;
                     z-index: 1;
                     width: 100%;
+                }
+                
+                .ratingWrapper .ratingScale .selectors label.error {
+                    position: absolute;
+                    top:-12px;
+                    left:0;
                 }
 
             .ratingWrapper .ratingScale .ends {
