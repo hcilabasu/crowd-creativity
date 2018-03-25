@@ -220,7 +220,7 @@ class SolutionSpaceView extends View {
 	toggleMinimap(button){
 		// Only execute if not loading
 		if(!this.getParentContainer().hasClass('loading')){
-			$('#miniMap').stop().toggle('fast');
+			$('#miniMap').stop().fadeToggle('fast');
 			button.stop().toggleClass('active');
 		}
 	}

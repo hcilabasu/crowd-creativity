@@ -129,9 +129,9 @@ class VersioningView extends View {
 		this.getParentContainer().removeClass('loading');
 		// Hide legend on hover
 		$(this.container).hover(()=>{
-			$(this.container + ' .legend').stop().hide('fast');
+			$(this.container + ' .legend').stop().fadeOut('fast');
 		},()=>{
-			$(this.container + ' .legend').stop().show('fast');
+			$(this.container + ' .legend').stop().fadeIn('fast');
 		});
 	}
 
