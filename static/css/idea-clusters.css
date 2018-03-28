@@ -30,6 +30,10 @@ body {
     background: #3AAAFC;
 }
 
+body.development {
+    border: solid 5px red;
+}
+
 h2, h3 {
     margin-top: 0;
     margin-bottom: 10px;
@@ -144,7 +148,7 @@ a.logo:focus {
     border-bottom: 0;
     margin-bottom: 0;
     background: #3AAAFC;
-    background: linear-gradient(rgba(80, 48, 220, 0.4), #3AAAFC);
+    background: linear-gradient(rgba(80, 48, 220, 0.4), rgba(58,170,207,0));
     z-index: 99;
 }
 
