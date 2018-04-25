@@ -31,7 +31,7 @@
 
         <ul>
             <li><strong>Number of ideas</strong> {{=model.count_pair + 1}} </li>
-            <li><strong>Category switching ratio</strong> {{=model.count_transition_pairs / model.count_pair}}</li>
+            <li><strong>Category switching ratio</strong> {{if model.count_pair > 0:}} {{=model.count_transition_pairs / model.count_pair}} {{else:}}-{{pass}}</li>
             <li><strong>Current category</strong> {{=model.last_cat}} </li>
         </ul>
     </div>    
