@@ -62,7 +62,6 @@ def index():
         # user already has ID. This means it's a page reload. Log it.
         log_action(user_id, "refresh_page", json.dumps({'condition':session.userCondition}))
     # load problem info
-    # TODO retrieve it dynamically
     problem_id = request.vars.problem
     problem = db(db.problem.url_id == problem_id).select().first() 
     if not problem_id or not problem:
@@ -83,8 +82,27 @@ def index():
         ))
 
 def problems():
-    problems = db(db.problem.id > 0).select()
-    return dict(problems=problems)
+    problems = db(db.problem.public == True).select()
+    return dict(
+        problems=problems, 
+        validation=dict(
+            data_max = DATA_MAX,
+            text_max = TEXT_MAX,
+            short_string_max = SHORT_STRING_MAX
+        ))
+
+def create_problem():
+    title = request.vars['title'].lower()
+    description = request.vars['description']
+    public = True if request.vars['public'] else False
+    url_id = ''.join(title.split())
+    # Insert
+    db.problem.insert(
+        title=title,
+        description=description,
+        url_id=url_id,
+        public=public)
+    redirect(URL('default', '?problem=' + url_id))
 
 def add_idea():
     '''

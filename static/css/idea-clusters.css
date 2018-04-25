@@ -1538,7 +1538,7 @@ body.welcome {
         font-size: 5em;
         margin-bottom: 20px;
     }
-    #welcome ul {
+    #welcome ul.clickable {
         background: rgba(255,255,255,0.9);
         width: 300px;
         text-align: left;
@@ -1548,13 +1548,13 @@ body.welcome {
         overflow: hidden;
     }
     
-        #welcome ul > li {
+        #welcome ul.clickable > li {
             width: 100%;
             border-bottom: solid 1px #EEE;
         }
-        #welcome ul > li:last-child { border-bottom: none; }
+        #welcome ul.clickable > li:last-child { border-bottom: none; }
 
-            #welcome ul > li a {
+            #welcome ul.clickable > li a {
                 padding: 10px;
                 display: block;
                 color: black;
@@ -1563,7 +1563,7 @@ body.welcome {
                 transition: background-color 0.5s;
             }
 
-            #welcome ul > li a:hover {
+            #welcome ul.clickable > li a:hover {
                 background: rgb(188, 227, 255);
             }
 
@@ -1644,3 +1644,28 @@ body.welcome {
                         left: initial;
                         right: 16px; /* Based on .ratingWrapper .ratingScale .selectors padding value */
                     }
+
+.newSession {
+    background: rgba(255,255,255,0.9);
+    border-radius: 10px;
+    width: 400px;
+    text-align: left;
+    margin: 0 auto 20px auto;
+    padding: 10px;
+    color: black;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.newSession:after {
+    content:"";
+    display:block;
+    clear:both;
+  }
+
+    .newSession label {
+        display: block;
+    }
+
+    .newSession input[type=checkbox] + label {
+        display: inline-block;
+    }

@@ -105,6 +105,7 @@ db.define_table('problem',
     Field('title', 'string', length=SHORT_STRING_MAX),
     Field('url_id', 'string', unique=True, length=SHORT_STRING_MAX),
     Field('description', 'text', length=TEXT_MAX),
+    Field('public', 'boolean', default=True),
     migrate=MIGRATE,
     fake_migrate=FAKE_MIGRATE)
 

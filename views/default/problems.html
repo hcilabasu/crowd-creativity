@@ -12,14 +12,33 @@
     <link rel="stylesheet" href="{{=URL('static','css/idea-clusters.css')}}"/>
     <link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
+
+    {{include 'web2py_ajax.html'}}
+    <script type="text/javascript" src="{{=URL('static','js/jquery.validate.min.js')}}"></script>
 </head>
 <body class="welcome">
 
     <div id="welcome">
         <h1 class="logo">Crowd<span>Muse</span></h1>
 
-        <p>Available brainstorming sessions:</p>
-        <ul>
+        <p>Create a new brainstorming session!</p>
+        <form id="newSession" class="newSession" action="{{=URL('default','create_problem')}}">
+            <ul>
+                <li><label for="title">Title:</label> <input type="text" name="title" id="title" required maxlength="{{=validation['short_string_max']}}" placeholder="Write a short title for your session"> </li>
+                <li>
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" cols="30" rows="10" placeholder="Describe what people should generate ideas towards" required maxlength="{{=validation['text_max']}}"></textarea>
+                </li>
+                <li>
+                    <input type="checkbox" name="public" id="public"> <label for="public">Make this session public</label>
+                </li>
+            </ul>
+        
+            <a class="btn floatRight submit" onclick="createNewProblem();">Create session</a>
+        </form>
+
+        <p>Available public brainstorming sessions:</p>
+        <ul class="clickable">
             {{for p in problems:}}
                 <li>
                     <a href="{{=URL('default','?problem=' + p.url_id)}}">{{=p.title}}</a>
@@ -28,5 +47,14 @@
         </ul>
     </div>
     
+    <script>
+        var createNewProblem = function(){
+            var form = $('#newSession');
+            if(form.valid()){
+                // Get data and submit
+                form.submit();
+            }
+        };
+    </script>
 </body>
 </html>
