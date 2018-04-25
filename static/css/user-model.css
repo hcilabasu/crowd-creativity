@@ -28,6 +28,10 @@ ul {
             width: 200px;
         }
 
+        li > a {
+            color: white;
+        }
+
 table {
     border-radius: 10px;
     overflow: hidden;

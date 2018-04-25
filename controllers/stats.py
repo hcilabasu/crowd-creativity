@@ -1,5 +1,16 @@
 import user_models
 
+def index():
+    problems = db(db.problem.id > 0).select()
+    users_per_problem = dict()
+    for p in problems:
+        users = db(
+            (db.idea.problem == p.id) & 
+            (db.idea.userId == db.user_info.id)
+        ).select(db.idea.userId, db.user_info.userId, distinct=True)
+        users_per_problem[p.id] = users
+    return dict(problems=problems, users_per_problem=users_per_problem)
+
 def usermodel():
     user_id = request.vars['user']
     problem_id = request.vars['problem']

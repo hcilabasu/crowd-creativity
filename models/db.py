@@ -20,7 +20,10 @@ else:
 
 if not request.env.web2py_runtime_gae:
     ## if NOT running on Google App Engine use SQLite or other DB
-    db = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['mysql'])
+    db = DAL(
+        myconf.take('db.uri'), 
+        pool_size=myconf.take('db.pool_size', cast=int), 
+        check_reserved=['mysql'])
     db_scheduler = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['mysql'])
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
@@ -95,15 +98,22 @@ DATA_MAX = myconf.take('db.data_max') # Used for fields that store things such a
 TEXT_MAX = myconf.take('db.text_max')
 SHORT_STRING_MAX = myconf.take('db.short_string_max')
 
+MIGRATE = True
+FAKE_MIGRATE = False
+
 db.define_table('problem',
     Field('title', 'string', length=SHORT_STRING_MAX),
     Field('url_id', 'string', unique=True, length=SHORT_STRING_MAX),
-    Field('description', 'text', length=TEXT_MAX))
+    Field('description', 'text', length=TEXT_MAX),
+    migrate=MIGRATE,
+    fake_migrate=FAKE_MIGRATE)
 
 db.define_table('user_info',
     Field('userId', 'string', length=SHORT_STRING_MAX),
     Field('userCondition', 'integer'),
-    Field('initialLogin', 'datetime'))
+    Field('initialLogin', 'datetime'),
+    migrate=MIGRATE,
+    fake_migrate=FAKE_MIGRATE)
 
 db.define_table('idea',
     Field('idea','text', length=TEXT_MAX), 
@@ -116,32 +126,44 @@ db.define_table('idea',
     Field('relatedIdeas','list:reference idea'),
     Field('origin', 'string'),
     Field('replacedBy', 'reference idea'),
-    Field('sources', 'list:reference idea'))
+    Field('sources', 'list:reference idea'),
+    migrate=MIGRATE,
+    fake_migrate=FAKE_MIGRATE)
 
 db.define_table('favorite',
     Field('user_info', 'reference user_info'),
     Field('idea', 'reference idea'),
-    Field('timestamp', 'datetime'))
+    Field('timestamp', 'datetime'),
+    migrate=MIGRATE,
+    fake_migrate=FAKE_MIGRATE)
     
 db.define_table('tag',
     Field('tag', 'string', length=SHORT_STRING_MAX),
     Field('problem', 'reference problem'),
-    Field('replacedBy', 'reference tag'))
+    Field('replacedBy', 'reference tag'),
+    migrate=MIGRATE,
+    fake_migrate=FAKE_MIGRATE)
     
 db.define_table('tag_idea',
     Field('tag', 'reference tag'),
-    Field('idea', 'reference idea'))
+    Field('idea', 'reference idea'),
+    migrate=MIGRATE,
+    fake_migrate=FAKE_MIGRATE)
 
 db.define_table('action_log',
     Field('actionName', 'string', length=SHORT_STRING_MAX),
     Field('userId', 'reference user_info'),
     Field('extraInfo', 'text', length=DATA_MAX), # any other necessary contextual information
-    Field('dateAdded', 'datetime'))
+    Field('dateAdded', 'datetime'),
+    migrate=MIGRATE,
+    fake_migrate=FAKE_MIGRATE)
 
 db.define_table('sessionCondition',
     Field('conditionNumber', 'integer'),
     Field('conditionName', 'string'),
-    Field('conditionCount', 'integer'))
+    Field('conditionCount', 'integer'),
+    migrate=MIGRATE,
+    fake_migrate=FAKE_MIGRATE)
 
 db.define_table('task',
     Field('task_type', 'string', length=SHORT_STRING_MAX),
@@ -154,7 +176,9 @@ db.define_table('task',
     Field('completed_by', 'reference user_info'),
     Field('completed_timestamp', 'datetime'),
     Field('options', 'text', length=DATA_MAX),
-    Field('answer', 'text', length=DATA_MAX))
+    Field('answer', 'text', length=DATA_MAX),
+    migrate=MIGRATE,
+    fake_migrate=FAKE_MIGRATE)
 
 db.define_table('user_model',
     Field('user', 'reference user_info'),
@@ -163,26 +187,9 @@ db.define_table('user_model',
     Field('count_pair', 'integer'),
     Field('count_transition_pairs', 'integer'),
     Field('transition_graph', 'text', length=DATA_MAX),
-    Field('category_matrix', 'text', length=DATA_MAX))
-
-# DEPRECATED
-db.define_table('idea_rating',
-    Field('idea', 'reference idea'),
-    Field('completed', 'boolean'),
-    Field('relativeTo', 'reference idea'), # If the task is comparing the idea in terms of another
-    Field('ratingOriginality', 'integer'),
-    Field('ratingUsefulness', 'integer'),
-    Field('dateCompleted', 'datetime'),
-    Field('completedBy', 'string'))
-
-db.define_table('categorization',
-    Field('idea', 'reference idea'),
-    Field('completed', 'boolean',),
-    Field('categorizationType', 'string'), # selectBest / categorize
-    Field('suggestedTags', 'list:string'), # Results from suggest tasks
-    Field('chosenTags', 'list:string'), # Results from selectBest tasks
-    Field('categorized', 'list:string'), # Results from categorize tasks
-    Field('completedBy', 'string'))
+    Field('category_matrix', 'text', length=DATA_MAX),
+    migrate=MIGRATE,
+    fake_migrate=FAKE_MIGRATE)
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
