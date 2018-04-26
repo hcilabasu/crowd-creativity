@@ -1535,6 +1535,10 @@ body.welcome {
         color: white;
     }
 
+    #welcome a.btn {
+        color: black;
+    }
+
     #welcome .logo {
         font-size: 5em;
         margin-bottom: 20px;
