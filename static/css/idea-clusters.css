@@ -1527,12 +1527,13 @@ body.welcome {
 #welcome {
     position: absolute;
     width: 100%;
-    margin: 0 auto;
+    margin: 20px auto;
     color: white;
     text-align: center;
-    top: 50%;
-    transform: translateY(-60%);
 }
+    #welcome a {
+        color: white;
+    }
 
     #welcome .logo {
         font-size: 5em;
