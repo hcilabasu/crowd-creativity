@@ -18,22 +18,13 @@ else:
     # response.optimize_css = 'concat,minify,inline'
     # response.optimize_js = 'concat,minify,inline'
 
-if not request.env.web2py_runtime_gae:
-    ## if NOT running on Google App Engine use SQLite or other DB
-    db = DAL(
-        myconf.take('db.uri'), 
-        pool_size=myconf.take('db.pool_size', cast=int), 
-        check_reserved=['mysql'])
-    db_scheduler = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['mysql'])
-else:
-    ## connect to Google BigTable (optional 'google:datastore://namespace')
-    db = DAL('google:datastore+ndb')
-    ## store sessions and tickets there
-    session.connect(request, response, db=db)
-    ## or store session in Memcache, Redis, etc.
-    ## from gluon.contrib.memdb import MEMDB
-    ## from google.appengine.api.memcache import Client
-    ## session.connect(request, response, db = MEMDB(Client()))
+# Setup db
+db = DAL(
+    myconf.take('db.uri'), 
+    pool_size=myconf.take('db.pool_size', cast=int), 
+    check_reserved=['mysql'])
+db_scheduler = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['mysql'])
+
 
 # Add db to current
 current.db = db

@@ -12,10 +12,12 @@ import random
 import microtask
 import user_models
 
-DEBUG = False # Add debug mode
+DEBUG = False
+if settings['is_development']:
+    DEBUG = True # Allow debugging options
+
 NUKE_KEY = 'blastoise'
 ADD_TO_POOL = True
-TEST_USER_ID = None #'testuser1' # Use None if no test ID is needed
 TASKS_PER_IDEA = 4 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 
 def nuke(): # Nukes the database to blank.
@@ -33,13 +35,30 @@ def nuke(): # Nukes the database to blank.
         response.status = 500
         return 'Nuke is a negative!'            
 
-def logoff():
-    session.user_id = None
+def export():
+    db.export_to_csv_file(open('db.csv','wb'))
+
+def login_as():
+    if DEBUG:
+        user_name = request.vars['user_name']
+        user_id = None
+        user = db(db.user_info.userId == user_name).select().first()
+        if user:
+            user_id = user.id
+        else:
+            user_id = __create_new_user(user_name)
+        # Set session attributes
+        print('Setting session %s and id %d' % (user_name, user_id))
+        session.user_name = user_name
+        session.user_id = user_id
     redirect(URL('default', 'index'))
 
+def logoff():
+    if DEBUG:
+        session.user_id = None
+        redirect(URL('default', 'index'))
+
 def index():
-    if TEST_USER_ID:
-        session.user_id = TEST_USER_ID # Force userID for testing
     user_id = session.user_id
     user_name = session.user_name
     new_user = False
@@ -47,17 +66,7 @@ def index():
         new_user = True
         # Generating new user
         user_name = uuid.uuid4().hex
-        session.user_name = user_name
-        # Selecting condition
-        session.startTime = datetime.datetime.now()
-        session.startTimeUTC = datetime.datetime.utcnow()
-        session.userCondition = 2 # TODO randomly select condition
-        # add user to DB
-        user_id = db.user_info.insert(userId=user_name, userCondition=session.userCondition, initialLogin=session.startTime)
-        session.user_id = user_id
-        # Log
-        log_action(user_id, "start_session", json.dumps({'condition':session.userCondition}))
-
+        user_id = __create_new_user(user_name)
     else:
         # user already has ID. This means it's a page reload. Log it.
         log_action(user_id, "refresh_page", json.dumps({'condition':session.userCondition}))
@@ -229,6 +238,18 @@ def tag_exists():
 
 
 ### PRIVATE FUNCTIONS
+def __create_new_user(user_name):
+    session.user_name = user_name
+    # Selecting condition
+    session.startTime = datetime.datetime.now()
+    session.startTimeUTC = datetime.datetime.utcnow()
+    session.userCondition = 2 # TODO randomly select condition
+    # add user to DB
+    user_id = db.user_info.insert(userId=user_name, userCondition=session.userCondition, initialLogin=session.startTime)
+    session.user_id = user_id
+    # Log
+    log_action(user_id, "start_session", json.dumps({'condition':session.userCondition}))
+    return user_id
 
 def __insert_tasks_for_idea(idea, user_id, problem_id):
     for i in range(0,TASKS_PER_IDEA):
