@@ -11,6 +11,7 @@ import os
 import random
 import microtask
 import user_models
+import testproblems
 
 DEBUG = False
 if settings['is_development']:
@@ -19,44 +20,6 @@ if settings['is_development']:
 NUKE_KEY = 'blastoise'
 ADD_TO_POOL = True
 TASKS_PER_IDEA = 4 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
-
-def nuke(): # Nukes the database to blank.
-    if (request.vars.key and request.vars.key == NUKE_KEY) and DEBUG:
-        # nuke!
-        db(db.tag.id > 0).delete()
-        db(db.tag_idea.id > 0).delete()
-        db(db.idea.id > 0).delete()
-        db(db.categorization.id > 0).delete()
-        db(db.user_info.id > 0).delete()
-        db(db.idea_rating.id > 0).delete()
-        db(db.action_log.id > 0).delete()
-        return 'Nuke is a GO'
-    else:
-        response.status = 500
-        return 'Nuke is a negative!'            
-
-def export():
-    db.export_to_csv_file(open('db.csv','wb'))
-
-def login_as():
-    if DEBUG:
-        user_name = request.vars['user_name']
-        user_id = None
-        user = db(db.user_info.userId == user_name).select().first()
-        if user:
-            user_id = user.id
-        else:
-            user_id = __create_new_user(user_name)
-        # Set session attributes
-        print('Setting session %s and id %d' % (user_name, user_id))
-        session.user_name = user_name
-        session.user_id = user_id
-    redirect(URL('default', 'index'))
-
-def logoff():
-    if DEBUG:
-        session.user_id = None
-        redirect(URL('default', 'index'))
 
 def index():
     user_id = session.user_id
@@ -149,11 +112,7 @@ def add_idea():
             origin=origin,
             sources=sources)
         # Inserting tags
-        for tag in tags:
-            tag = __clean_tag(tag)
-            tag_id = __insert_or_retrieve_tag_id(tag)
-            # Inserting relationships
-            db.tag_idea.insert(tag=tag_id, idea=idea_id)
+        __insert_tags_for_idea(tags, idea_id, problem_id)
         # If idea was merged, update replacedBy on the original ideas
         if origin == 'merge' or origin == 'refinement':
             for source in sources:
@@ -237,7 +196,104 @@ def tag_exists():
 
 
 
+### DEBUG FUNCTIONS
+# These functions only work in development mode (i.e. DEBUG == True)
+def nuke(): # Nukes the database to blank.
+    if (request.vars.key and request.vars.key == NUKE_KEY) and DEBUG:
+        # nuke!
+        db(db.tag.id > 0).delete()
+        db(db.tag_idea.id > 0).delete()
+        db(db.idea.id > 0).delete()
+        db(db.categorization.id > 0).delete()
+        db(db.user_info.id > 0).delete()
+        db(db.idea_rating.id > 0).delete()
+        db(db.action_log.id > 0).delete()
+        return 'Nuke is a GO'
+    else:
+        response.status = 500
+        return 'Nuke is a negative!'            
+
+def login_as():
+    if DEBUG:
+        user_name = request.vars['user_name']
+        user_id = None
+        user = db(db.user_info.userId == user_name).select().first()
+        if user:
+            user_id = user.id
+        else:
+            user_id = __create_new_user(user_name)
+        # Set session attributes
+        print('Setting session %s and id %d' % (user_name, user_id))
+        session.user_name = user_name
+        session.user_id = user_id
+    redirect(URL('default', 'index'))
+
+def logoff():
+    if DEBUG:
+        session.user_id = None
+        redirect(URL('default', 'index'))
+
+def reset_problem():
+    if not DEBUG:
+        return 'Not debug'
+    url_id = request.vars['url']
+    if not url_id:
+        return 'Inform URL ID'
+    if not hasattr(testproblems, url_id):
+        return 'Not a test problem'
+    # Delete problem in database
+    db_problem = db(db.problem.url_id == url_id).delete()
+    # Create problem
+    problem_id = db.problem.insert(
+        title = url_id,
+        description = url_id,
+        url_id = url_id,
+        public = True)
+    # Get test problem data
+    tag_sequences = getattr(testproblems, url_id)()
+    # create users
+    users = dict()
+    for i in range(len(tag_sequences)):
+        # Create users name
+        user_name = 'testuser' + str(i)
+        # check if user already exists
+        db_user = db(db.user_info.userId == user_name).select().first()
+        if not db_user:
+            user_id = db.user_info.insert(
+                userId=user_name,
+                userCondition=0,
+                initialLogin=datetime.datetime.now())
+        else:
+            user_id = db_user.id
+        # Keep track of the DB id for each testuser
+        users[i] = user_id
+    # insert ideas
+    for i, user_tags in enumerate(tag_sequences):
+        for tags in user_tags:
+            idea_id = db.idea.insert(
+                userId=users[i],
+                idea=str(tags),
+                dateAdded=datetime.datetime.now(), 
+                userCondition=0, 
+                problem=problem_id,
+                ratings=0, 
+                pool=True,
+                origin='original',
+                sources=[])
+            __insert_tags_for_idea(tags, idea_id, problem_id)
+            __update_user_model(users[i], problem_id, tags)
+    return 'Problem reset!'
+
+    
+
 ### PRIVATE FUNCTIONS
+def __insert_tags_for_idea(tags, idea_id, problem_id):
+    for tag in tags:
+        tag = __clean_tag(tag)
+        tag_id = __insert_or_retrieve_tag_id(tag, problem_id)
+        # Inserting relationships
+        db.tag_idea.insert(tag=tag_id, idea=idea_id)
+
 def __create_new_user(user_name):
     session.user_name = user_name
     # Selecting condition
@@ -264,8 +320,7 @@ def __clean_tag(tag):
     tag = ''.join(c for c in tag if c not in punctuation) # remove punctuation
     return tag
 
-def __insert_or_retrieve_tag_id(tag):
-    problem_id = session.problem_id
+def __insert_or_retrieve_tag_id(tag, problem_id):
     tagResult = db((db.tag.tag == tag) & (db.tag.problem == problem_id)).select(db.tag.id)
     if tagResult:
         return tagResult[0].id
