@@ -250,7 +250,7 @@ def reset_problem():
         url_id = url_id,
         public = True)
     # Get test problem data
-    tag_sequences = getattr(testproblems, url_id)()
+    tag_sequences = getattr(testproblems, url_id)
     # create users
     users = dict()
     for i in range(len(tag_sequences)):
