@@ -282,6 +282,9 @@ def reset_problem():
                 sources=[])
             __insert_tags_for_idea(tags, idea_id, problem_id)
             __update_user_model(users[i], problem_id, tags)
+            # Insert tasks
+            idea = dict(id=idea_id, idea=str(tags), tags=tags)
+            __insert_tasks_for_idea(idea, users[i], problem_id)
     return 'Problem reset!'
 
     
