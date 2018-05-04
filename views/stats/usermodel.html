@@ -196,7 +196,8 @@
                   .attr("y", function(d) { return d.y; });
 
         edgelabels.attr('transform',function(d,i){
-            if (d.target.x<d.source.x){
+            if (d.target.x<d.source.x || 
+                ((d.source.x == d.target.x)&&(d.source.y == d.target.y))){
                 bbox = this.getBBox();
                 rx = bbox.x+bbox.width/2;
                 ry = bbox.y+bbox.height/2;
@@ -233,7 +234,7 @@
             // Make drx and dry different to get an ellipse
             // instead of a circle.
             drx = 30;
-            dry = 20;
+            dry = 30;
             // For whatever reason the arc collapses to a point if the beginning
             // and ending points of the arc are the same, so kludge it.
             x2 = x2 + 1;
