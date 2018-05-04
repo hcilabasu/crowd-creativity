@@ -31,7 +31,16 @@
 
         <ul>
             <li><strong>Number of ideas</strong> {{=model.count_pair + 1}} </li>
-            <li><strong>Category switching ratio</strong> {{if model.count_pair > 0:}} {{=model.count_transition_pairs / float(model.count_pair)}} {{else:}}-{{pass}}</li>
+            <li>
+                <strong>Category switching ratio</strong> 
+                {{if model.count_pair > 0:}} 
+                    {{='{0:.2f}'.format(model.count_transition_pairs / float(model.count_pair))}} 
+                    (i.e. probability of switching to a new category)
+                {{else:}}
+                    (there isn't enough information)
+                {{pass}} 
+                
+            </li>
             <li><strong>Current category</strong> {{=model.last_cat}} </li>
         </ul>
     </div>    
@@ -97,14 +106,20 @@
 
  
 
-    var edges = svg.selectAll("line")
+    var edges = svg.selectAll(".edge")
       .data(dataset.edges)
       .enter()
-      .append("line")
+      .append("path")
       .attr("id",function(d,i) {return 'edge'+i})
+      .attr({
+        'class':'edge',
+        'fill-opacity':0,
+        'stroke-opacity':1,
+        'fill':'blue',
+        'stroke':'#CCC',
+      })
       .attr('marker-end','url(#arrowhead)')
-    //   .style('markerUnits','userSpaceOnUse')
-      .style("stroke","#ccc")
+      .style('markerUnits','userSpaceOnUse')
       .style("stroke-width",function(d,i){ return 1; })
       .style("pointer-events", "none");
     
@@ -125,20 +140,8 @@
               "y":function(d){return d.y;},
               "class":"nodelabel",
               "stroke":"black"})
-       .text(function(d){return d.tag;});
-
-    var edgepaths = svg.selectAll(".edgepath")
-        .data(dataset.edges)
-        .enter()
-        .append('path')
-        .attr({'d': function(d) {return 'M '+d.source.x+' '+d.source.y+' L '+ d.target.x +' '+d.target.y},
-               'class':'edgepath',
-               'fill-opacity':0,
-               'stroke-opacity':0,
-               'fill':'blue',
-               'stroke':'red',
-               'id':function(d,i) {return 'edgepath'+i}})
-        .style("pointer-events", "none");
+       .text(function(d){return d.tag;})
+       .style("pointer-events", "none");
 
     var edgelabels = svg.selectAll(".edgelabel")
         .data(dataset.edges)
@@ -153,7 +156,7 @@
                'fill':'#aaa'});
 
     edgelabels.append('textPath')
-        .attr('xlink:href',function(d,i) {return '#edgepath'+i})
+        .attr('xlink:href',function(d,i) {return '#edge'+i})
         .style("pointer-events", "none")
         .text(function(d,i){
             return d.count
@@ -181,7 +184,8 @@
         edges.attr({"x1": function(d){return d.source.x;},
                     "y1": function(d){return d.source.y;},
                     "x2": function(d){return d.target.x;},
-                    "y2": function(d){return d.target.y;}
+                    "y2": function(d){return d.target.y;},
+                    "d": function(d){ return calculateArc(d); }
         });
 
         nodes.attr({"cx":function(d){return d.x;},
@@ -190,10 +194,6 @@
 
         nodelabels.attr("x", function(d) { return d.x; }) 
                   .attr("y", function(d) { return d.y; });
-
-        edgepaths.attr('d', function(d) { var path='M '+d.source.x+' '+d.source.y+' L '+ d.target.x +' '+d.target.y;
-                                           //console.log(d)
-                                           return path});       
 
         edgelabels.attr('transform',function(d,i){
             if (d.target.x<d.source.x){
@@ -207,6 +207,40 @@
                 }
         });
     });
+
+    var calculateArc = function(d){
+        var x1 = d.source.x,
+            y1 = d.source.y,
+            x2 = d.target.x,
+            y2 = d.target.y,
+            dx = x2 - x1,
+            dy = y2 - y1,
+            dr = Math.sqrt(dx * dx + dy * dy),
+            // Defaults for normal edge.
+            drx = dr,
+            dry = dr,
+            xRotation = 0, // degrees
+            largeArc = 0, // 1 or 0
+            sweep = 1; // 1 or 0
+        // Self edge.
+        if ( x1 === x2 && y1 === y2 ) {
+            // Fiddle with this angle to get loop oriented.
+            xRotation = -45;
+            // Needs to be 1.
+            largeArc = 1;
+            // Change sweep to change orientation of loop. 
+            //sweep = 0;
+            // Make drx and dry different to get an ellipse
+            // instead of a circle.
+            drx = 30;
+            dry = 20;
+            // For whatever reason the arc collapses to a point if the beginning
+            // and ending points of the arc are the same, so kludge it.
+            x2 = x2 + 1;
+            y2 = y2 + 1;
+        } 
+        return "M" + x1 + "," + y1 + "A" + drx + "," + dry + " " + xRotation + "," + largeArc + "," + sweep + " " + x2 + "," + y2;
+    };
 
 </script>
 
