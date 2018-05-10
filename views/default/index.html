@@ -55,7 +55,7 @@
 			newUser: '{{=str(new_user).lower()}}' === 'true',
 			doneInspirationTutorial: '{{=str(new_user).lower()}}' === 'true' ? false : true,
 			currentPhase: 1, // Keeps track of the current ideation phase
-			aloneIdeationTime: 0.05, // Duration of time, in minutes, before other views are opened
+			aloneIdeationTime: 10, // Duration of time, in minutes, before other views are opened
 			checkUpdateFrequency: 10000 // How often should the system check for new ideas
 		},
 		EVENTS = {
@@ -413,7 +413,10 @@
 
 	<script id="tagPickerTemplate" type="text/x-tmpl-mustache">
 		<div class="panel">
-			<p>Pick <strong>at most 2 tags</strong> that best summarize your idea</p>
+			<p>
+				Pick <strong>at most 2 tags</strong> that best summarize your idea.<br/>
+				A tag is usually one word that can be used to categorize your idea.
+			</p>
 			<div class="tagPicker">
 				<input type="text" class="search" placeholder="Filter tags" disabled/>
 				<ul class="tags loading">
