@@ -2,16 +2,21 @@ import json
 import datetime
 from collections import defaultdict
 from gluon.debug import dbg
+import user_models
 
 '''
 Controller for functions related to the tasks view
 '''
+
+NUM_TASKS = 3
+
 
 def get_available_tasks():
     user_id = session.user_id
     tasks = __get_tasks(user_id)
     # set headers
     response.headers['Content-Type']='application/json'
+    # return json.dumps(tasks)
     return tasks.as_json()
 
 def submit_task():
@@ -40,35 +45,52 @@ def reset_tasks():
 # Private functions
 def __get_tasks(user_id):
     problem_id = session.problem_id
-    task_types = (
+    # Get tags
+    model = user_models.UserModel(user_id, problem_id)
+    inspiration_categories = model.get_inspiration_categories(NUM_TASKS)
+    print(inspiration_categories)
+    # These are the task types that will be retrieved
+    task_types = [
         # 'TagSuggestionTask',
         # 'TagValidationTask',
         'RatingTask'
-    )
+    ]
+    
+    # Build query
     completed_tasks = dict()
-    all_query = ((db.task.completed == False) & # Holds the query to retrieve all available tasks
-        (db.task.owner != user_id) & 
-        (db.task.idea == db.idea.id) &
-        (db.task.problem == problem_id))
+    # For each tasktype, retrieve the idea id for tasks already completed by the current user and build query to avoid them
     completed_query = None # Holds the query to avoid all repeated tasks
-    # retrieve tasks already completed and build query to avoid them
     retrieve_tasks = lambda task_type: [row.idea for row in db((db.task.completed_by == user_id) & (db.task.task_type == task_type) & (db.task.problem == problem_id)).select(db.task.idea)]
     for t in task_types:
         completed_tasks[t] = retrieve_tasks(t) # retrieve completed tasks for type t
         query = ((db.task.task_type == t) & ~db.task.idea.belongs(completed_tasks[t])) # build query to ignore completed tasks
-        completed_query = (completed_query) | query if completed_query != None else completed_query # append to completed query
-    # Append completed query to all query
-    all_query = all_query & db.task.id
-    # retrieve all tasks
-    tasks =  db(all_query).select(groupby=db.task.idea, orderby='<random>')[0:3]   
-    # Add favorite field to return structure
+        completed_query = (completed_query) | query if completed_query != None else query # append to completed query
+    
+    # all_query holds the query to retrieve all non-completed tasks that do not belong to the current user
+    all_query = ((db.task.completed == False) & 
+        (db.task.owner != user_id) & 
+        (db.task.idea == db.idea.id) &
+        (db.task.problem == problem_id) &
+        ((db.task.idea == db.tag_idea.idea) &
+        (db.tag_idea.tag == db.tag.id)))
+    # Retrieve all tasks except: owned by user, completed by user, type not in task_types
+    # This will have duplicates if an idea has more than one tag. One row for each tag.
+    # IMPORTANT: this will probably break when more task types are used. Maybe do one query per task_type.
+    tasks = db(all_query).select(groupby=db.tag_idea.id, having=completed_query, orderby='<random>')
+    
+    # Filter based on recommended categories
+    tasks.exclude(lambda row: row.tag.tag not in inspiration_categories)
+
+    # Add favorites
     favorites = __get_favorites(user_id)
     for t in tasks:
         if t.idea.id in favorites:
             t.idea.favorite = True
         else:
             t.idea.favorite = False
-    return tasks  #[dict(type="rating", task_id=r.idea_rating.id, idea=r.idea.idea, idea_id=r.idea.id) for r in rating_tasks_results]
+
+    # Filter to max number of tasks and return
+    return tasks[0:NUM_TASKS]
 
 # DEPRECATED
 def submit_rating_task():
