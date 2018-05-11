@@ -40,6 +40,8 @@ def get_solution_space():
                 if n > max_n:
                     max_n = n
     tags = tags[:SOLUTION_SPACE_MAX_TAGS]
+    # Sort tags based on sorter
+    
     base64_image = __generate_birdseye_solutionspace(tags, connections, max_n=max_n)
     return json.dumps(dict(tags=tags, connections=connections, max_n=max_n, overview=base64_image))
 

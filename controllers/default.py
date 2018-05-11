@@ -342,39 +342,6 @@ def __update_reverse_index():
     return json.dumps(keywords)
 
 def __update_user_model(user_id, problem_id, tags):
-    user_model = db((db.user_model.user == user_id) & (db.user_model.problem == problem_id)).select().first()
+    model = user_models.UserModel(user_id, problem_id)
     current_cat = '|'.join(tags)
-    print(current_cat)
-    # Check if model exists in order to update it
-    if user_model:
-        # Model exists. Update.
-        # Parse models
-        transition_graph = user_models.TransitionGraph(user_model.last_cat, user_model.transition_graph)
-        category_matrix = user_models.CategoryMatrix(user_model.category_matrix)
-        # Update models
-        transition_graph.update(current_cat)
-        category_matrix.update(current_cat)
-        # Update in DB
-        user_model.count_pair += 1
-        if user_model.last_cat != current_cat:
-            user_model.count_transition_pairs +=1
-            user_model.last_cat = current_cat
-        user_model.transition_graph = str(transition_graph)
-        user_model.category_matrix = str(category_matrix)
-        user_model.update_record()
-    else:
-        # Create empty models
-        transition_graph = user_models.TransitionGraph(last_category=None)
-        category_matrix = user_models.CategoryMatrix()
-        # Update models
-        transition_graph.update(current_cat)
-        category_matrix.update(current_cat)
-        # Create models
-        db.user_model.insert(
-            user=user_id,
-            problem=problem_id,
-            last_cat=current_cat,
-            count_pair=0,
-            count_transition_pairs=0,
-            transition_graph=str(transition_graph),
-            category_matrix=str(category_matrix))
+    model.update(current_cat)

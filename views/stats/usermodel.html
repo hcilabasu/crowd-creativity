@@ -46,6 +46,19 @@
     </div>    
 
     <div>
+        <h2>Inferences</h2>
+
+        <ul>
+            <li>
+                <strong>Next inspiration categories: </strong> {{=str(model.get_inspiration_categories(3))}} (i.e. this is probabilistic, so it may change)
+            </li>
+            <li>
+                <strong>Views ordering: </strong>
+            </li>
+        </ul>
+    </div>
+
+    <div>
         <h2>Category matrix</h2>
 
         <table id="category-matrix">
@@ -70,7 +83,7 @@
 <script>
     var MODELS = {};
     MODELS.categoryMatrix = JSON.parse('{{=XML(model.category_matrix)}}');
-    MODELS.transitionGraph = JSON.parse('{{=XML(transition_graph)}}');
+    MODELS.transitionGraph = JSON.parse('{{=XML(model.transition_graph.format_graph())}}');
 
     // Update category matrix
     var matrixHeader = $('#category-matrix thead tr');
@@ -82,7 +95,8 @@
 </script>
 
 <script type="text/javascript">
-
+    // Could try this kind of layout later: http://bl.ocks.org/fancellu/2c782394602a93921faff74e594d1bb1
+    
     var w = $('#graph-canvas').width();
     var h = $('#graph-canvas').height();
     var linkDistance=200;
