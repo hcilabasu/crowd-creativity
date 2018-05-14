@@ -56,7 +56,7 @@
                 <strong>Next inspiration categories: </strong> {{=', '.join(model.get_inspiration_categories(3))}} (i.e. this is probabilistic, so it may change)
             </li>
             <li>
-                <strong>Views ordering: </strong>
+                <strong>Views ordering: </strong>{{=', '.join(model.get_ordered_tags())}}
             </li>
         </ul>
     </div>

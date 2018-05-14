@@ -16,35 +16,10 @@ BIRDSEYE_SIZE = 100 # size of the solution space birdseye view
 def get_solution_space():
     user_id = session.user_id
     problem_id = session.problem_id
-    tags = db((db.tag.id > 0) & (db.tag.replacedBy == None) & (db.tag.problem == problem_id)).select(orderby='<random>').as_list()
-    tags = [t['tag'] for t in tags]
+    user_model = user_models.UserModel(user_id, problem_id)
     
-    # ADAPTATION START
-    # Customize tags order through the user model
-    ordered_tags = []
-    model = user_models.UserModel(user_id, problem_id)
-    # 1: current category
-    for c in model.last_cat:
-        ordered_tags.append(c)
-        tags.remove(c)
-    # 2: adjacent categories
-    adjacent = model.transition_graph.get_adjacent(model.last_cat)
-    for t in adjacent:
-        if t not in ordered_tags: # if there's a self loop and t is the current category, it shouldn't be added
-            ordered_tags.append(t)
-            tags.remove(t)
-    # 3: inferred new categories (collab. filtering)
-    # TODO
-    # 4: other visited categories (ordered by quantity)
-    frequent = model.category_matrix.get_most_frequent()
-    for f in frequent:
-        if f not in ordered_tags:
-            ordered_tags.append(f)
-            tags.remove(f)
-    # Merge lists
-    ordered_tags.extend(tags)
-    tags = ordered_tags
-    # ADAPTATION END
+    # Get tags ordered by the user model
+    tags = user_model.get_ordered_tags()
 
     # get ideas with respective tags
     ideas = db((db.idea.id == db.tag_idea.idea) & 

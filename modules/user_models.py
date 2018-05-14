@@ -57,6 +57,7 @@ class UserModel(object):
             db(query).update(**vars(self))
 
     def get_inspiration_categories(self, n):
+        ''' Returns a list of categories to be used for the inspiration '''
         categories = []
         next_categories = self.transition_graph.get_next_categories(n)
         for i in range(n):
@@ -67,6 +68,40 @@ class UserModel(object):
             else:
                 categories.append(next_categories.pop(0))
         return categories
+    
+    def get_ordered_tags(self):
+        ''' Returns a list of all the tags in the current problem, ordered by usefulness to current user '''
+        user_id = self.user
+        problem_id = self.problem
+        db = current.db
+        ordered_tags = []
+        # Get all tags
+        tags = db((db.tag.id > 0) & (db.tag.replacedBy == None) & (db.tag.problem == problem_id)).select(orderby='<random>').as_list()
+        tags = [t['tag'] for t in tags]
+        # Start sequence:
+        # 1: current category
+        for c in self.last_cat:
+            ordered_tags.append(c)
+            tags.remove(c)
+        # 2: adjacent categories
+        adjacent = self.transition_graph.get_adjacent(self.last_cat)
+        for t in adjacent:
+            if t not in ordered_tags: # if there's a self loop and t is the current category, it shouldn't be added
+                ordered_tags.append(t)
+                tags.remove(t)
+        # 3: inferred new categories (collab. filtering)
+        # TODO
+        # 4: other visited categories (ordered by quantity)
+        frequent = self.category_matrix.get_most_frequent()
+        for f in frequent:
+            if f not in ordered_tags:
+                ordered_tags.append(f)
+                tags.remove(f)
+        # Merge lists
+        ordered_tags.extend(tags)
+        tags = ordered_tags
+        return tags
+
 
 class ModelRepresentation(object):
     ''' This is the super class for the matrix and graph representations '''
