@@ -1,6 +1,7 @@
 import json
 import random
 import heapq
+from collections import Counter
 from operator import itemgetter
 from gluon import current
 
@@ -35,15 +36,18 @@ class UserModel(object):
         self.transition_graph.user_model = self
         self.category_matrix.user_model = self
 
-    def update(self, new_category):
+    def update(self, new_categories):
+        ''' new_categories is an array. It's length can be 1 or 2'''
         db = current.db
         # Update entire model
         self.count_pair += 1
-        if self.last_cat != new_category:
+        # Update matrix and graph
+        self.transition_graph.update(new_categories)
+        self.category_matrix.update(new_categories)
+        # Check if there was a transition
+        if Counter(self.last_cat) != Counter(new_categories):
             self.count_transition_pairs += 1
-        self.last_cat = new_category
-        self.transition_graph.update(new_category)
-        self.category_matrix.update(new_category)
+        self.last_cat = new_categories
         query = ((db.user_model.user == self.user) & (db.user_model.problem == self.problem))
         if db(query).isempty():
             # Create new model
@@ -58,7 +62,8 @@ class UserModel(object):
         for i in range(n):
             if random.random() > self.category_switch_ratio: 
                 # stay in the same category
-                categories.append(self.last_cat)
+                # if len(self.last_cat) > 1, we randomly choose from the current categories
+                categories.append(random.choice(self.last_cat)) 
             else:
                 categories.append(next_categories.pop(0))
         return categories
@@ -72,7 +77,7 @@ class ModelRepresentation(object):
         json_model = json.loads(model_string)
         return json_model
 
-    def update(self, category):
+    def update(self, categories):
         raise NotImplementedError
 
     def __str__(self):
@@ -93,46 +98,49 @@ class TransitionGraph(ModelRepresentation):
         ...
     ]
     '''
-    def __init__(self, last_category=None, model_string='[]'):
-        self.last_category = last_category
+    def __init__(self, last_cat=None, model_string='[]'):
+        self.last_cat = last_cat
         super(TransitionGraph, self).__init__(model_string)
 
-    def update(self, category):
-        # transition graph update logic
-        from_node = None
-        to_node = None
+    def update(self, new_categories):
+        ''' transition graph update logic '''
+        from_nodes = []
+        to_nodes = []
+        last_cat = self.user_model.last_cat if self.user_model.last_cat != None else [] # Get last category from user model
+        categories = list(new_categories) # Duplicate list to avoid changing the original one
+        # The purpose for this first loop is to get pointers to the nodes that need to be updated
+        # Since ideas can have multiple tags, we need to treat from and to nodes as lists
         for node in self.model:
-            # Look for the last category node. This node must exist in correct models.
-            if node['tag'] == self.last_category:
-                from_node = node
-            if node['tag'] == category:
-                to_node = node
-            # End search if both have been found
-            if from_node and to_node:
-                break
-        # create nodes if they don't exist
-        if not from_node:
-            # If this is the first node, the from_node will use the new category, as there is no last_category
-            from_node_category = self.last_category if self.last_category else category
-            from_node = dict(tag=from_node_category,edges=[])
-            self.model.append(from_node)
-        if (not to_node) and (self.last_category): # if there is no last_category, there is no need for to_node
-            to_node = dict(tag=category,edges=[])
-            self.model.append(to_node)
-        # update edges on from_node
-        if self.last_category: # only add edge if this is not the first run (i.e. there is no last_category)
-            edge = None
-            # Look for edge to update
-            for from_node_edge in from_node['edges']:
-                if from_node_edge['tag'] == category:
-                    # Found edge. Retrieve it.
-                    edge = from_node_edge
-            if not edge:
-                # Edge doesn't exist. Create and add it
-                edge = dict(tag=category, count=0)
-                from_node['edges'].append(edge)
-            # Update count
-            edge['count'] += 1
+            if node['tag'] in last_cat: # Find nodes the user is transitioning FROM
+                from_nodes.append(node) # At the end of the loop, len(from_nodes) should be equal to len(last_cat)
+            if node['tag'] in categories: # Find nodes the user is transitioning TO
+                to_nodes.append(node)
+                categories.remove(node['tag']) # Remove from categories to find out which ones need to be created
+            # If there are no more nodes in last_cat or categories, quit search.
+            if len(last_cat) == 0 and len(categories) == 0: break
+
+        # Create TO nodes that don't exist yet
+        for c in categories:
+            node = dict(tag=c,edges=[])
+            to_nodes.append(node) # Keep a reference
+            self.model.append(node) # Add to model
+
+        # Update edges on FROM nodes
+        for f_node in from_nodes:
+            for t_node in to_nodes:
+                found_edge = None
+                # Look for an existing edge between f_node and t_node
+                for edge in f_node['edges']:
+                    if edge['tag'] == t_node['tag']:
+                        # Found edge. Retrieve it.
+                        found_edge = edge
+                # Check if edge exists. If it doesn't, create it. Then increment count.
+                if not found_edge:
+                    # Edge doesn't exist. Create and add it
+                    found_edge = dict(tag=t_node['tag'], count=0)
+                    f_node['edges'].append(found_edge)
+                # Update count
+                found_edge['count'] += 1
         return self
 
     def format_graph(self):
@@ -164,24 +172,24 @@ class TransitionGraph(ModelRepresentation):
             edge['target'] = nodes_index[edge['target']]
         return json.dumps(dict(nodes=nodes,edges=edges))
 
-    def get_adjacent(self, category):
+    def get_adjacent(self, categories):
         ''' Ordered by frequency '''
-        adjacent = []
-        sorted_edges = []
+        edges = []
         for node in self.model:
-            if node['tag'] == category:
-                # Found current node. Get adjacent
-                sorted_edges = sorted(node['edges'], key=itemgetter('count'), reverse=True)
+            if node['tag'] in categories:
+                # Found one of the current nodes. Get adjacent
+                edges.extend(node['edges'])
+        # sort list of edges by count
+        sorted_edges = sorted(edges, key=itemgetter('count'), reverse=True)
         adjacent = [e['tag'] for e in sorted_edges]
         return adjacent
 
     def get_next_categories(self, n):
-        categories = self.get_adjacent(self.last_category)[0:n]
+        categories = self.get_adjacent(self.last_cat)[0:n]
         if len(categories) < n:
             ''' There aren't enough adjacent. Use overall frequency '''
             frequent = self.user_model.category_matrix.get_most_frequent()[0:n-len(categories)]
             categories.extend(frequent)
-        # TODO return categories
         return categories
 
 class CategoryMatrix(ModelRepresentation):
@@ -195,12 +203,13 @@ class CategoryMatrix(ModelRepresentation):
     def __init__(self, model_string='{}'):
         super(CategoryMatrix, self).__init__(model_string)
 
-    def update(self, category):
+    def update(self, categories):
         # category matrix update logic
-        if category in self.model.keys():
-            self.model[category] += 1
-        else:
-            self.model[category] = 1
+        for category in categories:
+            if category in self.model.keys():
+                self.model[category] += 1
+            else:
+                self.model[category] = 1
         return self
     
     def get_most_frequent(self):

@@ -268,8 +268,8 @@ def reset_problem():
         # Keep track of the DB id for each testuser
         users[i] = user_id
     # insert ideas
-    for i, user_tags in enumerate(tag_sequences):
-        for tags in user_tags:
+    for i, user_tags in enumerate(tag_sequences): # Iterates over each row (user) in the test problem
+        for tags in user_tags: # Iterates over each tag list for a given user
             idea_id = db.idea.insert(
                 userId=users[i],
                 idea=str(tags),
@@ -343,5 +343,4 @@ def __update_reverse_index():
 
 def __update_user_model(user_id, problem_id, tags):
     model = user_models.UserModel(user_id, problem_id)
-    current_cat = '|'.join(tags)
-    model.update(current_cat)
+    model.update(tags)

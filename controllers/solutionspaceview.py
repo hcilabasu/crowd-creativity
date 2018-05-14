@@ -18,22 +18,20 @@ def get_solution_space():
     problem_id = session.problem_id
     tags = db((db.tag.id > 0) & (db.tag.replacedBy == None) & (db.tag.problem == problem_id)).select(orderby='<random>').as_list()
     tags = [t['tag'] for t in tags]
+    
+    # ADAPTATION START
     # Customize tags order through the user model
     ordered_tags = []
     model = user_models.UserModel(user_id, problem_id)
     # 1: current category
-    current_cat = model.last_cat
-    
-    print(current_cat)
-    print(tags)
-    ordered_tags.append(current_cat)
-    tags.remove(current_cat)
+    for c in model.last_cat:
+        ordered_tags.append(c)
+        tags.remove(c)
     # 2: adjacent categories
-    adjacent = model.transition_graph.get_adjacent(current_cat)
+    adjacent = model.transition_graph.get_adjacent(model.last_cat)
     for t in adjacent:
         if t not in ordered_tags: # if there's a self loop and t is the current category, it shouldn't be added
             ordered_tags.append(t)
-            print('Remove %s' % t)
             tags.remove(t)
     # 3: inferred new categories (collab. filtering)
     # TODO
@@ -46,6 +44,7 @@ def get_solution_space():
     # Merge lists
     ordered_tags.extend(tags)
     tags = ordered_tags
+    # ADAPTATION END
 
     # get ideas with respective tags
     ideas = db((db.idea.id == db.tag_idea.idea) & 
