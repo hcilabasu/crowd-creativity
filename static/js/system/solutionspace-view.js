@@ -78,8 +78,8 @@ class SolutionSpaceView extends View {
 				var d = structure.tags[i];
 				var cell = $('<div></div>').addClass('spCell');
 				var stats = $('<div></div>').addClass('spCell');
-				cell.append($('<span></span>').text(d.tag));
-				cell.addClass(ENV.classPrefix + d.tag);
+				cell.append($('<span></span>').text(d));
+				cell.addClass(ENV.classPrefix + d);
 				cell.addClass('headerCell');
 				$('#solutionSpaceHeader').append(cell);
 				$('#solutionSpaceLeftColumn').append(cell.clone());
@@ -90,11 +90,11 @@ class SolutionSpaceView extends View {
 				// innerContainer.append(newRow);
 				for(var j = i; j < structure.tags.length; j++){
 					var e = structure.tags[j];
-					var tags = [d.tag, e.tag].sort(); // Make it alphabetical
+					var tags = [d, e].sort(); // Make it alphabetical
 					var cellClass = 'spCell cl_' + (tags[0] === tags[1] ? tags [0] + ' single' : tags[0] + ' cl_' + tags[1]); // If this is the diagonal, add only one class.
 					var newCell = $('<div><span></span></div>').addClass(cellClass);
 					// paint cell
-					var key = (d.tag === e.tag ? d.tag : tags.join('|'));
+					var key = (d === e ? d : tags.join('|'));
 					var connection = structure.connections[key];
 					if(connection){
 						var tags = connection.tags.sort();
@@ -106,7 +106,7 @@ class SolutionSpaceView extends View {
 						// Add cell, clone, and add the new one
 						newCell.css('left', i * 40 + 'px');
 						newCell.css('top', j * 40 + 'px');
-						if(d.tag !== e.tag){ // Don't add clone if it's the diagonal
+						if(d !== e){ // Don't add clone if it's the diagonal
 							var newCellClone = newCell.clone();
 							newCellClone.css('left', j * 40 + 'px');
 							newCellClone.css('top', i * 40 + 'px');

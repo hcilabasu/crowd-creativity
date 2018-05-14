@@ -8,8 +8,8 @@ class UserModel(object):
     ''' This is the main user model class, housing all properties, including the graph and matrix '''
 
     def __init__(self, user_id, problem_id):
-        self.user_id = user_id
-        self.problem_id = problem_id
+        self.user = user_id
+        self.problem = problem_id
         self.exists = False # Flag whether this model already exists in DB or not
         # Retrieve user model from DB
         db = current.db
@@ -44,7 +44,13 @@ class UserModel(object):
         self.last_cat = new_category
         self.transition_graph.update(new_category)
         self.category_matrix.update(new_category)
-        db((db.user_model.user == self.user_id) & (db.user_model.problem == self.problem_id)).update(**vars(self))
+        query = ((db.user_model.user == self.user) & (db.user_model.problem == self.problem))
+        if db(query).isempty():
+            # Create new model
+            db.user_model.insert(**vars(self))
+        else:
+            # update model
+            db(query).update(**vars(self))
 
     def get_inspiration_categories(self, n):
         categories = []
@@ -161,6 +167,7 @@ class TransitionGraph(ModelRepresentation):
     def get_adjacent(self, category):
         ''' Ordered by frequency '''
         adjacent = []
+        sorted_edges = []
         for node in self.model:
             if node['tag'] == category:
                 # Found current node. Get adjacent

@@ -13,7 +13,8 @@ NUM_TASKS = 3
 
 def get_available_tasks():
     user_id = session.user_id
-    tasks = __get_tasks(user_id)
+    problem_id = session.problem_id
+    tasks = __get_tasks(user_id, problem_id)
     # set headers
     response.headers['Content-Type']='application/json'
     # encode json
@@ -44,8 +45,7 @@ def reset_tasks():
 
 
 # Private functions
-def __get_tasks(user_id):
-    problem_id = session.problem_id
+def __get_tasks(user_id, problem_id):
     # Get tags
     model = user_models.UserModel(user_id, problem_id)
     inspiration_categories = model.get_inspiration_categories(NUM_TASKS)
@@ -80,6 +80,7 @@ def __get_tasks(user_id):
     tasks = db(all_query).select(groupby=db.tag_idea.id, having=completed_query, orderby='<random>')
     
     # Filter based on recommended categories
+    # TODO just randomly select if this is not the explicit intervention condition or if there are no inspiraiton categories
     tasks.exclude(lambda row: row.tag.tag not in inspiration_categories)
     # At this point, all tasks belong to the inspiration categories, 
     # but we need to sample one from each of the categories.

@@ -42,6 +42,9 @@
                 
             </li>
             <li><strong>Current category</strong> {{=model.last_cat}} </li>
+            <li>
+                <strong>Adjacent categories:</strong> {{=', '.join(model.transition_graph.get_adjacent(model.last_cat))}}
+            </li>
         </ul>
     </div>    
 
@@ -50,7 +53,7 @@
 
         <ul>
             <li>
-                <strong>Next inspiration categories: </strong> {{=str(model.get_inspiration_categories(3))}} (i.e. this is probabilistic, so it may change)
+                <strong>Next inspiration categories: </strong> {{=', '.join(model.get_inspiration_categories(3))}} (i.e. this is probabilistic, so it may change)
             </li>
             <li>
                 <strong>Views ordering: </strong>

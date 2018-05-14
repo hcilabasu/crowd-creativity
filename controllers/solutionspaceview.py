@@ -2,6 +2,7 @@ import json
 import itertools
 import base64
 import cStringIO
+import user_models
 from PIL import Image
 
 '''
@@ -13,8 +14,39 @@ SOLUTION_SPACE_MAX_TAGS = 200
 BIRDSEYE_SIZE = 100 # size of the solution space birdseye view
 
 def get_solution_space():
+    user_id = session.user_id
     problem_id = session.problem_id
-    tags = db((db.tag.id > 0) & (db.tag.replacedBy == None) & (db.tag.problem == problem_id)).select().as_list()
+    tags = db((db.tag.id > 0) & (db.tag.replacedBy == None) & (db.tag.problem == problem_id)).select(orderby='<random>').as_list()
+    tags = [t['tag'] for t in tags]
+    # Customize tags order through the user model
+    ordered_tags = []
+    model = user_models.UserModel(user_id, problem_id)
+    # 1: current category
+    current_cat = model.last_cat
+    
+    print(current_cat)
+    print(tags)
+    ordered_tags.append(current_cat)
+    tags.remove(current_cat)
+    # 2: adjacent categories
+    adjacent = model.transition_graph.get_adjacent(current_cat)
+    for t in adjacent:
+        if t not in ordered_tags: # if there's a self loop and t is the current category, it shouldn't be added
+            ordered_tags.append(t)
+            print('Remove %s' % t)
+            tags.remove(t)
+    # 3: inferred new categories (collab. filtering)
+    # TODO
+    # 4: other visited categories (ordered by quantity)
+    frequent = model.category_matrix.get_most_frequent()
+    for f in frequent:
+        if f not in ordered_tags:
+            ordered_tags.append(f)
+            tags.remove(f)
+    # Merge lists
+    ordered_tags.extend(tags)
+    tags = ordered_tags
+
     # get ideas with respective tags
     ideas = db((db.idea.id == db.tag_idea.idea) & 
         (db.tag.id == db.tag_idea.tag)
@@ -79,9 +111,9 @@ def __generate_birdseye_solutionspace(tags, connections, max_n):
     for i, ti in enumerate(tags):
         for j, tj in enumerate(tags):
             # Create key
-            key = ti['tag']
+            key = ti
             if ti != tj:
-                key_list = [ti['tag'], tj['tag']]
+                key_list = [ti, tj]
                 key_list.sort()
                 key = '|'.join(key_list)
             # Get connection object
