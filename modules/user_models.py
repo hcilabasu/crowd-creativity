@@ -59,14 +59,15 @@ class UserModel(object):
     def get_inspiration_categories(self, n):
         ''' Returns a list of categories to be used for the inspiration '''
         categories = []
-        next_categories = self.transition_graph.get_next_categories(n)
-        for i in range(n):
-            if random.random() > self.category_switch_ratio: 
-                # stay in the same category
-                # if len(self.last_cat) > 1, we randomly choose from the current categories
-                categories.append(random.choice(self.last_cat)) 
-            else:
-                categories.append(next_categories.pop(0))
+        if self.last_cat: # Check if the user has ideated before
+            next_categories = self.transition_graph.get_next_categories(n)
+            for i in range(n):
+                if random.random() > self.category_switch_ratio: 
+                    # stay in the same category
+                    # if len(self.last_cat) > 1, we randomly choose from the current categories
+                    categories.append(random.choice(self.last_cat)) 
+                else:
+                    categories.append(next_categories.pop(0))
         return categories
     
     def get_ordered_tags(self):

@@ -80,18 +80,19 @@ def __get_tasks(user_id, problem_id):
     # IMPORTANT: this will probably break when more task types are used. Maybe do one query per task_type.
     tasks = db(all_query).select(groupby=db.tag_idea.id, having=completed_query, orderby='<random>')
     
-    # Filter based on recommended categories
-    # TODO just randomly select if this is not the explicit intervention condition or if there are no inspiraiton categories
+    filtered_tasks = []
+    # Remove tasks based on recommended categories
     if len(inspiration_categories) > 0:
         tasks.exclude(lambda row: row.tag.tag not in inspiration_categories)
-    # At this point, all tasks belong to the inspiration categories, 
-    # but we need to sample one from each of the categories.
-    filtered_tasks = []
-    for t in tasks:
-        if t.tag.tag in inspiration_categories:
-            filtered_tasks.append(t)
-            inspiration_categories.remove(t.tag.tag)
-
+        # At this point, all tasks belong to the inspiration categories, 
+        # but we need to sample one from each of the categories.
+        for t in tasks:
+            if t.tag.tag in inspiration_categories:
+                filtered_tasks.append(t)
+                inspiration_categories.remove(t.tag.tag)
+    else:
+        # If there are no suggested inspiration categories, just get the first 3 tasks
+        filtered_tasks = tasks[0:NUM_TASKS]
     # Add favorites
     favorites = __get_favorites(user_id)
     for t in filtered_tasks:
