@@ -57,7 +57,7 @@ def get_idea_by_id():
     idea = db((db.idea.id == id) &
                 ((db.idea.id == db.tag_idea.idea) & 
                 (db.tag.id == db.tag_idea.tag))
-    ).select(orderby=~db.idea.id, groupby=db.idea.id).first()
+    ).select(orderby=db.idea.dateAdded, groupby=db.idea.id).first()
 
     clean_idea = dict(id=idea.idea.id, 
         idea=idea.idea.idea, 
