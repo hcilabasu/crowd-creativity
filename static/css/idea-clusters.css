@@ -218,7 +218,8 @@ a.logo:focus {
     opacity: 0;
     top: 95%;
     right: 0;
-    max-width: 300px;
+    max-width: 500px;
+    min-width: 150px;
     background: white;
     color: black;
     border-radius: 10px;
@@ -226,6 +227,14 @@ a.logo:focus {
     padding: 10px;
     box-shadow: 0 0 5px rgba(0,0,0,0.2);
     transition: display 0.2s, opacity 0.2s;
+}
+
+.navBlock.share .dropDown img {
+    height: 18px;
+    width: 18px;
+}
+.navBlock.share input[type=text] {
+    width: 300px;
 }
 
 .navbar-right .navBlock .dropDown {

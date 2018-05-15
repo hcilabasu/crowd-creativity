@@ -856,3 +856,9 @@ var tagExists = function(tag, callback){
 		}
 	})
 };
+
+// Right now this only works for the dropdown in the header
+var copyToClipboard = function(clicked){
+	$(clicked).closest('.dropDown').find('input').select();
+	document.execCommand('copy');
+}

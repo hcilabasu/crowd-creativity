@@ -472,7 +472,17 @@
 {{end}}
 
 {{block rightNavMenu}}
-	<div class="navBlock actionable phase1_bl">
+	<div class="share navBlock actionable phase1_bl">
+		<a onclick=""><img src="{{=URL('static','images/share-navbar.png')}}"></a>
+		<div class="dropDown">
+			<p>Link to this brainstorm: </p>
+			<input type="text" value="{{=URL(args=request.args, vars=request.get_vars, host=True)}}" readonly>
+			<p>
+				<a onclick="copyToClipboard(this);"><img src="{{=URL('static','images/copy.png')}}" alt="Copy to clipboard">Copy to clipboard</a>
+			</p>
+		</div>
+	</div>
+<div class="navBlock actionable phase1_bl">
 		<a onclick="openHelp()"><img src="{{=URL('static','images/help-navbar.png')}}"></a>
 	</div>
 	<div class="navBlock actionable">
