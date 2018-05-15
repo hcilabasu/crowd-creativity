@@ -49,6 +49,7 @@ def __get_tasks(user_id, problem_id):
     # Get tags
     model = user_models.UserModel(user_id, problem_id)
     inspiration_categories = model.get_inspiration_categories(NUM_TASKS)
+
     print(inspiration_categories)
     # These are the task types that will be retrieved
     task_types = [
@@ -81,7 +82,8 @@ def __get_tasks(user_id, problem_id):
     
     # Filter based on recommended categories
     # TODO just randomly select if this is not the explicit intervention condition or if there are no inspiraiton categories
-    tasks.exclude(lambda row: row.tag.tag not in inspiration_categories)
+    if len(inspiration_categories) > 0:
+        tasks.exclude(lambda row: row.tag.tag not in inspiration_categories)
     # At this point, all tasks belong to the inspiration categories, 
     # but we need to sample one from each of the categories.
     filtered_tasks = []
