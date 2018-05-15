@@ -24,7 +24,7 @@ def get_ideas():
         query = query & (db.idea.id.belongs(favorites))
     # Get user favorites
     # Get ideas
-    ideas = db(query).select(orderby=db.idea.id, groupby=db.idea.id)
+    ideas = db(query).select(orderby=db.idea.dateAdded, groupby=db.idea.id)
     clean_ideas = [
         dict(id=i.idea.id,
             userId=i.idea.userId, 
@@ -73,7 +73,7 @@ def get_all_ideas():
     ideas = db((db.idea.id == db.tag_idea.idea) & 
                (db.tag.id == db.tag_idea.tag) &
                (db.idea.problem == problem_id)
-    ).select(orderby=~db.idea.id, groupby=db.idea.id)
+    ).select(orderby=db.idea.dateAdded, groupby=db.idea.id)
     clean_ideas = [dict(
         id=i.idea.id, 
         idea=i.idea.idea, 

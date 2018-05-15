@@ -140,7 +140,7 @@ class IdeaViewerView extends View {
         // Remove invisible padding elements (fix for flex box last row)
         $(this.container + ' .invisibleIdeaBlock').remove();
         // Add element
-        $(this.container).append(ideaBlock);        
+        $(this.container).prepend(ideaBlock);        
         // Add new invisible padding elements
         var ideaBlockWidth = ideaBlock.outerWidth();
         var containerWidth = $(this.container).innerWidth();
