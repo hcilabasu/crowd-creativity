@@ -235,8 +235,8 @@
             dy = y2 - y1,
             dr = Math.sqrt(dx * dx + dy * dy),
             // Defaults for normal edge.
-            drx = dr,
-            dry = dr,
+            drx = 0, // set to dr to make an arc
+            dry = 0, // set to dr to make an arc
             xRotation = 0, // degrees
             largeArc = 0, // 1 or 0
             sweep = 1; // 1 or 0
