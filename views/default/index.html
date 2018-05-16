@@ -412,42 +412,41 @@
 	</script>
 
 	<script id="tagPickerTemplate" type="text/x-tmpl-mustache">
-		<div class="panel">
+		<div class="tagWrapper loading">
 			<p>
 				Pick <strong>at most 2 tags</strong> that best summarize your idea.<br/>
 				A tag is usually one word that can be used to categorize your idea.
 			</p>
-			<div class="tagPicker">
-				<input type="text" class="search" placeholder="Filter tags" disabled/>
-				<ul class="tags loading">
-					<!-- <li class="t_example">Example</li> -->
-					<li>
-						<div class="loadingBadge"></div>
-					</li>
-				</ul>
-				<div class="tagPlaceholder empty">
-					<span class="text"></span>
-					<span class="empty">tag 1</span> 
-					<span class="close">x</span>
+			<div class="panel">
+				<div class="tagPicker">
+					<input type="text" class="search" placeholder="Filter tags" disabled/>
+					<ul class="tags">
+						<!-- <li class="t_example">Example</li> -->
+						<li><div class="loadingBadge">Loading tags...</div></li>
+					</ul>
+					<div class="tagPlaceholder empty">
+						<span class="text"></span>
+						<span class="empty">tag 1</span> 
+						<span class="close">x</span>
+					</div>
+					<div class="tagPlaceholder empty">
+						<span class="text"></span>
+						<span class="empty">tag 2 (opt.)</span> 
+						<span class="close">x</span>
+					</div>
+					<input type="hidden" name="pickTags" value="" />
+					<a class="alternative">None of these tags represent your idea?</a>
 				</div>
-				<div class="tagPlaceholder empty">
-					<span class="text"></span>
-					<span class="empty">tag 2 (opt.)</span> 
-					<span class="close">x</span>
+			</div>
+			<div class="panel suggestTags" style="display: none">
+				<div>
+					<input type="text" placeholder="tag 1" name="suggestTags" maxlength="{{=validation['short_string_max']}}"/>
+					<input type="text" placeholder="tag 2 (opt.)" name="suggestTags" maxlength="{{=validation['short_string_max']}}"/>
 				</div>
-				<input type="hidden" name="pickTags" value="" />
-				<a class="alternative">None of these tags represent your idea?</a>
+				<a class="alternative"><strong>&lsaquo;</strong> Go back to tag picker</a>
 			</div>
+			<input type="hidden" name="customTag" value="false"/> <!-- This input reflects whether the user picked a tag or created a custom one -->
 		</div>
-		<div class="panel suggestTags" style="display: none">
-			<p>Suggest <strong>at most 2 tags</strong> that best summarize your idea</p>
-			<div>
-				<input type="text" placeholder="tag 1" name="suggestTags" maxlength="{{=validation['short_string_max']}}"/>
-				<input type="text" placeholder="tag 2 (opt.)" name="suggestTags" maxlength="{{=validation['short_string_max']}}"/>
-			</div>
-			<a class="alternative"><strong>&lsaquo;</strong> Go back to tag picker</a>
-		</div>
-		<input type="hidden" name="customTag" value="false"/> <!-- This input reflects whether the user picked a tag or created a custom one -->
 	</script>
 {{end}}
 

@@ -7,6 +7,13 @@ var setupTagPicker = function(container){
 		switchPanel(tagPicker);
 	});
 
+	// Prevent special characters on inputs
+	// From: https://stackoverflow.com/questions/2980038/allow-text-box-only-for-letters-using-jquery
+	$('input[type=text]',tagPicker).bind('keyup blur input',function(){ 
+		var node = $(this);
+		node.val(node.val().replace(/[^a-z]/g,'') ); }
+	);
+
 	// Setup filter
 	$('.search', tagPicker).on('keyup paste', function(e){
 		var text = $(this).val().toLowerCase();
@@ -62,41 +69,53 @@ var loadTags = function(tagsContainer){
 		url: URL.getAllTags,
 		success: function(data){
 			// Load tags
-			tagPicker.removeClass('loading');
+			$('.loading', tagsContainer).removeClass('loading');
 			tagPicker.empty();
-			data.forEach(function(d,i){
-				let li = $('<li></li>').addClass('t_' + d).text(d);
-				tagPicker.append(li);
-			});
-			// Add "create new" item
-			tagPicker.append($('<li></li>').addClass('createNew'));
-			// Setup click on tag
-			$('li',tagPicker).click(function(){
-				var tag = $(this).text();
-				var placeholder = $('.tagPlaceholder.empty:first', tagsContainer);
-				if(placeholder.length > 0){
-					// Check if a placeholder already holds this tag
-					var placeholders = $('.tagPlaceholder', tagsContainer);
-					for (let i = 0; i < placeholders.length; i++) {
-						const ph = placeholders[i];
-						if($('.text', ph).text() === tag){
-							return false;
+			if (data.length == 0){
+				// TODO This is a mess. Some functions use tagPicker to refer to the ul where you pick the tags,
+				// whereas others use it to refer to the overall tagPicker. The later should be the default. 
+				// switchPanel(tagsContainer);
+				// Add li saying that no tags exist
+				var noTagsLi = $('<li>No tags have been added yet. Add your own.</li>');
+				noTagsLi.css('text-transform','none');
+				noTagsLi.click(function(){switchPanel(tagsContainer);});
+				tagPicker.append(noTagsLi);
+			} else {
+				data.forEach(function(d,i){
+					let li = $('<li></li>').addClass('t_' + d).text(d);
+					tagPicker.append(li);
+				});
+				// Add "create new" item
+				tagPicker.append($('<li></li>').addClass('createNew'));
+				// Setup click on tag
+				$('li',tagPicker).click(function(){
+					var tag = $(this).text();
+					var placeholder = $('.tagPlaceholder.empty:first', tagsContainer);
+					if(placeholder.length > 0){
+						// Check if a placeholder already holds this tag
+						var placeholders = $('.tagPlaceholder', tagsContainer);
+						for (let i = 0; i < placeholders.length; i++) {
+							const ph = placeholders[i];
+							if($('.text', ph).text() === tag){
+								return false;
+							}
 						}
+						setTag(placeholder, tag);
 					}
-					setTag(placeholder, tag);
-				}
-			});
-			// Enable filter
-			$('.search', tagsContainer).prop('disabled', false);
+				});
+				// Enable filter
+				$('.search', tagsContainer).prop('disabled', false);
+			}
 		}
 	});
 }
 
 /*
 	If toTagPicker == true, this will switch to (or remain on) the tagPicker.
-	If undefined, it will just flip
+		If undefined, it will just flip
+	If instant == true, there will be no animation
 */
-var switchPanel = function(tagPicker, toTagPicker){
+var switchPanel = function(tagPicker, toTagPicker, instant){
 	var customTagInput = $('input[name=customTag]', tagPicker);
 	var isAtCustomTag = customTagInput.val() === 'true';
 	var changeNeeded = true;
@@ -104,7 +123,8 @@ var switchPanel = function(tagPicker, toTagPicker){
 		changeNeeded = toTagPicker && isAtCustomTag;
 	}
 	if(changeNeeded){
-		$('.panel', tagPicker).toggle('slow');
+		var speed = instant ? 0 : 'slow';
+		$('.panel', tagPicker).toggle(speed);
 		customTagInput.val(!isAtCustomTag);
 	}
 };
@@ -116,7 +136,7 @@ var teardownTagPicker = function(tagPicker, reloadList){
 		$('.search', tagPicker).prop('disabled', true);
 		tagsContainer.empty()
 		tagsContainer.html('<li><div class="loadingBadge"></div></li>');
-		tagsContainer.addClass('loading');
+		tagPicker.addClass('loading');
 	}
 	// Empty tag placeholders
 	var placeholders = $('.tagPlaceholder', tagPicker);

@@ -1418,6 +1418,17 @@ div.w2p_flash.alert {
 
 /* Tag picker */
 
+.tagWrapper.loading .tagPicker {
+    opacity: 0.3;
+}
+
+.tagWrapper.loading .loadingBadge {
+    width: 100%;
+    background-position: left;
+    line-height: 33px;
+    text-indent: 40px;
+}
+
 .tagPicker .search {
     margin-bottom: 0;
     border-bottom: none;
@@ -1434,8 +1445,8 @@ div.w2p_flash.alert {
     transition: height 0.5s;
 }
 
-.tagPicker .tags.loading {
-    height: 52px;
+.loading .tagPicker .tags {
+    height: 50px;
 }
 
     .tagPicker .tags > li {
@@ -1446,11 +1457,6 @@ div.w2p_flash.alert {
 
     .tagPicker .tags > li:hover {
         background-color: #DCF0FF;
-    }
-
-    .tagPicker .tags.loading > li {
-        cursor: auto !important;
-        background: white !important;
     }
 
 .tagPicker .tagPlaceholder {
