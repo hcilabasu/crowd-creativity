@@ -18,7 +18,7 @@ ul {
     display: inline-block;
 }
 
-    li {
+    ul.underlined li {
         border-bottom: dotted 1px white;
         width: auto;
     }
