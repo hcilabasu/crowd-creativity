@@ -237,6 +237,12 @@ class TransitionGraph(ModelRepresentation):
             ''' There aren't enough adjacent. Use overall frequency '''
             frequent = self.user_model.category_matrix.get_most_frequent()[0:n-len(categories)]
             categories.extend(frequent)
+        if len(categories) < n:
+            # Even adding the frequent categories wasn't enough. Repeat list until it's enough
+            i = 0
+            while len(categories) < n:
+                categories.append(categories[i])
+                i += 1
         return categories
 
 class CategoryMatrix(ModelRepresentation):
