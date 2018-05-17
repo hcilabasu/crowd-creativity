@@ -62,7 +62,8 @@ class UserModel(object):
     def __blacklist(self):
         ''' Returns a list of self variables that do not belong in the db '''
         return [
-            'exists'
+            'exists',
+            'category_switch_ratio'
         ]
 
     def get_inspiration_categories(self, n):
