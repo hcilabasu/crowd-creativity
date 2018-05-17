@@ -29,7 +29,7 @@
     <div>
         <h2>Basic stats</h2>
 
-        <ul>
+        <ul class="underlined">
             <li><strong>Number of ideas</strong> {{=model.count_pair + 1}} </li>
             <li>
                 <strong>Category switching ratio</strong> 
@@ -51,7 +51,7 @@
     <div>
         <h2>Inferences</h2>
 
-        <ul>
+        <ul class="underlined">
             <li>
                 <strong>Next inspiration categories: </strong> {{=', '.join(model.get_inspiration_categories(3))}} (i.e. this is probabilistic, so it may change)
             </li>

@@ -16,8 +16,13 @@
 
     {{include 'web2py_ajax.html'}}
     <script src="{{=URL('static','js/d3.min.js')}}"></script>
+    <script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
+    <script src="{{=URL('static','js/web2py-bootstrap3.js')}}"></script>
 </head>
 <body>
+    <div>
+        <a href="{{=URL('stats','regenerate_models')}}" class="btn">Regenerate models</a>
+    </div>
     <div>
     {{for p in problems:}}
         <h2>{{=p.title}}</h2>

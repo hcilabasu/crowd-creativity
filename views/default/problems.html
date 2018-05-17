@@ -21,25 +21,26 @@
     <div id="welcome">
         <h1 class="logo">Crowd<span>Muse</span></h1>
 
-        <h3>Create a new brainstorm session!</h3>
-        <form id="newSession" class="newSession" action="{{=URL('default','create_problem')}}">
-            <ul>
-                <li><label for="title">Title:</label> <input type="text" name="title" id="title" required maxlength="{{=validation['short_string_max']}}" placeholder="Write a short title for your session"> </li>
-                <li>
-                    <label for="description">Description</label>
-                    <textarea name="description" id="description" cols="30" rows="10" placeholder="Describe what people should generate ideas towards" required maxlength="{{=validation['text_max']}}"></textarea>
-                </li>
-                <li>
-                    <input type="checkbox" name="public" id="public"> <label for="public">Make this session public</label>
-                </li>
-            </ul>
+        <div class="sessionPanel">
+            <h3>Create a new brainstorm session!</h3>
+            <form id="newSession" class="newSession" action="{{=URL('default','create_problem')}}">
+                <ul>
+                    <li><label for="title">Title:</label> <input type="text" name="title" id="title" required maxlength="{{=validation['short_string_max']}}" placeholder="Write a short title for your session"> </li>
+                    <li>
+                        <label for="description">Description</label>
+                        <textarea name="description" id="description" cols="30" rows="10" placeholder="Describe what people should generate ideas towards" required maxlength="{{=validation['text_max']}}"></textarea>
+                    </li>
+                    <li>
+                        <input type="checkbox" name="public" id="public"> <label for="public">Make this session public</label>
+                        <a class="btn floatRight submit" onclick="createNewProblem();">Create session</a>
+                    </li>
+                </ul>
+            </form>
+            <p class="toggleSessionPanel"><a>View available public sessions</a></p>
+        </div>
         
-            <a class="btn floatRight submit" onclick="createNewProblem();">Create session</a>
-        </form>
-
-        <p id="publicSessionsToggle"><a onclick="showPublicSessions();">View available public sessions</a></p>
-        <div id="publicSessions" style="display: none">
-            <p>Available public brainstorming sessions:</p>
+        <div class="sessionPanel" style="display: none">
+            <h3>Listed brainstorming sessions:</h3>
             <ul class="clickable">
                 {{for p in problems:}}
                     <li>
@@ -47,6 +48,7 @@
                     </li>
                 {{pass}}
             </ul>
+            <p class="toggleSessionPanel"><a>Create a new session</a></p>
         </div>
     </div>
     
@@ -59,10 +61,12 @@
             }
         };
 
-        var showPublicSessions = function(){
-            $('#publicSessionsToggle').hide();
-            $('#publicSessions').fadeIn('slow');
-        }
+        var panels = $('.toggleSessionPanel a').click(function(){
+            var hidden = $('.sessionPanel:hidden');
+            $('.sessionPanel:visible').fadeOut('fast', function(){
+                hidden.fadeIn('fast');
+            });
+        });
     </script>
 </body>
 </html>
