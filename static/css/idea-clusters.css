@@ -1587,6 +1587,29 @@ body.welcome {
                 background: rgb(188, 227, 255);
             }
 
+.error-panel {
+    width: 500px !important;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -70%);
+
+}
+
+    .error-panel .logo {
+        font-size: 5em;
+        margin-bottom: 20px;
+    }
+
+    .error-panel a {
+        background: white;
+        border-radius: 10px;
+        display: inline-block;
+        padding: 0 10px;
+        text-decoration: none;
+    }
+
 .ratingWrapper {
     margin-bottom: 30px;
 }

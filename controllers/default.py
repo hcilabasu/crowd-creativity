@@ -53,6 +53,24 @@ def index():
             short_string_max = SHORT_STRING_MAX
         ))
 
+def error():
+    '''
+    Must update routes.py to redirect all pages here. e.g.:
+    routes_onerror = [
+        ('crowdmuse/*', '/error')
+    ]
+    '''
+    code = request.vars.code
+    request_url = request.vars.request_url
+    full_ticket = request.vars.ticket
+    short_ticket = full_ticket.split('.')[-1]
+    # Reporting error
+    if settings['is_development']:
+        link = URL('admin', 'ticket', full_ticket)
+    else:
+        link = 'mailto:vaugusto@asu.edu'
+    return dict(ticket=short_ticket, full_ticket=full_ticket, link=link, code=code)
+
 def problems():
     problems = db(db.problem.public == True).select()
     return dict(

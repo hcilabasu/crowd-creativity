@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Oops! - CrowdMuse</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Concert+One|Lato" rel="stylesheet">
+    <link rel="stylesheet" href="{{=URL('static','css/bootstrap.min.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/web2py-bootstrap3.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/idea-clusters.css')}}"/>
+    <link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
+
+    {{include 'web2py_ajax.html'}}
+</head>
+<body class="welcome">
+    <div class="error-panel">
+        {{if code == '404':}}
+            <h1 class="logo">Crowd<span>404</span></h1>
+            <h2>We couldn't find this page :/</h2>
+            {{else:}}
+            <h1 class="logo">Crowd<span>Booo!</span></h1>
+            <h2>Something went wrong :(</h2>
+            <p>
+                If you'd like to tell us about it, just send us the code below. If you can explain what you were doing when this happened, that would be very helpful!
+                {{=code}}
+            </p>
+            <h3>
+                Error code: <a href="{{=link}}" target="_blank">{{=ticket}}</a>
+            </h3>
+        {{pass}}
+    </div>
+</body>
+</html>
