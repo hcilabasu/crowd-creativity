@@ -49,12 +49,21 @@ class UserModel(object):
             self.count_transition_pairs += 1
         self.last_cat = new_categories
         query = ((db.user_model.user == self.user) & (db.user_model.problem == self.problem))
+        update_dict = vars(self)
+        for k in self.__blacklist():
+            update_dict.pop(k, None)
         if db(query).isempty():
             # Create new model
-            db.user_model.insert(**vars(self))
+            db.user_model.insert(**update_dict)
         else:
             # update model
-            db(query).update(**vars(self))
+            db(query).update(**update_dict)
+    
+    def __blacklist(self):
+        ''' Returns a list of self variables that do not belong in the db '''
+        return [
+            'exists'
+        ]
 
     def get_inspiration_categories(self, n):
         ''' Returns a list of categories to be used for the inspiration '''
