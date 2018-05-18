@@ -610,7 +610,7 @@ div.w2p_flash.alert {
     }
 
 #ideasContainer {
-    padding: 5px;
+    padding: 5px 15px 5px 0px;
     overflow: auto;
     display: flex;
     flex-wrap: wrap;

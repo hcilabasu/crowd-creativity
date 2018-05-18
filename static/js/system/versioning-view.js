@@ -6,7 +6,7 @@ class VersioningView extends View {
         // Set shared variables
         this.dimensions = {
             smallIdea: 15
-        };
+		};
     }
 
     /*
@@ -23,9 +23,13 @@ class VersioningView extends View {
             type: "GET",
             url: URL.getVersioningStructure,
             success: (data)=>{
-                this.buildVersioningPanel(data);
+				this.buildVersioningPanel(data);
+				// Setup scroll marker
+				$('.treeView', $(this.container)).scrollMarker().init({
+					width: '10px'
+				});
             }
-        });
+		});
         return this;
     }
 
@@ -47,6 +51,11 @@ class VersioningView extends View {
 		// 		}, ENV.scrollSpeed);
 		// 	}
 		// }, ENV.scrollDelay);
+		// Add markers
+        $('.treeView', $(this.container)).scrollMarker().addMarkers(ideas, {
+            markerColor: '#FFDE78',
+            fade: true
+        });
     }
 
     /*
@@ -58,6 +67,10 @@ class VersioningView extends View {
 		ideas.removeClass('hover');
 		// Clear timeout
 		clearTimeout(this.hoverTimeout);
+		// Clear markers
+        $('.treeView', $(this.container)).scrollMarker().clear({
+            fade: false
+        });
 	}
 	
 	/*
@@ -67,6 +80,11 @@ class VersioningView extends View {
 		var tags = e.params.tags; 
 		var ideas = $(tags.join(''), this.getParentContainer());
 		ideas.addClass('hover');
+		// Add markers
+        $('.treeView', $(this.container)).scrollMarker().addMarkers(ideas, {
+            markerColor: '#FFDE78',
+            fade: true
+        });
 	}
 
 	/*
@@ -75,6 +93,10 @@ class VersioningView extends View {
 	blurTagsHandler(e){
 		var ideas = $('.hover', this.getParentContainer());
 		ideas.removeClass('hover');
+		// Clear markers
+        $('.treeView', $(this.container)).scrollMarker().clear({
+            fade: false
+        });
 	}
 
 	/*

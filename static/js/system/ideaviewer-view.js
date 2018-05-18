@@ -16,20 +16,25 @@ class IdeaViewerView extends View {
         var source = e.params.source;
         // Highlight
         var ideaBlock = $(this.container + ' .id' + id);
-        if(ideaBlock.length > 0) {
-            ideaBlock.addClass('ideaHover');
-            // If hovering for over a given threshold of time, scroll down to the idea
-            // But first, checking if source is not the idea viewer itself
-            if(source && !(this instanceof source)){
-                this.hoverTimeout = window.setTimeout(()=>{ // Wait
-                    var container = $(this.container); 
-                    var scrollTo = ideaBlock.offset().top - container.offset().top + container.scrollTop();
-                    container.animate({
-                        scrollTop: scrollTo
-                    }, ENV.scrollSpeed);
-                }, ENV.scrollDelay);
-            }
-        }
+        ideaBlock.addClass('ideaHover');
+        // if(ideaBlock.length > 0) {
+        //     // If hovering for over a given threshold of time, scroll down to the idea
+        //     // But first, checking if source is not the idea viewer itself
+        //     if(source && !(this instanceof source)){
+        //         this.hoverTimeout = window.setTimeout(()=>{ // Wait
+        //             var container = $(this.container); 
+        //             var scrollTo = ideaBlock.offset().top - container.offset().top + container.scrollTop();
+        //             container.animate({
+        //                 scrollTop: scrollTo
+        //             }, ENV.scrollSpeed);
+        //         }, ENV.scrollDelay);
+        //     }
+        // }
+        // Add markers
+        $(this.container).scrollMarker().addMarkers(ideaBlock, {
+            markerColor: '#FFDE78',
+            fade: true
+        });
     }
 
     /*
@@ -37,10 +42,15 @@ class IdeaViewerView extends View {
     */
     blurIdeaHandler(e){
         var id = e.params.id;
+        var ideas = $(this.container + ' .id' + id);
         // Remove highlight
-        $(this.container + ' .id' + id).removeClass('ideaHover');
+        ideas.removeClass('ideaHover');
         // Cancel hover timer
         clearTimeout(this.hoverTimeout);
+        // Clear markers
+        $(this.container).scrollMarker().clear({
+            fade: false
+        });
     }
 
     /*
@@ -48,7 +58,13 @@ class IdeaViewerView extends View {
     */
     highlightTagsHandler(e){
         var tags = e.params.tags;
-        $(this.container + ' ' + tags.join('')).addClass('ideaHover');
+        var highlightIdeas = $(this.container + ' ' + tags.join(''));
+        highlightIdeas.addClass('ideaHover');
+        // Add markers
+        $(this.container).scrollMarker().addMarkers(highlightIdeas, {
+            markerColor: '#FFDE78',
+            fade: true
+        });
     }
 
     /*
@@ -56,11 +72,14 @@ class IdeaViewerView extends View {
     */
     blurTagsHandler(e){
         $(this.container + ' .ideaHover').removeClass('ideaHover');
+        // Clear markers
+        $(this.container).scrollMarker().clear({
+            fade: false
+        });
     }
 
     loadFavoriteIdeas(){
-        // Clear panel
-        $(this.container).empty();
+        this.resetView();
         // Load ideas
         this.getParentContainer().addClass('loading');
         $.ajax({
@@ -79,8 +98,7 @@ class IdeaViewerView extends View {
     }
 
     loadIdeasAddedBy(userId){
-        // Clear panel
-        $(this.container).empty();
+        this.resetView();
         // Load ideas
         this.getParentContainer().addClass('loading');
         var params = {};
@@ -177,4 +195,13 @@ class IdeaViewerView extends View {
             });
         }
     };
+
+    resetView() {
+        // Clear panel
+        $(this.container).empty();
+        // Add scrollmarker
+        $(this.container).scrollMarker().init({
+            width: '10px'
+        });
+    }
 }
