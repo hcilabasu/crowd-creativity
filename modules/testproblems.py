@@ -13,5 +13,6 @@ testproblem1 = [
     [['blue'],['green'],['green'],['green'],['red'],['purple'],['blue'],['purple'],['blue'],['blue']],
     [['blue'],['orange'],['purple'],['orange'],['orange'],['yellow'],['orange'],['purple'],['blue'],['yellow']],
     [['orange'],['orange'],['blue'],['purple'],['red'],['red'],['red'],['red'],['purple'],['blue']],
-    [['orange'],['blue'],['red'],['purple'],['blue'],['yellow'],['yellow'],['blue'],['purple'],['yellow']]
+    [['orange'],['blue'],['red'],['purple'],['blue'],['yellow'],['yellow'],['blue'],['purple'],['yellow']],
+    [['orange'],['blue'],['red'],['purple'],['blue']]
 ]

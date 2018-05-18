@@ -4,6 +4,7 @@ import heapq
 from collections import Counter
 from operator import itemgetter
 from gluon import current
+import numpy
 
 class UserModel(object):
     ''' This is the main user model class, housing all properties, including the graph and matrix '''
@@ -18,6 +19,7 @@ class UserModel(object):
         if db_user_model:
             self.exists = True
             # Create matrix and graph
+            # TODO make these two be lazy loaded
             self.transition_graph = TransitionGraph(db_user_model.last_cat, db_user_model.transition_graph)
             self.category_matrix = CategoryMatrix(db_user_model.category_matrix)
             # Create other properties
@@ -269,3 +271,15 @@ class CategoryMatrix(ModelRepresentation):
         most_frequent = sorted(self.model.items(), key=itemgetter(1), reverse=True)
         most_frequent = [t[0] for t in most_frequent]
         return most_frequent
+
+    def get_standardized_categories(self):
+        values = [self.model[k] for k in self.model.keys()]
+        avg = numpy.mean(values)
+        sdev = numpy.std(values)
+        std_cats = dict()
+        for k in self.model.keys():
+            std_cats[k] = (self.model[k] - avg) / sdev
+        return std_cats
+
+    def format_standardized_json(self):
+        return json.dumps(self.get_standardized_categories())

@@ -18,19 +18,39 @@ ul {
     display: inline-block;
 }
 
-    ul.underlined li {
+    ul.underlined > li {
         border-bottom: dotted 1px white;
         width: auto;
     }
 
-        li > strong {
+        ul > li > strong {
             display: inline-block;
             width: 200px;
         }
 
-        li > a {
-            color: white;
-        }
+li > a {
+    color: white;
+}
+
+li > ol {
+    display: inline-block;
+    margin-left: 0;
+    padding-left: 15px;
+    width: auto !important;
+}
+
+    li > ol > li {
+        width: 300px;
+    }
+
+.vertical-align {
+    display: table;
+}
+
+    .vertical-align > * {
+        vertical-align: top;
+        display: table-cell;
+    }
 
 table {
     border-radius: 10px;
@@ -47,6 +67,13 @@ table {
     table td {
         background: white;
         border: solid 1px white;
+    }
+    table td.empty {
+        background: transparent;
+        color: white;
+    }
+    table td.inferred {
+        background: rgb(249, 255, 220);
     }
 
 #graph-canvas {

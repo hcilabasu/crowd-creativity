@@ -1,35 +1,36 @@
 import user_models
+import collab_filter
 
 def index():
     problems = db(db.problem.id > 0).select()
     users_per_problem = dict()
     regenerated = True if request.vars.regenerated else False
     for p in problems:
-        users = db(
-            (db.idea.problem == p.id) & 
-            (db.idea.userId == db.user_info.id)
-        ).select(db.idea.userId, db.user_info.userId, distinct=True)
-        users_per_problem[p.id] = users
+        users_per_problem[p.id] = __get_users_in_problem(p.id)
     return dict(problems=problems, users_per_problem=users_per_problem, regenerated=regenerated)
 
 def usermodel():
     user_id = request.vars['user']
     problem_id = request.vars['problem']
-
     if not user_id or not problem_id:
         redirect(URL('stats', 'index'))
-    # retrieve items
+    # retrieve contextual info
     user = db(db.user_info.id == user_id).select().first()
     problem = db(db.problem.id == problem_id).select().first()
-
     if not user or not problem:
         redirect(URL('stats', 'index'))
-
+    # Retrieve user model
     user_model = user_models.UserModel(user.id, problem.id)
-    # user_model = db((db.user_model.user == user_id) & (db.user_model.problem == problem_id)).select().first()
-    # transition_graph = user_models.TransitionGraph(user_model.last_cat, user_model.transition_graph).format_graph()
-    # user_model.transition_graph = None # reducing amount of data that will be sent back
-    return dict(user=user, problem=problem, model=user_model)
+    
+    # Get all user models in problem_id
+    all_users = __get_users_in_problem(problem_id, [user_id])
+    models = []
+    for u in all_users:
+        models.append(user_models.UserModel(u.idea.userId, problem_id))
+    nearest_neighbors = collab_filter.find_n_nearest(user_model, models, 5)
+    print(nearest_neighbors)
+
+    return dict(user=user, problem=problem, model=user_model, nearest_neighbors=nearest_neighbors)
 
 def regenerate_models():
     # Delete all models
@@ -49,3 +50,14 @@ def regenerate_models():
         model.update(tags)
     # Send back to stats
     redirect(URL('stats','index'))
+
+'''
+Returns a list of all users who contributed in a problem.
+blacklist: list of ids of users to be excluded from this list
+'''
+def __get_users_in_problem(problem_id, blacklist=[]):
+    return db(
+        (db.idea.problem == problem_id) & 
+        (db.idea.userId == db.user_info.id) &
+        (~db.idea.userId.belongs(blacklist))
+    ).select(db.idea.userId, db.user_info.userId, distinct=True)

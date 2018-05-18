@@ -20,8 +20,9 @@
 <body>
     <div>
         <h2>User and problem info</h2>
-        <ul>
+        <ul class="underlined">
             <li><strong>User</strong> {{=user.userId}}</li>
+            <li><strong>ID</strong> {{=user.id}}</li>
             <li><strong>Problem</strong> "{{=problem.title}}"</li>
         </ul>
     </div>
@@ -58,6 +59,16 @@
             <li>
                 <strong>Views ordering: </strong>{{=', '.join(model.get_ordered_tags())}}
             </li>
+            <li class="vertical-align">
+                <strong>Nearest neighbors (similarity): </strong>
+                <ol>
+                    {{for n in nearest_neighbors:}}
+                    <li>
+                        <a href="{{=URL('stats','usermodel?problem=%d&user=%d' % (problem.id, n[0].user))}}">{{='%d (%f)' % (n[0].user, n[1])}}</a>
+                    </li>
+                    {{pass}}
+                </ol>
+            </li>
         </ul>
     </div>
 
@@ -67,14 +78,37 @@
         <table id="category-matrix">
             <thead>
                 <tr>
+                    <!-- <td class="inferred">inferred1</td>
+                    <td class="empty">empty1</td> -->
                 </tr>
             </thead>
             <tbody>
                 <tr>
+                    <!-- <td class="inferred">3.2</td>
+                    <td class="empty">0</td> -->
                 </tr>
             </tbody>
         </table>
     </div>
+
+    <div>
+            <h2>Standardized matrix</h2>
+    
+            <table id="standardized-matrix">
+                <thead>
+                    <tr>
+                        <!-- <td class="inferred">inferred1</td>
+                        <td class="empty">empty1</td> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <!-- <td class="inferred">3.2</td>
+                        <td class="empty">0</td> -->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
     <div>
         <h2>Transition graph</h2>
@@ -86,15 +120,22 @@
 <script>
     var MODELS = {};
     MODELS.categoryMatrix = JSON.parse('{{=XML(model.category_matrix)}}');
+    MODELS.standardizedMatrix = JSON.parse('{{=XML(model.category_matrix.format_standardized_json())}}');
     MODELS.transitionGraph = JSON.parse('{{=XML(model.transition_graph.format_graph())}}');
 
     // Update category matrix
-    var matrixHeader = $('#category-matrix thead tr');
-    var matrixBody = $('#category-matrix tbody tr');
-    for(var tag in MODELS.categoryMatrix){
-        matrixHeader.append($('<th>'+tag+'</th>'));
-        matrixBody.append($('<td>'+MODELS.categoryMatrix[tag]+'</td>'));
+    var buildMatrix = function(matrix_selector, model){
+        var matrixHeader = $(matrix_selector + ' thead tr');
+        var matrixBody = $(matrix_selector + ' tbody tr');
+        for(var tag in model){
+            matrixHeader.append($('<th>'+tag+'</th>'));
+            var decimalPlaces = Number.isInteger(model[tag]) ? 0 : 2;
+            matrixBody.append($('<td>'+model[tag].toFixed(decimalPlaces)+'</td>'));
+        }
     }
+    // Build matrices
+    buildMatrix('#category-matrix', MODELS.categoryMatrix);
+    buildMatrix('#standardized-matrix', MODELS.standardizedMatrix);
 </script>
 
 <script type="text/javascript">
