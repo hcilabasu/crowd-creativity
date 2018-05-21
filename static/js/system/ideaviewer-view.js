@@ -17,19 +17,6 @@ class IdeaViewerView extends View {
         // Highlight
         var ideaBlock = $(this.container + ' .id' + id);
         ideaBlock.addClass('ideaHover');
-        // if(ideaBlock.length > 0) {
-        //     // If hovering for over a given threshold of time, scroll down to the idea
-        //     // But first, checking if source is not the idea viewer itself
-        //     if(source && !(this instanceof source)){
-        //         this.hoverTimeout = window.setTimeout(()=>{ // Wait
-        //             var container = $(this.container); 
-        //             var scrollTo = ideaBlock.offset().top - container.offset().top + container.scrollTop();
-        //             container.animate({
-        //                 scrollTop: scrollTo
-        //             }, ENV.scrollSpeed);
-        //         }, ENV.scrollDelay);
-        //     }
-        // }
         // Add markers
         $(this.container).scrollMarker().addMarkers(ideaBlock, {
             markerColor: '#FFDE78',

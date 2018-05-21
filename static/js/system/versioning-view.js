@@ -7,6 +7,8 @@ class VersioningView extends View {
         this.dimensions = {
             smallIdea: 15
 		};
+		// Create markers queue
+		this.markersQueue = [];
     }
 
     /*
@@ -40,22 +42,8 @@ class VersioningView extends View {
 		var id = e.params.id; 
 		var ideas = $('.' + ENV.idPrefix + id, this.getParentContainer());
 		ideas.addClass('hover');
-		// If hovering for over a given threshold of time, scroll down to the idea
-		// this.hoverTimeout = window.setTimeout(()=>{ // Wait
-		// 	var container = $(this.container); // This is the scroll container element
-		// 	if(idea.nodes().length > 0){
-		// 		var taskBlock = $(idea.nodes()[0]); // This is the task block that will be scrolled to
-		// 		var scrollTo = taskBlock.offset().top - container.offset().top + container.scrollTop();
-		// 		container.animate({
-		// 			scrollTop: scrollTo - 30 // padding
-		// 		}, ENV.scrollSpeed);
-		// 	}
-		// }, ENV.scrollDelay);
 		// Add markers
-        $('.treeView', $(this.container)).scrollMarker().addMarkers(ideas, {
-            markerColor: '#FFDE78',
-            fade: true
-        });
+        this.addMarkers(ideas);
     }
 
     /*
@@ -65,12 +53,8 @@ class VersioningView extends View {
         var id = e.params.id;
         var ideas = $('.' + ENV.idPrefix + id, this.getParentContainer());
 		ideas.removeClass('hover');
-		// Clear timeout
-		clearTimeout(this.hoverTimeout);
 		// Clear markers
-        $('.treeView', $(this.container)).scrollMarker().clear({
-            fade: false
-        });
+        this.clearMarkers(this.markersQueue.shift());
 	}
 	
 	/*
@@ -81,10 +65,7 @@ class VersioningView extends View {
 		var ideas = $(tags.join(''), this.getParentContainer());
 		ideas.addClass('hover');
 		// Add markers
-        $('.treeView', $(this.container)).scrollMarker().addMarkers(ideas, {
-            markerColor: '#FFDE78',
-            fade: true
-        });
+        this.addMarkers(ideas);
 	}
 
 	/*
@@ -94,9 +75,28 @@ class VersioningView extends View {
 		var ideas = $('.hover', this.getParentContainer());
 		ideas.removeClass('hover');
 		// Clear markers
-        $('.treeView', $(this.container)).scrollMarker().clear({
-            fade: false
-        });
+		this.clearMarkers(this.markersQueue.shift());
+	}
+
+	addMarkers(elements){
+		var markers = $('.treeView', $(this.container)).scrollMarker().addMarkers(elements, {
+            markerColor: '#FFDE78',
+			fade: true
+		});
+		// Add to queue
+		this.markersQueue.push(markers);
+	}
+
+	/*
+	Clears the scroll markers
+	*/
+	clearMarkers(markers){
+		window.setTimeout(()=>{
+			$('.treeView', $(this.container)).scrollMarker().clear({
+				fade: false,
+				markers: markers
+			});
+		},0); // TODO increase timer to enable delayed fade
 	}
 
 	/*
