@@ -18,60 +18,67 @@
     <script src="{{=URL('static','js/d3.min.js')}}"></script>
 </head>
 <body>
-    <div>
-        <h2>User and problem info</h2>
-        <ul class="underlined">
-            <li><strong>User</strong> {{=user.userId}}</li>
-            <li><strong>ID</strong> {{=user.id}}</li>
-            <li><strong>Problem</strong> "{{=problem.title}}"</li>
-        </ul>
+    <div id="container">
+        <div>
+            <h2>User and problem info</h2>
+            <ul class="underlined">
+                <li><strong>User</strong> {{=user.userId}}</li>
+                <li><strong>ID</strong> {{=user.id}}</li>
+                <li><strong>Problem</strong> "{{=problem.title}}"</li>
+            </ul>
+            <h2>Basic stats</h2>
+
+            <ul class="underlined">
+                <li><strong>Number of ideas</strong> {{=model.count_pair + 1}} </li>
+                <li>
+                    <strong>Category switching ratio</strong> 
+                    {{if model.count_pair > 0:}} 
+                        {{='{0:.2f}'.format(model.count_transition_pairs / float(model.count_pair))}} 
+                        (i.e. probability of switching to a new category)
+                    {{else:}}
+                        (there isn't enough information)
+                    {{pass}} 
+                </li>
+                <li><strong>Current category</strong> {{=model.last_cat}} </li>
+                <li>
+                    <strong>Adjacent categories:</strong> {{=', '.join(model.transition_graph.get_adjacent(model.last_cat))}}
+                </li>
+            </ul>
+        </div>    
+
+        <div>
+            <h2>Inferences</h2>
+
+            <ul class="underlined">
+                <li>
+                    <strong>Next inspiration categories: </strong>{{=', '.join(model.get_inspiration_categories(3))}} (i.e. this is probabilistic, so it may change on refresh)
+                </li>
+                <li>
+                    <strong>Views ordering: </strong>{{=', '.join(model.get_ordered_tags())}}
+                </li>
+                <!-- <li class="vertical-align">
+                    <strong>Inferred categories:</strong>
+                    <ol>
+                        {{for i in inferred:}}
+                        <li>
+                            {{='%s (%f) ' % (i[0], i[1])}}
+                        </li>
+                        {{pass}}
+                    </ol>
+                </li> -->
+                <li class="vertical-align">
+                    <strong>Nearest neighbors (distance): </strong>
+                    <ol>
+                        {{for n in nearest_neighbors:}}
+                        <li>
+                            <a href="{{=URL('stats','usermodel?problem=%d&user=%d' % (problem.id, n[0].user))}}">{{='%d (%f)' % (n[0].user, n[1])}}</a>
+                        </li>
+                        {{pass}}
+                    </ol>
+                </li>
+            </ul>
+        </div>
     </div>
-
-    <div>
-        <h2>Basic stats</h2>
-
-        <ul class="underlined">
-            <li><strong>Number of ideas</strong> {{=model.count_pair + 1}} </li>
-            <li>
-                <strong>Category switching ratio</strong> 
-                {{if model.count_pair > 0:}} 
-                    {{='{0:.2f}'.format(model.count_transition_pairs / float(model.count_pair))}} 
-                    (i.e. probability of switching to a new category)
-                {{else:}}
-                    (there isn't enough information)
-                {{pass}} 
-                
-            </li>
-            <li><strong>Current category</strong> {{=model.last_cat}} </li>
-            <li>
-                <strong>Adjacent categories:</strong> {{=', '.join(model.transition_graph.get_adjacent(model.last_cat))}}
-            </li>
-        </ul>
-    </div>    
-
-    <div>
-        <h2>Inferences</h2>
-
-        <ul class="underlined">
-            <li>
-                <strong>Next inspiration categories: </strong> {{=', '.join(model.get_inspiration_categories(3))}} (i.e. this is probabilistic, so it may change)
-            </li>
-            <li>
-                <strong>Views ordering: </strong>{{=', '.join(model.get_ordered_tags())}}
-            </li>
-            <li class="vertical-align">
-                <strong>Nearest neighbors (similarity): </strong>
-                <ol>
-                    {{for n in nearest_neighbors:}}
-                    <li>
-                        <a href="{{=URL('stats','usermodel?problem=%d&user=%d' % (problem.id, n[0].user))}}">{{='%d (%f)' % (n[0].user, n[1])}}</a>
-                    </li>
-                    {{pass}}
-                </ol>
-            </li>
-        </ul>
-    </div>
-
     <div>
         <h2>Category matrix</h2>
 
@@ -122,6 +129,7 @@
     MODELS.categoryMatrix = JSON.parse('{{=XML(model.category_matrix)}}');
     MODELS.standardizedMatrix = JSON.parse('{{=XML(model.category_matrix.format_standardized_json())}}');
     MODELS.transitionGraph = JSON.parse('{{=XML(model.transition_graph.format_graph())}}');
+    MODELS.inferred = JSON.parse('{{=XML(inferred_json)}}');
 
     // Update category matrix
     var buildMatrix = function(matrix_selector, model){
@@ -136,6 +144,21 @@
     // Build matrices
     buildMatrix('#category-matrix', MODELS.categoryMatrix);
     buildMatrix('#standardized-matrix', MODELS.standardizedMatrix);
+    // Add inferred items
+    var header = $('#standardized-matrix thead tr');
+    var body = $('#standardized-matrix tbody tr');
+    MODELS.inferred.forEach(function(d,i){
+        var th = $('<th></th>', {
+            text: d[0],
+            class: 'inferred'
+        });
+        var td = $('<td></td>', {
+            text: d[1].toFixed(2),
+            class: 'inferred'
+        });
+        header.append(th);
+        body.append(td);
+    });
 </script>
 
 <script type="text/javascript">

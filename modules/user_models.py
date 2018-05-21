@@ -1,10 +1,11 @@
 import json
 import random
 import heapq
+import numpy
+import collab_filter
 from collections import Counter
 from operator import itemgetter
 from gluon import current
-import numpy
 
 class UserModel(object):
     ''' This is the main user model class, housing all properties, including the graph and matrix '''
@@ -104,7 +105,11 @@ class UserModel(object):
                     ordered_tags.append(t)
                     tags.remove(t)
             # 3: inferred new categories (collab. filtering)
-            # TODO
+            inferred = collab_filter.get_inferred_categories(self.user, self.problem, db)
+            for i in inferred:
+                if i[0] not in ordered_tags:
+                    ordered_tags.append(i[0])
+                    tags.remove(i[0])
             # 4: other visited categories (ordered by quantity)
             frequent = self.category_matrix.get_most_frequent()
             for f in frequent:

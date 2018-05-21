@@ -43,6 +43,16 @@ li > ol {
         width: 300px;
     }
 
+#container {
+    display: table;
+}
+
+#container > div {
+    display: table-cell;
+    padding: 20px;
+    width: 33%;
+}
+
 .vertical-align {
     display: table;
 }
@@ -71,6 +81,9 @@ table {
     table td.empty {
         background: transparent;
         color: white;
+    }
+    table th.inferred {
+        background: rgb(231, 236, 200);
     }
     table td.inferred {
         background: rgb(249, 255, 220);

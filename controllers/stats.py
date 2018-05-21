@@ -1,5 +1,6 @@
 import user_models
 import collab_filter
+import json
 
 def index():
     problems = db(db.problem.id > 0).select()
@@ -21,16 +22,21 @@ def usermodel():
         redirect(URL('stats', 'index'))
     # Retrieve user model
     user_model = user_models.UserModel(user.id, problem.id)
-    
     # Get all user models in problem_id
     all_users = __get_users_in_problem(problem_id, [user_id])
     models = []
     for u in all_users:
         models.append(user_models.UserModel(u.idea.userId, problem_id))
     nearest_neighbors = collab_filter.find_n_nearest(user_model, models, 5)
-    print(nearest_neighbors)
-
-    return dict(user=user, problem=problem, model=user_model, nearest_neighbors=nearest_neighbors)
+    # Infer categories from nearest neighbors
+    inferred = collab_filter.infer_categories(user_model, nearest_neighbors, True)
+    return dict(
+        user=user, 
+        problem=problem, 
+        model=user_model, 
+        nearest_neighbors=nearest_neighbors, 
+        inferred=inferred,
+        inferred_json=json.dumps(inferred))
 
 def regenerate_models():
     # Delete all models
