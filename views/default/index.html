@@ -44,7 +44,7 @@
             <ul class="clickable">
                 {{for p in problems:}}
                     <li>
-                        <a href="{{=URL('brainstorm','index',p.url_id)}}">{{=p.title}}</a>
+                        <a href="{{=URL('brainstorm',p.url_id)}}">{{=p.title}}</a>
                     </li>
                 {{pass}}
             </ul>
