@@ -6,5 +6,5 @@ def get_problem_title(request):
 def get_problem_id(request):
     title = get_problem_title(request)
     db = current.db
-    id = db(db.problem.title == title).select().first().id
+    id = db(db.problem.url_id == title).select().first().id
     return id

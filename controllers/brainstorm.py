@@ -102,6 +102,7 @@ def add_idea():
 
 def check_updates():
     ''' This function checks if new ideas have been added since a given timestamp '''
+    problem_id = util.get_problem_id(request)
     # Get timestamp
     client_timestamp = float(request.vars['timestamp'])
     epoch = datetime.datetime(1970,1,1)
@@ -111,7 +112,7 @@ def check_updates():
     timestamp = timestamp.replace(tzinfo=pytz.utc).astimezone(local_tz)
     # Get last idea timestamp
     # TODO limit this to current problem only
-    ideas_post_timestamp = db(db.idea.dateAdded > timestamp).count()
+    ideas_post_timestamp = db((db.idea.dateAdded > timestamp) & (db.idea.problem == problem_id)).count()
     if ideas_post_timestamp > 0:
         return True
     else:
@@ -124,7 +125,7 @@ def get_all_tags():
     response.headers['Content-Type'] = 'text/json'
     return json.dumps(tags) 
 
-    
+
 
 ### PRIVATE FUNCTIONS
 def __insert_tags_for_idea(tags, idea_id, problem_id):
