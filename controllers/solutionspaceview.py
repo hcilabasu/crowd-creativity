@@ -3,6 +3,7 @@ import itertools
 import base64
 import cStringIO
 import user_models
+import util
 from PIL import Image
 
 '''
@@ -15,7 +16,7 @@ BIRDSEYE_SIZE = 100 # size of the solution space birdseye view
 
 def get_solution_space():
     user_id = session.user_id
-    problem_id = session.problem_id
+    problem_id = util.get_problem_id(request)
     user_model = user_models.UserModel(user_id, problem_id)
     
     # Get tags ordered by the user model

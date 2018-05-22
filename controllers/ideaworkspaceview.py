@@ -1,5 +1,6 @@
 import json
 import datetime
+import util
 
 '''
 Controller for functions realted to idea workspace view
@@ -7,7 +8,7 @@ Controller for functions realted to idea workspace view
 
 def get_ideas():
     user_id = session.user_id
-    problem_id = session.problem_id
+    problem_id = util.get_problem_id(request)
     current_only = True if request.vars.current_only == 'true' else False
     added_by = request.vars.added_by
     is_favorite = request.vars.is_favorite
@@ -65,21 +66,6 @@ def get_idea_by_id():
         tags=[tag.tag.tag for tag in idea.idea.tag_idea.select()])
 
     return json.dumps(clean_idea)
-
-def get_all_ideas():
-    # Get user favorites
-    favorites = __get_favorites(user_id)
-    # Get ideas
-    ideas = db((db.idea.id == db.tag_idea.idea) & 
-               (db.tag.id == db.tag_idea.tag) &
-               (db.idea.problem == problem_id)
-    ).select(orderby=db.idea.dateAdded, groupby=db.idea.id)
-    clean_ideas = [dict(
-        id=i.idea.id, 
-        idea=i.idea.idea, 
-        favorite=True if i.idea.id in favorites else False
-        ) for i in ideas]
-    return json.dumps(clean_ideas)
 
 def __get_favorites(user_id):
     favorites_rows = db(db.favorite.user_info == user_id).select(db.favorite.idea)

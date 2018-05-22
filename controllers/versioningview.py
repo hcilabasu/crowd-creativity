@@ -1,4 +1,5 @@
 import json
+import util
 import user_models
 
 '''
@@ -42,7 +43,7 @@ def get_versioning_structure():
         }
     ]
     '''
-    problem_id = session.problem_id
+    problem_id = util.get_problem_id(request)
     user_id = session.user_id
     # get all ideas
     query = (db.idea.id == db.tag_idea.idea) & (db.tag.id == db.tag_idea.tag) & (db.idea.problem == problem_id)

@@ -1,8 +1,9 @@
 import json
 import datetime
+import util
+import user_models
 from collections import defaultdict
 from gluon.debug import dbg
-import user_models
 
 '''
 Controller for functions related to the tasks view
@@ -13,7 +14,7 @@ NUM_TASKS = 3
 
 def get_available_tasks():
     user_id = session.user_id
-    problem_id = session.problem_id
+    problem_id = util.get_problem_id(request)
     tasks = __get_tasks(user_id, problem_id)
     # set headers
     response.headers['Content-Type']='application/json'
