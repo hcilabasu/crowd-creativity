@@ -24,10 +24,8 @@
 		// Set up globals
 	    var URL = { // URLs
 	    	addIdea: "{{=URL('default','add_idea')}}",
-	    	getOrganizationRatio: "{{=URL('default','get_organization_ratio')}}",
 			getTags: "{{=URL('default','get_tags')}}",
 			getAllTags: "{{=URL('default','get_all_tags')}}",
-			tagExists: "{{=URL('default','tag_exists')}}",
 			checkUpdates: "{{=URL('default','check_updates')}}",
 			// Idea workspace view
 			getUserIdeas: "{{=URL('ideaworkspaceview','get_ideas')}}",
@@ -96,7 +94,7 @@
 				</a></li>
 			</ul> -->
 			<ul>
-				<li><a title="Load your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
+				<li>{{=request.args(0)}}<a title="Load your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
 					<img src="{{=URL('static','images/user.png')}}">
 				</a></li>
 				<li><a title="Load your favorite ideas" onclick="TOOLBAR.ideaViewer.loadFavoriteIdeas()">

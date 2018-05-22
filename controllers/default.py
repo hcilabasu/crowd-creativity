@@ -146,29 +146,6 @@ def add_idea():
         log_action(user_id, "add_idea", idea)
     return json.dumps(dict(id=idea_id))
 
-def get_organization_ratio():
-    # TODO standardize this into a single variable, perhaps together with 'next_task' (see submit_categorization_task)
-    base_weights = dict(
-        suggest=0,
-        selectBest=1,
-        categorize=2
-    ) 
-    completed = 0
-    total = 0
-    # Categorization tasks
-    categorization_tasks = db(db.categorization.id > 0).select()
-    for c in categorization_tasks:
-        total += len(base_weights.keys())
-        # Update number of completed tasks
-        completed += base_weights[c.categorizationType] # base weight. Even if a task is not completed, it may already imply that others have been completed before.
-        if c.completed:
-            completed += 1
-    if total > 0:
-        return completed / float(total)
-    else:
-        # There is no data yet to calculate this.
-        return -1
-
 def check_updates():
     ''' This function checks if new ideas have been added since a given timestamp '''
     # Get timestamp
@@ -179,8 +156,8 @@ def check_updates():
     local_tz = get_localzone() 
     timestamp = timestamp.replace(tzinfo=pytz.utc).astimezone(local_tz)
     # Get last idea timestamp
+    # TODO limit this to current problem only
     ideas_post_timestamp = db(db.idea.dateAdded > timestamp).count()
-    # print('Ideas post timestamp (%s): %d' % (timestamp, ideas_post_timestamp))
     if ideas_post_timestamp > 0:
         return True
     else:
@@ -198,21 +175,6 @@ def get_tags():
     tags = db(db.tag.tag.like(term) & (db.tag.problem == problem_id)).select(db.tag.tag)
     tags = [t.tag for t in tags]
     return json.dumps(tags)
-
-def get_suggested_tags():
-    text = request.vars.text
-    # Get suggested tags
-    tags = __rake(text)
-    tags = [__clean_tag(t[0]) for t in tags]
-    # Submit response
-    response.headers['Content-Type'] = 'text/json'
-    return json.dumps(tags)
-
-def tag_exists():
-    tag = request.vars.tag
-    return str(len(db((db.tag.tag == tag) & (db.tag.problem == problem_id)).select()) > 0).lower()
-
-
 
 ### DEBUG FUNCTIONS
 # These functions only work in development mode (i.e. DEBUG == True)
@@ -347,17 +309,6 @@ def __insert_or_retrieve_tag_id(tag, problem_id):
         return tagResult[0].id
     else:
         return db.tag.insert(tag=tag, problem=problem_id)
-
-# keyword extraction
-def __rake(text):
-    file = os.path.join(request.folder,'static','SmartStoplist.txt')
-    r = rake.Rake(file)
-    keywords = r.run(text)
-    return keywords
-
-def __update_reverse_index():
-    keywords = __rake('A Python module implementation of the Rapid Automatic Keyword Extraction (RAKE) algorithm as described in: Rose, S., Engel, D., Cramer, N., & Cowley, W. (2010). Automatic Keyword Extraction from Individual Documents. In M. W. Berry & J. Kogan (Eds.), Text Mining: Theory and Applications: John Wiley & Sons. Initially by @aneesha, packaged by @tomaspinho')
-    return json.dumps(keywords)
 
 def __update_user_model(user_id, problem_id, tags):
     model = user_models.UserModel(user_id, problem_id)
