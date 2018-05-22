@@ -13,8 +13,8 @@ response.subtitle = ''
 
 ## read more at http://dev.w3.org/html5/markup/meta.name.html
 response.meta.author = ''
-response.meta.description = 'a cool new app'
-response.meta.keywords = 'web2py, python, framework'
+response.meta.description = 'Be more creative with the inspiration of the crowd!'
+response.meta.keywords = 'creativity, brainstorm, inspiration'
 response.meta.generator = 'Web2py Web Framework'
 
 ## your http://google.com/analytics id
