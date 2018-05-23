@@ -17,7 +17,6 @@
     <script type="text/javascript" src="{{=URL('static','js/jquery.validate.min.js')}}"></script>
 </head>
 <body class="welcome">
-
     <div id="welcome">
         <h1 class="logo">Crowd<span>Muse</span></h1>
 
@@ -25,13 +24,19 @@
             <h3>Create a new brainstorm session!</h3>
             <form id="newSession" class="newSession" action="{{=URL('default','create_problem')}}">
                 <ul>
-                    <li><label for="title">Title:</label> <input type="text" name="title" id="title" required maxlength="{{=validation['short_string_max']}}" placeholder="Write a short title for your session"> </li>
                     <li>
-                        <label for="description">Description</label>
-                        <textarea name="description" id="description" cols="30" rows="10" placeholder="Describe what people should generate ideas towards" required maxlength="{{=validation['text_max']}}"></textarea>
+                        <label for="title">Title:</label> 
+                        <input type="text" name="title" id="title" required maxlength="{{=validation['short_string_max']}}" placeholder="Write a short title for your session" value="{{=title}}"> 
+                        {{if exists:}}
+                            <p class="error">This title has already been used. Please use a different one.</p>
+                        {{pass}}
                     </li>
                     <li>
-                        <input type="checkbox" name="public" id="public"> <label for="public">Make this session public</label>
+                        <label for="description">Description</label>
+                        <textarea name="description" id="description" cols="30" rows="10" placeholder="Describe what people should generate ideas towards" required maxlength="{{=validation['text_max']}}">{{=description}}</textarea>
+                    </li>
+                    <li>
+                        <input type="checkbox" name="public" id="public" {{='checked' if public else ''}}> <label for="public">Make this session public</label>
                         <a class="btn floatRight submit" onclick="createNewProblem();">Create session</a>
                     </li>
                 </ul>

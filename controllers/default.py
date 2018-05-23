@@ -19,13 +19,46 @@ if settings['is_development']:
 
 def index():
     problems = db(db.problem.public == True).select()
+    # Get values if this is a redirect from a failed create problem submission
+    title = request.vars['title'] if 'title' in request.vars else ''
+    description = request.vars['description'] if 'description' in request.vars else ''
+    public = request.vars['public'] == 'True' if 'public' in request.vars else False
+    exists = request.vars['exists'] == 'True' if 'exists' in request.vars else False
+
     return dict(
         problems=problems, 
         validation=dict(
             data_max = DATA_MAX,
             text_max = TEXT_MAX,
             short_string_max = SHORT_STRING_MAX
-        ))
+        ),
+        title=title,
+        description=description,
+        public=public,
+        exists=exists)
+
+def create_problem():
+    title = request.vars['title'].lower()
+    description = request.vars['description']
+    public = True if request.vars['public'] else False
+    url_id = ''.join(title.split())
+    url_id = ''.join([c for c in url_id if c.isalnum()]) # strip non alpha characters
+    # Check if URL id already exists
+    if db(db.problem.url_id == url_id).select():
+        redirect(URL('default', 'index', vars=dict(
+            title=title,
+            description=description,
+            public=public,
+            exists=True
+        )))
+    else:
+        # Insert
+        db.problem.insert(
+            title=title,
+            description=description,
+            url_id=url_id,
+            public=public)
+        redirect(URL('brainstorm', url_id))
 
 def error():
     '''
@@ -44,20 +77,6 @@ def error():
     else:
         link = 'mailto:vaugusto@asu.edu'
     return dict(ticket=short_ticket, full_ticket=full_ticket, link=link, code=code)
-
-def create_problem():
-    title = request.vars['title'].lower()
-    description = request.vars['description']
-    public = True if request.vars['public'] else False
-    url_id = ''.join(title.split())
-    url_id = ''.join([c for c in url_id if c.isalpha()]) # strip non alpha characters
-    # Insert
-    db.problem.insert(
-        title=title,
-        description=description,
-        url_id=url_id,
-        public=public)
-    redirect(URL('brainstorm', url_id))
 
 
 ### DEBUG FUNCTIONS
