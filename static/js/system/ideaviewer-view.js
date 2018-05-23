@@ -91,9 +91,8 @@ class IdeaViewerView extends View {
         var params = {};
         if (userId) {
             params.added_by = userId;
-        } else {
-            params.current_only = true;
-        }
+        } 
+        params.current_only = true;
         $.ajax({
             type: "GET",
             url: URL.getUserIdeas,

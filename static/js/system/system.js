@@ -306,8 +306,9 @@ var submitRefinedIdea = function(event){
 			var _id = JSON.parse(data).id;
 			var _idea = idea;
 			var _tags = tags;
-			// Add to UI
+			// Add new idea to UI and remove older
 			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
+			VIEWS.ideasView.closeIdea(originalId);
 			// Giving feedback to user
 			$.web2py.flash('Your idea has been added!', 'ok');
 			// Reset other views and reset check timer
