@@ -50,13 +50,14 @@ def create_problem():
     description = request.vars['description']
     public = True if request.vars['public'] else False
     url_id = ''.join(title.split())
+    url_id = ''.join([c for c in url_id if c.isalpha()]) # strip non alpha characters
     # Insert
     db.problem.insert(
         title=title,
         description=description,
         url_id=url_id,
         public=public)
-    redirect(URL('brainstorm', '?problem=' + url_id))
+    redirect(URL('brainstorm', url_id))
 
 
 ### DEBUG FUNCTIONS
