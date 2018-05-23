@@ -1542,6 +1542,7 @@ span.tag {
 body.welcome {
     background: #3AAAFC;
     background: linear-gradient(#437BF0, #3AAAFC);
+    background-attachment: fixed;
 }
 
 #welcome {
