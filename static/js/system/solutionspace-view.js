@@ -184,9 +184,7 @@ class SolutionSpaceView extends View {
 		miniMap.css('background', 'url(data:image/png;base64,' + image + ')');
 		this.updatePan();
 		// Make sure button matches this state
-		$('#toggleMinimap').stop().addClass('active');
-		// Show
-		miniMap.fadeIn('fast');
+		$('#toggleMinimap').stop().removeClass('active');
 	}
 
 	updatePan(){
