@@ -256,8 +256,7 @@ var submitNewIdea = function(event){
 	var formElement = $(event.target).closest('form');
 	var form = UTIL.objectifyForm(formElement.serializeArray());
 	// Validate tag picker
-	var tagsValidation = validateTagPicker({
-		tagPickerRoot: '#newIdeaTagPicker',
+	var tagsValidation = $('#newIdeaTagPicker').tagPicker('validate', {
 		displayErrorMessage: function(tagPicker){
 			UTIL.insertErrorMessage('#newIdeaTagPicker .tagPicker', 'Insert at least ' + ENV.minNumberTags + ' tag', 'errorTags');
 		},
@@ -284,7 +283,7 @@ var submitNewIdea = function(event){
 			// Remove loading
 			$('#addIdea').removeClass('loading');
 			// Reset tag picker
-			teardownTagPicker($('#addIdea'), false);
+			$('#newIdeaTagPicker').tagPicker('teardown');
 			// Reset other views and reset check timer
 			VIEWS.solutionSpaceView.load();
 			VIEWS.versioningView.load();
@@ -322,8 +321,7 @@ var submitRefinedIdea = function(event){
 };
 
 var submitCombinedIdea = function(event){
-	var tagsValidation = validateTagPicker({
-		tagPickerRoot: '#combineIdeas .ideaInput',
+	var tagsValidation = $('#combinedTagInput').tagPicker('validate', {
 		displayErrorMessage: function(tagPicker){
 			UTIL.insertErrorMessage('#combineIdeas .tagPicker', 'Insert at least ' + ENV.minNumberTags + ' tag', 'errorTags');
 		},
@@ -470,7 +468,7 @@ var combineIdeasSetup = function(params){
 	});
 	// Set the values
 	$('#combineIdeas input[name=combinedIdeaIds]').val(JSON.stringify(ids));
-	setupTagPicker('#combineIdeas .combinedTagInput');
+	$('#combinedTagInput').tagPicker('setup');
 
 	// Set up tear down function
 	EVENTS.popOverClose.push(function(){
@@ -538,12 +536,10 @@ var tagsViewSetup = function(params){
 var addIdeaSetup = function(){
 	// Set focus for immediate typing
 	$('#addIdea textarea').focus();
-	setupTagPicker('#newIdeaTagPicker');
-	var tagPicker = $('#addIdea .tagPicker');
-	var tagsContainer = $('.tags', tagPicker);
+	var tagPicker = $('#newIdeaTagPicker').tagPicker('setup');
 	// Revert tagPicker panel
 	EVENTS.popOverClose.push(function(){
-		teardownTagPicker(tagPicker, true);
+		$('#newIdeaTagPicker').tagPicker('teardown');
 	});
 }
 

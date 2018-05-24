@@ -419,7 +419,7 @@
 			<div class="panel">
 				<div class="tagPicker">
 					<input type="text" class="search" placeholder="Filter tags" disabled/>
-					<ul class="tags">
+					<ul class="tagsList">
 						<!-- <li class="t_example">Example</li> -->
 						<li><div class="loadingBadge">Loading tags...</div></li>
 					</ul>
@@ -563,7 +563,7 @@
 
 			<textarea name="combinedIdeaInput" required maxlength="{{=validation['text_max']}}"></textarea>
 
-			<div class="combinedTagInput"></div>
+			<div id="combinedTagInput"></div>
 
 			<input type="hidden" name="combineTypeInput">
 			<input type="hidden" name="combinedIdeaIds">

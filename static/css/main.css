@@ -1175,6 +1175,7 @@ div.w2p_flash.alert {
 
     .tagsList li {
         display: inline-block;
+        width: 100%;
     }
 
     .tagsList .tag {
@@ -1442,27 +1443,29 @@ div.w2p_flash.alert {
     background-size: 20px 20px;
 }
 
-.tagPicker .tags {
+.tagPicker .tagsList {
     width: 100%;
     height: 150px;
     border: solid 1px #CCC;
     overflow: auto;
     transition: height 0.5s;
 }
-
-.loading .tagPicker .tags {
-    height: 50px;
-}
-
-    .tagPicker .tags > li {
-        padding: 5px 10px;
+    .tagPicker .tagsList > li {
+        width: 100%;
+        height: 35px;
+        line-height: 35px;
+        padding: 0px 10px;
         cursor: pointer;
         text-transform: lowercase;
     }
 
-    .tagPicker .tags > li:hover {
+    .tagPicker .tagsList > li:hover {
         background-color: #DCF0FF;
     }
+
+.loading .tagPicker .tagsList {
+    height: 35px;
+}
 
 .tagPicker .tagPlaceholder {
     display: inline-block;
