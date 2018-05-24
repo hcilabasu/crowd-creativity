@@ -279,7 +279,6 @@ var submitNewIdea = function(event){
 			$('#addIdea textarea').val('');
 			$('#addIdea textarea').focus();
 			$('#addIdea .suggestedTags > div').html('');
-			$.web2py.flash('Your idea has been added!', 'ok');
 			// Remove loading
 			$('#addIdea').removeClass('loading');
 			// Reset tag picker
@@ -308,8 +307,6 @@ var submitRefinedIdea = function(event){
 			// Add new idea to UI and remove older
 			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
 			VIEWS.ideasView.closeIdea(originalId);
-			// Giving feedback to user
-			$.web2py.flash('Your idea has been added!', 'ok');
 			// Reset other views and reset check timer
 			VIEWS.solutionSpaceView.load();
 			VIEWS.versioningView.load();
@@ -349,6 +346,7 @@ var submitCombinedIdea = function(event){
 			}
 			// Add idea
 			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
+
 			// Reset other views and reset check timer
 			VIEWS.solutionSpaceView.load();
 			VIEWS.versioningView.load();
@@ -372,6 +370,8 @@ var submitIdea = function(idea, tags, origin, sources, successCallback, errorCal
         },
         success: function(data){
 			successCallback(data);
+			// Popup alert
+			$.web2py.flash('Your idea has been added!', 'ok');
 			// Trigger event
 			$.event.trigger({type:EVENTS.ideaSubmitted, params:{idea:idea}});
 		},
