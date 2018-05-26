@@ -84,7 +84,7 @@ def __get_tasks(user_id, problem_id):
     ideas_ids = []
     # Remove tasks based on recommended categories
     if len(inspiration_categories) > 0:
-        tasks.exclude(lambda row: row.tag.tag not in inspiration_categories)
+        excluded = tasks.exclude(lambda row: row.tag.tag not in inspiration_categories)
         # At this point, all tasks belong to the inspiration categories, 
         # but we need to sample one from each of the categories.
         for t in tasks:
@@ -95,8 +95,13 @@ def __get_tasks(user_id, problem_id):
                 filtered_tasks.append(t)
                 inspiration_categories.remove(t.tag.tag)
                 ideas_ids.append(t.idea.id)
-    else:
-        # If there are no suggested inspiration categories, just get the first 3 tasks
+        # Move all remaining back to the tasks variable
+        tasks = excluded 
+        
+    # At this point, the lenght may still be < NUM_TASKS if:
+    # 1. there were no inspiration categories (so len() == 0)
+    # 2. there were inspiration categories, but they amounted to fewer than NUM_TASKS
+    if len(filtered_tasks) < NUM_TASKS: 
         for t in tasks:
             if t.idea.id not in ideas_ids: # make sure there are no dupplicates
                 filtered_tasks.append(t)
