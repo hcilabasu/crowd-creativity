@@ -51,7 +51,6 @@ def __get_tasks(user_id, problem_id):
     model = user_models.UserModel(user_id, problem_id)
     inspiration_categories = model.get_inspiration_categories(NUM_TASKS)
 
-    print(inspiration_categories)
     # These are the task types that will be retrieved
     task_types = [
         # 'TagSuggestionTask',
@@ -82,18 +81,28 @@ def __get_tasks(user_id, problem_id):
     tasks = db(all_query).select(groupby=db.tag_idea.id, having=completed_query, orderby='<random>')
     
     filtered_tasks = []
+    ideas_ids = []
     # Remove tasks based on recommended categories
     if len(inspiration_categories) > 0:
         tasks.exclude(lambda row: row.tag.tag not in inspiration_categories)
         # At this point, all tasks belong to the inspiration categories, 
         # but we need to sample one from each of the categories.
         for t in tasks:
-            if t.tag.tag in inspiration_categories:
+            # Append to filtered tasks if:
+            # 1. tag is in the inspiration categories list (which is reduced every time an idea is added)
+            # 2. task has not yet been added (prevent duplicates)
+            if t.tag.tag in inspiration_categories and t.idea.id not in ideas_ids:
                 filtered_tasks.append(t)
                 inspiration_categories.remove(t.tag.tag)
+                ideas_ids.append(t.idea.id)
     else:
         # If there are no suggested inspiration categories, just get the first 3 tasks
-        filtered_tasks = tasks[0:NUM_TASKS]
+        for t in tasks:
+            if t.idea.id not in ideas_ids: # make sure there are no dupplicates
+                filtered_tasks.append(t)
+                ideas_ids.append(t.idea.id)
+            if len(filtered_tasks) == NUM_TASKS:
+                break
     # Add favorites
     favorites = __get_favorites(user_id)
     for t in filtered_tasks:
