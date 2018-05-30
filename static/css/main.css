@@ -942,10 +942,18 @@ div.w2p_flash.alert {
     text-align: left;
     overflow: auto;
     width: 44%;
+    float: left;
+    max-height: 200px;
+    min-height: 100px;
+    height: auto;
 }
 
     #combineIdeas p {
         margin-bottom: 10px;
+    }
+
+    #combineIdeas .choices {
+        clear: both;
     }
 
     #combineIdeas .choices li {
