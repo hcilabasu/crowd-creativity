@@ -270,7 +270,7 @@
 
 #solutionSpaceHeader .spCell {
 	border-top: none;
-	border-bottom: none;
+	border-bottom: solid 2px white;
 	border-left: none;
 	display: inline-block;
 }
@@ -291,11 +291,20 @@
 	transform: rotate(-45deg)
 }
 
+#solutionSpaceLeftColumn .spCell:hover,
+#solutionSpaceHeader .spCell:hover {
+	background: rgb(79, 176, 250);
+}
+
 #solutionSpaceLeftColumn .spCell,
 #solutionSpaceRightColumn .spCell {
 	border-left: none;
 	border-right: none;
 	border-top: none;
+}
+
+#solutionSpaceLeftColumn .spCell {
+	border-right: solid 2px white;
 }
 
 #solutionSpaceLeftColumn .spCell:first-child {

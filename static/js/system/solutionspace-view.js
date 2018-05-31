@@ -63,11 +63,14 @@ class SolutionSpaceView extends View {
 		
 		if(structure.tags.length > 0){
 			container.html(Mustache.render(TEMPLATES.solutionSpaceStructureTemplate));
+			var headerEl = $('#solutionSpaceHeader', container);
+			var leftColumnEl = $('#solutionSpaceLeftColumn', container);
+			var containerEl = $('#spaceContainer', container);
 			var innerContainer = $('#spaceContainer', container);
 			// Make sure header columns and minimap stay in place
 			container.on('scroll resize',(event)=>{
-				$('#solutionSpaceHeader').offset({top:container.offset().top});
-				$('#solutionSpaceLeftColumn').offset({left:container.offset().left});
+				headerEl.offset({top:container.offset().top});
+				leftColumnEl.offset({left:container.offset().left});
 				// var rightColumn = $('#solutionSpaceRightColumn');
 				// rightColumn.offset({left:container.prop("clientWidth") - rightColumn.width()});
 				// Minimap
@@ -76,13 +79,13 @@ class SolutionSpaceView extends View {
 
 			for(var i = 0; i < structure.tags.length; i++){
 				var d = structure.tags[i];
-				var cell = $('<div></div>').addClass('spCell');
+				var cell = $('<div></div>').addClass('spCell').attr('title', d);
 				var stats = $('<div></div>').addClass('spCell');
 				cell.append($('<span></span>').text(d));
 				cell.addClass(ENV.classPrefix + d);
 				cell.addClass('headerCell');
-				$('#solutionSpaceHeader').append(cell);
-				$('#solutionSpaceLeftColumn').append(cell.clone());
+				headerEl.append(cell);
+				leftColumnEl.append(cell.clone());
 				// $('#solutionSpaceRightColumn').append(stats);
 	
 				// Create cells 
@@ -112,13 +115,13 @@ class SolutionSpaceView extends View {
 							newCellClone.css('top', i * 40 + 'px');
 						}
 						// add to container
-						$('#spaceContainer').append(newCell).append(newCellClone);
+						containerEl.append(newCell).append(newCellClone);
 					}
 				}
 			}
 	
 			// Add interactivity
-			$('.spCell', innerContainer).hover(function(e){
+			$('.spCell', container).hover(function(e){
 				// Add row and column highlight
 				$(this).addClass('cellHover');
 				var position = $(this).index() + 1;
