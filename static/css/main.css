@@ -1653,7 +1653,6 @@ body.welcome {
 
                 .ratingWrapper .ratingScale .selectors input[type=radio] {
                     z-index: 999;   
-                    transform: scale(1.3);
                 }
 
                 .ratingWrapper .ratingScale .selectors .line {
