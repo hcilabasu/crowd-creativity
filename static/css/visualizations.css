@@ -68,21 +68,16 @@
 	
 	#versioningContainer .legend li span {
 		display: inline-block;
-		background: blue;
-		height: 4px;
-		width: 15px;
+		height: 6px;
+		width: 32px;
 		margin-right: 10px;
+		background-size: contain;
+		background-repeat: repeat-x;
 	}
 
-	#versioningContainer .legend li.refinement span {
-		background-color: #70AD47;
-	}
-	#versioningContainer .legend li.combine span {
-		background-color: #4472C4;
-	}
-	#versioningContainer .legend li.merge span {
-		background-color: #DF6464;
-	}
+	#versioningContainer .legend li.refinement span {background-image: url(../images/refine-line.png);}
+	#versioningContainer .legend li.combine span {background-image: url(../images/combine-line.png);}
+	#versioningContainer .legend li.merge span {background-image: url(../images/merge-line.png);}
 
 .treeView {
 	visibility: visible;
@@ -129,17 +124,19 @@
 }
 
 	.node > .line {
-		height: 4px;
+		height: 6px;
 		width: 50px;
 		position: absolute;
 		top: 0;
 		left: 0;
 		z-index: 5;
+		background-size: contain;
+		background-repeat: repeat-x;
 	}
 
-	.node.refinement > .line {background-color: #70AD47;}
-	.node.combine > .line {background-color: #4472C4;}
-	.node.merge > .line {background-color: #DF6464;}
+	.node.refinement > .line {background-image: url(../images/refine-line.png);}
+	.node.combine > .line {background-image: url(../images/combine-line.png);}
+	.node.merge > .line {background-image: url(../images/merge-line.png);}
 
 .treeView > .node {
 	background: url(../images/versioning-bg.png) repeat-y;

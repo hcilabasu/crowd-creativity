@@ -185,7 +185,7 @@ class VersioningView extends View {
 		var getCenter = function(el){
 			var offset = el.offset();
 			return {
-				top: offset.top + (el.height() / 2),
+				top: offset.top + (el.height() / 2) - 3,
 				left: offset.left + (baseNode.width() / 2)
 			};
 		}
