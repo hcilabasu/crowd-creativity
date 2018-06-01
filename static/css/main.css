@@ -658,7 +658,9 @@ div.w2p_flash.alert {
 }
 
 .ideaBlock.favorite {
-    background: #FDC4BB;
+    background: #FDC4BB url('../images/heart.png') no-repeat;
+    background-position: right 5px bottom 5px;
+    background-size: 15px;
 }
 
 .ideaBlock a.close {
