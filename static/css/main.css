@@ -701,20 +701,17 @@ div.w2p_flash.alert {
 }
 
 .ideaBlock .popOut {
+    font-size: 0.7em;
     display: block;
     position: absolute;
-    right: 50px;
+    right: 10px;
     top: 10px;
     z-index: 4; 
     padding: 0 0 0 10px;
-    transition: right 0.2s, bottom 0.2s;
 }
 
 .ideaBlock:hover .popOut {
     display: block;
-    right: 10px;
-    bottom: 5px;
-    transition: right 0.2s, bottom 0.2s;
 }
 
     .ideaBlock .popOut a {
@@ -824,11 +821,12 @@ div.w2p_flash.alert {
 
 .ideaHover {
     background-color: #FFBD5E;
-    width: 150px; /* Relative to ideaBlock size */
-    height: 120px;
-    margin: 0;
+    /* width: 150px;
+    height: 120px; */
+    /* margin: 0; */
     box-shadow: 0 0 5px rgba(0,0,0,0.2);
-    transition: width 0.2s, height 0.2s, background-color 0.2s, margin 0.2s;
+    transition: all 0.2s;
+    transform: scale(1.2);
 }
 
 .ideaHover span.fade {

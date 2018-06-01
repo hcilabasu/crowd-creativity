@@ -97,7 +97,7 @@
 	border-radius: 5px;
 	position: absolute;
 	top: 50%;
-	transform: translateY(-50%);
+	transform: translateY(-50%) scale(1);
 	left: 10px;
 	transition: width 0.2s, height 0.2s, transform 0.2s;
 	z-index: 10;
@@ -107,10 +107,8 @@
 .smallIdea.hover,
 .smallIdea:hover {
 	background: #FCBD65;
-	height: 30px;
-	width: 30px;
-	transform: translate(-2.5px, -50%);
-	transition: width 0.2s, height 0.2s, transform 0.2s;
+	transform: translateY(-50%) scale(1.2);
+	transition: transform 0.2s;
 	box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
 
