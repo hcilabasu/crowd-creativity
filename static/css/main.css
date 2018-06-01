@@ -962,6 +962,7 @@ div.w2p_flash.alert {
 
     #combineIdeas .ideaInput {
         display: none;
+        clear: both;
     }
 
 .combinationType {
