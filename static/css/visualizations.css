@@ -87,6 +87,7 @@
 	width: 100%;	
 	overflow: scroll;
 	z-index: 15;
+	padding-bottom: 100px;
 }
 
 .smallIdea {

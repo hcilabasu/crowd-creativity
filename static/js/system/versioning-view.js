@@ -149,12 +149,6 @@ class VersioningView extends View {
 			this.getParentContainer().addClass('empty');
 		}
 		this.getParentContainer().removeClass('loading');
-		// Hide legend on hover
-		$(this.container).hover(()=>{
-			$(this.container + ' .legend').stop().fadeOut('fast');
-		},()=>{
-			$(this.container + ' .legend').stop().fadeIn('fast');
-		});
 	}
 
 	buildTree(node){
