@@ -7,7 +7,7 @@ from gluon.contrib.appconfig import AppConfig
 
 # Adjust settings depending on environment
 settings = dict()
-if request.env.http_host == '127.0.0.1:8000' or request.env.http_host == 'localhost:8000':
+if request.env.http_host in ('127.0.0.1:8000', 'localhost:8000', '192.168.0.8:8000'):
     settings['is_development'] = True
     myconf = AppConfig(reload=True)
 else:
