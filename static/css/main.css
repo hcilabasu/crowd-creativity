@@ -30,9 +30,9 @@ body {
     background: #3AAAFC;
 }
 
-body.development {
+/* body.development {
     border: solid 5px red;
-}
+} */
 
 h2, h3 {
     margin-top: 0;
@@ -262,6 +262,14 @@ a.logo:focus {
 .utilError {
     color: indianred;
     margin-bottom: 20px;
+}
+
+.lm_content.loading {
+    background: white url(../images/loading.gif) no-repeat center center;
+    background-size: 36px;
+    width: 36px;
+    height: 36px;
+    background-position: center center;
 }
 
 .footer {
@@ -605,8 +613,11 @@ div.w2p_flash.alert {
 }
 
     .lm_maximised .viewContainer {
-        top: 10px;
         height: calc(100% - 10px);
+    }
+    
+    .viewContainer.noToolbar {
+        top: 10px;
     }
 
 #ideasContainer {
@@ -622,11 +633,11 @@ div.w2p_flash.alert {
     }
 
 #ideasContainerCounter {
-    display: block;
+    /* display: block;
     position: absolute;
     right: 10px;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%); */
 }
 
 .loading #ideasContainerCounter {
@@ -1014,6 +1025,7 @@ div.w2p_flash.alert {
 
     .toolbar ul:last-child {
         border-right: none;
+        padding-right: 4px;
     }
 
     .toolbar ul:first-child {
@@ -1025,6 +1037,7 @@ div.w2p_flash.alert {
             display: inline-block;
             margin-left: -1px;
             position: relative;
+            line-height: 30px;
         }
 
         .toolbar ul > li > a {
@@ -1033,7 +1046,6 @@ div.w2p_flash.alert {
             font-size: 0.9em;
             color: black;
             text-align: center;
-            line-height: 30px;
             text-decoration: none;
             padding: 0 5px;
             border-radius: 5px;
@@ -1077,6 +1089,17 @@ div.w2p_flash.alert {
 
     .update .toolbar .notificationBadge {
         display: block;
+    }
+
+    .toolbar .right-buttons {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .toolbar > div,
+    .toolbar .right-buttons > div {
+        display: inline-block;
     }
 
 .glow {

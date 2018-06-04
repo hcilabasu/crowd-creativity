@@ -7,10 +7,6 @@
 	position: relative;
 }
 
-.loading #versioningContainer {
-	background: white;
-}
-
 	#versioningContainer .header {
 		width: 100%;
 		z-index: 20;

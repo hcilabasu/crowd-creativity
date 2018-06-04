@@ -29,20 +29,13 @@ var config = {
         },{
             type: 'column',
             content:[{
+                id: 'versioningView',
                 type: 'component',
                 title: 'Versioning',
-                //height: 45,
                 isClosable: false,
                 componentName: 'versioning',
                 componentState: { }
-            }/*,{
-                id: 'suggestedTasks',
-                type: 'component',
-                title: 'Suggested tasks',
-                isClosable: false,
-                componentName: 'suggestedTasks',
-                componentState: { }
-            }*/]
+            }]
         }]
     }]
 };

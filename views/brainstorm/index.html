@@ -54,7 +54,7 @@
 			newUser: '{{=str(new_user).lower()}}' === 'true',
 			doneInspirationTutorial: '{{=str(new_user).lower()}}' === 'true' ? false : true,
 			currentPhase: 1, // Keeps track of the current ideation phase
-			aloneIdeationTime: 10, // Duration of time, in minutes, before other views are opened
+			aloneIdeationTime: 0.1, // Duration of time, in minutes, before other views are opened
 			checkUpdateFrequency: 10000 // How often should the system check for new ideas
 		},
 		EVENTS = {
@@ -103,10 +103,18 @@
 					<img src="{{=URL('static','images/group.png')}}">
 				</a></li>
 			</ul>
-			<div class="loadingBadge"></div>
-			<div id="ideasContainerCounter"><span>0</span> ideas loaded</div>
+			<div class="right-buttons">
+				<ul>
+					<li id="ideasContainerCounter">
+						<span>0</span> ideas loaded
+					</li>
+					<!-- <li><a title="Maximize view" onclick="TOOLBAR.general.toggleMaximise('ideaViewer')">
+						<img src="{{=URL('static','images/maximize.png')}}">
+					</a></li> -->
+				</ul>
+			</div>
 		</div>
-		<div id="ideasContainer" class="viewContainer"></div>
+		<div id="ideasContainer" class="viewContainer phase1_cl" data-phase1cl="noToolbar"></div>
 	</script>
 
 	<script id="versioningViewerTemplate" type="text/x-tmpl-mustache">
@@ -119,7 +127,13 @@
 					 <img src="{{=URL('static','images/clock.png')}}"><span id='versioningTimerDisplay'>OFF</span>
 				</a></li> -->
 			</ul>
-			<div class="loadingBadge"></div>
+			<div class="right-buttons">
+				<!-- <ul>
+					<li><a title="Maximize view" onclick="TOOLBAR.general.toggleMaximise('versioningView')">
+						<img src="{{=URL('static','images/maximize.png')}}">
+					</a></li>
+				</ul> -->
+			</div>
 		</div>
 		<div id="versioningContainer" class="viewContainer">
 			
@@ -147,24 +161,6 @@
 		</div>
 	</script>
 
-	<script id="suggestedTasksViewerTemplate" type="text/x-tmpl-mustache">
-		<div class="toolbar">
-			<ul>
-				<li><a title="Reload this panel" onclick="TOOLBAR.suggestedTasks.reload()">
-					<img src="{{=URL('static','images/reload.png')}}">
-				</a></li>
-				<li><a title="Auto-reload toggle" onclick="TOOLBAR.suggestedTasks.toggleAutoReload()">
-					<img src="{{=URL('static','images/clock.png')}}"><span id='tasksTimerDisplay'>OFF</span>
-				</a></li>
-			</ul>
-			<div class="loadingBadge"></div>
-		</div>
-		<div id="suggestedTasksContainer" class="viewContainer">
-			<ul id="suggestedTasksList">
-			</ul>
-		</div>
-	</script>
-
 	<script id="solutionSpaceViewerTemplate" type="text/x-tmpl-mustache">
 		<div class="toolbar">
 			<ul>
@@ -180,7 +176,13 @@
 					<img src="{{=URL('static','images/map.png')}}">
 				</a></li>
 			</ul>
-			<div class="loadingBadge"></div>
+			<div class="right-buttons">
+				<!-- <ul>
+					<li><a title="Maximize view" onclick="TOOLBAR.general.toggleMaximise('solutionSpace')">
+						<img src="{{=URL('static','images/maximize.png')}}">
+					</a></li>
+				</ul> -->
+			</div>
 		</div>
 		
 		<div id="solutionSpaceContainer" class="viewContainer">

@@ -170,6 +170,11 @@ $(function(){
 				var button = $('#toggleMinimap');
 				VIEWS.solutionSpaceView.toggleMinimap(button);
 			}
+		},
+		general: {
+			toggleMaximise: (viewId)=>{
+				toggleMaximise(viewId);
+			}
 		}
 	};
 
@@ -177,7 +182,8 @@ $(function(){
 	if(ENV.newUser){
 		// Maximize first view
 		setPhase(1);
-		LAYOUT.root.getItemsById('ideaViewer')[0].toggleMaximise();
+		var ideaViewer = LAYOUT.root.getItemsById('ideaViewer')[0];
+		ideaViewer.toggleMaximise();
 		// Start first tutorial
 		startTutorial(ENV.firstTutorial);
 	} else {
@@ -233,14 +239,30 @@ var openAllViews = function(){
 	});
 };
 
+var toggleMaximise = function(viewId){
+	LAYOUT.root.getItemsById(viewId)[0].toggleMaximise();
+};
+
 var setPhase = function(phase){
 	// Increment phase
 	var previousPhase = ENV.currentPhase;
 	ENV.currentPhase = phase;
 	// Show blacklisted elements from previous phase
 	$('.phase' + previousPhase + '_bl').show();
+	// Remove previous phase classes
+	$('.phase' + previousPhase + '_cl').each(function(i,d){
+		var classes = $(d).data('phase' + previousPhase + 'cl');
+		$(d).removeClass(classes);
+		console.dir(classes);
+	});
 	// hide blacklisted elements from current phase
 	$('.phase' + ENV.currentPhase + '_bl').hide();
+	// Add current phase classes
+	$('.phase' + ENV.currentPhase + '_cl').each(function(i,d){
+		var classes = $(d).data('phase' + previousPhase + 'cl');
+		$(d).addClass(classes);
+		console.dir(classes);
+	});
 };
 
 var incrementPhase = function(){
