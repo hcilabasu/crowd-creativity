@@ -501,8 +501,9 @@
 	<div class="popupDialog" id="addIdea">
 		<span class="close"></span>
 		<h2>New idea</h2>
+		<p class="problemDescription">{{=problem.description}}</p>
 		<form>
-			<textarea name='idea' placeholder="Type your idea in here" required maxlength="{{=validation['text_max']}}"></textarea>
+			<textarea name='idea' class="ideaInput" placeholder="Write your idea in here" required maxlength="{{=validation['text_max']}}"></textarea>
 			
 			<div id="newIdeaTagPicker"></div>
 
@@ -537,7 +538,7 @@
 	<div class="popupDialog" id="combineIdeas">
 		<span class="close"></span>
 		<h2>Idea Mixing</h2>
-
+		<p class="problemDescription">{{=problem.description}}</p>
 		<div class="combineIdeasShowIdeas">
 			<p class="ideaBlock"><span></span></p>
 			<p class="ideaBlock"><span></span></p>
@@ -563,7 +564,7 @@
 			<p> <a onclick="replaceCombineIdeasOptions(event, 'back')">&lt; Back</a> </p>
 			<p>Please, write down your <span class='combinationType'></span> idea in the textarea below. Make sure to include as much detail as possible!</p>
 
-			<textarea name="combinedIdeaInput" required maxlength="{{=validation['text_max']}}"></textarea>
+			<textarea name="combinedIdeaInput" placeholder="Write your idea in here" class="ideaInput" required maxlength="{{=validation['text_max']}}"></textarea>
 
 			<div id="combinedTagInput"></div>
 

@@ -260,8 +260,33 @@ a.logo:focus {
 
 .error,
 .utilError {
-    color: indianred;
+    background: rgb(219, 131, 131);
+    color: white;
     margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px indianred;
+    margin-top: 10px;
+}
+
+.error::after,
+.utilError::after {
+    content: '';
+    width: 0; 
+    height: 0; 
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid rgb(219, 131, 131);
+    position: absolute;
+    top: -10px;
+    left: 10px;
+}
+
+label.error,
+label.utilError {
+    animation: shake 0.1s both;
+    animation-iteration-count: 5;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
 
 .lm_content.loading {
@@ -575,25 +600,33 @@ div.w2p_flash.alert {
     text-align: center;
 }
 
-#addIdeaPopup {
-    display:none;
-    position: absolute;
-    bottom: 0px;
-    width: 400px;
-    -webkit-transform: translateY(100%);
-    transform: translateY(100%);
-    padding-top: 15px;
-    background: url(../images/triangle.png) no-repeat;
-    background-position: 35px -4px;
+#addIdea .problemDescription,
+#combineIdeas .problemDescription {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-#addIdeaPopup > div {
-    overflow: auto; /* Needed so that the button float doesn't cause the container to collapse under it */
-    background: white;
-    border: solid 1px #CCC;
-    border-top-width: 0;
-    padding: 20px;
-    box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+#addIdea textarea.ideaInput,
+#combineIdeas textarea.ideaInput {
+    margin-bottom: 0;
+}
+
+textarea.ideaInput {
+    background: #FFDE78;
+    border: none;
+    border-radius: 10px;
+    resize: none;
+    outline: none !important;
+    transition: box-shadow 0.4s;
+}
+textarea.ideaInput:focus,
+textarea.ideaInput:active {
+    box-shadow: 0 0 10px #FFDE78;
+    transition: box-shadow 0.4s;
+}
+
+textarea.ideaInput + div {
+    margin-top: 20px;
 }
 
 .floatRight {
@@ -1635,7 +1668,6 @@ body.welcome {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -70%);
-
 }
 
     .error-panel .logo {
@@ -1690,8 +1722,17 @@ body.welcome {
                 
                 .ratingWrapper .ratingScale .selectors label.error {
                     position: absolute;
-                    top:-12px;
+                    top:-13px;
                     left:0;
+                    background: transparent;
+                    padding: 0;
+                    color: indianred;
+                    box-shadow: none;
+                    margin: 0;
+                }
+
+                .ratingWrapper .ratingScale .selectors .error::after {
+                    content: none !important;
                 }
 
             .ratingWrapper .ratingScale .ends {
