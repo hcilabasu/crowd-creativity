@@ -295,6 +295,8 @@ var submitNewIdea = function(event){
 			var _id = JSON.parse(data).id;
 			var _idea = form.idea;
 			var _tags = tags;
+			// Close popup
+			closeOverlay();
 			// Add to UI
 			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
 			// Clearing up inputs and giving feedback to the user
