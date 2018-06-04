@@ -68,7 +68,10 @@
 		},
 		TEMPLATES = {}, // Mustache templates (dynamically loaded on page load)
 		VIEWS = {}, // View objects
-		TOOLBAR = {}; // Toolbar event handlers
+		TOOLBAR = {}, // Toolbar event handlers
+		COMMON = { // Houses dynamic variables shared across views
+			openIdeas: []
+		}; 
 	</script>
 
 	<!-- Load JS custom code -->
@@ -146,6 +149,7 @@
 				<li class="refinement"><span></span>Refinement</li>
 				<li class="combine"><span></span>Combination</li>
 				<li class="merge"><span></span>Merging</li>
+				<li class="openIdea"><span></span>Open idea
 			</ul>
 		</div>
 		<div class="treeView">

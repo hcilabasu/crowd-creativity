@@ -157,6 +157,10 @@ class IdeaViewerView extends View {
         if(updateCounter){
             this.updateIdeaCounter(this.getIdeasCounterNumber() + 1);
         }
+        // Add to common variable
+        COMMON.openIdeas.push(idea.id);
+        // Add to versioning View
+        VIEWS['versioningView'].markIdeasOpen([idea.id]);
     };
 
     closeIdea(id){
@@ -189,5 +193,10 @@ class IdeaViewerView extends View {
         $(this.container).scrollMarker().init({
             width: '10px'
         });
+        // Reset common variable
+        COMMON.openIdeas = [];
+        if(VIEWS['versioningView']){ // Check if view is loaded
+            VIEWS['versioningView'].clearOpenIdeas();
+        }
     }
 }

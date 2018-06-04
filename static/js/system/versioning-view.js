@@ -100,6 +100,24 @@ class VersioningView extends View {
 	}
 
 	/*
+	Marks an array of idea ids as open
+	*/
+	markIdeasOpen(ideasIds) {
+		var allIdeas = $('.smallIdea', $(this.container));
+		for (let i = 0; i < ideasIds.length; i++) {
+			const id = ideasIds[i];
+			allIdeas.filter('.id' + id).addClass('open');
+		}
+	}
+
+	/*
+	Clears all open idea markers
+	*/
+	clearOpenIdeas(){
+		$('.open', $(this.container)).removeClass('open');
+	}
+
+	/*
     Build the visualization
     */
     buildVersioningPanel(structure){
@@ -149,6 +167,8 @@ class VersioningView extends View {
 			this.getParentContainer().addClass('empty');
 		}
 		this.getParentContainer().removeClass('loading');
+		// Mark nodes open if in common variable
+		this.markIdeasOpen(COMMON.openIdeas);
 	}
 
 	buildTree(node){

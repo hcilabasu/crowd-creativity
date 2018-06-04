@@ -91,7 +91,9 @@ $(function(){
 			my: 'center top+15',
 			at: "center bottom",
 			collision: 'flipfit'
-		}
+		},
+		show: false,
+		hide: false
 	});
 
 	// Close overlay on click
@@ -253,7 +255,6 @@ var setPhase = function(phase){
 	$('.phase' + previousPhase + '_cl').each(function(i,d){
 		var classes = $(d).data('phase' + previousPhase + 'cl');
 		$(d).removeClass(classes);
-		console.dir(classes);
 	});
 	// hide blacklisted elements from current phase
 	$('.phase' + ENV.currentPhase + '_bl').hide();
@@ -261,7 +262,6 @@ var setPhase = function(phase){
 	$('.phase' + ENV.currentPhase + '_cl').each(function(i,d){
 		var classes = $(d).data('phase' + previousPhase + 'cl');
 		$(d).addClass(classes);
-		console.dir(classes);
 	});
 };
 
