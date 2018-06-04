@@ -1,7 +1,13 @@
+@keyframes tutorialGlow {
+    0%   {box-shadow: 0 0 20px #3AAAFC;}
+    50%  {box-shadow: 0 0 50px #3AAAFC;}
+    100% {box-shadow: 0 0 20px #3AAAFC;}
+}
+
 #tutorialOverlay {
     display: none; 
     z-index: 2000; 
-    background: rgba(255,255,255,0.7);
+    background: rgba(0,0,0,0.8);
     width: 100%; 
     height: 100%; 
     position: fixed; 
@@ -56,4 +62,9 @@
 .tutorialHighlightElement {
     z-index: 9000 !important;
     position: relative;
+    animation-name: tutorialGlow;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-out;
+
 }
