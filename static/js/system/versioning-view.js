@@ -124,7 +124,7 @@ class VersioningView extends View {
 		if(structure.length > 0){
 			var html = '<div class="header">\
 				<h3>Latest version</h3>\
-				<h3>Previous versions</h3>\
+				<h3>History</h3>\
 			</div>';
 			// Build view
 			for(var i = 0; i < structure.length; i++){
