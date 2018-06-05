@@ -280,7 +280,7 @@ var submitNewIdea = function(event){
 	// Validate tag picker
 	var tagsValidation = $('#newIdeaTagPicker').tagPicker('validate', {
 		displayErrorMessage: function(tagPicker){
-			UTIL.insertErrorMessage('#newIdeaTagPicker .tagPicker', 'Insert at least ' + ENV.minNumberTags + ' tag', 'errorTags');
+			UTIL.insertErrorMessage('#newIdeaTagPicker .alternative', 'Insert at least ' + ENV.minNumberTags + ' tag', 'errorTags');
 		},
 		hideErrorMessage: function(tagPicker){
 			$('.utilError', tagPicker).remove();
@@ -344,7 +344,7 @@ var submitRefinedIdea = function(event){
 var submitCombinedIdea = function(event){
 	var tagsValidation = $('#combinedTagInput').tagPicker('validate', {
 		displayErrorMessage: function(tagPicker){
-			UTIL.insertErrorMessage('#combineIdeas .tagPicker', 'Insert at least ' + ENV.minNumberTags + ' tag', 'errorTags');
+			UTIL.insertErrorMessage('#combineIdeas .alternative', 'Insert at least ' + ENV.minNumberTags + ' tag', 'errorTags');
 		},
 		hideErrorMessage: function(tagPicker){
 			$('.utilError', tagPicker).remove();

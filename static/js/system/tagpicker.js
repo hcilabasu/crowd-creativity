@@ -36,21 +36,10 @@ $.fn.tagPicker = function(action, params){
 					});
 					// Add "create new" item
 					tagsList.append($('<li></li>').addClass('createNew'));
-					// Setup click on tag
+					// Add tag on click
 					$('li',tagsList).click(function(){
 						var tag = $(this).text();
-						var placeholder = $('.tagPlaceholder.empty:first', topContainer);
-						if(placeholder.length > 0){
-							// Check if a placeholder already holds this tag
-							var placeholders = $('.tagPlaceholder', topContainer);
-							for (let i = 0; i < placeholders.length; i++) {
-								const ph = placeholders[i];
-								if($('.text', ph).text() === tag){
-									return false;
-								}
-							}
-							setTag(placeholder, tag, topContainer);
-						}
+						addTag(tag, topContainer);
 					});
 					// Enable filter
 					$('.search', topContainer).prop('disabled', false);
@@ -60,63 +49,88 @@ $.fn.tagPicker = function(action, params){
 	}
 
 	/*
-		If toTagPicker == true, this will switch to (or remain on) the tagPicker.
-			If undefined, it will just flip
 		If instant == true, there will be no animation
 	*/
-	var switchPanel = function(topContainer, toTagPicker, instant){
-		var customTagInput = $('input[name=customTag]', topContainer);
-		var isAtCustomTag = customTagInput.val() === 'true';
-		var changeNeeded = true;
-		if(toTagPicker !== undefined){
-			changeNeeded = toTagPicker && isAtCustomTag;
-		}
-		if(changeNeeded){
-			var speed = instant ? 0 : 'slow';
-			$('.panel', topContainer).toggle(speed);
-			customTagInput.val(!isAtCustomTag);
-		}
+	var switchPanel = function(topContainer, instant){
+		var speed = instant ? 0 : 'slow';
+		$('.panel', topContainer).toggle(speed);
+		// Switch alternative button text
+		$('.alternative > span', topContainer).toggle();
 	};
 
 	/*
-	Clears a tag from the placeholder (i.e. it goes back to being an empty placeholder) 
+	Adds a tag to the hidden tags input
 	*/
-	var removeTag = function(placeholder, topContainer){
-		var text = $('.text', placeholder);
-		var currentTag = text.text();
-		text.text('');
-		placeholder.addClass('empty');
-		// Remove tag from hidden input
-		var input = $('input[name=pickTags]', topContainer);
-		var current = input.val();
-		var tags = current.split(ENV.tagsDelimiter);
-		var newVal = '';
-		if(tags.length > 1){
-			var removeIndex = tags.indexOf(currentTag);
-			tags.splice(removeIndex, 1);
-			newVal = tags[0];
+	var addTag = function(tag, topContainer){
+		// Get tags
+		var input = $('[name=tags]', topContainer);
+		var tags = input.val() === '' ? [] : input.val().split(ENV.tagsDelimiter);
+		if (tags.indexOf(tag) < 0 && tags.length < 2) {
+			// Tag hasn't been added yet, there is room, and tag is not empty
+			tags.push(tag);
+			// trim empty tags
+			while(tags.indexOf('') >= 0){
+				var i = tags.indexOf('');
+				tags.splice(i, 1);
+			}
+			// Update input and add delimiter
+			input.val(tags.join(ENV.tagsDelimiter)).change();
 		}
-		input.val(newVal);
 	}
 
-	var setTag = function(placeholder, tag, topContainer){
-		// trim tag
-		tag = tag.replace(/\s/g,'');
-		$('.text', placeholder).text(tag);
-		placeholder.removeClass('empty');
-		// Add tag to hidden input
-		var input = $('input[name=pickTags]', topContainer);
-		var current = input.val();
-		var tags = current.split(ENV.tagsDelimiter);
-		if(tags.indexOf(tag) < 0){ // Tag may already be in there
-			if(tags.length===1 && tags[0]===''){
-				// input is empty
-				input.val(tag);
-			} else {
-				input.val(current + ENV.tagsDelimiter + tag);
-			}
+	/*
+	Removes a tag by its index from the hidden tags input 
+	*/
+	var removeTag = function(tagN, topContainer){
+		// Get tags
+		var input = $('[name=tags]', topContainer);
+		var tags = input.val().split(ENV.tagsDelimiter);
+		if(tagN < tags.length){
+			// There are enough elements to remove the desired index
+			tags.splice(tagN, 1);
+			input.val(tags.join(ENV.tagsDelimiter)).change();
 		}
-	};
+	}
+
+	/*
+	This function responds to a change in the tags hidden input.
+	It reflects that change in both the placeholders and the text inputs.
+	*/
+	var tagChange = function(e, topContainer){
+		var input = $(e.target);
+		var tags = input.val() === '' ? [] : input.val().split(ENV.tagsDelimiter);
+		var placeholders = $('.tagPlaceholder', topContainer);
+		// Calculate the difference in tag len
+		var deltaTagsPlaceholders = placeholders.length - tags.length;
+		// Update tags
+		var i;
+		for (i = 0; i < tags.length; i++) {
+			const tag = tags[i];
+			var placeholder = $('.tagPlaceholder[data-i='+i+']');
+			var tagInput = $('.suggestTags input[data-i='+i+']');
+			// Add tag to placeholder	
+			$('.text', placeholder).text(tag);
+			placeholder.removeClass('empty');
+			// Add tag to input
+			tagInput.val(tag).change();
+		}
+		// Clear the remaining ones
+		for (let j = i; j < i + deltaTagsPlaceholders; j++) {
+			// Clear placeholder
+			var placeholder = $('.tagPlaceholder[data-i='+j+']');
+			placeholder.addClass('empty');
+			// Clear input
+			var tagInput = $('.suggestTags input[data-i='+j+']');
+			tagInput.val('').change();
+		}
+		// Make sure that second input is enabled if there is one tag
+		var secondInput = $('.suggestTags input[data-i=1]');
+		if(tags.length > 0){
+			secondInput.attr('disabled', false);
+		} else {
+			secondInput.attr('disabled', true);
+		}
+	}
 
 	if(action === 'setup'){
 		topContainer.html(Mustache.render(TEMPLATES.tagPickerTemplate));
@@ -155,31 +169,40 @@ $.fn.tagPicker = function(action, params){
 		$('.tagPlaceholder .close', topContainer).click(function(e){
 			var pressedButton = $(this);
 			var placeholder = pressedButton.closest('.tagPlaceholder');
-			// Check if this is placeholder1
-			var isPlaceholder1 = placeholder.is('.tagPlaceholder:first');
-			if(isPlaceholder1){
-				// Check if placeholder 2 is used
-				var placeholder2 = $('.tagPlaceholder:eq(1)', topContainer);
-				var isPlaceholder2Empty = placeholder2.hasClass('empty');
-				if (isPlaceholder2Empty) {
-					// Ph2 is not being used. It's ok to empty Ph1
-					removeTag(placeholder, topContainer);
-				} else {
-					// Placeholder 1 is being deleted and 2 is used. Move ph2 to ph1 and delete ph2
-					var text = $('.text', placeholder2).text();
-					removeTag(placeholder2, topContainer);
-					removeTag(placeholder, topContainer);
-					setTag(placeholder, text, topContainer);
-				}
-			} else {
-				// Ph2 being deleted needs no checks
-				removeTag(placeholder, topContainer);
-			}
+			var placeholderIndex = parseInt(placeholder.data('i'));
+			// Remove tag
+			removeTag(placeholderIndex, topContainer);
 		});
 
 		loadTags(tagsList, topContainer);
 
+		// Attach change event to tags input
+		$('[name=tags]', topContainer).change(function(e){
+			tagChange(e, topContainer);
+		});
 
+		// Attach event handler to text tag input
+		$('.suggestTags input[type=text]', topContainer).on('keyup blur input', function(e){
+			var input = $(e.target);
+			var inputIndex = parseInt(input.data('i'));
+			var hiddenInput = $('[name=tags]', topContainer);
+			// Update values in hidden input
+			// 1. clear input
+			hiddenInput.val('');
+			// 2. add values
+			var tags = []
+			$('.suggestTags input[type=text]', topContainer).each(function(i,d){
+				var tagInput = $(d);
+				if (!tagInput.is(':disabled')){
+					tags.push(tagInput.val());
+				}
+			});
+			for (let i = 0; i < tags.length; i++) {
+				const tag = tags[i];
+				addTag(tag, topContainer);
+			}
+
+		});
 	
 	} else if (action === 'validate'){
 		/*
@@ -193,31 +216,15 @@ $.fn.tagPicker = function(action, params){
 		// Clean any tags errors
 		settings.hideErrorMessage(topContainer);
 		// Get values
-		var pickTags = function(value){
+		var tags = function(value){
 			if (value === ''){
 				return [];
 			} else {
 				return value.split(ENV.tagsDelimiter);
 			}
-		}($('[name=pickTags]', topContainer).val());
-	
-		var suggestTags = function(inputs){
-			var tags = []
-			$.each(inputs, function(i,d){
-				var input = $(d);
-				if(input.val().trim() !== ''){ 
-					tags.push(input.val().replace(/\s/g,''));
-				}
-			});
-			return tags;
-		}($('[name=suggestTags]', topContainer));
-		
-		var customTag = function(value){
-			return value === 'true';
-		}($('[name=customTag]', topContainer).val());
+		}($('[name=tags]', topContainer).val());
 		
 		// Validate
-		var tags = customTag ? suggestTags : pickTags;
 		if (tags === undefined){
 			tags = [];
 		} else if (!(tags.constructor === Array)){
@@ -252,7 +259,7 @@ $.fn.tagPicker = function(action, params){
 		// Empty tag placeholders
 		var placeholders = $('.tagPlaceholder', topContainer);
 		placeholders.each(function(i,d){
-			removeTag($(d));
+			removeTag(i, topContainer);
 		});
 		// Empty suggest tags
 		$('.suggestTags [name=suggestTags]', topContainer).val('');

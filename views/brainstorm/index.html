@@ -424,33 +424,36 @@
 			</p>
 			<div class="panel">
 				<div class="tagPicker">
-					<input type="text" class="search" placeholder="Filter tags" disabled/>
+					<input type="text" class="search" placeholder="Search tags" disabled/>
 					<ul class="tagsList">
 						<!-- <li class="t_example">Example</li> -->
 						<li><div class="loadingBadge">Loading tags...</div></li>
 					</ul>
-					<div class="tagPlaceholder empty">
-						<span class="text"></span>
-						<span class="empty">tag 1</span> 
-						<span class="close">x</span>
-					</div>
-					<div class="tagPlaceholder empty">
-						<span class="text"></span>
-						<span class="empty">tag 2 (opt.)</span> 
-						<span class="close">x</span>
-					</div>
-					<input type="hidden" name="pickTags" value="" />
-					<a class="alternative">None of these tags represent your idea?</a>
 				</div>
 			</div>
 			<div class="panel suggestTags" style="display: none">
 				<div>
-					<input type="text" placeholder="tag 1" name="suggestTags" maxlength="{{=validation['short_string_max']}}"/>
-					<input type="text" placeholder="tag 2 (opt.)" name="suggestTags" maxlength="{{=validation['short_string_max']}}"/>
+					<input type="text" data-i="0" placeholder="tag 1" name="suggestTags" maxlength="{{=validation['short_string_max']}}"/>
+					<input type="text" data-i="1" placeholder="tag 2 (opt.)" name="suggestTags" maxlength="{{=validation['short_string_max']}}" disabled/>
 				</div>
-				<a class="alternative"><strong>&lsaquo;</strong> Go back to tag picker</a>
 			</div>
-			<input type="hidden" name="customTag" value="false"/> <!-- This input reflects whether the user picked a tag or created a custom one -->
+			<a class="alternative">
+				<span>None of these tags represent your idea well?</span>
+				<span style="display: none">&lt; Go back to tag picker</span>
+			</a>
+			<div class="placeholders">
+				<div class="tagPlaceholder empty" data-i="0">
+					<span class="text"></span>
+					<span class="empty">tag 1</span> 
+					<span class="close">x</span>
+				</div>
+				<div class="tagPlaceholder empty" data-i="1">
+					<span class="text"></span>
+					<span class="empty">tag 2 (opt.)</span> 
+					<span class="close">x</span>
+				</div>
+			</div>
+			<input type="hidden" name="tags" value="" />
 		</div>
 	</script>
 {{end}}
@@ -511,7 +514,7 @@
 			
 			<div id="newIdeaTagPicker"></div>
 
-			<a class="btn floatRight submit" onclick="submitNewIdea(event);">Submit</a>
+			<a class="btn cornerRight submit" onclick="submitNewIdea(event);">Submit</a>
 			
 		</form>
 	</div>
@@ -575,8 +578,7 @@
 			<input type="hidden" name="combineTypeInput">
 			<input type="hidden" name="combinedIdeaIds">
 
-			<a class="btn floatRight" onclick="submitCombinedIdea(event)">Submit</a>
+			<a class="btn cornerRight" onclick="submitCombinedIdea(event)">Submit</a>
 		</form>
-
 	</div>
 {{end}}

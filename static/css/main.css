@@ -633,6 +633,12 @@ textarea.ideaInput + div {
     float: right;
 }
 
+.cornerRight {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
 .viewContainer {
     display: block;
     position: absolute;
@@ -1004,10 +1010,17 @@ textarea.ideaInput + div {
         overflow: auto;
     }
 
-    #combineIdeas .ideaInput {
+    #combineIdeas form.ideaInput {
         display: none;
         clear: both;
+        position: relative;
     }
+
+    #combineIdeas form.ideaInput .cornerRight {
+        right: 0;
+        bottom: 0;
+    }
+
 
 .combinationType {
     font-weight: bolder;
@@ -1532,7 +1545,15 @@ textarea.ideaInput + div {
     height: 35px;
 }
 
-.tagPicker .tagPlaceholder {
+.tagWrapper {
+    text-align: center;
+}
+
+    .tagWrapper > * {
+        text-align: left;
+    }
+
+.tagWrapper .tagPlaceholder {
     display: inline-block;
     padding: 10px;
     min-width: 80px;
@@ -1543,12 +1564,12 @@ textarea.ideaInput + div {
     color: #3083CC;
 }
 
-.tagPicker .tagPlaceholder.empty {
+.tagWrapper .tagPlaceholder.empty {
     background: white;
     border: dashed 1px #3083CC;
 }
 
-    .tagPicker .tagPlaceholder .close {
+    .tagWrapper .tagPlaceholder .close {
         display: inline-block;
         padding: 0 0 0 15px;
         font-size: inherit;
@@ -1558,18 +1579,28 @@ textarea.ideaInput + div {
         opacity: 1;
         font-family: "Arial Black"
     }
-    .tagPicker .tagPlaceholder.empty .empty { display: inline-block; }
-    .tagPicker .tagPlaceholder .empty { display: none; }
-    .tagPicker .tagPlaceholder.empty .close {
-        display: none;
-    }
+    .tagWrapper .tagPlaceholder.empty .empty { display: inline-block; }
+    .tagWrapper .tagPlaceholder.empty .text { display: none; }
+    .tagWrapper .tagPlaceholder .empty { display: none; }
+    .tagWrapper .tagPlaceholder.empty .close { display: none; }
 
-.tagPicker .alternative {
-    float: right;
+.tagWrapper .alternative {
+    display: inline-block;
     clear: both;
+    /* background: #3AAAFC; */
+    line-height: 35px;
+    border-radius: 20px;
+    /* color: white; */
+    /* text-decoration: none; */
+    padding: 0 10px;
+    margin-bottom: 20px;
 }
 
-.tagPicker .panel.hide {
+.tagWrapper .panel {
+    margin-bottom: 5px;
+}
+
+.tagWrapper .panel.hide {
     display: none;
 }
 
