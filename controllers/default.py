@@ -70,7 +70,7 @@ def error():
     code = request.vars.code
     request_url = request.vars.request_url
     full_ticket = request.vars.ticket
-    short_ticket = full_ticket.split('.')[-1]
+    short_ticket = 'There is none. Oh no!' if not full_ticket else full_ticket.split('.')[-1]
     # Reporting error
     if settings['is_development']:
         link = URL('admin', 'ticket', full_ticket)

@@ -54,7 +54,7 @@
 			newUser: '{{=str(new_user).lower()}}' === 'true',
 			doneInspirationTutorial: '{{=str(new_user).lower()}}' === 'true' ? false : true,
 			currentPhase: 1, // Keeps track of the current ideation phase
-			aloneIdeationTime: 0.1, // Duration of time, in minutes, before other views are opened
+			aloneIdeationTime: 10, // Duration of time, in minutes, before other views are opened
 			checkUpdateFrequency: 10000 // How often should the system check for new ideas
 		},
 		EVENTS = {
