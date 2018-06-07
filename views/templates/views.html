@@ -1,0 +1,123 @@
+<script id="ideaViewerTemplate" type="text/x-tmpl-mustache">
+    <div class="toolbar phase1_bl">
+        <!-- <ul>
+            <li><a title="Reload this panel" onclick="TOOLBAR.ideaViewer.reload()">
+                <img src="{{=URL('static','images/reload.png')}}">
+            </a></li>
+        </ul> -->
+        <ul>
+            <li><a title="Load your latest ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
+                <img src="{{=URL('static','images/user.png')}}">
+            </a></li>
+            <li><a title="Load your favorite ideas" onclick="TOOLBAR.ideaViewer.loadFavoriteIdeas()">
+                <img src="{{=URL('static','images/heart-black.png')}}">
+            </a></li>
+            <li><a title="Load all latest version ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
+                <img src="{{=URL('static','images/group.png')}}">
+            </a></li>
+        </ul>
+        <div class="right-buttons">
+            <ul>
+                <li id="ideasContainerCounter">
+                    <span>0</span> ideas loaded
+                </li>
+                <!-- <li><a title="Maximize view" onclick="TOOLBAR.general.toggleMaximise('ideaViewer')">
+                    <img src="{{=URL('static','images/maximize.png')}}">
+                </a></li> -->
+            </ul>
+        </div>
+    </div>
+    <div id="ideasContainer" class="viewContainer phase1_cl" data-phase1cl="noToolbar"></div>
+</script>
+
+<script id="versioningViewerTemplate" type="text/x-tmpl-mustache">
+    <div class="toolbar">
+        <ul>
+            <li><a title="Reload this panel" onclick="TOOLBAR.versioningView.reload()">
+                <img src="{{=URL('static','images/reload.png')}}">
+            </a><span class="notificationBadge">!</span></li>
+            <!-- <li><a title="Auto-reload toggle" onclick="TOOLBAR.versioningView.toggleAutoReload()">
+                 <img src="{{=URL('static','images/clock.png')}}"><span id='versioningTimerDisplay'>OFF</span>
+            </a></li> -->
+        </ul>
+        <div class="right-buttons">
+            <!-- <ul>
+                <li><a title="Maximize view" onclick="TOOLBAR.general.toggleMaximise('versioningView')">
+                    <img src="{{=URL('static','images/maximize.png')}}">
+                </a></li>
+            </ul> -->
+        </div>
+    </div>
+    <div id="versioningContainer" class="viewContainer">
+        
+    </div>
+</script>
+
+<script id="innerVersioningViewerTemplate" type="text/x-tmpl-mustache">
+    <div class="legend">
+        <ul>
+            <li class="refinement"><span></span>Refinement</li>
+            <li class="combine"><span></span>Combination</li>
+            <li class="merge"><span></span>Merging</li>
+            <li class="openIdea"><span></span>Open idea
+        </ul>
+    </div>
+    <div class="treeView">
+    </div>
+</script>
+
+<script id="versioningViewNodeTemplate" type="text/x-tmpl-mustache">
+    <div class="node [[type]]">
+        <span class="smallIdea [[classTags]] [[classId]]" data-id="[[id]]" data-tags="[[tags]]"></span>
+        <span class="line line1"></span>
+        <span class="line line2"></span>
+        <div class="children"></div>
+    </div>
+</script>
+
+<script id="solutionSpaceViewerTemplate" type="text/x-tmpl-mustache">
+    <div class="toolbar">
+        <ul>
+            <li><a title="Reload this panel" onclick="TOOLBAR.solutionSpaceView.reload()">
+                <img src="{{=URL('static','images/reload.png')}}">
+            </a><span class="notificationBadge">!</span></li>
+            <!-- <li><a title="Auto-reload toggle" onclick="TOOLBAR.solutionSpaceView.toggleAutoReload()">
+                <img src="{{=URL('static','images/clock.png')}}"><span id='solutionSpaceTimerDisplay'>OFF</span>
+            </a></li> -->
+        </ul>
+        <ul>
+            <li><a class="" id="toggleMinimap" title="Toggle the minimap" onclick="TOOLBAR.solutionSpaceView.toggleMinimap()">
+                <img src="{{=URL('static','images/map.png')}}">
+            </a></li>
+        </ul>
+        <div class="right-buttons">
+            <!-- <ul>
+                <li><a title="Maximize view" onclick="TOOLBAR.general.toggleMaximise('solutionSpace')">
+                    <img src="{{=URL('static','images/maximize.png')}}">
+                </a></li>
+            </ul> -->
+        </div>
+    </div>
+    
+    <div id="solutionSpaceContainer" class="viewContainer">
+    </div>
+    
+    <div id="miniMap" style="display:none">
+        <div id="pan"></div>
+    </div>
+</script>
+
+
+<script id="solutionSpaceStructureTemplate" type="text/x-tmpl-mustache">
+    <div id="solutionSpaceHeader">
+    </div>
+
+    <div id="solutionSpaceLeftColumn">
+    </div>
+
+    <!-- <div id="solutionSpaceRightColumn">
+    </div> -->
+
+    <div id="spaceContainer">
+    </div>
+</script>

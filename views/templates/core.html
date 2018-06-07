@@ -1,0 +1,120 @@
+<script id="ideaBlockTemplate" type="text/x-tmpl-mustache">
+    <div class="ideaBlock id[[id]] [[favorite]]" id="id[[id]]" style="display:none">
+        [[idea]]
+        [[#closeable]]
+        <a title="Close idea" class="close"></a>
+        [[/closeable]]
+        <div class="popOut">
+            [[#editable]]
+            <a class="expandBtn">View</a>
+            <a class="refineBtn">Refine</a>
+            [[/editable]]
+            <a class="favoriteBtn">Favorite</a>
+        </div>
+        <!-- <span class="fade"></span> -->
+        <input type="hidden" name="ideaId" value="[[id]]"></input>
+        <input type="hidden" name="ideaTags" value="[[tags]]"></input>
+    </div>
+</script>
+
+<script id="tagsViewTemplate" type="text/x-tmpl-mustache">
+    <span class="close"></span>
+    <h2>Tags view</h2>
+    <p>See ideas that have the tags you selected. If you see ideas you like, drag and drop to combine or merge them.</p>
+
+    <div class="twoCategoryIdeasList">
+        <div class="cl_[[category1]]">
+            <h3>[[category1]]</h3>
+            <ul>
+                <li class="loading"><div class="loadingBadge"></div></li>
+            </ul>
+        </div>
+
+        <div class="cl_[[category2]] loading">
+            <h3>[[category2]]</h3>
+            <ul>
+                <li class="loading"><div class="loadingBadge"></div></li>
+            </ul>
+        </div>
+    </div>
+</script>
+
+<script id="tagTemplate" type="text/x-tmpl-mustache">
+    <span class="tag"><a>[[tag]]</a></span>
+</script>
+
+<script id="inspirationPopupTemplate" type="text/x-tmpl-mustache">
+    <span class="close"></span>
+
+    <h2>Get inspired <a class="help">?</a> </h2>
+    <div class="helpPanel">
+        <img src='{{=URL('static','images/insp-tut1.png')}}' />
+        <p>
+            To inspire you, we'll show you three ideas from other users
+        </p>
+        <img src='{{=URL('static','images/insp-tut2.png')}}' />
+        <p>
+            We'll also ask you to answer simple questions about them
+        </p>
+        <img src='{{=URL('static','images/insp-tut3.png')}}' />
+        <p>
+            Answering those questions can help you get more inspired, while helping us to organize the ideas better
+        </p>
+        <p><a id="finishInspirationTutorial">Got it!</a></p>
+    </div>
+    <div class="tasksPanel">
+        <p>Look at the following ideas suggested by other users and use them as inspiration.</p>
+        <ul id="inspirationPanel" class="loading">
+            <li class="selected">
+                <div class="loadingBadge"></div>
+            </li>
+        </ul>
+        <div id="inspirationControls" class="first" style="display: none">
+            <a class="arrow arrow-left previous" onclick=""></a>
+            <span class="stages">0/0</span>
+            <a class="arrow arrow-right next" onclick=""></a>
+            <a class="btn submit" onclick="submitInspirationTask(event);">Submit</a>
+        </div>
+    </div>
+</script>
+
+<script id="tagPickerTemplate" type="text/x-tmpl-mustache">
+    <div class="tagWrapper loading">
+        <p>
+            Pick <strong>at most 2 tags</strong> that best summarize your idea.<br/>
+            A tag is usually one word that can be used to categorize your idea.
+        </p>
+        <div class="panel">
+            <div class="tagPicker">
+                <input type="text" class="search" placeholder="Search tags" disabled/>
+                <ul class="tagsList">
+                    <!-- <li class="t_example">Example</li> -->
+                    <li><div class="loadingBadge">Loading tags...</div></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel suggestTags" style="display: none">
+            <div>
+                <input type="text" data-i="0" placeholder="tag 1" name="suggestTags" maxlength="{{=validation['short_string_max']}}"/>
+                <input type="text" data-i="1" placeholder="tag 2 (opt.)" name="suggestTags" maxlength="{{=validation['short_string_max']}}" disabled/>
+            </div>
+        </div>
+        <a class="alternative">
+            <span>None of these tags represent your idea well?</span>
+            <span style="display: none">&lt; Go back to tag picker</span>
+        </a>
+        <div class="placeholders">
+            <div class="tagPlaceholder empty" data-i="0">
+                <span class="text"></span>
+                <span class="empty">tag 1</span> 
+                <span class="close">x</span>
+            </div>
+            <div class="tagPlaceholder empty" data-i="1">
+                <span class="text"></span>
+                <span class="empty">tag 2 (opt.)</span> 
+                <span class="close">x</span>
+            </div>
+        </div>
+        <input type="hidden" name="tags" value="" />
+    </div>
+</script>
