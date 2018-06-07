@@ -38,4 +38,4 @@ pip-log.txt
 .vscode
 
 private.*
-*.compiled.w2p
+*.compiled.*

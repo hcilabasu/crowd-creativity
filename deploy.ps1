@@ -1,4 +1,10 @@
 <# 
+DEPENDENCIES
+* postcss-cli https://github.com/postcss/postcss-cli
+* csso-cli https://github.com/css/csso-cli
+* uglifyJS https://github.com/mishoo/UglifyJS2
+* 7z.exe
+
 USAGE
 
 Simply run this script on powershell. It will generate a web2py.app.compiled.w2p file.
@@ -9,6 +15,8 @@ Hit install and wait for the instalation to conclude.
 #> 
 
 Write-Host Starting deployment script
+
+<# REMOVE
 
 # Replacing appconfig files
 Write-Host Switching appconfig.ini files...
@@ -28,14 +36,47 @@ if (Test-Path compiled){
     Write-Host "-- Deleted compiled directory"
 }
 
+#>
+
 # Compile
 Write-Host Compiling app...
+
 # python -c "import gluon.compileapp; gluon.compileapp.compile_application('..\\..\\applications\\crowdmuse')"
 
+<# TODO Compile CSS files
+Write-Host Compiling CSS...
+cd static/css
+# First compile all less files
+Get-ChildItem -Path .\ -Filter *.less -Recurse -File | ForEach-Object { 
+    lessc $_.FullName "$($_.DirectoryName)\$($_.BaseName).compiled.css"
+}
+# Combine all css files into one
+cd ..
+Get-Content "*.css" | Out-File "css.compiled.css"
+cd css
+Get-ChildItem -Path .\ -Recurse -Directory | ForEach-Object {
+    echo $_.Name
+    echo "$($_.Name)\$($_.Name).compiled.css"
+    Get-Content "$($_.Name)\*.css" | Out-File "$($_.Name)\$($_.Name).compiled.css"
+}
+# TODO run minify
+# Go back to base
+cd ../..
+#>
+
+Write-Host Compiling JS...
+cd static/js
+
+cd ../..
 # Pack app
+
+<# REMOVE
+
 Write-Host Packing app...
 7z.exe a -ttar web2py.crowdmuse.compiled.tar *
 7z.exe a -tgzip web2py.crowdmuse.compiled.w2p web2py.crowdmuse.compiled.tar
+
+
 
 # Clean up
 Write-Host Cleaning up...
@@ -44,5 +85,7 @@ cd private
 Rename-Item appconfig.ini private.appconfig.ini # Make production appconfig private again
 Rename-Item temp.appconfig.ini appconfig.ini # Remove temp from dev appconfig
 cd ..
+
+REMOVE #>
 
 Write-Host Done!

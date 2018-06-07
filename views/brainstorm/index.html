@@ -1,7 +1,26 @@
 {{extend 'systemlayout.html'}}
 
+{{block page_styles}}
+	<!-- Load styles -->
+	{{if settings['is_development']:}}
+		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/goldenlayout-base.css')}}" />
+		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/goldenlayout-light-theme.css')}}" />
+		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/visualizations.css')}}" />
+		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/tutorial.css')}}" />
+		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/jquery-ui.min.css')}}" />
+		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/jquery.tagsinput.min.css')}}" />
+	{{else:}}
+		<!-- TODO combine and minify all files into one -->
+		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/goldenlayout-base.css')}}" />
+		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/goldenlayout-light-theme.css')}}" />
+		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/visualizations.css')}}" />
+		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/tutorial.css')}}" />
+		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/jquery-ui.min.css')}}" />
+		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/jquery.tagsinput.min.css')}}" />
+	{{pass}}
+{{end}}
+
 {{block page_js}}
-	
 	<!-- Load JS libraries -->
 	<script type="text/javascript" src="{{=URL('static','js/jquery-ui.min.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/jquery.mobile.custom.min.js')}}"></script>
@@ -11,14 +30,6 @@
 	<script type="text/javascript" src="{{=URL('static','js/jquery.tagsinput.min.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/jquery.validate.min.js')}}"></script>
 	<script type="text/javascript" src="{{=URL('static','js/scrollmarker.js')}}"></script>
-
-	<!-- Load styles -->
-	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/goldenlayout-base.css')}}" />
-	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/goldenlayout-light-theme.css')}}" />
-	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/visualizations.css')}}" />
-	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/tutorial.css')}}" />
-	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/jquery-ui.min.css')}}" />
-	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/jquery.tagsinput.min.css')}}" />
 
 	<script>
 		// Set up globals
