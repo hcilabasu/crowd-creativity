@@ -2,22 +2,13 @@
 
 {{block page_styles}}
 	<!-- Load styles -->
-	{{if settings['is_development']:}}
-		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/goldenlayout-base.css')}}" />
-		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/goldenlayout-light-theme.css')}}" />
-		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/visualizations.css')}}" />
-		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/tutorial.css')}}" />
-		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/jquery-ui.min.css')}}" />
-		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/jquery.tagsinput.min.css')}}" />
-	{{else:}}
-		<!-- TODO combine and minify all files into one -->
-		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/goldenlayout-base.css')}}" />
-		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/goldenlayout-light-theme.css')}}" />
-		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/visualizations.css')}}" />
-		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/tutorial.css')}}" />
-		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/jquery-ui.min.css')}}" />
-		<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/jquery.tagsinput.min.css')}}" />
-	{{pass}}
+	<!-- TODO combine and minify all files into one and serve them if not in dev. -->
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/goldenlayout-base.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/goldenlayout-light-theme.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/visualizations.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/tutorial.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/jquery-ui.min.css')}}" />
+	<link type="text/css" rel="stylesheet" href="{{=URL('static','css/brainstorm/jquery.tagsinput.min.css')}}" />
 {{end}}
 
 {{block page_js}}
