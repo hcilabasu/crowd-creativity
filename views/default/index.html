@@ -7,13 +7,19 @@
     <title>CrowdMuse</title>
 
     <link href="https://fonts.googleapis.com/css?family=Concert+One|Lato" rel="stylesheet">
-    <link rel="stylesheet" href="{{=URL('static','css/bootstrap.min.css')}}"/>
-    <link rel="stylesheet" href="{{=URL('static','css/web2py-bootstrap3.css')}}"/>
-    <link rel="stylesheet/less" href="{{=URL('static','css/system.less')}}"/>
+    
+    <link rel="stylesheet" href="{{=URL('static','css/core/bootstrap.min.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/core/web2py-bootstrap3.css')}}"/>
+    {{if settings['is_development']:}}
+        <link rel="stylesheet/less" href="{{=URL('static','css/core/system.less')}}"/>
+        <script src="{{=URL('static','js/less.min.js')}}"></script>
+    {{else:}}
+        <link rel="stylesheet" href="{{=URL('static','css/core/system.compiled.css')}}"/>
+    {{pass}}
+
     <link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
 
-    <script src="{{=URL('static','js/less.min.js')}}"></script>
     {{include 'web2py_ajax.html'}}
     <script type="text/javascript" src="{{=URL('static','js/jquery.validate.min.js')}}"></script>
 </head>
