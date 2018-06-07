@@ -85,10 +85,11 @@
 
     {{block footer}} 
     {{end}}
+    
     <!-- The javascript =============================== -->
-    {{include 'web2py_ajax.html'}} <!-- this includes jquery.js, calendar.js/.css and web2py.js -->
+    <script src="{{=URL('static','js/jquery.js')}}"></script>
+    <script src="{{=URL('static','js/web2py.js')}}"></script>
     <script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
-    <script src="{{=URL('static','js/web2py-bootstrap3.js')}}"></script>
     <script src="{{=URL('static','js/moment.js')}}"></script>
     <script src="{{=URL('static','js/countdown.min.js')}}"></script>
     <script src="{{=URL('static','js/moment-countdown.min.js')}}"></script>

@@ -16,8 +16,6 @@ Hit install and wait for the instalation to conclude.
 
 Write-Host Starting deployment script
 
-<# REMOVE
-
 # Replacing appconfig files
 Write-Host Switching appconfig.ini files...
 cd private
@@ -35,8 +33,6 @@ if (Test-Path compiled){
     Remove-Item compiled -Recurse 
     Write-Host "-- Deleted compiled directory"
 }
-
-#>
 
 # Compile
 Write-Host Compiling app...
@@ -70,8 +66,6 @@ cd static/js
 cd ../..
 # Pack app
 
-<# REMOVE
-
 Write-Host Packing app...
 7z.exe a -ttar web2py.crowdmuse.compiled.tar *
 7z.exe a -tgzip web2py.crowdmuse.compiled.w2p web2py.crowdmuse.compiled.tar
@@ -85,7 +79,5 @@ cd private
 Rename-Item appconfig.ini private.appconfig.ini # Make production appconfig private again
 Rename-Item temp.appconfig.ini appconfig.ini # Remove temp from dev appconfig
 cd ..
-
-REMOVE #>
 
 Write-Host Done!
