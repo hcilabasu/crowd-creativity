@@ -139,83 +139,10 @@
 {{end}}
 
 {{block overlay}}
-	<div class="popupDialog" id="tagsView">
-	</div>
-
-	<div class="popupDialog" id="addIdea">
-		<span class="close"></span>
-		<h2>New idea</h2>
-		<p class="problemDescription">{{=problem.description}}</p>
-		<form>
-			<textarea name='idea' class="ideaInput" placeholder="Write one idea here" required maxlength="{{=validation['text_max']}}"></textarea>
-			
-			<div id="newIdeaTagPicker"></div>
-
-			<a class="btn cornerRight submit" onclick="submitNewIdea(event);">Submit</a>
-			
-		</form>
-	</div>
-
-	<div class="popupDialog ideaPopup loading" id="editIdea">
-		<span class="close"></span>
-		<h2 class="viewElement">View Idea</h2>
-		<h2 class="editElement">Refine Idea</h2>
-		<p class="editElement">
-			Refining an idea by adding more details, fixing issues, etc.
-		</p>
-		<p class="ideaText viewElement">
-		</p>
-		<form class="editElement">
-			<textarea name='refinedIdea' placeholder="Type your idea in here" required maxlength="{{=validation['text_max']}}"></textarea>
-			<input type="hidden" name="tags" />
-			<input type="hidden" name="originalId">
-		</form>
-		<ul class="tags">
-		</ul>
-		<a class="btn floatRight submit editElement" onclick="submitRefinedIdea(event)">Submit</a>
-		<div class="loadingBadge"></div>
-	</div>
-
-	<div class="popupDialog" id="inspiration">
-	</div>
-
-	<div class="popupDialog" id="combineIdeas">
-		<span class="close"></span>
-		<h2>Idea Mixing</h2>
-		<p class="problemDescription">{{=problem.description}}</p>
-		<div class="combineIdeasShowIdeas">
-			<p class="ideaBlock"><span></span></p>
-			<p class="ideaBlock"><span></span></p>
-		</div>
-
-		<div class="choices">
-			<p>Choose an action:</p>
-
-			<ul>
-				<li class="clickEnabled" onclick="replaceCombineIdeasOptions(event,'merge')">
-					<img src="{{=URL('static','images/merge.gif')}}" class="sideImage" />
-					<h3>Merge ideas</h3>
-					<p>Use this when two ideas are virtually the same. This will eliminate the two ideas in favor of your merged idea.</p>
-				</li>
-				<li class="clickEnabled" onclick="replaceCombineIdeasOptions(event,'combine')">
-					<img src="{{=URL('static','images/combine.gif')}}" class="sideImage" />
-					<h3>Combine ideas</h3>
-					<p>Use this to combine two different ideas into a new, original idea. This will keep the two ideas and add your new idea. </p>
-				</li>
-			</ul>
-		</div>
-		<form class="ideaInput">
-			<p> <a onclick="replaceCombineIdeasOptions(event, 'back')">&lt; Back</a> </p>
-			<p>Please, write down your <span class='combinationType'></span> idea in the textarea below. Make sure to include as much detail as possible!</p>
-
-			<textarea name="combinedIdeaInput" placeholder="Write your idea in here" class="ideaInput" required maxlength="{{=validation['text_max']}}"></textarea>
-
-			<div id="combinedTagInput"></div>
-
-			<input type="hidden" name="combineTypeInput">
-			<input type="hidden" name="combinedIdeaIds">
-
-			<a class="btn cornerRight" onclick="submitCombinedIdea(event)">Submit</a>
-		</form>
-	</div>
+	<!-- Popups -->
+	<div class="popupDialog" id="tagsView"></div>
+	<div class="popupDialog" id="addIdea"></div>
+	<div class="popupDialog" id="inspiration"></div>
+	<div class="popupDialog" id="combineIdeas"></div>
+	<div class="popupDialog ideaPopup loading" id="editIdea"></div>
 {{end}}

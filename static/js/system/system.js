@@ -436,10 +436,14 @@ var closeOverlay = function(event){
 			handler();
 		}
 	}
-	
 };
 
 var editIdeaSetup = function(params){
+	var popup = $('#editIdea');
+	var template = $(Mustache.render(TEMPLATES['editIdeaPopupTemplate']));
+	if (popup.is(':empty')){ // Only load the html the first time
+		popup.html(template);
+	}
 	var type = 'view';
 	if(params.edit){
 		type = 'edit';
@@ -482,6 +486,11 @@ var editIdeaSetup = function(params){
 }
 
 var combineIdeasSetup = function(params){
+	var popup = $('#combineIdeas');
+	var template = $(Mustache.render(TEMPLATES['combineIdeaPopupTemplate']));
+	if (popup.is(':empty')){ // Only load the html the first time
+		popup.html(template);
+	}
 	// Add the idea text to the blocks
 	ids = []
 	tags = []
@@ -558,6 +567,11 @@ var tagsViewSetup = function(params){
 }
 
 var addIdeaSetup = function(){
+	var popup = $('#addIdea');
+	var template = $(Mustache.render(TEMPLATES['addIdeaPopupTemplate']));
+	if (popup.is(':empty')){ // Only load the html the first time
+		popup.html(template);
+	}
 	// Set focus for immediate typing
 	$('#addIdea textarea').focus();
 	var tagPicker = $('#newIdeaTagPicker').tagPicker('setup');
