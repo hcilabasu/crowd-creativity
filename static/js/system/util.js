@@ -34,17 +34,26 @@ var UTIL = {
 		return filtered;
 	},
 	/*
-	Starts a timer, displaying the countdown on timerDisplay, and executing endFn at every duration seconds.
+	Starts a timer, displaying the countdown on timerDisplay (jquery element), and executing endFn at every duration seconds.
 	*/
 	setTimer: function(timerDisplay, endFn, duration, repeat){
 		// Setup formatter and parser
 		var formatter = UTIL.formatTimer;
 		var parser = UTIL.parseTimer;
 		// Go through update logic
-		timerDisplay.text(formatter(duration));
+		// Add duration to localStorage
+		var lsName = 'timer_' + timerDisplay.attr('id');
+		if(localStorage[lsName]){
+			// This is not the first time. Load from local storage
+			duration = localStorage[lsName];
+		} else {
+			// This is the first time running. Add to local storage
+			localStorage[lsName] = duration;
+		}
 		var _duration = duration;
+		timerDisplay.text(formatter(duration));
 		var interval = window.setInterval(function(){
-			var seconds = parser(timerDisplay.text());
+			var seconds = parseInt(localStorage[lsName]);
 			if(!isNaN(seconds)) {
 				// Display is on. Continue timer from there
 				timerDisplay.text(formatter(seconds));
@@ -54,12 +63,15 @@ var UTIL = {
 					if(!repeat){
 						// Do not repeat. Stop timer
 						clearInterval(interval);
+						localStorage.removeItem(lsName);
 					} else {
 						timerDisplay.text(formatter(_duration));
+						localStorage[lsName] = _duration;
 					}
 				} else {
 					// Decrease timer
 					timerDisplay.text(formatter(seconds - 1));
+					localStorage[lsName] = seconds - 1;
 				}
 			} else {
 				// Display was turned off. Stop interval
