@@ -41,6 +41,7 @@ def index():
         user_id=user_id, 
         user_name=user_name, 
         new_user=new_user, 
+        study_session=problem.study_session,
         problem=problem,
         validation=dict(
             data_max = DATA_MAX,

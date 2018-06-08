@@ -109,8 +109,10 @@ class Idea {
             };
             ideaBlock.hover(function(){
                 $.event.trigger({type:EVENTS.highlightIdea, params:getParams(this)});
+                console.dir('Hover in');
             },function(){
                 $.event.trigger({type:EVENTS.blurIdea, params:getParams(this)});
+                console.dir('Hover out');
             });
         }
 

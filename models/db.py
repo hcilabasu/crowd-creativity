@@ -97,6 +97,7 @@ db.define_table('problem',
     Field('url_id', 'string', unique=True, length=SHORT_STRING_MAX),
     Field('description', 'text', length=TEXT_MAX),
     Field('public', 'boolean', default=True),
+    Field('study_session', 'boolean', default=False),
     migrate=MIGRATE,
     fake_migrate=FAKE_MIGRATE)
 

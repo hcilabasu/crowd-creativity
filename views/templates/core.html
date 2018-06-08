@@ -11,7 +11,7 @@
             [[/editable]]
             <a class="favoriteBtn">Favorite</a>
         </div>
-        <!-- <span class="fade"></span> -->
+        <span class="fade"></span>
         <input type="hidden" name="ideaId" value="[[id]]"></input>
         <input type="hidden" name="ideaTags" value="[[tags]]"></input>
     </div>
@@ -190,4 +190,19 @@
     </ul>
     <a class="btn floatRight submit editElement" onclick="submitRefinedIdea(event)">Submit</a>
     <div class="loadingBadge"></div>
+</script>
+
+<script id="sessionConclusionTemplate" type="text/x-tmpl-mustache">
+    <span class="close"></span>
+    
+    <h2>Almost there!</h2>
+    
+    <p>Thank you for your time! You're almost done with this study. The last step is to click on the "COMPLETE FORM" button below and complete the form there:</p>
+    
+    <a class="btn btn-primary" target="_blank" href="https://goo.gl/forms/UhnuYSsTDIsn6krC2">
+        Complete Form
+    </a>
+    
+    <p>Just as a reminder, your CrowdMuse user ID is:</p>
+    <p class="user_name">{{=user_name}}</p>
 </script>

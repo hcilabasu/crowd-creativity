@@ -52,6 +52,7 @@ var UTIL = {
 		}
 		var _duration = duration;
 		timerDisplay.text(formatter(duration));
+		timerDisplay.show('fast');
 		var interval = window.setInterval(function(){
 			var seconds = parseInt(localStorage[lsName]);
 			if(!isNaN(seconds)) {

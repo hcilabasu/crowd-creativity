@@ -1,3 +1,14 @@
+// Variables
+@ideaColor: #FFDE78;
+@ideaColorDarker: #FCBD65;
+@ideaColorFavorite: #FDC4BB;
+@ideaColorDarkerFavorite: #FDC4BB;
+
+@darkBlue: #3a80d1;
+@darkerBlue: #144C80;
+
+// Animations
+
 @keyframes glow {
     0%   {box-shadow: 0 0 0px #3AAAFC;}
     50%  {box-shadow: 0 0 20px #3AAAFC;}
@@ -5,10 +16,10 @@
 }
 
 @keyframes glowWhite {
-    0%   {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 0px white;}
-    40%  {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 20px white;}
-    80%  {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 0px white;}
-    100% {box-shadow: inset 0 -3px 0 0 rgba(0,0,0,0.2), 0 0 0px white;}
+    0%   {box-shadow: 0 0 0px white;}
+    40%  {box-shadow: 0 0 20px white;}
+    80%  {box-shadow: 0 0 0px white;}
+    100% {box-shadow: 0 0 0px white;}
 }
 
 @keyframes shake {
@@ -16,7 +27,9 @@
     25% {transform: rotate(2deg);} 
     75% {transform: rotate(-2deg);} 
     100% {transform: rotate(0)};
- } 
+}
+
+// Styles
 
 body,html {
     padding: 0;
@@ -152,14 +165,14 @@ a.logo:focus {
     z-index: 99;
 }
 
-.topNavbar .btn-primary {
-    background-color: rgb(58, 128, 209);
-    color: white;
-}
-
-    .topNavbar .btn:hover {
-        background-color: #144C80;
+.btn-primary {
+    background-color: @darkBlue !important;
+    color: white !important;
+    
+    &:hover {
+        background-color: @darkerBlue !important;
     }
+}
 
 .navContainer {
     position: relative;
@@ -196,6 +209,7 @@ a.logo:focus {
 .navBlock img {
     height: 22px;
     margin: 5px;
+    margin-bottom: 8px;
 }
 
 .navBlock.actionable {
@@ -379,7 +393,8 @@ body.loading #loadingOverlay {
     display: block;
 }
 
-#sessionTimer {
+#sessionTimer,
+#studyTimer {
     display: inline-block;
     font-size: 2em;
     font-weight: bolder;
@@ -505,7 +520,7 @@ body.loading #loadingOverlay {
 }
 
 .btn:hover {
-    background-color: #144C80;
+    background-color: @darkerBlue;
     transition: all 0.2s;
     color: white;
 }
@@ -691,6 +706,7 @@ textarea.ideaInput + div {
 }
 
 .ideaBlock {
+    font-size: 0.8em;
     position: relative;
     display: inline-block;
     border: none;
@@ -700,158 +716,143 @@ textarea.ideaInput + div {
     text-shadow: 0 1px rgba(255,255,255,0.4);
     width: 130px;
     height: 100px;
-    font-size: 1em;
     overflow: hidden;
     transition: width 0.2s, height 0.2s, background-color 0.2s, margin 0.2s;
-    background: #FFDE78; /* For browsers that do not support gradients */
+    background: @ideaColor; /* For browsers that do not support gradients */
     transform: rotate(0);
-}
 
-.ideaBlock.favorite {
-    background: #FDC4BB url(../../images/heart.png) no-repeat;
-    background-position: right 5px bottom 5px;
-    background-size: 15px;
-}
+    &.favorite {
+        background: @ideaColorFavorite url(../../images/heart.png) no-repeat;
+        background-position: right 5px bottom 5px;
+        background-size: 15px;
 
-.ideaBlock a.close {
-    background: url(../../images/close-24.png) no-repeat center center;
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    display: inline-block;
-    top: 0;
-    right: 0;
-}
-
-.ideaBlock.ui-draggable:hover {
-    color: transparent;
-    text-shadow: none;
-    background: url(../../images/drag.png) 15px center no-repeat;
-    background-color: #FCBD65;
-    background-size: 24px 24px;
-}
-
-.ideaBlock.ui-droppable-active:hover {
-    color: black;
-    background: #FFDE78;
-    width: 130px;
-}
-
-.ideaBlock.ui-draggable-dragging {
-    color: black;
-    text-shadow: 0 1px rgba(255,255,255,0.4);
-    background-image: none;
-}
-
-.ideaBlock.ui-draggable-dragging .popOut {
-    height: 0 !important;
-    display: none !important;
-}
-
-.ideaBlock.favorite:hover {
-    background-color: #F89A8B;
-}
-
-.ideaBlock .popOut {
-    font-size: 0.7em;
-    display: block;
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    z-index: 4; 
-    padding: 0 0 0 10px;
-}
-
-.ideaBlock:hover .popOut {
-    display: block;
-}
-
-    .ideaBlock .popOut a {
-        width: auto;
-        cursor: pointer;
-        display: block;
-        margin: 0;
-        padding: 0;
-        border-radius: 10px;
-        box-shadow: 0 0 5px rgba(0,0,0,0.2);
-        text-decoration: none;
-        color: black;
-        opacity: 0;
-        transition: opacity 0.5s;
-        margin-bottom: 5px;
-        padding: 5px 5px 5px 30px;
-        background: #DCF0FF no-repeat 10px center;
-        background-size: 16px 16px;
-    }
-
-        .ideaBlock .popOut a:hover {
-            background-color: rgb(182, 221, 252);    
+        &&:hover {
+            background-color: @ideaColorDarkerFavorite;
         }
 
-    .ideaBlock:hover .popOut a {
-        opacity: 1;
-        transition: opacity 0.5s;
-    }
-    
-    .ideaBlock .popOut .expandBtn {
-        background-image: url(../../images/expand.png);
-    }
-    .ideaBlock .popOut .refineBtn {
-        background-image: url(../../images/refine.png);
-    }
-    .ideaBlock .popOut a.favoriteBtn {
-        background-image: url(../../images/heart.png);
-    }
-        .ideaBlock.favorite a.favoriteBtn {
+        .favoriteBtn {
             background-image: url(../../images/heart-red.png) !important;
         }
 
-.ideaBlock span.fade {
-    z-index: 3;
-    opacity: 1;
-    border-radius: 10px;
-    color: #bd7b1e;
-    display: inline-block;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 20px;
-    line-height: 30px;
-    text-indent: 10px;
-    width: 100%;
-    background: #FFDE78; /* For browsers that do not support gradients */
-    background: -webkit-linear-gradient(rgba(253, 202, 113, 0), rgb(252, 189, 101)); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(rgba(253, 202, 113, 0), rgb(252, 189, 101)); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(rgba(253, 202, 113, 0), rgb(252, 189, 101)); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(rgba(253, 202, 113, 0), rgb(252, 189, 101)); /* Standard syntax */
-    opacity: 1;
-    transition: opacity 0.2s;
-}
-
-.ideaBlock.favorite span.fade {
-    background: #f8998a;
-    background: -webkit-linear-gradient(rgba(251, 187, 177, 0), #f8998a); /* Standard syntax */
-    background: -o-linear-gradient(rgba(251, 187, 177, 0), #f8998a); /* Standard syntax */
-    background: -moz-linear-gradient(rgba(251, 187, 177, 0), #f8998a); /* Standard syntax */
-    background: linear-gradient(rgba(251, 187, 177, 0), #f8998a); /* Standard syntax */
-}
-
-
-.ideaBlock.ideaDragHover {
-    animation-name: glow;
-    animation-duration: 0.5s;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-out;
-    padding: 10px;
-    margin: 10px;
-    width: 130px;
-    height: 100px;
-    box-shadow: inset 0 0 15px rgba(0,0,0,1) !important;
-}
-
-    .ideaBlock.ideaDragHover .popOut {
-        display: none;
+        span.fade {
+            background: @ideaColorFavorite;
+            background: -webkit-linear-gradient(rgba(251, 187, 177, 0), @ideaColorFavorite); /* Standard syntax */
+            background: -o-linear-gradient(rgba(251, 187, 177, 0), @ideaColorFavorite); /* Standard syntax */
+            background: -moz-linear-gradient(rgba(251, 187, 177, 0), @ideaColorFavorite); /* Standard syntax */
+            background: linear-gradient(rgba(251, 187, 177, 0), @ideaColorFavorite); /* Standard syntax */
+        }
     }
+
+    &.ui-draggable:hover {
+        color: transparent;
+        text-shadow: none;
+        background: url(../../images/drag.png) 15px center no-repeat;
+        background-color: @ideaColorDarker;
+        background-size: 24px 24px;
+    }
+
+    &.ui-droppable-active:hover {
+        color: black;
+        background: @ideaColor; 
+        width: 130px;
+    }
+
+    &.ui-draggable-dragging {
+        color: black;
+        text-shadow: 0 1px rgba(255,255,255,0.4);
+        background-image: none;
+
+        .popOut {
+            height: 0 !important;
+            display: none !important;
+        }
+    }
+
+    .popOut {
+        font-size: 0.7em;
+        display: block;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        z-index: 4; 
+        padding: 0 0 0 10px;
+
+        a {
+            width: auto;
+            cursor: pointer;
+            display: block;
+            margin: 0;
+            padding: 0;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            text-decoration: none;
+            color: black;
+            opacity: 0;
+            transition: opacity 0.5s;
+            margin-bottom: 5px;
+            padding: 5px 5px 5px 30px;
+            background: #DCF0FF no-repeat 10px center;
+            background-size: 16px 16px;
+
+            &:hover {
+                background-color: rgb(182, 221, 252);    
+            }
+        }
+
+        .expandBtn { background-image: url(../../images/expand.png); }
+        .refineBtn { background-image: url(../../images/refine.png); }
+        .favoriteBtn { 
+            background-image: url(../../images/heart.png);
+        }
+    }
+
+    &:hover .popOut {
+        display: block;
+
+        a {
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+    }
+
+    span.fade {
+        z-index: 3;
+        opacity: 1;
+        border-radius: 10px;
+        color: #bd7b1e;
+        display: inline-block;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 25px;
+        line-height: 30px;
+        text-indent: 10px;
+        width: 100%;
+        background: @ideaColor; /* For browsers that do not support gradients */
+        background: -webkit-linear-gradient(rgba(253, 202, 113, 0), @ideaColor); /* For Safari 5.1 to 6.0 */
+        background: -o-linear-gradient(rgba(253, 202, 113, 0), @ideaColor); /* For Opera 11.1 to 12.0 */
+        background: -moz-linear-gradient(rgba(253, 202, 113, 0), @ideaColor); /* For Firefox 3.6 to 15 */
+        background: linear-gradient(rgba(253, 202, 113, 0), @ideaColor); /* Standard syntax */
+        opacity: 1;
+        transition: opacity 0.2s;
+    }
+
+    &.ideaDragHover {
+        animation-name: glow;
+        animation-duration: 0.5s;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-out;
+        padding: 10px;
+        margin: 10px;
+        width: 130px;
+        height: 100px;
+        box-shadow: inset 0 0 15px rgba(0,0,0,1) !important;
+
+        .popOut {
+            display: none;
+        }
+    }
+} 
 
 .ui-droppable-active {
     animation: shake 0.2s both;
@@ -873,17 +874,14 @@ textarea.ideaInput + div {
 
 .ideaHover {
     background-color: #FFBD5E;
-    /* width: 150px;
-    height: 120px; */
-    /* margin: 0; */
     box-shadow: 0 0 5px rgba(0,0,0,0.2);
     transition: all 0.2s;
     transform: scale(1.2);
-}
-
-.ideaHover span.fade {
-    opacity: 0;
-    transition: opacity 0.2s;
+    
+    span.fade {
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
 }
 
 #overlay {
@@ -897,41 +895,41 @@ textarea.ideaInput + div {
     left: 0;
     top: 0;
     display:none;
+
+    .popupDialog {
+        width: 530px;
+        max-height: 100%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        padding: 20px 20px 20px 20px;
+        background: white;
+        border-radius: 10px;    
+        /* border: solid 1px #CCC; */
+        box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        transition: height 0.5s;
+    }
 }
 
 .popupDialog {
     display: none;
     overflow-x: hidden;
     z-index: 99999;
-}
-
-.popupDialog .help {
-    font-size: 0.5em;
-    background: #EEE;
-    color: #666;
-    display: inline-block;
-    border-radius: 15px;
-    text-align: center;
-    height: 24px;
-    width: 24px;
-    line-height: 24px;
-    text-decoration: none; 
-    transform: translateY(-20%);
-}
-
-#overlay .popupDialog {
-    width: 530px;
-    max-height: 100%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    padding: 20px 20px 20px 20px;
-    background: white;
-    border-radius: 10px;    
-    /* border: solid 1px #CCC; */
-    box-shadow: 0 0 5px rgba(0,0,0,0.2);
-    transition: height 0.5s;
+    
+    .help {
+        font-size: 0.5em;
+        background: #EEE;
+        color: #666;
+        display: inline-block;
+        border-radius: 15px;
+        text-align: center;
+        height: 24px;
+        width: 24px;
+        line-height: 24px;
+        text-decoration: none; 
+        transform: translateY(-20%);
+    }
 }
 
 #overlay .popupDialog.loading .submit {
@@ -1825,3 +1823,26 @@ body.welcome {
     .newSession input[type=checkbox] + label {
         display: inline-block;
     }
+
+#sessionConclusion {
+
+    .btn {
+        margin: 20px auto;
+        width: 100%;
+    }
+
+    span {
+        background: @darkerBlue;
+        color: white;
+        padding: 5px;
+        border-radius: 10px;
+    }
+
+    .user_name {
+        background: #EEE;
+        border-radius: 10px;
+        padding: 5px;
+        width: auto;
+        display: inline-block;
+    }
+}

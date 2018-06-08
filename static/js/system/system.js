@@ -84,6 +84,14 @@ $(function(){
 		{},
 		firstTutorialSteps.concat(secondTutorialSteps)
 	);
+	ENV.studyTutorial = new Tutorial(
+		{
+			onclose: function(){
+				setupStudySession();
+			}
+		},
+		firstTutorialSteps.concat(secondTutorialSteps)
+	);
 
 	// Enable tooltips
 	$( document ).tooltip({
@@ -180,19 +188,22 @@ $(function(){
 		}
 	};
 
-	// If this is a new user, start the process
-	if(ENV.newUser){
-		// Maximize first view
-		setPhase(1);
-		var ideaViewer = LAYOUT.root.getItemsById('ideaViewer')[0];
-		ideaViewer.toggleMaximise();
-		// Start first tutorial
-		startTutorial(ENV.firstTutorial);
-	} else {
-		setPhase(2);
+	// Set phase and tutorials
+	setPhase(2);
+	var tutorial = ENV.fullTutorial;
+	// Do study session tutorial and setup
+	if(ENV.isStudySession){		
+		tutorial = ENV.studyTutorial;
+		if (!ENV.newUser){ // Only run this if it's not a new user
+			setupStudySession();
+		}
+	}
+	// If this is a new user, run tutorial
+	if (ENV.newUser){
+		startTutorial(tutorial);
 	}
 
-	// FInished loading page
+	// Finished loading page
 	$('#loadingOverlay').fadeOut(1000, function(){
 		$('body').removeClass('loading');
 	});
@@ -223,6 +234,25 @@ var startViewSequencing = function(){
 		});
 	}, ENV.aloneIdeationTime * 60, false);
 };
+
+var setupStudySession = function(){
+	// Setup timer
+	var conclude = function(){
+		$('#studyTimer').fadeOut(500, function(){
+			$('#concludeSession').fadeIn(500);
+			localStorage['sessionConcluded' + ENV.problemId] = true;
+		});
+	};
+	if(localStorage['sessionConcluded' + ENV.problemId] === 'true'){
+		conclude();
+	} else {
+		UTIL.setTimer($('#studyTimer'), conclude, ENV.studyIdeationTime * 60, false);
+	}
+}
+
+var concludeSession = function(){
+	openOverlay('sessionConclusion');
+}
 
 var openAllViews = function(){
 	// Show other views
@@ -896,4 +926,12 @@ var tagExists = function(tag, callback){
 var copyToClipboard = function(clicked){
 	$(clicked).closest('.dropDown').find('input').select();
 	document.execCommand('copy');
+}
+
+var sessionConclusionSetup = function(){
+	var popup = $('#sessionConclusion');
+	var template = $(Mustache.render(TEMPLATES['sessionConclusionTemplate']));
+	if (popup.is(':empty')){ // Only load the html the first time
+		popup.html(template);
+	}
 }

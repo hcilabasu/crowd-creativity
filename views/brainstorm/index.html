@@ -45,6 +45,7 @@
 	    ENV = { // Global constants
 			userId: "{{=user_id}}",
 			userName: "{{=user_name}}",
+			problemId: "{{=problem.id}}",
 			autoReloadTimer: 15, // seconds or 'OFF' to disable
 			scrollDelay: 500, // Delay before a view scrolls to an idea on hover
 			scrollSpeed: 200, // Speed in which the scroll happens,
@@ -54,9 +55,11 @@
 			minNumberTags: 1,
 			maxNumberTags: 2,
 			newUser: '{{=str(new_user).lower()}}' === 'true',
+			isStudySession: '{{=str(study_session).lower()}}' === 'true', // if true, this is a limited time study session
 			doneInspirationTutorial: '{{=str(new_user).lower()}}' === 'true' ? false : true,
 			currentPhase: 1, // Keeps track of the current ideation phase
 			aloneIdeationTime: 10, // Duration of time, in minutes, before other views are opened
+			studyIdeationTime: 0.3, // Duration of time, in minutes, before the conclusion button opens
 			checkUpdateFrequency: 10000 // How often should the system check for new ideas
 		},
 		EVENTS = {
@@ -112,7 +115,12 @@
 				<img src="{{=URL('static','images/open-all.png')}}" alt="Open all views"/>
 				Open all views
 			</a>
+			<a id="concludeSession" class="btn btn-primary btn-bg phase1_bl phase2_bl glowWhite" onclick="concludeSession()">
+				<img src="{{=URL('static','images/checkmark.png')}}" alt="Conclude session"/>
+				Conclude Session
+			</a>
 			<span id="sessionTimer" class="phase2_bl" title="Countdown before you can see other people's ideas. Try to come up with as many ideas as you can by yourself!">00:00</span>
+			<span id="studyTimer" class="phase2_bl" title="Countdown before you can see other people's ideas. Try to come up with as many ideas as you can by yourself!">00:00</span>
 		</div>
 	</div>
 {{end}}
@@ -147,4 +155,5 @@
 	<div class="popupDialog" id="inspiration"></div>
 	<div class="popupDialog" id="combineIdeas"></div>
 	<div class="popupDialog ideaPopup loading" id="editIdea"></div>
+	<div class="popupDialog" id="sessionConclusion"></div>
 {{end}}
