@@ -1,5 +1,6 @@
 import json
 import util
+import datetime
 import user_models
 
 '''
@@ -10,14 +11,28 @@ class ClassEncoder(json.JSONEncoder):
     def default(self, o):
         return o.__dict__
 
+class ClassDecoder(json.JSONDecoder):
+    def __init__(self, *args, **kwargs):
+        json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
+
+    def object_hook(self, obj):
+        if 'i' not in obj:
+            return obj
+        return Node(
+            obj['tags'],
+            obj['type'],
+            obj['id'],
+            obj['i'],
+            obj['children']
+        )
+
 class Node(object):
-    def __init__(self, tags, type, id, i, rank, children=[]):
+    def __init__(self, tags, type, id, i, children=[]):
         self.tags = tags
         self.type = type
         self.id = id
         self.i = i
         self.children = children
-        self.rank = rank
 
 def get_versioning_structure():
     ''' 
@@ -45,25 +60,42 @@ def get_versioning_structure():
     '''
     problem_id = util.get_problem_id(request)
     user_id = session.user_id
-    # get all ideas
-    query = (db.idea.id == db.tag_idea.idea) & (db.tag.id == db.tag_idea.tag) & (db.idea.problem == problem_id)
-    results = db(query).select(orderby=db.idea.dateAdded, groupby=db.idea.id) # Ordered from older to newer
-    # Get user model and ordered tag sequence
-    model = user_models.UserModel(user_id, problem_id)
-    ordered_tags = model.get_ordered_tags()
-    # build idea map
+    cache_type = 'versioning'
+    timestamp = datetime.datetime.min
     complete_idea_map = dict()
     filtered_idea_list = []
     ids = []
+
+    # Retrieve latest cache
+    cache = db((db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)).select().first()
+    if cache:
+        json_cache = json.loads(cache.cache, cls=ClassDecoder)
+        timestamp = cache.timestamp
+        complete_idea_map = json_cache['complete_idea_map']
+        filtered_idea_list = json_cache['filtered_idea_list']
+        ids = json_cache['ids']
+
+    # get all ideas
+    query = (
+        (db.idea.id == db.tag_idea.idea) & 
+        (db.tag.id == db.tag_idea.tag) & 
+        (db.idea.problem == problem_id) &
+        (db.idea.dateAdded > timestamp))
+    results = db(query).select(orderby=db.idea.dateAdded, groupby=db.idea.id) # Ordered from older to newer
+
+    # Get user model and ordered tag sequence
+    model = user_models.UserModel(user_id, problem_id)
+    ordered_tags = model.get_ordered_tags()
+    print(ordered_tags)
+    
+    # build idea map
     for i,r in enumerate(results):
         tags = [t.tag.tag for t in r.idea.tag_idea.select()]
         complete_idea_map[r.idea.id] = Node(
             tags=tags,
             type=r.idea.origin,
             id=r.idea.id,
-            i=i,
-            rank=min([ordered_tags.index(t) for t in tags]) # Used for sorting
-        )
+            i=i)
         children = []
         if r.idea.sources:
             children = [complete_idea_map[c] for c in r.idea.sources]
@@ -71,11 +103,26 @@ def get_versioning_structure():
         if not r.idea.replacedBy:
             filtered_idea_list.append(complete_idea_map[r.idea.id])
             ids.append(r.idea.id)
-    # sort ideas according to user model
-    filtered_idea_list.sort(key=lambda idea: (idea.rank, -idea.i))
+    
     # Trim nodes to avoid redundancy
     for i in filtered_idea_list:
         __trim_node(i, ids)
+
+    # Update cache
+    key = (db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)
+    db.visualization_cache.update_or_insert(key,
+        problem=problem_id,
+        type=cache_type,
+        cache=json.dumps(dict(
+            complete_idea_map=complete_idea_map,
+            filtered_idea_list=filtered_idea_list,
+            ids=ids
+        ), cls=ClassEncoder),
+        timestamp=datetime.datetime.now())
+
+    # sort ideas according to user model
+    filtered_idea_list.sort(key=lambda idea: (min([ordered_tags.index(t) for t in idea.tags]), idea.i))
+    
     # return
     response.headers['Content-Type'] = 'application/json'
     return json.dumps(filtered_idea_list, cls=ClassEncoder)
@@ -92,7 +139,6 @@ def __trim_node(node, ids):
                 type=c.type,
                 id=c.id,
                 i=c.i,
-                rank=c.rank,
                 children=[]
             )
         else:

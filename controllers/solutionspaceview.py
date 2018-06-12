@@ -20,15 +20,15 @@ def get_solution_space():
     user_id = session.user_id
     problem_id = util.get_problem_id(request)
     user_model = user_models.UserModel(user_id, problem_id)
-    
+    cache_type = 'solutionspace'
     connections = dict()
     timestamp = datetime.datetime.min
     max_n = 0
+
     # Retrieve latest cache
-    cache = db(db.visualization_cache.problem == problem_id).select().first()
+    cache = db((db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)).select().first()
     if cache:
-        print('Using cache...')
-        json_cache = json.loads(cache.cache.replace('\'', '"'))
+        json_cache = json.loads(cache.cache)
         connections = json_cache['connections']
         timestamp = cache.timestamp
         max_n = json_cache['max_n']
@@ -64,7 +64,6 @@ def get_solution_space():
     outcome = json.dumps(dict(tags=tags, connections=connections, max_n=max_n, overview=overview))
     
     # Update cache
-    cache_type = 'solutionspace'
     key = (db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)
     db.visualization_cache.update_or_insert(key,
         problem=problem_id,
