@@ -12,6 +12,7 @@ def get_ideas():
     current_only = True if request.vars.current_only == 'true' else False
     added_by = request.vars.added_by
     is_favorite = request.vars.is_favorite
+    strict = True if request.vars.strict == 'true' else False
     tags = None
     if request.vars['tags[]']:
         tags = request.vars['tags[]'] if isinstance(request.vars['tags[]'], list) else [request.vars['tags[]']] 
@@ -28,6 +29,7 @@ def get_ideas():
         query = query & (db.idea.id.belongs(favorites))
     if tags:
         query = query & (db.tag.tag.belongs(tags))
+    
     # Get user favorites
     # Get ideas
     ideas = db(query).select(orderby=db.idea.dateAdded, groupby=db.idea.id)
@@ -38,7 +40,7 @@ def get_ideas():
             tags=[tag.tag.tag for tag in i.idea.tag_idea.select()],
             favorite=True if i.idea.id in favorites else False
         ) for i in ideas]
-    if tags:
+    if tags and strict:
         check_tags = set(tags)
         clean_ideas = [i for i in clean_ideas if set(i['tags']) == check_tags]
     return json.dumps(clean_ideas)

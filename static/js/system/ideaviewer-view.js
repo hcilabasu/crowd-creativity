@@ -89,12 +89,18 @@ class IdeaViewerView extends View {
         });
     }
 
-    loadIdeasByTags(tags){
+    /*
+    Loads all ideas that have the tags passed by parameter.
+    If strict == true, the ideas will be returned if and only if their tags exactly match the param tags.
+    Else, the idea will be returned if it has at least one of the tags
+    */
+    loadIdeasByTags(tags, strict){
         this.resetView();
         // Load ideas
         this.getParentContainer().addClass('loading');
         var params = {
             tags: tags,
+            strict: strict,
             current_only: true
         };
         $.ajax({

@@ -138,13 +138,16 @@ class SolutionSpaceView extends View {
 				$.event.trigger({type:'blurTags', params:{}});
 			}).click(function(event){
 				event.stopPropagation();
-				var classes = UTIL.getClasses($(this), 'cl_');
+				var cell = $(this);
+				var classes = UTIL.getClasses(cell, 'cl_');
+				// If this is a table body cell, be strict. Otherwise, load all ideas with the tag
+				var strict = cell.closest('#spaceContainer').length > 0 ? true : false;
 				// Clean up
 				classes.forEach(function(d,i){
 					classes[i] = d.replace('.cl_', '');
 				});
 				// Open ideas
-				VIEWS['ideasView'].loadIdeasByTags(classes);
+				VIEWS['ideasView'].loadIdeasByTags(classes, strict);
 			});
 	
 			// Setup minimap
