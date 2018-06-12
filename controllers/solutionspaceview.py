@@ -37,15 +37,13 @@ def get_solution_space():
             idea_tags.append(tag)
         idea_tags.sort() # this contains a sorted array of tags for idea
         # insert into data structure
-        for i in range(1,SIZE_OVERLAP+1): # this will iterate over all unique permutations of the tags, inserting them in pairs
-            # for combination in itertools.combinations(idea_tags, i):
-                key = '|'.join(idea_tags)
-                if key not in connections.keys():
-                    connections[key] = dict(tags=idea_tags, n=0)
-                n = connections[key]['n'] + 1
-                connections[key]['n'] = n
-                if n > max_n:
-                    max_n = n
+        key = '|'.join(idea_tags)
+        if key not in connections.keys():
+            connections[key] = dict(tags=idea_tags, n=0)
+        n = connections[key]['n'] + 1
+        connections[key]['n'] = n
+        if n > max_n:
+            max_n = n
     tags = tags[:SOLUTION_SPACE_MAX_TAGS]
     # Create overview    
     base64_image = __generate_birdseye_solutionspace(tags, connections, max_n=max_n)
