@@ -86,7 +86,6 @@ def get_versioning_structure():
     # Get user model and ordered tag sequence
     model = user_models.UserModel(user_id, problem_id)
     ordered_tags = model.get_ordered_tags()
-    print(ordered_tags)
     
     # build idea map
     for i,r in enumerate(results):
