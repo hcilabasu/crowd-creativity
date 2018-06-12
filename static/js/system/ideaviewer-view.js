@@ -14,7 +14,7 @@ class IdeaViewerView extends View {
     highlightIdeaHandler(e){
         var id = e.params.id;
         var source = e.params.source;
-        if(!this instanceof source){
+        if(!(this instanceof source)){
             // Highlight
             var ideaBlock = $(this.container + ' .id' + id);
             ideaBlock.addClass('ideaHover');
@@ -32,7 +32,7 @@ class IdeaViewerView extends View {
     blurIdeaHandler(e){
         var id = e.params.id;
         var source = e.params.source;
-        if(!this instanceof source){
+        if(!(this instanceof source)){
             var ideas = $(this.container + ' .id' + id);
             // Remove highlight
             ideas.removeClass('ideaHover');

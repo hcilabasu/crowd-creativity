@@ -146,7 +146,7 @@ class VersioningView extends View {
 				$.event.trigger({type:EVENTS.highlightIdea, params:{
 					id: id,
 					tags: tags,
-					source: this
+					source: VersioningView
 				}});
 			}, function(e){
 				var idea = $(e.target);
@@ -155,7 +155,7 @@ class VersioningView extends View {
 				$.event.trigger({type:EVENTS.blurIdea, params:{
 					id: id,
 					tags: tags,
-					source: this
+					source: VersioningView
 				}});
 			}).click(function(e){
 				// Open idea on click
