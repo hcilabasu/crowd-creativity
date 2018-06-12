@@ -1,11 +1,19 @@
 // Variables
 @ideaColor: #FFDE78;
 @ideaColorDarker: #FCBD65;
+@ideaColorLighter: #ffe1b7;
 @ideaColorFavorite: #FDC4BB;
-@ideaColorDarkerFavorite: #FDC4BB;
+@ideaColorDarkerFavorite: #e09d93;
 
 @darkBlue: #3a80d1;
 @darkerBlue: #144C80;
+
+@borderRadius: 10px;
+@boxShadow: 0 0 5px rgba(0,0,0,0.2);
+@boxShadowLarger: 0 0 10px rgba(0,0,0,0.4);
+
+@ideaBlockWidth: 150px;
+@ideaBlockHeight: 120px;
 
 // Animations
 
@@ -682,10 +690,6 @@ textarea.ideaInput + div {
     justify-content: space-evenly;
 }
 
-    #ideasContainer .ideaBlock {
-        cursor: move;
-    }
-
 #ideasContainerCounter {
     /* display: block;
     position: absolute;
@@ -706,91 +710,88 @@ textarea.ideaInput + div {
 }
 
 .ideaBlock {
-    font-size: 0.8em;
     position: relative;
     display: inline-block;
     border: none;
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: @borderRadius;
+    padding: 0px;
     margin: 10px;
     text-shadow: 0 1px rgba(255,255,255,0.4);
-    width: 130px;
-    height: 100px;
+    width: @ideaBlockWidth;
+    height: @ideaBlockHeight;
     overflow: hidden;
-    transition: width 0.2s, height 0.2s, background-color 0.2s, margin 0.2s;
-    background: @ideaColor; /* For browsers that do not support gradients */
+    transition: all 0.2s;
     transform: rotate(0);
 
-    &.favorite {
-        background: @ideaColorFavorite url(../../images/heart.png) no-repeat;
-        background-position: right 5px bottom 5px;
-        background-size: 15px;
-
-        &&:hover {
-            background-color: @ideaColorDarkerFavorite;
-        }
-
-        .favoriteBtn {
-            background-image: url(../../images/heart-red.png) !important;
-        }
-
-        span.fade {
-            background: @ideaColorFavorite;
-            background: -webkit-linear-gradient(rgba(251, 187, 177, 0), @ideaColorFavorite); /* Standard syntax */
-            background: -o-linear-gradient(rgba(251, 187, 177, 0), @ideaColorFavorite); /* Standard syntax */
-            background: -moz-linear-gradient(rgba(251, 187, 177, 0), @ideaColorFavorite); /* Standard syntax */
-            background: linear-gradient(rgba(251, 187, 177, 0), @ideaColorFavorite); /* Standard syntax */
-        }
-    }
-
-    &.ui-draggable:hover {
-        color: transparent;
-        text-shadow: none;
-        background: url(../../images/drag.png) 15px center no-repeat;
+    &:hover .ideaBlockContainer {
         background-color: @ideaColorDarker;
-        background-size: 24px 24px;
+        transition: background-color 0.2s;
     }
 
-    &.ui-droppable-active:hover {
-        color: black;
-        background: @ideaColor; 
-        width: 130px;
-    }
-
-    &.ui-draggable-dragging {
-        color: black;
-        text-shadow: 0 1px rgba(255,255,255,0.4);
-        background-image: none;
-
-        .popOut {
-            height: 0 !important;
-            display: none !important;
-        }
-    }
-
-    .popOut {
-        font-size: 0.7em;
-        display: block;
+    span.fade {
+        z-index: 3;
+        opacity: 1;
+        border-radius: @borderRadius;
+        display: inline-block;
         position: absolute;
-        right: 10px;
-        top: 10px;
-        z-index: 4; 
-        padding: 0 0 0 10px;
+        bottom: 0;
+        left: 0;
+        height: 1px;
+        width: 100%;
+        background: @ideaColorDarker;
+        box-shadow: 0 0px 40px 20px @ideaColorDarker;
+    }
+} 
+
+.ideaBlockContainer {
+    font-size: 0.9em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: @ideaColor;
+    width: @ideaBlockWidth;
+    height: @ideaBlockHeight;
+    padding: 0;
+    border-radius: @borderRadius;
+
+    .ideaBlockHeader {
+        height: 15%;
+        opacity: 0.5;
+        text-indent: 35px;
+        background: url(../../images/drag.png) top 2px left 5px no-repeat;
+        background-size: 20px;
+        overflow: visible;
+        cursor: move;
+        text-indent: -9999px;
+    }
+    
+    .ideaBlockText {
+        height: 85%;
+        overflow: hidden;
+        padding: 10px;
+        padding-top: 0;
+    }
+    
+    .ideaBlockPopOut {
+        overflow: hidden !important;
+        white-space: nowrap;
+        opacity: 0;
+        height: 0;
+        background: rgba(255,255,255,0.7);
+        padding-top: 6px;
+        text-align: center;
 
         a {
             width: auto;
-            cursor: pointer;
-            display: block;
+            display: inline-block;
             margin: 0;
             padding: 0;
-            border-radius: 10px;
+            border-radius: @borderRadius;
             box-shadow: 0 0 5px rgba(0,0,0,0.2);
             text-decoration: none;
             color: black;
-            opacity: 0;
-            transition: opacity 0.5s;
             margin-bottom: 5px;
-            padding: 5px 5px 5px 30px;
+            padding: 5px 8px 5px 30px;
             background: #DCF0FF no-repeat 10px center;
             background-size: 16px 16px;
 
@@ -798,89 +799,109 @@ textarea.ideaInput + div {
                 background-color: rgb(182, 221, 252);    
             }
         }
-
-        .expandBtn { background-image: url(../../images/expand.png); }
+        .hideBtn { background-image: url(../../images/hide.png); }
         .refineBtn { background-image: url(../../images/refine.png); }
         .favoriteBtn { 
             background-image: url(../../images/heart.png);
         }
     }
+    
+    &.detached,
+    &.expanded {
+        // Styles for when the element is detached
+        transition: all 0.2s;
+        margin: 0;
+        background: @ideaColor;
+        border-radius: @borderRadius;
+        z-index: 4;
+        position: relative;
+        overflow: hidden;
+        padding: 0px;
+        width: 250px;
+        height: 250px;
+        box-shadow: @boxShadowLarger;
 
-    &:hover .popOut {
-        display: block;
-
-        a {
+        .ideaBlockHeader {
+            height: 10%;
+            opacity: 0.5;
+            line-height: 22px;
+            text-indent: 30px;
+        }
+        
+        .ideaBlockText {
+            height: 73%;
+            overflow: auto;
+        }
+        
+        .ideaBlockPopOut {
+            height: 17%;
             opacity: 1;
-            transition: opacity 0.5s;
         }
     }
 
-    span.fade {
-        z-index: 3;
-        opacity: 1;
-        border-radius: 10px;
-        color: #bd7b1e;
-        display: inline-block;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 25px;
-        line-height: 30px;
-        text-indent: 10px;
-        width: 100%;
-        background: @ideaColor; /* For browsers that do not support gradients */
-        background: -webkit-linear-gradient(rgba(253, 202, 113, 0), @ideaColor); /* For Safari 5.1 to 6.0 */
-        background: -o-linear-gradient(rgba(253, 202, 113, 0), @ideaColor); /* For Opera 11.1 to 12.0 */
-        background: -moz-linear-gradient(rgba(253, 202, 113, 0), @ideaColor); /* For Firefox 3.6 to 15 */
-        background: linear-gradient(rgba(253, 202, 113, 0), @ideaColor); /* Standard syntax */
-        opacity: 1;
-        transition: opacity 0.2s;
-    }
+    &.favorite {
+        background: @ideaColorFavorite url(../../images/heart.png) no-repeat;
+        background-position: right 5px bottom 5px;
+        background-size: 15px;
+        
+        span.fade {
+            background: @ideaColorDarkerFavorite;
+            box-shadow: 0 0px 40px 20px @ideaColorDarkerFavorite;
+        }
+    
+        &:hover {
+            background: @ideaColorFavorite;
+        }
 
-    &.ideaDragHover {
-        animation-name: glow;
-        animation-duration: 0.5s;
-        animation-iteration-count: infinite;
-        animation-timing-function: ease-out;
-        padding: 10px;
-        margin: 10px;
-        width: 130px;
-        height: 100px;
-        box-shadow: inset 0 0 15px rgba(0,0,0,1) !important;
-
-        .popOut {
-            display: none;
+        .favoriteBtn { 
+            background-image: url(../../images/heart-red.png);
+            box-shadow: inset 0 5px 10px 5px rgba(0,0,0,0.2);
         }
     }
-} 
+}
 
 .ui-droppable-active {
     animation: shake 0.2s both;
     animation-iteration-count: infinite;
-    box-shadow: 0 0 5px rgba(0,0,0,0.2);
-}
 
-    .ui-droppable-active .popOut {
+    .popOut {
         display: none;
     }
+}
 
 .ideaDragHandle {
     box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
     z-index: 9999;
     background: #FFDE78 !important; /* For browsers that do not support gradients */
     color: black !important;
-    width: 130px !important;
+    width: @ideaBlockWidth !important;
+    height: @ideaBlockHeight !important;
+    font-size: 0.9em;
+    border-radius: @borderRadius;
+    text-align: center;
+    line-height: @ideaBlockHeight;
+    opacity: 0.7;
+}
+
+.ideaDragHover {
+    animation: none;
+
+    .ideaBlockContainer {
+        background: @ideaColorDarker;
+    }
 }
 
 .ideaHover {
-    background-color: #FFBD5E;
-    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    box-shadow: @boxShadow;
     transition: all 0.2s;
-    transform: scale(1.2);
-    
-    span.fade {
-        opacity: 0;
-        transition: opacity 0.2s;
+    transform: scale(1.1);
+
+    .ideaBlockContainer {
+        background-color: @ideaColorDarker;
+    }
+
+    &.favorite {
+        background-color: @ideaColorDarkerFavorite !important;
     }
 }
 
@@ -958,10 +979,43 @@ textarea.ideaInput + div {
         background-size: 30px 30px;
     }
 
-#editIdea .editElement { display:none; }
-#editIdea .viewElement { display:none; }
-#editIdea.view .viewElement { display:inherit; }
-#editIdea.edit .editElement { display:inherit; }
+#editIdea {
+    .editElement { display:none; }
+    .viewElement { display:none; }
+
+    &.edit {
+        .editElement { display:inherit; }
+    }
+
+    &.view {
+        .viewElement { display:inherit; }
+    }
+
+    textarea {
+        height: 300px;
+    }
+    
+    &.loading .ideaText,
+    &.loading .tags,
+    &.loading form,
+    &.loading a {
+        display: none !important;
+    }
+    
+    &.loading .loadingBadge {
+        display: block;
+    }
+    
+    .tags li {
+        display: inline-block;
+        padding: 10px;
+        background: #A0D3FF;
+        color: #3083CC;
+        border-radius: 10px;
+        border: solid 1px rgb(129, 177, 219);
+        margin: 0 5px 5px 0;
+    }
+} 
 
 .clickEnabled {
     cursor: pointer;
@@ -994,6 +1048,8 @@ textarea.ideaInput + div {
     max-height: 200px;
     min-height: 100px;
     height: auto;
+    background: @ideaColor;
+    padding: 10px;
 }
 
     #combineIdeas p {
@@ -1022,33 +1078,6 @@ textarea.ideaInput + div {
 
 .combinationType {
     font-weight: bolder;
-}
-
-.ideaPopup .ideaText {
-    max-height: 400px;
-    overflow-y: auto;
-    margin-bottom: 30px;
-}
-
-.ideaPopup.loading .ideaText,
-.ideaPopup.loading .tags,
-.ideaPopup.loading form,
-.ideaPopup.loading a {
-    display: none !important;
-}
-
-.ideaPopup.loading .loadingBadge {
-    display: block;
-}
-
-.ideaPopup .tags li {
-    display: inline-block;
-    padding: 10px;
-    background: #A0D3FF;
-    color: #3083CC;
-    border-radius: 10px;
-    border: solid 1px rgb(129, 177, 219);
-    margin: 0 5px 5px 0;
 }
 
 .toolbar {
@@ -1236,10 +1265,6 @@ textarea.ideaInput + div {
                 text-align: left;
             }
 
-.twoCategoryIdeasList .ideaBlock {
-    cursor: move;
-}
-
 .twoCategoryIdeasList .ideaBlock:hover {
     width: 150px;
 }
@@ -1378,6 +1403,39 @@ textarea.ideaInput + div {
     font-size: 1.2em;
 }
 
+#inspiration {
+
+    .ideaBlock{
+        width: 100% !important;
+        margin: 0 0 15px 0 !important;
+        display: inline-block !important;
+        height: 150px;
+
+        .ideaBlockContainer {
+            width: 100%;
+            height: 100%;
+            position: relative !important;
+        
+            .fade {
+                display: none;
+            }
+        
+            .ideaBlockText {
+                height: 73%;
+                padding-top: 10px;
+            }
+
+            .ideaBlockPopOut {
+                height: 27%;
+            }
+        
+            .ideaBlockHeader {
+                display: none;
+            }
+        }
+    }
+} 
+
 #inspiration .tasksPanel {
     display: none;
 }
@@ -1447,7 +1505,7 @@ textarea.ideaInput + div {
         display: none;
         border-radius: 10px;
         margin-right: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }
     
     #inspirationPanel > li.selected {
@@ -1455,16 +1513,6 @@ textarea.ideaInput + div {
     }
         #inspirationPanel > li .tagsinput {
             margin-bottom: 0;
-        }
-
-        #inspirationPanel > li .ideaBlock {
-            display: inline-block !important;
-            width: auto;
-            min-width: 150px;
-            height: auto;
-            padding: 10px 10px 40px;
-            margin: 15px 0 !important;
-            transition: padding 0.2s, margin 0.2s;
         }
 
         #inspirationPanel > li .loadingBadge {

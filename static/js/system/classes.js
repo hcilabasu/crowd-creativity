@@ -24,6 +24,7 @@ class Idea {
             editable: params['editable']
         };
         var ideaBlock = $(Mustache.render(TEMPLATES.ideaBlockTemplate, ideaParameters));
+        var innerContainer = $('.ideaBlockContainer:not(.detached)', ideaBlock);
         if(idea.tags){
             idea.tags.forEach(function(d,i){
                 ideaBlock.addClass('cl_' + d);
@@ -42,9 +43,12 @@ class Idea {
         }
 
         if(typeof params['draggable'] == 'boolean' && params['draggable']){
-            ideaBlock.draggable({  
-                appendTo: "parent",
-                helper: "clone",
+            innerContainer.draggable({
+                handle: '.ideaBlockHeader',  
+                appendTo: "#ideasContainer",
+                helper: function(){
+                    return $('<div>Drop to combine</div>');
+                },
                 scope: 'ideas',
                 revert: true,
                 start: function(event, ui){
@@ -56,19 +60,25 @@ class Idea {
                     event.stopPropagation();
                     $(this).css('opacity', 1);
                 }
-            }).droppable({
+            });
+            ideaBlock.droppable({
                 drop: function(event, ui){
+                    event.stopPropagation();
+                    
                     var idea1Element = ui.draggable;
                     var idea2Element = $(this);
 
-                    var idea1 = {idea: idea1Element.clone().children().remove().end().text(), 
-                                id: $('input[name=ideaId]', idea1Element).val(),
-                                tags: $('input[name=ideaTags]', idea1Element).val().split(',')};
-                    var idea2 = {idea: idea2Element.clone().children().remove().end().text(), 
-                                id: $('input[name=ideaId]', idea2Element).val(),
-                                tags: $('input[name=ideaTags]', idea2Element).val().split(',')};
-                    event.stopPropagation();
-                    openOverlay('combineIdeas', {ideas: [idea1, idea2]});
+                    if(idea1Element.length >= 1 && idea2Element.length >= 1 && idea2Element.html().trim() !== ''){
+                        var idea1 = {idea: idea1Element.find('.ideaBlockText').text().trim(), 
+                                    id: $('input[name=ideaId]', idea1Element).val(),
+                                    tags: $('input[name=ideaTags]', idea1Element).val().split(',')};
+                        var idea2 = {idea: idea2Element.find('.ideaBlockText').text().trim(), 
+                                    id: $('input[name=ideaId]', idea2Element).val(),
+                                    tags: $('input[name=ideaTags]', idea2Element).val().split(',')};
+                        if(idea1.id !== idea2.id){
+                            openOverlay('combineIdeas', {ideas: [idea1, idea2]});
+                        }                
+                    }
                 },
                 tolerance: 'pointer',
                 scope: 'ideas',
@@ -107,15 +117,54 @@ class Idea {
                     source:params['source']
                 }
             };
-            ideaBlock.hover(function(){
-                $.event.trigger({type:EVENTS.highlightIdea, params:getParams(this)});
-                console.dir('Hover in');
-            },function(){
-                $.event.trigger({type:EVENTS.blurIdea, params:getParams(this)});
-                console.dir('Hover out');
-            });
-        }
 
+            var outerTimeout;
+            innerContainer.mouseenter(function(e){
+                e.stopPropagation();
+                if(!innerContainer.parent('body').length){ // if parent is NOT body
+                    outerTimeout = window.setTimeout(function(){ // Have short delay before expanding idea
+                        $.event.trigger({type:EVENTS.highlightIdea, params:getParams(ideaBlock)});
+                        // Detach inner container and attach it to body so it can hover over everything
+                        var position = innerContainer[0].getBoundingClientRect();
+                        innerContainer.detach();
+                        ideaBlock.css('visibility','hidden');
+                        $('body').append(innerContainer);
+                        innerContainer.css({
+                            top: position.top,
+                            left: position.left,
+                            'z-index': '9999'
+                        });
+                        // This delay is necessary to trigger the css transition
+                        window.setTimeout(function(){
+                            // check if inner container is detached
+                            if(innerContainer.parent('body').length){
+                                innerContainer.addClass('detached');
+                            }
+                        }, 50);
+                    }, 200);
+                }
+            });
+            innerContainer.mouseleave(function(e){
+                e.stopPropagation();
+                clearTimeout(outerTimeout);
+                $.event.trigger({type:EVENTS.blurIdea, params:getParams(ideaBlock)});
+                // Detach from body and reattach inner container to ideaBlock
+                innerContainer.detach();
+                ideaBlock.css('visibility','visible');
+                ideaBlock.append(innerContainer);
+                innerContainer.removeClass('detached');
+                innerContainer.css({
+                    position: 'absolute',
+                    top: '0px',
+                    left: '0px',
+                    'z-index': '1'
+                });
+            });
+        } else {
+            // Not focuseable
+            innerContainer.addClass('expanded');
+        }
+        
         // Editable
         if(typeof params['editable'] == 'boolean' && params['editable']){
             $('.expandBtn', ideaBlock).click(function(){
@@ -130,7 +179,7 @@ class Idea {
         $('.favoriteBtn', ideaBlock).click(function(e){
             e.stopPropagation();
             // Proactively change appearance
-            var toggleBlock = $('.' + ENV.idPrefix + idea.id + '.ideaBlock');
+            var toggleBlock = $('.' + ENV.idPrefix + idea.id + '.ideaBlockContainer');
             toggleBlock.toggleClass('favorite');
             // Send request to server
             $.ajax({
@@ -141,8 +190,16 @@ class Idea {
                 }, error: function(){
                     $.web2py.flash('Something went wrong!', 'error');
                     // Remove class if fail
-                    toggleBlock.toggleClass('favorite');
+                    toggleBlock.removeClass('favorite');
                 }
+            });
+        });
+
+        // Setup close button 
+        $('.hideBtn', ideaBlock).click(function(e){
+            e.stopPropagation();
+            ideaBlock.fadeOut('fast', function(){
+                VIEWS['ideasView'].closeIdea(idea.id);
             });
         });
         return ideaBlock;

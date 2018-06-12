@@ -659,7 +659,7 @@ var buildInspirationPanel = function(structure){
 				favorite: structure[i].idea.favorite
 			};
 			// Setting up HTML
-			var params = {closeable: false, focuseable: true, source: this.constructor}
+			var params = {closeable: false, focuseable: false, source: this.constructor}
 			var ideaElement = new Idea(idea, params);
 			var templateParams = {id: taskId, type: taskType}
 			var template = $(Mustache.render(TEMPLATES[taskType + 'Template'], templateParams));

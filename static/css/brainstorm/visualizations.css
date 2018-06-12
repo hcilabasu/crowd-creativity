@@ -27,7 +27,7 @@
 		display: inline-block;
 		text-align: center;
 		margin-top: 10px;
-		min-height: 26px;
+		min-height: 16px;
 	}
 	#versioningContainer h3:first-child {
 		width: 50px;

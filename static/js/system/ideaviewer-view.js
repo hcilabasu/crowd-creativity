@@ -14,14 +14,16 @@ class IdeaViewerView extends View {
     highlightIdeaHandler(e){
         var id = e.params.id;
         var source = e.params.source;
-        // Highlight
-        var ideaBlock = $(this.container + ' .id' + id);
-        ideaBlock.addClass('ideaHover');
-        // Add markers
-        $(this.container).scrollMarker().addMarkers(ideaBlock, {
-            markerColor: '#FFDE78',
-            fade: true
-        });
+        if(!this instanceof source){
+            // Highlight
+            var ideaBlock = $(this.container + ' .id' + id);
+            ideaBlock.addClass('ideaHover');
+            // Add markers
+            $(this.container).scrollMarker().addMarkers(ideaBlock, {
+                markerColor: '#FFDE78',
+                fade: true
+            });
+        }
     }
 
     /*
@@ -29,15 +31,18 @@ class IdeaViewerView extends View {
     */
     blurIdeaHandler(e){
         var id = e.params.id;
-        var ideas = $(this.container + ' .id' + id);
-        // Remove highlight
-        ideas.removeClass('ideaHover');
-        // Cancel hover timer
-        clearTimeout(this.hoverTimeout);
-        // Clear markers
-        $(this.container).scrollMarker().clear({
-            fade: false
-        });
+        var source = e.params.source;
+        if(!this instanceof source){
+            var ideas = $(this.container + ' .id' + id);
+            // Remove highlight
+            ideas.removeClass('ideaHover');
+            // Cancel hover timer
+            clearTimeout(this.hoverTimeout);
+            // Clear markers
+            $(this.container).scrollMarker().clear({
+                fade: false
+            });
+        }
     }
 
     /*
@@ -73,6 +78,29 @@ class IdeaViewerView extends View {
             type: "GET",
             url: URL.getUserIdeas,
             data: {is_favorite: true},
+            success: (data)=>{
+                var ideas = JSON.parse(data);
+                this.updateIdeaCounter(ideas.length);
+                for (var i = 0; i < ideas.length; i++) {
+                    this.addIdeaToDisplay(ideas[i]);
+                }
+                this.getParentContainer().removeClass('loading');
+            }
+        });
+    }
+
+    loadIdeasByTags(tags){
+        this.resetView();
+        // Load ideas
+        this.getParentContainer().addClass('loading');
+        var params = {
+            tags: tags,
+            current_only: true
+        };
+        $.ajax({
+            type: "GET",
+            url: URL.getUserIdeas,
+            data: params,
             success: (data)=>{
                 var ideas = JSON.parse(data);
                 this.updateIdeaCounter(ideas.length);
@@ -165,6 +193,8 @@ class IdeaViewerView extends View {
 
     closeIdea(id){
         $(this.container + ' #id'+id).hide(200, function(){ this.remove(); });
+        // Decrease counter
+        this.updateIdeaCounter(this.getIdeasCounterNumber() - 1);
     }
 
     loadIdea(id){

@@ -1,19 +1,21 @@
 <script id="ideaBlockTemplate" type="text/x-tmpl-mustache">
-    <div class="ideaBlock id[[id]] [[favorite]]" id="id[[id]]" style="display:none">
-        [[idea]]
-        [[#closeable]]
-        <a title="Close idea" class="close"></a>
-        [[/closeable]]
-        <div class="popOut">
-            [[#editable]]
-            <a class="expandBtn">View</a>
-            <a class="refineBtn">Refine</a>
-            [[/editable]]
-            <a class="favoriteBtn">Favorite</a>
+    <div class="ideaBlock id[[id]]" id="id[[id]]" style="display:none">
+        <div class="ideaBlockContainer id[[id]] [[favorite]]" style="position:absolute; top: 0; left: 0;">
+            <div class="ideaBlockHeader">Drag to combine</div>
+            <div class="ideaBlockText">
+                [[idea]]
+                <span class="fade"></span>
+            </div>
+            <div class="ideaBlockPopOut">
+                [[#editable]]
+                <a class="refineBtn">Refine</a>
+                [[/editable]]
+                <a class="favoriteBtn">Favorite</a>
+                <!-- <a class="hideBtn">Close</a> -->
+            </div>
+            <input type="hidden" name="ideaId" value="[[id]]"></input>
+            <input type="hidden" name="ideaTags" value="[[tags]]"></input>
         </div>
-        <span class="fade"></span>
-        <input type="hidden" name="ideaId" value="[[id]]"></input>
-        <input type="hidden" name="ideaTags" value="[[tags]]"></input>
     </div>
 </script>
 
@@ -182,7 +184,7 @@
     <p class="ideaText viewElement">
     </p>
     <form class="editElement">
-        <textarea name='refinedIdea' placeholder="Type your idea in here" required maxlength="{{=validation['text_max']}}"></textarea>
+        <textarea class="ideaInput" name='refinedIdea' placeholder="Type your idea in here" required maxlength="{{=validation['text_max']}}"></textarea>
         <input type="hidden" name="tags" />
         <input type="hidden" name="originalId" />
     </form>

@@ -123,7 +123,7 @@ class VersioningView extends View {
     buildVersioningPanel(structure){
 		if(structure.length > 0){
 			var html = '<div class="header">\
-				<h3>Latest version</h3>\
+				<h3>Idea</h3>\
 				<h3>History</h3>\
 			</div>';
 			// Build view
@@ -145,7 +145,8 @@ class VersioningView extends View {
 				var tags = idea.data('tags').toString().split(',');
 				$.event.trigger({type:EVENTS.highlightIdea, params:{
 					id: id,
-					tags: tags
+					tags: tags,
+					source: this
 				}});
 			}, function(e){
 				var idea = $(e.target);
@@ -153,7 +154,8 @@ class VersioningView extends View {
 				var tags = idea.data('tags').toString().split(',');
 				$.event.trigger({type:EVENTS.blurIdea, params:{
 					id: id,
-					tags: tags
+					tags: tags,
+					source: this
 				}});
 			}).click(function(e){
 				// Open idea on click

@@ -143,7 +143,8 @@ class SolutionSpaceView extends View {
 				classes.forEach(function(d,i){
 					classes[i] = d.replace('.cl_', '');
 				});
-				openOverlay('tagsView', {tags: classes});
+				// Open ideas
+				VIEWS['ideasView'].loadIdeasByTags(classes);
 			});
 	
 			// Setup minimap
