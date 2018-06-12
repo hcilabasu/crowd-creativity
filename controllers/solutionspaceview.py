@@ -4,6 +4,8 @@ import base64
 import cStringIO
 import user_models
 import util
+import datetime
+import ast
 from PIL import Image
 
 '''
@@ -19,17 +21,28 @@ def get_solution_space():
     problem_id = util.get_problem_id(request)
     user_model = user_models.UserModel(user_id, problem_id)
     
+    connections = dict()
+    timestamp = datetime.datetime.min
+    max_n = 0
+    # Retrieve latest cache
+    cache = db(db.visualization_cache.problem == problem_id).select().first()
+    if cache:
+        print('Using cache...')
+        json_cache = json.loads(cache.cache.replace('\'', '"'))
+        connections = json_cache['connections']
+        timestamp = cache.timestamp
+        max_n = json_cache['max_n']
+
     # Get tags ordered by the user model
     tags = user_model.get_ordered_tags()
 
     # get ideas with respective tags
     ideas = db((db.idea.id == db.tag_idea.idea) & 
-        (db.tag.id == db.tag_idea.tag)
+        (db.tag.id == db.tag_idea.tag) &
+        (db.idea.dateAdded >= timestamp)
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
+    
     # extract tags
-    i = 0
-    max_n = 0
-    connections = dict()
     for idea in ideas:
         idea_tags = list()
         for tag in idea.idea.tag_idea.select():
@@ -45,9 +58,21 @@ def get_solution_space():
         if n > max_n:
             max_n = n
     tags = tags[:SOLUTION_SPACE_MAX_TAGS]
-    # Create overview    
-    base64_image = __generate_birdseye_solutionspace(tags, connections, max_n=max_n)
-    return json.dumps(dict(tags=tags, connections=connections, max_n=max_n, overview=base64_image))
+
+    # Create minimap overview and generate outcome dict
+    overview = __generate_birdseye_solutionspace(tags, connections, max_n=max_n)
+    outcome = json.dumps(dict(tags=tags, connections=connections, max_n=max_n, overview=overview))
+    
+    # Update cache
+    cache_type = 'solutionspace'
+    key = (db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)
+    db.visualization_cache.update_or_insert(key,
+        problem=problem_id,
+        type=cache_type,
+        cache=outcome,
+        timestamp=datetime.datetime.now())
+    
+    return outcome
 
 def get_ideas_per_tag():
     '''

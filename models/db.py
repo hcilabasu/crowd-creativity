@@ -184,5 +184,13 @@ db.define_table('user_model',
     migrate=MIGRATE,
     fake_migrate=FAKE_MIGRATE)
 
+db.define_table('visualization_cache',
+    Field('problem', 'reference problem'),
+    Field('type', 'string'),
+    Field('cache', 'text', length=DATA_MAX),
+    Field('timestamp', 'datetime'),
+    migrate=MIGRATE,
+    fake_migrate=FAKE_MIGRATE)
+
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
