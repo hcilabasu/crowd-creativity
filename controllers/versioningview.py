@@ -90,17 +90,17 @@ def get_versioning_structure():
     # build idea map
     for i,r in enumerate(results):
         tags = [t.tag.tag for t in r.idea.tag_idea.select()]
-        complete_idea_map[r.idea.id] = Node(
+        complete_idea_map[str(r.idea.id)] = Node(
             tags=tags,
             type=r.idea.origin,
             id=r.idea.id,
             i=i)
         children = []
         if r.idea.sources:
-            children = [complete_idea_map[c] for c in r.idea.sources]
-        complete_idea_map[r.idea.id].children = children
+            children = [complete_idea_map[str(c)] for c in r.idea.sources]
+        complete_idea_map[str(r.idea.id)].children = children
         if not r.idea.replacedBy:
-            filtered_idea_list.append(complete_idea_map[r.idea.id])
+            filtered_idea_list.append(complete_idea_map[str(r.idea.id)])
             ids.append(r.idea.id)
     
     # Trim nodes to avoid redundancy
