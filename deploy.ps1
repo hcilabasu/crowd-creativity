@@ -39,13 +39,14 @@ Write-Host Compiling app...
 
 # python -c "import gluon.compileapp; gluon.compileapp.compile_application('..\\..\\applications\\crowdmuse')"
 
-<# TODO Compile CSS files
 Write-Host Compiling CSS...
 cd static/css
+
 # First compile all less files
 Get-ChildItem -Path .\ -Filter *.less -Recurse -File | ForEach-Object { 
     lessc $_.FullName "$($_.DirectoryName)\$($_.BaseName).compiled.css"
 }
+<# TODO Compile CSS files
 # Combine all css files into one
 cd ..
 Get-Content "*.css" | Out-File "css.compiled.css"
@@ -57,8 +58,8 @@ Get-ChildItem -Path .\ -Recurse -Directory | ForEach-Object {
 }
 # TODO run minify
 # Go back to base
-cd ../..
 #>
+cd ../..
 
 Write-Host Compiling JS...
 cd static/js
