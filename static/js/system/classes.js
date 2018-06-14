@@ -47,7 +47,7 @@ class Idea {
                 handle: '.ideaBlockHeader',  
                 appendTo: "#ideasContainer",
                 helper: function(){
-                    return $('<div>Drop to combine</div>');
+                    return $('<div></div>').text(idea.idea);
                 },
                 scope: 'ideas',
                 revert: true,
