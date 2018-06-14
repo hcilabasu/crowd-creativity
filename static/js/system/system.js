@@ -241,6 +241,7 @@ var setupStudySession = function(){
 		$('#studyTimer').fadeOut(500, function(){
 			$('#concludeSession').fadeIn(500);
 			localStorage['sessionConcluded' + ENV.problemId] = true;
+			concludeSession();
 		});
 	};
 	if(localStorage['sessionConcluded' + ENV.problemId] === 'true'){
