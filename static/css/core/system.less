@@ -769,7 +769,7 @@ textarea.ideaInput + div {
         white-space: nowrap;
         opacity: 0;
         height: 0;
-        background: rgba(255,255,255,0.7);
+        background: rgba(255,255,255,0.5);
         padding-top: 6px;
         text-align: center;
 
@@ -814,19 +814,20 @@ textarea.ideaInput + div {
         box-shadow: @boxShadowLarger;
 
         .ideaBlockHeader {
-            height: 10%;
+            height: 9%;
             opacity: 0.5;
             line-height: 22px;
             text-indent: 30px;
+            background-color: rgba(255,255,255,0.7);
         }
         
         .ideaBlockText {
-            height: 73%;
+            height: 75%;
             overflow: auto;
         }
         
         .ideaBlockPopOut {
-            height: 17%;
+            height: 16%;
             opacity: 1;
         }
     }
@@ -847,7 +848,9 @@ textarea.ideaInput + div {
 
         .favoriteBtn { 
             background-image: url(../../images/heart-red.png);
-            box-shadow: inset 0 5px 10px 5px rgba(0,0,0,0.2);
+            box-shadow: inset 0 5px 5px 5px rgba(0,0,0,0.2);
+            background-color: rgb(172, 216, 252);
+            transition: all 0.4s;
         }
     }
 }
