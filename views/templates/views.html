@@ -6,14 +6,14 @@
             </a></li>
         </ul> -->
         <ul>
-            <li><a title="Load your latest ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
+            <li><a title="Load all ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
+                <img src="{{=URL('static','images/group.png')}}">
+            </a></li>
+            <li><a title="Load only your ideas" onclick="TOOLBAR.ideaViewer.loadUserIdeas()">
                 <img src="{{=URL('static','images/user.png')}}">
             </a></li>
-            <li><a title="Load your favorite ideas" onclick="TOOLBAR.ideaViewer.loadFavoriteIdeas()">
+            <li><a title="Load only your favorite ideas" onclick="TOOLBAR.ideaViewer.loadFavoriteIdeas()">
                 <img src="{{=URL('static','images/heart-black.png')}}">
-            </a></li>
-            <li><a title="Load all latest version ideas" onclick="TOOLBAR.ideaViewer.loadAllIdeas()">
-                <img src="{{=URL('static','images/group.png')}}">
             </a></li>
         </ul>
         <div class="right-buttons">

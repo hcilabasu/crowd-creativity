@@ -4,7 +4,7 @@ class IdeaViewerView extends View {
     Empties the container and initializes the view inside of it
     */
     load(){
-        this.loadIdeasAddedBy(ENV.userId);
+        this.loadIdeasAddedBy();
         return this;
     }
 
