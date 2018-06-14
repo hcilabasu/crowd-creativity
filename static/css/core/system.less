@@ -690,14 +690,6 @@ textarea.ideaInput + div {
     justify-content: space-evenly;
 }
 
-#ideasContainerCounter {
-    /* display: block;
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%); */
-}
-
 .loading #ideasContainerCounter {
     display: none;
 }
@@ -900,7 +892,7 @@ textarea.ideaInput + div {
         background-color: @ideaColorDarker;
     }
 
-    &.favorite {
+    & .favorite.ideaBlockContainer {
         background-color: @ideaColorDarkerFavorite !important;
     }
 }
