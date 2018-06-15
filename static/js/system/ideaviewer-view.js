@@ -187,7 +187,6 @@ class IdeaViewerView extends View {
             $(this.container).append($('<div></div>',{class:'invisibleIdeaBlock'}));
         }
         // Update view
-        ideaBlock.fadeIn('slow');
         if(updateCounter){
             this.updateIdeaCounter(this.getIdeasCounterNumber() + 1);
         }
