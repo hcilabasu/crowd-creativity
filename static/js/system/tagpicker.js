@@ -39,7 +39,10 @@ $.fn.tagPicker = function(action, params){
 					// Add tag on click
 					$('li',tagsList).click(function(){
 						var tag = $(this).text();
-						addTag(tag, topContainer);
+						var index = addTag(tag, topContainer);
+						if(index >= 0){
+							callAttention($('.tagPlaceholder').eq(index), 100, 'new');
+						}
 					});
 					// Enable filter
 					$('.search', topContainer).prop('disabled', false);
@@ -59,23 +62,52 @@ $.fn.tagPicker = function(action, params){
 	};
 
 	/*
-	Adds a tag to the hidden tags input
+	Calls attention to a tag placeholder by doing something like shaking it
+	*/
+	var callAttention = function(placeholder, delay, attnClass){
+		delay = delay ? delay : 1000;
+		attnClass = attnClass ? attnClass : 'shake';
+		placeholder.addClass(attnClass).delay(delay).queue(function(){
+			$(this).removeClass(attnClass).dequeue();
+		});
+	};
+
+	/*
+	Adds a tag to the hidden tags input. Returns the index of the tag that was added, or -1 if no tag was added
 	*/
 	var addTag = function(tag, topContainer){
 		// Get tags
 		var input = $('[name=tags]', topContainer);
+		var placeholders = $('.tagPlaceholder', topContainer);
 		var tags = input.val() === '' ? [] : input.val().split(ENV.tagsDelimiter);
-		if (tags.indexOf(tag) < 0 && tags.length < 2) {
-			// Tag hasn't been added yet, there is room, and tag is not empty
-			tags.push(tag);
-			// trim empty tags
-			while(tags.indexOf('') >= 0){
-				var i = tags.indexOf('');
-				tags.splice(i, 1);
+		var returnIndex = -1;
+		if(tags.indexOf(tag) < 0){
+			if (tags.length < 2) {
+				// Tag hasn't been added yet, there is room, and tag is not empty
+				returnIndex = tags.length;
+				tags.push(tag);
+				// trim empty tags
+				while(tags.indexOf('') >= 0){
+					var i = tags.indexOf('');
+					tags.splice(i, 1); 
+				}
+				// Update input and add delimiter
+				input.val(tags.join(ENV.tagsDelimiter)).change();
+			} else {
+				// There are already two tags. Display message
+				callAttention($('.maxTagWarning'), 5000);
 			}
-			// Update input and add delimiter
-			input.val(tags.join(ENV.tagsDelimiter)).change();
+		} else {
+			// Tag already exists. Shake it!
+			var tagIndex = tags.indexOf(tag);
+			callAttention(placeholders.eq(tagIndex));
 		}
+		// Animate the container down to show placeholder
+		var scrollParent = placeholders.scrollParent();
+		scrollParent.animate({
+			scrollTop: placeholders.offset().top
+		}, 200);
+		return returnIndex;
 	}
 
 	/*
