@@ -7,6 +7,8 @@
 @darkBlue: #3a80d1;
 @darkerBlue: #144C80;
 @errorColor: indianred;
+@mergeColor: #DF6464;
+@combineColor: #4472C4;
 
 @borderRadius: 10px;
 @boxShadow: 0 0 5px rgba(0,0,0,0.2);
@@ -1016,67 +1018,99 @@ textarea.ideaInput + div {
     }
 } 
 
-.clickEnabled {
-    cursor: pointer;
-    padding: 10px;
-}
+#combineIdeas {
 
-.clickEnabled > p {
-    margin-bottom: 0;
-}
+    .dynamicContent {
+        p > a {
+            display: inline-block;
+        }
 
-.clickEnabled:hover {
-    background: #A0D3FF;
-}
+        & > h3 {
+            display: inline-block;
+        }
+    }
 
-.sideImage {
-    float:left;
-    margin-right: 15px;
-}
+    & > .combineIdeasShowIdeas {
+        text-align: center;
+        margin-bottom: 30px;
+        overflow: auto;
 
-#combineIdeas > .combineIdeasShowIdeas {
-    text-align: center;
-    margin-bottom: 20px;
-}
+        .ideaBlock {
+            text-align: left;
+            overflow: auto;
+            width: 44%;
+            float: left;
+            max-height: 200px;
+            min-height: 100px;
+            height: auto;
+            background: @ideaColor;
+            padding: 10px;
+        }
+    }
 
-#combineIdeas > .combineIdeasShowIdeas .ideaBlock {
-    text-align: left;
-    overflow: auto;
-    width: 44%;
-    float: left;
-    max-height: 200px;
-    min-height: 100px;
-    height: auto;
-    background: @ideaColor;
-    padding: 10px;
-}
-
-    #combineIdeas p {
+    p {
         margin-bottom: 10px;
     }
 
-    #combineIdeas .choices {
+    ul {
         clear: both;
+
+        li {
+            overflow: auto;
+            border-radius: @borderRadius;
+    
+            &.merge h3 {
+                color: @mergeColor;
+            }
+    
+            &.combine h3 {
+                color: @combineColor;
+            }
+        }
     }
 
-    #combineIdeas .choices li {
-        overflow: auto;
-    }
-
-    #combineIdeas form.ideaInput {
-        display: none;
+    form.ideaInput {
         clear: both;
         position: relative;
+
+        .cornerRight {
+            right: 0;
+            bottom: 0;
+        }
     }
 
-    #combineIdeas form.ideaInput .cornerRight {
-        right: 0;
-        bottom: 0;
+    img {
+        height: 60px;
+        border-radius: @borderRadius;
     }
 
+    .combinationType {
+        font-weight: bolder;
+    }
+    
+    .clickEnabled {
+        cursor: pointer;
+        padding: 10px;
+        transition: background-color 0.2s;
 
-.combinationType {
-    font-weight: bolder;
+        & > p {
+            margin-bottom: 0;
+        }
+
+        &:hover {
+            background: #A0D3FF;
+        }
+    }
+    
+    .sideImage {
+        float:left;
+        margin-right: 15px;
+    }
+
+    &.chosen .clickEnabled {
+        cursor: default;
+        background-color: white !important;
+    }
 }
 
 .toolbar {

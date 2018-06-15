@@ -144,7 +144,7 @@ $(function(){
 				VIEWS.ideasView.load();
 			},
 			loadUserIdeas:()=>{
-				VIEWS.ideasView.load();
+				VIEWS.ideasView.loadIdeasAddedBy(ENV.userId);
 			},
 			loadFavoriteIdeas:()=>{
 				VIEWS.ideasView.loadFavoriteIdeas();
@@ -522,6 +522,9 @@ var combineIdeasSetup = function(params){
 	if (popup.is(':empty')){ // Only load the html the first time
 		popup.html(template);
 	}
+	// Hide and show elements
+	$('.merge,.combine').hide();
+	$('.choose', popup).show();
 	// Add the idea text to the blocks
 	ids = []
 	tags = []
@@ -548,14 +551,17 @@ var combineIdeasSetup = function(params){
 }
 
 var replaceCombineIdeasOptions = function(event, type){
+	var popup = $('#combineIdeas');
 	if(type == 'back'){
-		$('#combineIdeas .choices').show('fast');
-		$('#combineIdeas .ideaInput').hide('fast');
+		popup.removeClass('chosen');
+		$('.merge,.combine', popup).hide('fast');
+		$('.choose', popup).show('fast');
 	} else {
-		$('#combineIdeas .choices').hide('fast');
-		$('#combineIdeas .ideaInput').show('fast');
+		popup.addClass('chosen');
+		$('.merge,.combine,.choose', popup).filter(':not(.'+type+')').hide('fast');
+		$('.' + type, popup).show('fast');
 		// Sets the text in the paragraph
-		$('.combinationType').text(type + 'd');
+		$('#combineIdeas textarea').attr('placeholder','Write your ' + type + 'd' + ' idea here');
 		$('#combineIdeas input[name=combineTypeInput]').val(type);
 	}
 };

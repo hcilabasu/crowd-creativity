@@ -1,5 +1,5 @@
 <script id="ideaBlockTemplate" type="text/x-tmpl-mustache">
-    <div class="ideaBlock id[[id]]" id="id[[id]]" style="display:none">
+    <div class="ideaBlock id[[id]]" id="id[[id]]">
         <div class="ideaBlockContainer id[[id]] [[favorite]]" style="position:absolute; top: 0; left: 0;">
             <div class="ideaBlockHeader">Drag to combine</div>
             <div class="ideaBlockText">
@@ -146,35 +146,35 @@
         <p class="ideaBlock"><span></span></p>
         <p class="ideaBlock"><span></span></p>
     </div>
+    
+    <div class="dynamicContent">
+        <p> <a class="merge combine" onclick="replaceCombineIdeasOptions(event, 'back')">&lt; Choose a different action</a> </p>
 
-    <div class="choices">
-        <p>Choose an action:</p>
+        <h3 class="choose">Choose an action:</h3>
         <ul>
-            <li class="clickEnabled" onclick="replaceCombineIdeasOptions(event,'merge')">
+            <li class="clickEnabled merge choose" onclick="replaceCombineIdeasOptions(event,'merge')">
                 <img src="{{=URL('static','images/merge.gif')}}" class="sideImage" />
                 <h3>Merge ideas</h3>
-                <p>Are two ideas virtually the same? Click here to keep only one of them.</p>
+                <p>Merge similar ideas into one. Replaces the original ideas.</p>
             </li>
-            <li class="clickEnabled" onclick="replaceCombineIdeasOptions(event,'combine')">
+            <li class="clickEnabled combine choose" onclick="replaceCombineIdeasOptions(event,'combine')">
                 <img src="{{=URL('static','images/combine.gif')}}" class="sideImage" />
                 <h3>Combine ideas</h3>
-                <p>Want to combine to ideas into a new, different one? Click here to combine them.</p>
+                <p>Combine two ideas into a new one. Keeps the original ideas.</p>
             </li>
         </ul>
+        <form class="ideaInput merge combine">
+
+            <textarea name="combinedIdeaInput" placeholder="Write your idea in here" class="ideaInput" required maxlength="{{=validation['text_max']}}"></textarea>
+
+            <div id="combinedTagInput"></div>
+
+            <input type="hidden" name="combineTypeInput">
+            <input type="hidden" name="combinedIdeaIds">
+
+            <a class="btn cornerRight" onclick="submitCombinedIdea(event)">Submit</a>
+        </form>
     </div>
-    <form class="ideaInput">
-        <p> <a onclick="replaceCombineIdeasOptions(event, 'back')">&lt; Back</a> </p>
-        <p>Please, write down your <span class='combinationType'></span> idea in the textarea below. Make sure to include as much detail as possible!</p>
-
-        <textarea name="combinedIdeaInput" placeholder="Write your idea in here" class="ideaInput" required maxlength="{{=validation['text_max']}}"></textarea>
-
-        <div id="combinedTagInput"></div>
-
-        <input type="hidden" name="combineTypeInput">
-        <input type="hidden" name="combinedIdeaIds">
-
-        <a class="btn cornerRight" onclick="submitCombinedIdea(event)">Submit</a>
-    </form>
 </script>
 
 <script id="editIdeaPopupTemplate" type="text/x-tmpl-mustache">
