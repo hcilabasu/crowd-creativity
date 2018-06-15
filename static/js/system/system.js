@@ -518,12 +518,13 @@ var editIdeaSetup = function(params){
 
 var combineIdeasSetup = function(params){
 	var popup = $('#combineIdeas');
+	popup.removeClass('chosen');
 	var template = $(Mustache.render(TEMPLATES['combineIdeaPopupTemplate']));
 	if (popup.is(':empty')){ // Only load the html the first time
 		popup.html(template);
 	}
 	// Hide and show elements
-	$('.merge,.combine').hide();
+	$('.merge,.combine', popup).hide();
 	$('.choose', popup).show();
 	// Add the idea text to the blocks
 	ids = []
@@ -554,7 +555,7 @@ var replaceCombineIdeasOptions = function(event, type){
 	var popup = $('#combineIdeas');
 	if(type == 'back'){
 		popup.removeClass('chosen');
-		$('.merge,.combine', popup).hide('fast');
+		$('.merge,.combine', popup).filter(':not(.choose)').hide('fast');
 		$('.choose', popup).show('fast');
 	} else {
 		popup.addClass('chosen');
