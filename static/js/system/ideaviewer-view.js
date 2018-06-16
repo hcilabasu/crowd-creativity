@@ -165,35 +165,37 @@ class IdeaViewerView extends View {
     Adds an idea to the view 
     */
     addIdeaToDisplay(idea, updateCounter){
-        var params = {
-            closeable:true, 
-            draggable:true, 
-            resizable: true, 
-            focuseable: true, 
-            editable: true, 
-            source: this.constructor
-        };
-        var ideaElement = new Idea(idea, params);
-        var ideaBlock = ideaElement.html();
-        // Remove invisible padding elements (fix for flex box last row)
-        $(this.container + ' .invisibleIdeaBlock').remove();
-        // Add element
-        $(this.container).prepend(ideaBlock);        
-        // Add new invisible padding elements
-        var ideaBlockWidth = ideaBlock.outerWidth();
-        var containerWidth = $(this.container).innerWidth();
-        var numberOfFillers = containerWidth / ideaBlockWidth;
-        for(var i = 0; i < numberOfFillers; i++){
-            $(this.container).append($('<div></div>',{class:'invisibleIdeaBlock'}));
-        }
-        // Update view
-        if(updateCounter){
-            this.updateIdeaCounter(this.getIdeasCounterNumber() + 1);
-        }
-        // Add to common variable
-        COMMON.openIdeas.push(idea.id);
-        // Add to versioning View
-        VIEWS['versioningView'].markIdeasOpen([idea.id]);
+        window.setTimeout(()=>{
+            var params = {
+                closeable:true, 
+                draggable:true, 
+                resizable: true, 
+                focuseable: true, 
+                editable: true, 
+                source: this.constructor
+            };
+            var ideaElement = new Idea(idea, params);
+            var ideaBlock = ideaElement.html();
+            // Remove invisible padding elements (fix for flex box last row)
+            $(this.container + ' .invisibleIdeaBlock').remove();
+            // Add element
+            $(this.container).prepend(ideaBlock);        
+            // Add new invisible padding elements
+            var ideaBlockWidth = ideaBlock.outerWidth();
+            var containerWidth = $(this.container).innerWidth();
+            var numberOfFillers = containerWidth / ideaBlockWidth;
+            for(var i = 0; i < numberOfFillers; i++){
+                $(this.container).append($('<div></div>',{class:'invisibleIdeaBlock'}));
+            }
+            // Update view
+            if(updateCounter){
+                this.updateIdeaCounter(this.getIdeasCounterNumber() + 1);
+            }
+            // Add to common variable
+            COMMON.openIdeas.push(idea.id);
+            // Add to versioning View
+            VIEWS['versioningView'].markIdeasOpen([idea.id]);
+        }, 50);
     };
 
     closeIdea(id){
