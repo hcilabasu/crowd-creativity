@@ -21,13 +21,7 @@
     <!-- TODO combine all css files below into a single, minified one -->
     <link rel="stylesheet" href="{{=URL('static','css/core/bootstrap.min.css')}}"/>
     <link rel="stylesheet" href="{{=URL('static','css/core/web2py-bootstrap3.css')}}"/>
-    {{if settings['is_development']:}} <!-- Serve precompiled if on production -->
-      <link rel="stylesheet/less" href="{{=URL('static','css/core/system.less')}}"/>
-      <!-- All JavaScript at the bottom, except for LESS for processing styles before loading -->
-      <script src="{{=URL('static','js/less.min.js')}}"></script>
-    {{else:}}
-      <link rel="stylesheet" href="{{=URL('static','css/core/system.compiled.css')}}"/>
-    {{pass}}
+    <link rel="stylesheet" href="{{=URL('static','css/core/system.compiled.css')}}"/>
     {{block page_styles}}{{end page_styles}}
 
     <!-- Fonts -->
