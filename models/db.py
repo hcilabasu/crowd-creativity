@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from random import SystemRandom
 
 # Track module changes
 from gluon.custom_import import track_changes; track_changes(True)
@@ -92,6 +93,16 @@ SHORT_STRING_MAX = myconf.take('db.short_string_max')
 MIGRATE = True
 FAKE_MIGRATE = False
 
+# Random variable for default user model condition
+SECURE = SystemRandom()
+
+# Conditions
+settings['conditions'] = dict(
+    control=1,
+    subtle=2,
+    overt=3,
+    all=4)
+
 db.define_table('problem',
     Field('title', 'string', length=SHORT_STRING_MAX),
     Field('url_id', 'string', unique=True, length=SHORT_STRING_MAX),
@@ -176,6 +187,7 @@ db.define_table('task',
 db.define_table('user_model',
     Field('user', 'reference user_info'),
     Field('problem', 'reference problem'),
+    Field('user_condition', 'integer'),
     Field('last_cat', 'list:string', length=SHORT_STRING_MAX),
     Field('count_pair', 'integer'),
     Field('count_transition_pairs', 'integer'),

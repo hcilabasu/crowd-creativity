@@ -5,7 +5,10 @@ import numpy
 import collab_filter
 from collections import Counter
 from operator import itemgetter
-from gluon import current
+from gluon import current, settings
+from random import SystemRandom
+
+CONDITIONS = dict(control=1,subtle=2,overt=3,all=4)
 
 class UserModel(object):
     ''' This is the main user model class, housing all properties, including the graph and matrix '''
@@ -24,11 +27,14 @@ class UserModel(object):
             self.transition_graph = TransitionGraph(db_user_model.last_cat, db_user_model.transition_graph)
             self.category_matrix = CategoryMatrix(db_user_model.category_matrix)
             # Create other properties
+            self.user_condition = db_user_model.user_condition
             self.last_cat = db_user_model.last_cat
             self.count_pair = db_user_model.count_pair
             self.count_transition_pairs = db_user_model.count_transition_pairs
             self.category_switch_ratio = self.count_transition_pairs / float(self.count_pair)
         else:
+            condition = lambda : SystemRandom().choice(CONDITIONS.values())
+            self.user_condition = condition
             self.last_cat = None
             self.count_pair = 0
             self.count_transition_pairs = 0
@@ -70,9 +76,12 @@ class UserModel(object):
         ]
 
     def get_inspiration_categories(self, n):
-        ''' Returns a list of categories to be used for the inspiration '''
+        ''' 
+        Returns a list of categories to be used for the inspiration.
+        If there are none (or the condition doesn't employ adaptive inspirations), return empty list. 
+        '''
         categories = []
-        if self.last_cat: # Check if the user has ideated before
+        if self.last_cat and self.has_adaptive_inspirations(): # Check if the user has ideated before, or if conditions should be adaptive
             next_categories = self.transition_graph.get_next_categories(n)
             for i in range(n):
                 if random.random() > self.category_switch_ratio: 
@@ -92,7 +101,7 @@ class UserModel(object):
         # Get all tags
         tags = db((db.tag.id > 0) & (db.tag.replacedBy == None) & (db.tag.problem == problem_id)).select(orderby='<random>').as_list()
         tags = [t['tag'] for t in tags]
-        if self.last_cat: # Check if the user has ideated before
+        if self.last_cat and self.has_adaptive_views(): # Check if the user has ideated before
             # Start sequence:
             # 1: current category
             for c in self.last_cat:
@@ -120,6 +129,12 @@ class UserModel(object):
             ordered_tags.extend(tags)
             tags = ordered_tags
         return tags
+
+    def has_adaptive_inspirations(self):
+        return self.user_condition in (CONDITIONS['overt'], CONDITIONS['all'])
+
+    def has_adaptive_views(self):
+        return self.user_condition in (CONDITIONS['subtle'], CONDITIONS['all'])
 
 
 class ModelRepresentation(object):
@@ -283,7 +298,10 @@ class CategoryMatrix(ModelRepresentation):
         sdev = numpy.std(values)
         std_cats = dict()
         for k in self.model.keys():
-            std_cats[k] = (self.model[k] - avg) / sdev
+            if sdev != 0:
+                std_cats[k] = (self.model[k] - avg) / sdev
+            else:
+                std_cats[k] = self.model[k]
         return std_cats
 
     def format_standardized_json(self):

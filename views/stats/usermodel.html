@@ -7,9 +7,9 @@
     <title>User model - CrowdMuse</title>
 
     <link href="https://fonts.googleapis.com/css?family=Concert+One|Lato" rel="stylesheet">
-    <link rel="stylesheet" href="{{=URL('static','css/bootstrap.min.css')}}"/>
-    <link rel="stylesheet" href="{{=URL('static','css/web2py-bootstrap3.css')}}"/>
-    <link rel="stylesheet" href="{{=URL('static','css/main.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/core/bootstrap.min.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/core/web2py-bootstrap3.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/core/system.compiled.css')}}"/>
     <link rel="stylesheet" href="{{=URL('static','css/user-model.css')}}"/>
     <link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
@@ -25,6 +25,7 @@
                 <li><strong>User</strong> {{=user.userId}}</li>
                 <li><strong>ID</strong> {{=user.id}}</li>
                 <li><strong>Problem</strong> "{{=problem.title}}"</li>
+                <li><strong>Condition</strong> {{=model.user_condition}}</li>
             </ul>
             <h2>Basic stats</h2>
 

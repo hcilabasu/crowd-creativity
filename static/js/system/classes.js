@@ -44,6 +44,7 @@ class Idea {
 
         if(typeof params['draggable'] == 'boolean' && params['draggable']){
             innerContainer.draggable({
+                addClasses: false,
                 handle: '.ideaBlockHeader',  
                 appendTo: "#ideasContainer",
                 helper: function(){
@@ -80,6 +81,7 @@ class Idea {
                         }                
                     }
                 },
+                addClasses: false,
                 tolerance: 'pointer',
                 scope: 'ideas',
                 classes: {
