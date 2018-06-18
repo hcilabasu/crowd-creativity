@@ -205,9 +205,16 @@ class IdeaViewerView extends View {
     }
 
     loadIdea(id){
-        if($(this.container + ' #id' + id).length){
-            // Idea is already in pane. Focus
-            $(this.container + ' #id' + id).addClass('shake').delay(1000).queue(function(next){ $(this).removeClass('shake'); next(); });
+        var container = $(this.container);
+        var ideaElement = $(' #id' + id, container);
+        if(ideaElement.length){
+            // Scroll to idea and focus on it
+            container.animate({
+                scrollTop: ideaElement.offset().top - container.offset().top + container.scrollTop()
+            }, 1000, function(){
+                // Idea is already in pane. Focus
+                ideaElement.addClass('shake').delay(1000).queue(function(next){ $(this).removeClass('shake'); next(); });
+            });
         } else {
             // Idea is not in the pane. Retrieve and display.
             $.ajax({
