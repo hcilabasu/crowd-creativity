@@ -836,7 +836,7 @@ textarea.ideaInput + div {
 
     &.favorite {
         background: @ideaColorFavorite url(../../images/heart.png) no-repeat;
-        background-position: right 5px bottom 5px;
+        background-position: right 5px top 5px;
         background-size: 15px;
         
         span.fade {
@@ -845,7 +845,7 @@ textarea.ideaInput + div {
         }
     
         &:hover {
-            background: @ideaColorFavorite;
+            background-color: @ideaColorFavorite;
         }
 
         .favoriteBtn { 
@@ -861,7 +861,6 @@ textarea.ideaInput + div {
 
     .ideaBlockContainer{
         box-shadow: inset 0 0 0 4px @ideaColorDarker !important;
-        transition: box-shadow 0.4s;
     }
 
     .popOut {
