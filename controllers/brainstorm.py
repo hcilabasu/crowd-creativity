@@ -23,6 +23,7 @@ def index():
     user_name = session.user_name
     problem_title = request.args(0)
     new_user = False
+    browser = request.env.http_user_agent
 
     # load problem info
     problem = db(db.problem.url_id == problem_title).select().first() 
@@ -35,10 +36,10 @@ def index():
         # Generating new user
         user_name = uuid.uuid4().hex
         user_id = __create_new_user(user_name)
-        log_action(user_id, problem.id, "new_user", {'user_name': user_name})
+        log_action(user_id, problem.id, "new_user", {'user_name': user_name, 'browser': browser})
     else:
         # user already has ID. This means it's a page reload. Log it.
-        log_action(user_id, problem.id, "refresh_page", {'user_name': user_name})
+        log_action(user_id, problem.id, "refresh_page", {'user_name': user_name, 'browser': browser})
 
     # Update page title
     response.title = problem.title
