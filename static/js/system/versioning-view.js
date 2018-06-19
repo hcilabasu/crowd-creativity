@@ -111,6 +111,17 @@ class VersioningView extends View {
 	}
 
 	/*
+	Unmarks an array of idea ids as open
+	*/
+	unmarkIdeasOpen(ideasIds) {
+		var allIdeas = $('.smallIdea.open', $(this.container));
+		for (let i = 0; i < ideasIds.length; i++) {
+			const id = ideasIds[i];
+			allIdeas.filter('.id' + id).removeClass('open');
+		}
+	}
+
+	/*
 	Clears all open idea markers
 	*/
 	clearOpenIdeas(){

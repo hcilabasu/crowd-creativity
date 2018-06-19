@@ -67,7 +67,13 @@ def get_versioning_structure():
     ids = []
 
     # Retrieve latest cache
-    cache = db((db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)).select().first()
+    '''
+    TODO enable cache again
+    Cache is temporarily disabled due to a bug where refinements (and probably mergers) wouldn't be accurately reflected in the updated model.
+    E.g. if an idea was refined, the verisoning view would still show the pre-refined idea as the latest version, alongside with the refined idea.
+    The solution should involve updating the cached model when you detect a new idea that's the result of of merge or refinement
+    '''
+    cache = None # db((db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)).select().first()
     if cache:
         json_cache = json.loads(cache.cache, cls=ClassDecoder)
         timestamp = cache.timestamp
@@ -98,6 +104,7 @@ def get_versioning_structure():
         children = []
         if r.idea.sources:
             children = [complete_idea_map[str(c)] for c in r.idea.sources]
+            # TODO update previous ideas to reflect their replacement
         complete_idea_map[str(r.idea.id)].children = children
         if not r.idea.replacedBy:
             filtered_idea_list.append(complete_idea_map[str(r.idea.id)])

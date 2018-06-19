@@ -26,6 +26,7 @@ def get_available_tasks():
 
 def submit_task():
     user_id = session.user_id
+    problem_id = util.get_problem_id(request)
     answer = request.vars['answer']
     task_id = request.vars['id']
     task_type = request.vars['type']

@@ -202,6 +202,13 @@ class IdeaViewerView extends View {
         $(this.container + ' #id'+id).hide(200, function(){ this.remove(); });
         // Decrease counter
         this.updateIdeaCounter(this.getIdeasCounterNumber() - 1);
+        // Remove from common variable
+        var i = COMMON.openIdeas.indexOf(parseInt(id));
+        if(i > -1){
+            COMMON.openIdeas.splice(i, 1);
+        }
+        // Remove from versioning view
+        VIEWS['versioningView'].unmarkIdeasOpen([id]);
     }
 
     loadIdea(id){
