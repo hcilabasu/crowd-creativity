@@ -157,6 +157,7 @@ db.define_table('tag_idea',
 db.define_table('action_log',
     Field('actionName', 'string', length=SHORT_STRING_MAX),
     Field('userId', 'reference user_info'),
+    Field('problem', 'reference problem'),
     Field('extraInfo', 'text', length=DATA_MAX), # any other necessary contextual information
     Field('dateAdded', 'datetime'),
     migrate=MIGRATE,

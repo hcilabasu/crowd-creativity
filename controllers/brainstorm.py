@@ -21,20 +21,25 @@ TASKS_PER_IDEA = 4 # For each idea that is added, add this number of tasks per k
 def index():
     user_id = session.user_id
     user_name = session.user_name
+    problem_title = request.args(0)
     new_user = False
+
+    # load problem info
+    problem = db(db.problem.url_id == problem_title).select().first() 
+    if not problem_title or not problem:
+        redirect(URL('default', 'index'))
+    
+    # Check if the user exists
     if user_id == None:
         new_user = True
         # Generating new user
         user_name = uuid.uuid4().hex
         user_id = __create_new_user(user_name)
+        log_action(user_id, problem.id, "new_user", {'user_name': user_name})
     else:
         # user already has ID. This means it's a page reload. Log it.
-        log_action(user_id, "refresh_page", json.dumps({'condition':session.userCondition}))
-    # load problem info
-    problem_title = request.args(0)
-    problem = db(db.problem.url_id == problem_title).select().first() 
-    if not problem_title or not problem:
-        redirect(URL('default', 'index'))
+        log_action(user_id, problem.id, "refresh_page", {'user_name': user_name})
+
     # Update page title
     response.title = problem.title
     return dict(
@@ -98,7 +103,7 @@ def add_idea():
         # Update user model
         __update_user_model(user_id, problem_id, tags)
         # Log
-        log_action(user_id, "add_idea", idea)
+        log_action(user_id, problem_id, "add_idea", idea)
     return json.dumps(dict(id=idea_id))
 
 def check_updates():
@@ -112,7 +117,6 @@ def check_updates():
     local_tz = get_localzone() 
     timestamp = timestamp.replace(tzinfo=pytz.utc).astimezone(local_tz)
     # Get last idea timestamp
-    # TODO limit this to current problem only
     ideas_post_timestamp = db((db.idea.dateAdded > timestamp) & (db.idea.problem == problem_id)).count()
     if ideas_post_timestamp > 0:
         return True
@@ -145,8 +149,6 @@ def __create_new_user(user_name):
     # add user to DB
     user_id = db.user_info.insert(userId=user_name, userCondition=session.userCondition, initialLogin=session.startTime)
     session.user_id = user_id
-    # Log
-    log_action(user_id, "start_session", json.dumps({'condition':session.userCondition}))
     return user_id
 
 def __insert_tasks_for_idea(idea, user_id, problem_id):

@@ -122,6 +122,9 @@ def get_versioning_structure():
     # sort ideas according to user model
     filtered_idea_list.sort(key=lambda idea: (min([ordered_tags.index(t) for t in idea.tags]), idea.i))
     
+    # Log
+    log_action(user_id, problem_id, 'get_versioning_structure', {'cache': (cache != None)})
+
     # return
     response.headers['Content-Type'] = 'application/json'
     return json.dumps(filtered_idea_list, cls=ClassEncoder)

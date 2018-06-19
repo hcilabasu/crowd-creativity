@@ -34,13 +34,15 @@ class UserModel(object):
             self.category_switch_ratio = self.count_transition_pairs / float(self.count_pair)
         else:
             condition = lambda : SystemRandom().choice(CONDITIONS.values())
-            self.user_condition = condition
+            self.user_condition = condition()
             self.last_cat = None
             self.count_pair = 0
             self.count_transition_pairs = 0
             self.category_switch_ratio = None
             self.transition_graph = TransitionGraph()
             self.category_matrix = CategoryMatrix()
+            # Log
+            current.log_action(user_id, problem_id, 'create_user_model', {'condition':self.user_condition})
         # Add a reference to the user model
         self.transition_graph.user_model = self
         self.category_matrix.user_model = self
@@ -90,6 +92,8 @@ class UserModel(object):
                     categories.append(random.choice(self.last_cat)) 
                 else:
                     categories.append(next_categories.pop(0))
+        # Log
+        current.log_action(self.user, self.problem, 'get_inspiration_categories', {'tags': categories})
         return categories
     
     def get_ordered_tags(self):
@@ -128,6 +132,8 @@ class UserModel(object):
             # Merge lists
             ordered_tags.extend(tags)
             tags = ordered_tags
+        # Log
+        current.log_action(self.user, self.problem, 'get_ordered_tags', {'tags': tags})
         return tags
 
     def has_adaptive_inspirations(self):

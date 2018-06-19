@@ -20,6 +20,8 @@ def get_available_tasks():
     response.headers['Content-Type']='application/json'
     # encode json
     tasks = [json.loads(t.as_json()) for t in tasks]
+    # Log
+    log_action(user_id, problem_id, 'get_available_tasks', {'num_tasks': len(tasks), 'tasks': tasks})
     return json.dumps(tasks)
 
 def submit_task():
@@ -32,6 +34,8 @@ def submit_task():
     class_ = getattr(module, task_type)
     task = class_(id=task_id)
     task.complete(user_id, answer)
+    # Log
+    log_action(user_id, problem_id, 'submit_task', {'task_type': task_type, 'answer': answer})
     return str(task)
 
 def reset_tasks():

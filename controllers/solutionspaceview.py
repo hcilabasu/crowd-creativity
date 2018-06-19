@@ -71,6 +71,9 @@ def get_solution_space():
         cache=outcome,
         timestamp=datetime.datetime.now())
     
+    # Log
+    log_action(user_id, problem_id, 'get_solution_space', {'cache': (cache != None)})
+    
     return outcome
 
 def get_ideas_per_tag():
