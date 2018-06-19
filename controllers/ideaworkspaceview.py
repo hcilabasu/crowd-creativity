@@ -75,7 +75,7 @@ def add_to_favorites():
             user_info = user_id,
             idea = idea,
             timestamp = timestamp)
-    log_action(user_id, util.get_problem_id(request), "toggle_favorite", {add_favorite: add_favorite, idea: idea})
+    log_action(user_id, util.get_problem_id(request), "toggle_favorite", {'add_favorite': add_favorite, 'idea': idea})
 
 def get_idea_by_id():
     id = int(request.vars['id'])
@@ -92,7 +92,7 @@ def get_idea_by_id():
         tags=[tag.tag.tag for tag in idea.idea.tag_idea.select()])
 
     # Log
-    log_action(user_id, util.get_problem_id(request), 'get_idea_by_id', {idea:id})
+    log_action(user_id, util.get_problem_id(request), 'get_idea_by_id', {'idea':id})
     return json.dumps(clean_idea)
 
 def __get_favorites(user_id):
