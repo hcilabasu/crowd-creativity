@@ -95,9 +95,9 @@ def add_idea():
         # If idea was merged, update replacedBy on the original ideas
         if origin == 'merge' or origin == 'refinement':
             for source in sources:
-                idea = db(db.idea.id == source).select().first()
-                idea.replacedBy = idea_id
-                idea.update_record()
+                source_idea = db(db.idea.id == source).select().first()
+                source_idea.replacedBy = idea_id
+                source_idea.update_record()
         idea = dict(id=idea_id, idea=idea, tags=tags)
         # Insert tasks
         __insert_tasks_for_idea(idea, user_id, problem_id)
