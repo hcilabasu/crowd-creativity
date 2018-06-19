@@ -41,7 +41,7 @@ $.fn.tagPicker = function(action, params){
 						var tag = $(this).text();
 						var index = addTag(tag, topContainer);
 						if(index >= 0){
-							callAttention($('.tagPlaceholder').eq(index), 100, 'new');
+							callAttention($('.tagPlaceholder').eq(index), 200, 'new');
 						}
 					});
 					// Enable filter
