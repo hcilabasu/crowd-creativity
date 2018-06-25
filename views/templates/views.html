@@ -18,9 +18,14 @@
         </ul>
         <div class="right-buttons">
             <ul>
-                <li id="ideasContainerCounter">
-                    <span>0</span> ideas loaded
+                <li id="loadedIdeasStatus">
+                    Showing <strong>all</strong> ideas
                 </li>
+                <li id="ideasContainerCounter">
+                </li>
+                <li><a title="Help" onclick="TOOLBAR.ideaViewer.help()">
+                    <img src="{{=URL('static','images/help.png')}}">
+                </a></li>
                 <!-- <li><a title="Maximize view" onclick="TOOLBAR.general.toggleMaximise('ideaViewer')">
                     <img src="{{=URL('static','images/maximize.png')}}">
                 </a></li> -->
@@ -41,11 +46,14 @@
             </a></li> -->
         </ul>
         <div class="right-buttons">
-            <!-- <ul>
-                <li><a title="Maximize view" onclick="TOOLBAR.general.toggleMaximise('versioningView')">
-                    <img src="{{=URL('static','images/maximize.png')}}">
+            <ul>
+                <li><a title="Help" onclick="TOOLBAR.versioningView.help()">
+                    <img src="{{=URL('static','images/help.png')}}">
                 </a></li>
-            </ul> -->
+                <!--<li><a title="Maximize view" onclick="TOOLBAR.general.toggleMaximise('versioningView')">
+                    <img src="{{=URL('static','images/maximize.png')}}">
+                </a></li>-->
+            </ul>
         </div>
     </div>
     <div id="versioningContainer" class="viewContainer">
@@ -91,11 +99,14 @@
             </a></li>
         </ul>
         <div class="right-buttons">
-            <!-- <ul>
-                <li><a title="Maximize view" onclick="TOOLBAR.general.toggleMaximise('solutionSpace')">
-                    <img src="{{=URL('static','images/maximize.png')}}">
+            <ul>
+                <li><a title="Help" onclick="TOOLBAR.solutionSpaceView.help()">
+                    <img src="{{=URL('static','images/help.png')}}">
                 </a></li>
-            </ul> -->
+                <!-- <li><a title="Maximize view" onclick="TOOLBAR.general.toggleMaximise('solutionSpace')">
+                    <img src="{{=URL('static','images/maximize.png')}}">
+                </a></li> -->
+            </ul> 
         </div>
     </div>
     

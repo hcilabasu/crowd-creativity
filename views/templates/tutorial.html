@@ -44,3 +44,81 @@
         What are its older versions?
     </p>
 </script>
+
+<!-- Idea viewer expanded -->
+<script id="tutorialExpandedIdeaViewer1Template" type="text/x-tmpl-mustache">
+    <p>
+        The idea workspace lets you open view, refine, or combine ideas.
+    </p>
+    <p>
+        <img src="{{=URL('static', 'images/load-demo.gif')}}" alt="Click on the buttons to load ideas"/>
+        You can <strong>load a set of ideas</strong> by clicking one of the buttons on the top left.
+    </p>
+
+    <p>
+        You can load all ideas, only your ideas, or your favorite ideas.
+    </p>
+</script>
+<script id="tutorialExpandedIdeaViewer2Template" type="text/x-tmpl-mustache">
+    <p>
+        <img src="{{=URL('static', 'images/expand-demo.gif')}}" alt="Hover over an idea to expand it"/>
+        You can <strong>read an idea</strong> by hovering your mouse over it.
+        You can also <strong>mark it as favorite</strong> or <strong>refine it</strong> here.
+    </p>
+</script>
+<script id="tutorialExpandedIdeaViewer3Template" type="text/x-tmpl-mustache">
+    <p>
+        <img src="{{=URL('static', 'images/combine-demo.gif')}}" alt="Drag an idea onto another to combine them"/>
+        You can <strong>combine or merge</strong> two ideas by dragging one onto another.
+    </p>
+</script>
+
+<!-- Versioning view expanded -->
+<script id="tutorialExpandedVersioningView1Template" type="text/x-tmpl-mustache">
+    <p>
+        In CrowdMuse, you can can do 3 operations with ideas: refine, combine or merge.
+    </p>
+    <p>
+        The history view allows you to keep track of these operations and see how an idea came about.
+    </p>
+    <img src="{{=URL('static', 'images/history-example.png')}}" alt="The history view"/>
+    <p>
+        The left-most ideas (with the blue background) are the latest version. Their history is to their right.
+    </p>
+</script>
+<script id="tutorialExpandedVersioningView2Template" type="text/x-tmpl-mustache">
+    <img src="{{=URL('static', 'images/combined-example.png')}}" alt="Combined ideas" class="small"/>
+    <p>The blue line indicates that the idea on the left is the result of a combination between the ideas on the right</p>
+    
+    <img src="{{=URL('static', 'images/merged-example.png')}}" alt="Merged ideas" class="small"/>
+    <p>The red line indicates that the idea on the left is the result of a merge between the ideas on the right</p>
+    
+    <img src="{{=URL('static', 'images/refined-example.png')}}" alt="Refined idea" class="small"/>
+    <p>The green line indicates that the idea on the left is a refinement of the idea on the right</p>
+</script>
+<script id="tutorialExpandedVersioningView3Template" type="text/x-tmpl-mustache">
+    <p>You can open an idea in the idea workspace by clicking on it.</p>
+    <img src="{{=URL('static', 'images/open-demo.gif')}}" alt="Click to open an idea"/>
+    <p>Ideas that are open in the workspace are indicated by a dark dot in their center</p>
+</script>
+
+<!-- Solution space expanded -->
+<script id="tutorialExpandedSolutionSpace1Template" type="text/x-tmpl-mustache">
+    <p>The solution space gives you an overview of all the ideas suggested so far.</p>
+    
+    <img src="{{=URL('static', 'images/solutionspace-example.png')}}" alt="The solution space"/>
+
+    <p>The <strong>rows and columns represent all the tags</strong> that have been used so far</p>
+    
+    <p>The <strong>color of a cell represents the quantity of ideas</strong> that have been suggested at the intersection of the two tags. The darker the cell, the more ideas have been suggested</p>
+
+    <p>In this example, more ideas have been suggested with only the tag "second" than with both tags "second" and "third".</p>
+</script>
+
+<script id="tutorialExpandedSolutionSpace2Template" type="text/x-tmpl-mustache">
+    <img src="{{=URL('static', 'images/solutionspace-demo.gif')}}" alt="Opening ideas from the solution space"/>
+
+    <p>Clicking on a tag name will open ANY ideas that have used that tag on the workspace.</p>
+
+    <p>Clicking on a cell will open ONLY the ideas that have both tags.</p>
+</script>

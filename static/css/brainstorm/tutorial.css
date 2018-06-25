@@ -31,6 +31,23 @@
     line-height: 16px !important;
 }
 
+    #tutorialPopUp img {
+        max-width: 100%;
+        margin: 0 auto;
+        border-radius: 5px;
+    }
+    
+    #tutorialPopUp img.small {
+        width: 100px;
+        margin: 20px auto 0 auto;
+
+    }
+
+    #tutorialPopUp p {
+        clear: left;
+        margin-bottom: 20px;
+    }
+
 #tutorialPopUp.noHighlight {
     top: 50%;
     left: 50%;

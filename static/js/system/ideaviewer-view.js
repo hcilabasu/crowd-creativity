@@ -85,6 +85,7 @@ class IdeaViewerView extends View {
                     this.addIdeaToDisplay(ideas[i]);
                 }
                 this.getParentContainer().removeClass('loading');
+                this.updateStatusText('your favorite');
             }
         });
     }
@@ -114,6 +115,7 @@ class IdeaViewerView extends View {
                     this.addIdeaToDisplay(ideas[i]);
                 }
                 this.getParentContainer().removeClass('loading');
+                this.updateStatusText(tags.join(' and '));
             }
         });
     }
@@ -138,15 +140,21 @@ class IdeaViewerView extends View {
                     this.addIdeaToDisplay(ideas[i]);
                 }
                 this.getParentContainer().removeClass('loading');
+                // TODO make this dynamic to correctly handle ideas loaded by someone other than the user
+                if(userId){
+                    this.updateStatusText('your');
+                } else {
+                    this.updateStatusText('all');
+                }
             }
         });
     }
 
     /* Updates the idea counter */
     updateIdeaCounter(count){
-        var text = '<span>1</span> idea loaded';
+        var text = '<span>1</span> idea';
         if(count !== 1){
-            text = '<span>' + count + '</span> ideas loaded';
+            text = '<span>' + count + '</span> ideas';
         }
         $('#ideasContainerCounter').html(text);
     }
@@ -159,6 +167,13 @@ class IdeaViewerView extends View {
         } else {
             return parseInt(value);
         }
+    }
+
+    /*
+    Updates the status text on the toolbar
+    */
+    updateStatusText(type){
+        $('#loadedIdeasStatus').html('Showing <strong>' + type + '</strong> ideas');
     }
 
     /* 
@@ -232,16 +247,18 @@ class IdeaViewerView extends View {
                     var idea = JSON.parse(data);
                     this.updateIdeaCounter(this.getIdeasCounterNumber() + 1);
                     VIEWS.ideasView.addIdeaToDisplay(idea);
+                    this.updateStatusText('various');
                 }
             });
         }
     };
 
     resetView() {
+        var container = $(this.container);
         // Clear panel
-        $(this.container).empty();
+        container.empty();
         // Add scrollmarker
-        $(this.container).scrollMarker().init({
+        container.scrollMarker().init({
             width: '10px'
         });
         // Reset common variable
@@ -249,5 +266,7 @@ class IdeaViewerView extends View {
         if(VIEWS['versioningView']){ // Check if view is loaded
             VIEWS['versioningView'].clearOpenIdeas();
         }
+        // Reset status
+        $('#loadedIdeasStatus').empty();
     }
 }

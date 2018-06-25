@@ -47,7 +47,7 @@ $(function(){
 			location: {right: 20, top: 0},
 		},
 		{
-			title: 'Versioning view',
+			title: 'History view',
 			highlight: '.stack_VersioningView',
 			html: Mustache.render(TEMPLATES.tutorialVersioningViewTemplate),
 			location: {left: 20, top: 0},
@@ -151,6 +151,29 @@ $(function(){
 			},
 			loadAllIdeas:()=>{
 				VIEWS.ideasView.loadIdeasAddedBy();
+			},
+			help:()=>{
+				startTutorial(new Tutorial(
+					{},
+					[{
+						title: 'Idea Workspace',
+						highlight: '.stack_IdeaViewerView',
+						html: Mustache.render(TEMPLATES.tutorialExpandedIdeaViewer1Template),
+						location: {right: 20, top: 0},
+					},
+					{
+						title: 'Idea Workspace',
+						highlight: '.stack_IdeaViewerView',
+						html: Mustache.render(TEMPLATES.tutorialExpandedIdeaViewer2Template),
+						location: {right: 20, top: 0},
+					},
+					{
+						title: 'Idea Workspace',
+						highlight: '.stack_IdeaViewerView',
+						html: Mustache.render(TEMPLATES.tutorialExpandedIdeaViewer3Template),
+						location: {right: 20, top: 0},
+					}]
+				));
 			}
 		},
 		versioningView: {
@@ -159,6 +182,29 @@ $(function(){
 			},
 			toggleAutoReload: ()=>{
 				UTIL.toggleTimer($('#versioningTimerDisplay'), ()=>VIEWS.versioningView.load());
+			},
+			help: () =>{
+				startTutorial(new Tutorial(
+					{},
+					[{
+						title: 'History view',
+						highlight: '.stack_VersioningView',
+						html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView1Template),
+						location: {left: 20, top: 0},
+					},
+					{
+						title: 'History view',
+						highlight: '.stack_VersioningView',
+						html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView2Template),
+						location: {left: 20, top: 0},
+					},
+					{
+						title: 'History view',
+						highlight: '.stack_VersioningView',
+						html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView3Template),
+						location: {left: 20, top: 0},
+					}]
+				));
 			}
 		},
 		suggestedTasks: {
@@ -179,6 +225,23 @@ $(function(){
 			toggleMinimap: function(){
 				var button = $('#toggleMinimap');
 				VIEWS.solutionSpaceView.toggleMinimap(button);
+			},
+			help: () =>{
+				startTutorial(new Tutorial(
+					{},
+					[{
+						title: 'Solution space view',
+						highlight: '.stack_SolutionSpaceView',
+						html: Mustache.render(TEMPLATES.tutorialExpandedSolutionSpace1Template),
+						location: {right: 20, top: 325}, // TODO the tutorial.js positioning system needs to be improved
+					},
+					{
+						title: 'Solution space view',
+						highlight: '.stack_SolutionSpaceView',
+						html: Mustache.render(TEMPLATES.tutorialExpandedSolutionSpace2Template),
+						location: {right: 20, top: 67}, // TODO the tutorial.js positioning system needs to be improved
+					}]
+				));
 			}
 		},
 		general: {
