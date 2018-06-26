@@ -1,6 +1,9 @@
 import user_models
 import collab_filter
 import json
+import datetime
+import cStringIO
+import csv
 
 def index():
     problems = db(db.problem.id > 0).select()
@@ -40,7 +43,14 @@ def usermodel():
 
 def regenerate_models():
     # Delete all models
-    db(db.user_model.id > 0).delete()
+    users = db(db.user_model.id > 0).select()
+    for u in users:
+        u.last_cat = None
+        u.count_pair = 0
+        u.count_transition_pairs = 0
+        u.transition_graph = None
+        u.category_matrix = None
+        u.update_record()
     # Get all ideas
     ideas = db(db.idea.id > 0).select()
     # For each idea, get tags and update model
@@ -56,6 +66,58 @@ def regenerate_models():
         model.update(tags)
     # Send back to stats
     redirect(URL('stats','index'))
+
+def download_data():
+    problem_id = long(request.vars['problem'])
+    users = __get_users_in_problem(problem_id)
+    # Get data
+    fields, records = __get_data(problem_id)
+    # Create file
+    file = cStringIO.StringIO()
+    csv_file = csv.writer(file)
+    # Write header row
+    csv_file.writerow(fields)
+    # Write fields
+    for r in records:
+        csv_file.writerow(r)
+    # Prepare response reponse
+    response.headers['Content-Type']='application/vnd.ms-excel'
+    response.headers['Content-Disposition']='attachment; filename=problem_%d_data_%s.csv' % (problem_id, datetime.date.today())
+    return file.getvalue()
+
+def __get_data(problem_id):
+    users = __get_users_in_problem(problem_id)
+    # Define fields
+    fields = [
+        'problem_id',
+        'user_id',
+        'condition',
+        'num_ideas',
+        'breadth',
+        'depth_avg',
+        'depth_max',
+        'category_switch_ratio'
+        'model_url',
+        ]
+    # TODO get data
+    records = []
+    for u in users:
+        model = user_models.UserModel(u.idea.userId, problem_id)
+        user_record = [
+            problem_id,
+            u.idea.userId,
+            model.user_condition,
+            model.get_num_ideas(),
+            model.get_breadth(),
+            model.get_depth_avg(),
+            model.get_depth_max(),
+            model.category_switch_ratio,
+            'http://' + request.env.http_host + URL('stats','usermodel?problem=%d&user=%d' % (problem_id, u.idea.userId)),
+        ]
+        # Add to array
+        records.append(user_record)
+
+    return fields, records
 
 '''
 Returns a list of all users who contributed in a problem.

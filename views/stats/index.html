@@ -25,8 +25,11 @@
     </div>
     <div>
     {{for p in problems:}}
-        <h2>{{=p.title}}</h2>
-        <ul>
+        <div class="actions">
+            <h2>{{=p.title}}</h2>
+            <a href="{{=URL('stats', 'download_data?problem=' + str(p.id))}}" target="_blank">Download Data</a>
+        </div>
+        <ul class="contributors">
             {{for u in users_per_problem[p.id]:}}
                 <li><a href="{{=URL('stats','usermodel?problem='+str(p.id)+'&user='+str(u.idea.userId))}}">{{=u.user_info.userId}}</a></li>
             {{pass}}

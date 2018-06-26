@@ -95,3 +95,18 @@ table {
     border-radius: 10px;
     overflow: hidden;
 }
+
+.actions {
+    background: rgba(255,255,255,0.6);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+    .actions h2 {
+        color: black;
+    }
+
+.contributors {
+    margin-bottom: 40px;
+}

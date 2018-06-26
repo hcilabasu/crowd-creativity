@@ -20,7 +20,7 @@ class UserModel(object):
         # Retrieve user model from DB
         db = current.db
         db_user_model = db((db.user_model.user == user_id) & (db.user_model.problem == problem_id)).select().first()
-        if db_user_model:
+        if db_user_model and db_user_model.last_cat != None:
             self.exists = True
             # Create matrix and graph
             # TODO make these two be lazy loaded
@@ -33,8 +33,11 @@ class UserModel(object):
             self.count_transition_pairs = db_user_model.count_transition_pairs
             self.category_switch_ratio = self.count_transition_pairs / float(self.count_pair)
         else:
-            condition = lambda : SystemRandom().choice(CONDITIONS.values())
-            self.user_condition = condition()
+            if db_user_model:
+                condition = db_user_model.user_condition
+            else:
+                condition = SystemRandom().choice(CONDITIONS.values())
+            self.user_condition = condition
             self.last_cat = None
             self.count_pair = 0
             self.count_transition_pairs = 0
@@ -76,6 +79,18 @@ class UserModel(object):
             'exists',
             'category_switch_ratio'
         ]
+
+    def get_num_ideas(self):
+        return self.category_matrix.get_num_ideas()
+
+    def get_breadth(self):
+        return self.category_matrix.get_breadth()
+
+    def get_depth_avg(self):
+        return self.category_matrix.get_depth_avg()
+    
+    def get_depth_max(self):
+        return self.category_matrix.get_depth_max()
 
     def get_inspiration_categories(self, n):
         ''' 
@@ -292,6 +307,21 @@ class CategoryMatrix(ModelRepresentation):
             else:
                 self.model[category] = 1
         return self
+
+    def get_breadth(self):
+        return len(self.model.keys())
+
+    def get_depth_avg(self):
+        if self.get_breadth() > 0:
+            return sum(self.model.values()) / float(self.get_breadth())
+        else:
+            return 0
+
+    def get_depth_max(self):
+        return max(self.model.values())
+
+    def get_num_ideas(self):
+        return sum(self.model.values())
     
     def get_most_frequent(self):
         most_frequent = sorted(self.model.items(), key=itemgetter(1), reverse=True)
