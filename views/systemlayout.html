@@ -39,7 +39,16 @@
     <!-- Navbar ======================================= -->
     <nav class="topNavbar" role="navigation">
       <div id="problem">
-        <span>{{=problem.description}}</span>
+        <span>
+          {{=problem.title}} 
+          <a>
+            <span class="vertical">I</span>
+            <span>&mdash;</span>
+          </a> 
+        </span>
+        <p class="expanded-description">
+          {{=problem.description}}
+        </p>
       </div>
       <div class="navContainer left">
         <div class="navBlock">

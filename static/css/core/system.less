@@ -4,6 +4,7 @@
 @ideaColorLighter: #ffe1b7;
 @ideaColorFavorite: #FDC4BB;
 @ideaColorDarkerFavorite: #e09d93;
+@blue: #3CA0FA;
 @darkBlue: #3a80d1;
 @darkerBlue: #144C80;
 @errorColor: indianred;
@@ -133,13 +134,58 @@ input[type=radio] {
     height: 30px;
     line-height: 30px;
     text-shadow: 0 -1px 0 rgba(0,0,0,0.2);
-}
-
-    #problem > span.tutorialHighlightElement {
+    
+    & > span.tutorialHighlightElement {
         background: #4185F3;
         border-radius: 5px;
         padding: 0 5px;
     }
+
+    a {
+        display: inline-block;
+        background: white;
+        color: @blue;
+        border-radius: 50%;
+        height: 15px;
+        width: 15px;
+        line-height: 14px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bolder;
+        text-shadow: none;
+        margin-left: 5px;
+        position: relative;
+        top: 2px;
+
+        & > span {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 15px;
+            width: 15px;
+            display: inline-block;
+            overflow: visible;
+            font-size: 0.8em;
+
+            &.vertical {
+                top: 1px;
+            }            
+        }
+    }
+
+    .expanded-description {
+        display: none;
+        z-index: 3;
+        position: relative;
+        width: 100%;
+        background: #408BF4;
+        padding: 20px 35%;
+        text-align: left;
+        max-height: 400px;
+        overflow: auto;
+        box-shadow: 0 15px 15px 0 rgba(0,0,0,0.3);
+    }
+}
 
 .logo {
     margin: 0;

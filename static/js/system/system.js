@@ -287,6 +287,13 @@ $(function(){
 			}
 		})
 	}, 10000);
+
+	// Setup expanded problem description button 
+	var problemContainer = $('#problem');
+	$('a', problemContainer).click(function(){
+		$('.expanded-description').slideToggle('fast');
+		$('.vertical', problemContainer).fadeToggle('fast');
+	})
 });
 
 var startViewSequencing = function(){
