@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>User model - CrowdMuse</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Concert+One|Lato" rel="stylesheet">
+    <link rel="stylesheet" href="{{=URL('static','css/core/bootstrap.min.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/core/web2py-bootstrap3.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/core/system.compiled.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/user-model.css')}}"/>
+    <link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
+
+    {{include 'web2py_ajax.html'}}
+    <script src="{{=URL('static','js/jquery-ui.min.js')}}"></script>
+    <script src="{{=URL('static','js/d3.min.js')}}"></script>
+    <script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
+    <script src="{{=URL('static','js/web2py-bootstrap3.js')}}"></script>
+</head>
+<body>
+    <h2>{{=problem.title}}</h2>
+    <h3>Organize tags</h3>
+
+    <ul class="organize-tags">
+        {{for t in tags:}}
+            <li data-id="{{=t.id}}" class="{{='demoted' if t.replacedBy else ''}}">
+                <span>{{=t.tag}} ({{=counts[t.id]}})</span>
+                <a class="promote">&lt;</a>
+                <a class="demote">&gt;</a>
+            </li>
+        {{pass}}
+        <li class="new">
+            <a class="btn" id="createNew">Create new tag</a>
+        </li>
+    </ul>
+    <p>
+    </p>
+
+    <form method="POST" action="{{=URL('stats','update_tags')}}">
+        <input type="hidden" id="tagsInput" name="tags"/>
+        <input type="hidden" name="problem" value="{{=problem.id}}"/>
+        <input type="submit" class="btn" id="submit" value="Save changes"/>
+    </form>
+
+    <script>
+        $(function(){
+            $('.organize-tags').sortable({
+                cancel: ".new",
+                stop: function(event,ui){
+                    var item = $(ui.item);
+                    if(item.index() === 0){
+                        item.removeClass('demoted');
+                    }
+                }
+            });
+
+            $('.demote').click(function(){
+                var li = $(this).closest('li');
+                li.addClass('demoted');
+            });
+            
+            $('.promote').click(function(){
+                var li = $(this).closest('li');
+                li.removeClass('demoted');
+            });
+
+            // Handle submission
+            $('#submit').on('click', function(){
+                var items = $('li:not(.new)');
+                tags = [];
+                var lastTag;
+                items.each(function(i,d){
+                    var tagEl = $(d);
+                    var tag = tagEl.data('id');
+                    var isDemoted = tagEl.hasClass('demoted');
+                    var parentTag = undefined;
+                    if (isDemoted){
+                        parentTag = tagEl.prevAll(':not(.demoted)').first().data('id');
+                    }
+                    var tagObj = {
+                        tag: tag,
+                        parent: parentTag
+                    };
+                    console.dir(JSON.stringify(tagObj));
+                    tags.push(tagObj);
+                });
+                // TODO implement submission
+                $('#tagsInput').val(JSON.stringify(tags));
+            });
+
+        });
+    </script>
+</body>
+</html>

@@ -10,7 +10,7 @@ body {
     }
 
 h2 {
-    color: #DCF0FF;
+    color: white;
     margin-bottom: 5px;
 }
 
@@ -97,16 +97,104 @@ table {
 }
 
 .actions {
-    background: rgba(255,255,255,0.6);
-    padding: 10px;
     border-radius: 10px;
     margin-bottom: 10px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 10px;
+    padding: 0;
+    float: left;
+    clear: left;
+}
+.actions > div {
+    display: inline-block;
+    padding: 5px 10px 0 10px;
+    margin-right: 10px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 10px;
+}
+.actions > div:last-child {
+    margin-right: 0;
 }
 
-    .actions h2 {
+    .actions h3 {
+        display: inline-block;
+        margin-right: 20px;
         color: black;
+    }
+
+    .actions a {
+        display: inline-block;
+        padding-right: 10px;
+        margin-right: 10px;
+        border-right: solid 1px white;
+    }
+    .actions a:last-child {
+        border-right: none;
     }
 
 .contributors {
     margin-bottom: 40px;
+    clear: left;
+    display: block;
+}
+
+.organize-tags li {
+    background: rgba(255,255,255,0.6);
+    padding: 10px;
+    margin-bottom: 5px;
+    color: black;
+    border-radius: 10px;
+    width: 300px;
+    cursor: move;
+    position: relative;
+}
+
+.organize-tags li > a.promote,
+.organize-tags li > a.demote {
+    position: absolute;
+    font-weight: bolder;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
+    background: blue;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.organize-tags li.demoted {
+    margin-left: 30px;
+}
+
+.organize-tags li:first-child a.demote {
+    display: none !important;
+}
+
+.organize-tags li.demoted a.demote {
+    display: none;
+}
+.organize-tags li.demoted a.promote {
+    display: inline-block;
+}
+
+.organize-tags li > a.demote {
+    right: -25px;
+    top: 10px;
+}
+.organize-tags li > a.promote {
+    left: -25px;
+    top: 10px;
+    display: none;
+}
+
+.organize-tags li.new {
+    cursor: default;
+    background: transparent;
+    padding: 0;
+}
+
+.organize-tags li.new a {
+    width: 100%;
+    display: inline-block;
 }

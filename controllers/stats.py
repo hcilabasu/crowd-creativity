@@ -4,6 +4,7 @@ import json
 import datetime
 import cStringIO
 import csv
+from collections import defaultdict
 
 def index():
     problems = db(db.problem.id > 0).select()
@@ -41,6 +42,30 @@ def usermodel():
         inferred=inferred,
         inferred_json=json.dumps(inferred))
 
+def organize_tags():
+    problem_id = long(request.vars['problem'])
+    problem = db(db.problem.id == problem_id).select().first()
+    tags = db(db.tag.problem == problem_id).select()
+    # Get counts for each tag
+    counts = defaultdict(int)
+    for t in tags:
+        counts[t.id] = db(db.tag_idea.tag == t.id).count()
+    return dict(problem=problem, tags=tags, counts=counts)
+
+def update_tags():
+    print('update tags')
+    problem_id = long(request.vars['problem'])
+    tags = json.loads(request.vars['tags'])
+    print(tags)
+    for t in tags:
+        print(t)
+    
+    # Redirect back
+    return 0
+    # TODO Ideally we would now redirect back to the page, 
+    # but for some reason this is returning a 400 bad request error.
+    # redirect(URL('stats','index?problem=' + problem_id))
+
 def regenerate_models():
     # Delete all models
     users = db(db.user_model.id > 0).select()
@@ -72,6 +97,70 @@ def download_data():
     users = __get_users_in_problem(problem_id)
     # Get data
     fields, records = __get_data(problem_id)
+    filename = 'user_data_%d_%s.csv' % (problem_id, datetime.date.today())
+    return __prepare_csv_response(fields, records, filename, problem_id)
+
+def download_logs():
+    problem_id = long(request.vars['problem'])
+    users = __get_users_in_problem(problem_id)
+    users_ids = [u.idea.userId for u in users]
+    print(users_ids)
+    # Get data
+    fields = [
+        'actionName',
+        'userId', 
+        'problem',
+        'extraInfo',
+        'dateAdded'
+    ]
+    rows = db(db.action_log.problem == problem_id).select()
+    records = []
+    for r in rows:
+        if(r.userId in users_ids):
+            records.append([
+                r.actionName,
+                r.userId,
+                r.problem,
+                r.extraInfo,
+                r.dateAdded
+            ])
+    filename = 'logs_%d_%s.csv' % (problem_id, datetime.date.today())
+    return __prepare_csv_response(fields, records, filename, problem_id)
+
+def download_ideas():
+    problem_id = long(request.vars['problem'])
+    fields = [
+        'user',
+        'condition',
+        'id',
+        'idea',
+        'timestamp',
+        'origin',
+        'sources',
+        'tags'
+    ]
+    # Get records
+    rows = db(db.idea.problem == problem_id).select()
+    records = []
+    for r in rows:
+        model = user_models.UserModel(r.userId, problem_id)
+        tags = db((db.tag_idea.idea == r.id) & (db.tag.id == db.tag_idea.tag)).select()
+        tags = [t.tag.tag for t in tags]
+        records.append([
+            r.userId,
+            model.user_condition, # condition
+            r.id,
+            r.idea,
+            r.dateAdded,
+            r.origin,
+            r.sources,
+            '|'.join(tags) # tags 
+        ])
+    # Return
+    filename = 'ideas_%d_%s.csv' % (problem_id, datetime.date.today())
+    return __prepare_csv_response(fields, records, filename, problem_id)
+
+def __prepare_csv_response(fields, records, filename, problem_id):
     # Create file
     file = cStringIO.StringIO()
     csv_file = csv.writer(file)
@@ -80,9 +169,9 @@ def download_data():
     # Write fields
     for r in records:
         csv_file.writerow(r)
-    # Prepare response reponse
+    # Prepare response
     response.headers['Content-Type']='application/vnd.ms-excel'
-    response.headers['Content-Disposition']='attachment; filename=problem_%d_data_%s.csv' % (problem_id, datetime.date.today())
+    response.headers['Content-Disposition']='attachment; filename=%s' % filename
     return file.getvalue()
 
 def __get_data(problem_id):

@@ -25,9 +25,18 @@
     </div>
     <div>
     {{for p in problems:}}
+        <h2>{{=p.title}}</h2>
         <div class="actions">
-            <h2>{{=p.title}}</h2>
-            <a href="{{=URL('stats', 'download_data?problem=' + str(p.id))}}" target="_blank">Download Data</a>
+            <div>
+                <h3>Data</h3>
+                <a href="{{=URL('stats', 'download_data?problem=' + str(p.id))}}" target="_blank">User data</a>
+                <a href="{{=URL('stats', 'download_logs?problem=' + str(p.id))}}" target="_blank">Log data</a>
+                <a href="{{=URL('stats', 'download_ideas?problem=' + str(p.id))}}" target="_blank">Ideas</a>
+            </div>
+            <div>
+                <h3>Manage</h3>
+                <a href="{{=URL('stats', 'organize_tags?problem=' + str(p.id))}}">Organize tags</a>
+            </div>
         </div>
         <ul class="contributors">
             {{for u in users_per_problem[p.id]:}}
