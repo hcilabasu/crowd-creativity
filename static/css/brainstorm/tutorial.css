@@ -29,6 +29,7 @@
     color: black !important;
     text-align: left !important;
     line-height: 16px !important;
+    text-shadow: none !important;
 }
 
     #tutorialPopUp img {
@@ -40,7 +41,6 @@
     #tutorialPopUp img.small {
         width: 100px;
         margin: 20px auto 0 auto;
-
     }
 
     #tutorialPopUp p {
