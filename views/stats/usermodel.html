@@ -11,11 +11,13 @@
     <link rel="stylesheet" href="{{=URL('static','css/core/web2py-bootstrap3.css')}}"/>
     <link rel="stylesheet" href="{{=URL('static','css/core/system.compiled.css')}}"/>
     <link rel="stylesheet" href="{{=URL('static','css/user-model.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/datatables.css')}}"/>
     <link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
 
     {{include 'web2py_ajax.html'}}
     <script src="{{=URL('static','js/d3.min.js')}}"></script>
+    <script src="{{=URL('static','js/datatables.min.js')}}"></script>
 </head>
 <body>
     <div id="container">
@@ -127,7 +129,7 @@
 
     <div>
         <h2>Actions</h2>
-        <table>
+        <table id="logs">
             <thead>
                 <tr>
                     <th>Action</th>
@@ -182,6 +184,10 @@
         header.append(th);
         body.append(td);
     });
+
+    $('#logs').DataTable({
+        'paging': false
+    })
 </script>
 
 <script type="text/javascript">
