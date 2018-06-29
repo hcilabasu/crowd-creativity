@@ -299,14 +299,15 @@ var startViewSequencing = function(){
 
 var setupStudySession = function(){
 	// Setup timer
+	var sessionConcludedStorage = 'sessionConcluded' + ENV.problemId + ENV.userId;
 	var conclude = function(){
 		$('#studyTimer').fadeOut(500, function(){
 			$('#concludeSession').fadeIn(500);
-			localStorage['sessionConcluded' + ENV.problemId] = true;
+			localStorage[sessionConcludedStorage] = true;
 			concludeSession();
 		});
 	};
-	if(localStorage['sessionConcluded' + ENV.problemId] === 'true'){
+	if(localStorage[sessionConcludedStorage] === 'true'){
 		conclude();
 	} else {
 		UTIL.setTimer($('#studyTimer'), conclude, ENV.studyIdeationTime * 60, false);
