@@ -198,3 +198,9 @@ table {
     width: 100%;
     display: inline-block;
 }
+
+/* log actions */
+.add_idea td { background: rgb(255, 204, 128); }
+.get_available_tasks td { background: rgb(255, 253, 159); }
+.refresh_page td,
+.new_user td { background: rgb(193, 241, 160); }

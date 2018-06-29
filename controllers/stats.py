@@ -34,13 +34,16 @@ def usermodel():
     nearest_neighbors = collab_filter.find_n_nearest(user_model, models, 5)
     # Infer categories from nearest neighbors
     inferred = collab_filter.infer_categories(user_model, nearest_neighbors, True)
+    # Get logs
+    logs = db((db.action_log.problem == problem_id) & (db.action_log.userId == user_id)).select()
     return dict(
         user=user, 
         problem=problem, 
         model=user_model, 
         nearest_neighbors=nearest_neighbors, 
         inferred=inferred,
-        inferred_json=json.dumps(inferred))
+        inferred_json=json.dumps(inferred),
+        logs=logs)
 
 def organize_tags():
     problem_id = long(request.vars['problem'])

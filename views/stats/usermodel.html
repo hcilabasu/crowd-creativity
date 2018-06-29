@@ -125,6 +125,28 @@
         </div>
     </div>
 
+    <div>
+        <h2>Actions</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Timestamp</th>
+                    <th>More info</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{for l in logs:}}
+                    <tr class="{{=l.actionName}}">
+                        <td>{{=l.actionName}}</td>
+                        <td>{{=l.dateAdded}}</td>
+                        <td>{{=l.extraInfo}}</td>
+                    </tr>
+                {{pass}}
+            </tbody>
+        </table>
+    </div>
+
 <script>
     var MODELS = {};
     MODELS.categoryMatrix = JSON.parse('{{=XML(model.category_matrix)}}');
