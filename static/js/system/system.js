@@ -608,8 +608,7 @@ var combineIdeasSetup = function(params){
 		$('#combineIdeas input[name=combineTypeInput]').val('');
 		$('#combineIdeas input[name=ideaIds]').val('');
 		// Switch back options panel
-		$('#combineIdeas .choices').show();
-		$('#combineIdeas .ideaInput').hide();
+		replaceCombineIdeasOptions(undefined, 'back');
 		closeOverlay();
 	});
 }
@@ -622,8 +621,9 @@ var replaceCombineIdeasOptions = function(event, type){
 		$('.choose', popup).show('fast');
 	} else {
 		popup.addClass('chosen');
-		$('.merge,.combine,.choose', popup).filter(':not(.'+type+')').hide('fast');
-		$('.' + type, popup).show('fast');
+		$('.merge,.combine,.choose', popup).filter(':not(.'+type+')').hide('fast', function(){
+			$('.' + type, popup).show('fast');
+		});
 		// Sets the text in the paragraph
 		$('#combineIdeas textarea').attr('placeholder','Write your ' + type + 'd' + ' idea here');
 		$('#combineIdeas input[name=combineTypeInput]').val(type);
