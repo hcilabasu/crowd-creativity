@@ -14,9 +14,12 @@ class Tutorial {
     Starts the tutorial
     */
     start(){
-        // Load step 0
-        this.currentStep = 0;
-        this.loadStep();
+        // Only start a tutorial if there is no other ongoing tutorial
+        if ($('#tutorialOverlay').length == 0){
+            // Load step 0
+            this.currentStep = 0;
+            this.loadStep();
+        }
     }
 
     /*
