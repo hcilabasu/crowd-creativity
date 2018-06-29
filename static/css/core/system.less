@@ -5,6 +5,7 @@
 @ideaColorFavorite: #FDC4BB;
 @ideaColorDarkerFavorite: #e09d93;
 @blue: #3CA0FA;
+@lightBlue: #DCF0FF;
 @darkBlue: #3a80d1;
 @darkerBlue: #144C80;
 @errorColor: indianred;
@@ -141,7 +142,7 @@ input[type=radio] {
         padding: 0 5px;
     }
 
-    a {
+    & > span > a {
         display: inline-block;
         background: white;
         color: @blue;
@@ -184,6 +185,7 @@ input[type=radio] {
         max-height: 400px;
         overflow: auto;
         box-shadow: 0 15px 15px 0 rgba(0,0,0,0.3);
+        line-height: 14px;
     }
 }
 
@@ -1426,6 +1428,14 @@ textarea.ideaInput + div {
 
 #tutorialPopUp img.inline {
     height: 20px;
+}
+
+.tutorialProblemDescription {
+    max-height: 250px;
+    overflow: auto;
+    padding: 5px;
+    border-radius: @borderRadius;
+    background: @lightBlue;
 }
 
 .loadingBadge {

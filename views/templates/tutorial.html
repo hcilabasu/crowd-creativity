@@ -1,7 +1,18 @@
 <script id="tutorialWelcomeTemplate" type="text/x-tmpl-mustache">
     <p>Welcome to the CrowdMuse system. Here, you can collaboratively generate and organize ideas!</p>
 
-    <p>This very short tutorial will walk you through the core parts of this system.</p>
+    <p>This quick tutorial will walk you through the core parts of this system.</p>
+</script>
+
+<script id="tutorialTopicTemplate" type="text/x-tmpl-mustache">
+    <p>You are supposed to come up with ideas for the following topic:</p>
+    
+    <p class="tutorialProblemDescription">
+        {{=problem.description}}
+    </p>
+
+    <p>You can read this description at any time by clicking the "+" button above.</p>
+    
 </script>
 
 <script id="tutorialAddIdeaTemplate" type="text/x-tmpl-mustache">
@@ -9,7 +20,9 @@
 </script>
 
 <script id="tutorialInspirationTemplate" type="text/x-tmpl-mustache">
-    <p>Whenever you need some extra inspiration, just click here</p>
+    <p>Whenever you need some extra inspiration, just click here. We'll chose ideas from other users and show them to you.</p>
+
+    <p>Along with the ideas, we'll ask you to do a quick task based on them. This can help you be more inspired by them.</p>
 </script>
 
 <script id="tutorialIdeaViewerTemplate" type="text/x-tmpl-mustache">

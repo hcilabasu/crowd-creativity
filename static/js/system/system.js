@@ -19,6 +19,66 @@ $(function(){
         };
     });
 
+	/* 
+		CREATE TUTORIAL STEPS
+	*/
+	var ideaWorkspaceTutorialSteps = [
+		{
+			title: 'Idea Workspace',
+			highlight: '.stack_IdeaViewerView',
+			html: Mustache.render(TEMPLATES.tutorialExpandedIdeaViewer1Template),
+			location: {right: 20, top: 0},
+		},
+		{
+			title: 'Idea Workspace',
+			highlight: '.stack_IdeaViewerView',
+			html: Mustache.render(TEMPLATES.tutorialExpandedIdeaViewer2Template),
+			location: {right: 20, top: 0},
+		},
+		{
+			title: 'Idea Workspace',
+			highlight: '.stack_IdeaViewerView',
+			html: Mustache.render(TEMPLATES.tutorialExpandedIdeaViewer3Template),
+			location: {right: 20, top: 0},
+		}
+	];
+
+	var versioningViewTutorialSteps = [
+		{
+			title: 'History view',
+			highlight: '.stack_VersioningView',
+			html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView1Template),
+			location: {left: 20, top: 0},
+		},
+		{
+			title: 'History view',
+			highlight: '.stack_VersioningView',
+			html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView2Template),
+			location: {left: 20, top: 0},
+		},
+		{
+			title: 'History view',
+			highlight: '.stack_VersioningView',
+			html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView3Template),
+			location: {left: 20, top: 0},
+		}
+	];
+
+	var solutionSpaceTutorialSteps = [
+		{
+			title: 'Solution space view',
+			highlight: '.stack_SolutionSpaceView',
+			html: Mustache.render(TEMPLATES.tutorialExpandedSolutionSpace1Template),
+			location: {right: 20, top: 325}, // TODO the tutorial.js positioning system needs to be improved
+		},
+		{
+			title: 'Solution space view',
+			highlight: '.stack_SolutionSpaceView',
+			html: Mustache.render(TEMPLATES.tutorialExpandedSolutionSpace2Template),
+			location: {right: 20, top: 67}, // TODO the tutorial.js positioning system needs to be improved
+		}
+	];
+
 	var firstTutorialSteps = [ // Steps
 		{
 			title: 'Welcome',
@@ -27,7 +87,7 @@ $(function(){
 		{
 			title: 'Brainstorming topic',
 			highlight: '#problem > span',
-			html: '<p>This is the problem you\'re ideating on</p>',
+			html: Mustache.render(TEMPLATES.tutorialTopicTemplate),
 			location: {left: 'center', bottom: 20}
 
 		},
@@ -36,21 +96,6 @@ $(function(){
 			highlight: '#newIdeaButton',
 			html: Mustache.render(TEMPLATES.tutorialAddIdeaTemplate),
 			location: {left: 'center', bottom: 20}
-		}
-	];
-
-	var secondTutorialSteps = [ // Steps
-		{
-			title: 'Solution space view',
-			highlight: '.stack_SolutionSpaceView',
-			html: Mustache.render(TEMPLATES.tutorialSolutionSpaceTemplate),
-			location: {right: 20, top: 0},
-		},
-		{
-			title: 'History view',
-			highlight: '.stack_VersioningView',
-			html: Mustache.render(TEMPLATES.tutorialVersioningViewTemplate),
-			location: {left: 20, top: 0},
 		},
 		{
 			title: 'Inspiration button',
@@ -58,9 +103,13 @@ $(function(){
 			html: Mustache.render(TEMPLATES.tutorialInspirationTemplate),
 			location: {left: 'center', bottom: 20}
 		}
-	];
+	].concat(ideaWorkspaceTutorialSteps);
 
-	// Define tutorials
+	var secondTutorialSteps = solutionSpaceTutorialSteps.concat(versioningViewTutorialSteps);
+
+	/*
+		Create tutorial objects
+	*/
 	ENV.firstTutorial = new Tutorial(
 		{ // Settings
 			onclose: function(){
@@ -88,7 +137,8 @@ $(function(){
 		{
 			onclose: function(){
 				setupStudySession();
-			}
+			},
+			forceCompletion: true
 		},
 		firstTutorialSteps.concat(secondTutorialSteps)
 	);
@@ -112,21 +162,8 @@ $(function(){
 		delimiter: [',', ' ', ';'], // Doesn't seem like I can set the UI delimiters separate from the backend. If you change this, change cleanup on the submit function
 		height: 'auto',
 		width: '100%',
-		// autocomplete_url: URL.getTags,
-		// onAddTag: function(tag){
-		// 	var _this = $(this);
-		// 	tagExists(tag, function(tagExists){
-		// 		if(!tagExists){
-		// 			// Tag does not exist. Update style
-		// 			var container = _this.closest('.tagsinput');
-		// 			var tagElement = _this.siblings('.tagsinput').children('.tag').last();
-		// 			tagElement.addClass('new');
-		// 		}
-		// 	});
-		// }
 	};
 	ENV.tagsDelimiter = ',, ,;';
-	// $('#addIdea input[name=suggestTags]').tagsInput(ENV.tagConfig);
 	$('#combineIdeas input[name=combinedTagInput]').tagsInput(ENV.tagConfig);
 
 	// Load windowed layout
@@ -155,24 +192,7 @@ $(function(){
 			help:()=>{
 				startTutorial(new Tutorial(
 					{},
-					[{
-						title: 'Idea Workspace',
-						highlight: '.stack_IdeaViewerView',
-						html: Mustache.render(TEMPLATES.tutorialExpandedIdeaViewer1Template),
-						location: {right: 20, top: 0},
-					},
-					{
-						title: 'Idea Workspace',
-						highlight: '.stack_IdeaViewerView',
-						html: Mustache.render(TEMPLATES.tutorialExpandedIdeaViewer2Template),
-						location: {right: 20, top: 0},
-					},
-					{
-						title: 'Idea Workspace',
-						highlight: '.stack_IdeaViewerView',
-						html: Mustache.render(TEMPLATES.tutorialExpandedIdeaViewer3Template),
-						location: {right: 20, top: 0},
-					}]
+					ideaWorkspaceTutorialSteps
 				));
 			}
 		},
@@ -186,24 +206,7 @@ $(function(){
 			help: () =>{
 				startTutorial(new Tutorial(
 					{},
-					[{
-						title: 'History view',
-						highlight: '.stack_VersioningView',
-						html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView1Template),
-						location: {left: 20, top: 0},
-					},
-					{
-						title: 'History view',
-						highlight: '.stack_VersioningView',
-						html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView2Template),
-						location: {left: 20, top: 0},
-					},
-					{
-						title: 'History view',
-						highlight: '.stack_VersioningView',
-						html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView3Template),
-						location: {left: 20, top: 0},
-					}]
+					versioningViewTutorialSteps
 				));
 			}
 		},
@@ -229,18 +232,7 @@ $(function(){
 			help: () =>{
 				startTutorial(new Tutorial(
 					{},
-					[{
-						title: 'Solution space view',
-						highlight: '.stack_SolutionSpaceView',
-						html: Mustache.render(TEMPLATES.tutorialExpandedSolutionSpace1Template),
-						location: {right: 20, top: 325}, // TODO the tutorial.js positioning system needs to be improved
-					},
-					{
-						title: 'Solution space view',
-						highlight: '.stack_SolutionSpaceView',
-						html: Mustache.render(TEMPLATES.tutorialExpandedSolutionSpace2Template),
-						location: {right: 20, top: 67}, // TODO the tutorial.js positioning system needs to be improved
-					}]
+					solutionSpaceTutorialSteps
 				));
 			}
 		},

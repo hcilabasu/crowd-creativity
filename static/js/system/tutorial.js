@@ -78,11 +78,13 @@ class Tutorial {
             overlay.fadeIn('fast');
         }
         // Bind click on overlay to stop method
-        overlay.click((e)=>{
-            if($(e.target).attr('id') == 'tutorialOverlay'){
-                this.stop();
-            }
-        });
+        if(!this.settings.forceCompletion){ // If completion is required, prevent user from closign tutorial
+            overlay.click((e)=>{
+                if($(e.target).attr('id') == 'tutorialOverlay'){
+                    this.stop();
+                }
+            });
+        }
    }
 
     /*
