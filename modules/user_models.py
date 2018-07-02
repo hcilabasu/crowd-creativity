@@ -33,7 +33,8 @@ class UserModel(object):
             self.count_pair = db_user_model.count_pair
             self.timestamp = db_user_model.timestamp
             self.count_transition_pairs = db_user_model.count_transition_pairs
-            self.category_switch_ratio = self.count_transition_pairs / float(self.count_pair)
+            count_pairs = float(self.count_pair)
+            self.category_switch_ratio = 0 if count_pairs == 0 else self.count_transition_pairs / count_pairs
         else:
             if db_user_model:
                 condition = db_user_model.user_condition
