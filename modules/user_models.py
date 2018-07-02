@@ -2,6 +2,7 @@ import json
 import random
 import heapq
 import numpy
+import datetime
 import collab_filter
 from collections import Counter
 from operator import itemgetter
@@ -30,6 +31,7 @@ class UserModel(object):
             self.user_condition = db_user_model.user_condition
             self.last_cat = db_user_model.last_cat
             self.count_pair = db_user_model.count_pair
+            self.timestamp = db_user_model.timestamp
             self.count_transition_pairs = db_user_model.count_transition_pairs
             self.category_switch_ratio = self.count_transition_pairs / float(self.count_pair)
         else:
@@ -53,6 +55,8 @@ class UserModel(object):
     def update(self, new_categories):
         ''' new_categories is an array. It's length can be 1 or 2'''
         db = current.db
+        # Update timestamp
+        self.timestamp = datetime.datetime.now()
         # Update entire model
         self.count_pair += 1
         # Update matrix and graph

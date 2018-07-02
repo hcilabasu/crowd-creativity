@@ -187,6 +187,7 @@ db.define_table('task',
 
 db.define_table('user_model',
     Field('user', 'reference user_info'),
+    Field('timestamp', 'datetime'),
     Field('problem', 'reference problem'),
     Field('user_condition', 'integer'),
     Field('last_cat', 'list:string', length=SHORT_STRING_MAX),
