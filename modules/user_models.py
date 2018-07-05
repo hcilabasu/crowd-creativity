@@ -86,7 +86,7 @@ class UserModel(object):
         ]
 
     def get_num_ideas(self):
-        return self.category_matrix.get_num_ideas()
+        return self.count_pair + 1
 
     def get_breadth(self):
         return self.category_matrix.get_breadth()
@@ -324,9 +324,6 @@ class CategoryMatrix(ModelRepresentation):
 
     def get_depth_max(self):
         return max(self.model.values())
-
-    def get_num_ideas(self):
-        return sum(self.model.values())
     
     def get_most_frequent(self):
         most_frequent = sorted(self.model.items(), key=itemgetter(1), reverse=True)

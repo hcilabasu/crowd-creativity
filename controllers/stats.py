@@ -76,6 +76,8 @@ def regenerate_models():
         u.last_cat = None
         u.count_pair = 0
         u.count_transition_pairs = 0
+        u.transition_graph = '[]'
+        u.category_matrix = '{}'
         u.update_record()
     # Get all ideas
     ideas = db(db.idea.id > 0).select()
