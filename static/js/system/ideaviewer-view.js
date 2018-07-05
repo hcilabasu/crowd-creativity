@@ -209,7 +209,7 @@ class IdeaViewerView extends View {
             // Add to common variable
             COMMON.openIdeas.push(idea.id);
             // Add to versioning View
-            VIEWS['versioningView'].markIdeasOpen([idea.id]);
+            // VIEWS['versioningView'].markIdeasOpen([idea.id]);
         }, 50);
     };
 
@@ -223,7 +223,7 @@ class IdeaViewerView extends View {
             COMMON.openIdeas.splice(i, 1);
         }
         // Remove from versioning view
-        VIEWS['versioningView'].unmarkIdeasOpen([id]);
+        // VIEWS['versioningView'].unmarkIdeasOpen([id]);
     }
 
     loadIdea(id){
@@ -263,9 +263,9 @@ class IdeaViewerView extends View {
         });
         // Reset common variable
         COMMON.openIdeas = [];
-        if(VIEWS['versioningView']){ // Check if view is loaded
-            VIEWS['versioningView'].clearOpenIdeas();
-        }
+        // if(VIEWS['versioningView']){ // Check if view is loaded
+        //     VIEWS['versioningView'].clearOpenIdeas();
+        // }
         // Reset status
         $('#loadedIdeasStatus').empty();
     }
