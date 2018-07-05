@@ -14,28 +14,28 @@ var config = {
                 id: 'ideaViewer',
                 type: 'component',
                 title: 'Idea viewer',
-                height: 50,
+                // height: 50,
                 isClosable: false,
                 componentName: 'ideaViewer',
                 componentState: { } 
-            }, {
-                id: 'solutionSpace',
-                type: 'component',
-                title: 'Solution space',
-                isClosable: false,
-                componentName: 'solutionSpace',
-                componentState: { } 
-            }]
+            }/*, {
+                type: 'column',
+                content:[{
+                    id: 'versioningView',
+                    type: 'component',
+                    title: 'Versioning',
+                    isClosable: false,
+                    componentName: 'versioning',
+                    componentState: { }
+                }]
+            }*/]
         },{
-            type: 'column',
-            content:[{
-                id: 'versioningView',
-                type: 'component',
-                title: 'Versioning',
-                isClosable: false,
-                componentName: 'versioning',
-                componentState: { }
-            }]
+            id: 'solutionSpace',
+            type: 'component',
+            title: 'Solution space',
+            isClosable: false,
+            componentName: 'solutionSpace',
+            componentState: { } 
         }]
     }]
 };

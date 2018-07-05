@@ -43,39 +43,39 @@ $(function(){
 		}
 	];
 
-	var versioningViewTutorialSteps = [
-		{
-			title: 'History view',
-			highlight: '.stack_VersioningView',
-			html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView1Template),
-			location: {left: 20, top: 0},
-		},
-		{
-			title: 'History view',
-			highlight: '.stack_VersioningView',
-			html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView2Template),
-			location: {left: 20, top: 0},
-		},
-		{
-			title: 'History view',
-			highlight: '.stack_VersioningView',
-			html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView3Template),
-			location: {left: 20, top: 0},
-		}
-	];
+	// var versioningViewTutorialSteps = [
+	// 	{
+	// 		title: 'History view',
+	// 		highlight: '.stack_VersioningView',
+	// 		html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView1Template),
+	// 		location: {left: 20, top: 0},
+	// 	},
+	// 	{
+	// 		title: 'History view',
+	// 		highlight: '.stack_VersioningView',
+	// 		html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView2Template),
+	// 		location: {left: 20, top: 0},
+	// 	},
+	// 	{
+	// 		title: 'History view',
+	// 		highlight: '.stack_VersioningView',
+	// 		html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView3Template),
+	// 		location: {left: 20, top: 0},
+	// 	}
+	// ];
 
 	var solutionSpaceTutorialSteps = [
 		{
 			title: 'Solution space view',
 			highlight: '.stack_SolutionSpaceView',
 			html: Mustache.render(TEMPLATES.tutorialExpandedSolutionSpace1Template),
-			location: {right: 20, top: 325}, // TODO the tutorial.js positioning system needs to be improved
+			location: {left: 20, top: 0}
 		},
 		{
 			title: 'Solution space view',
 			highlight: '.stack_SolutionSpaceView',
 			html: Mustache.render(TEMPLATES.tutorialExpandedSolutionSpace2Template),
-			location: {right: 20, top: 67}, // TODO the tutorial.js positioning system needs to be improved
+			location: {left: 20, top: 0}, // TODO the tutorial.js positioning system needs to be improved
 		}
 	];
 
@@ -105,7 +105,7 @@ $(function(){
 		}
 	].concat(ideaWorkspaceTutorialSteps);
 
-	var secondTutorialSteps = solutionSpaceTutorialSteps.concat(versioningViewTutorialSteps);
+	var secondTutorialSteps = solutionSpaceTutorialSteps;//.concat(versioningViewTutorialSteps);
 
 	/*
 		Create tutorial objects
@@ -171,7 +171,7 @@ $(function(){
 
 	// Load panels on page load
 	VIEWS['ideasView'] = new IdeaViewerView('#ideasContainer').load();
-	VIEWS['versioningView'] = new VersioningView('#versioningContainer').load();
+	// VIEWS['versioningView'] = new VersioningView('#versioningContainer').load();
 	VIEWS['solutionSpaceView'] = new SolutionSpaceView('#solutionSpaceContainer').load();
 	
 	/* Toolbar button handlers */
@@ -196,7 +196,7 @@ $(function(){
 				));
 			}
 		},
-		versioningView: {
+		/*versioningView: {
 			reload: ()=>{
 				VIEWS.versioningView.load();
 			},
@@ -209,7 +209,7 @@ $(function(){
 					versioningViewTutorialSteps
 				));
 			}
-		},
+		},*/
 		suggestedTasks: {
 			reload: ()=>{
 				VIEWS.tasksView.load();
