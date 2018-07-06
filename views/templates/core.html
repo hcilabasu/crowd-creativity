@@ -140,17 +140,18 @@
 
 <script id="combineIdeaPopupTemplate" type="text/x-tmpl-mustache">
     <span class="close"></span>
-    <h2>Idea Mixing</h2>
-    <p class="problemDescription">{{=problem.description}}</p>
+    <h2>Idea Combination</h2>
+    <!-- <p class="problemDescription">{{=problem.description}}</p> -->
+    <p>Combine these two ideas...</p>
     <div class="combineIdeasShowIdeas">
         <p class="ideaBlock"><span></span></p>
         <p class="ideaBlock"><span></span></p>
     </div>
     
     <div class="dynamicContent">
-        <p> <a class="merge combine" onclick="replaceCombineIdeasOptions(event, 'back')">&lt; Choose a different action</a> </p>
+        <!-- <p> <a class="merge combine" onclick="replaceCombineIdeasOptions(event, 'back')">&lt; Choose a different action</a> </p> -->
 
-        <h3 class="choose">Choose an action:</h3>
+        <!-- <h3 class="choose">Choose an action:</h3>
         <ul>
             <li class="clickEnabled merge choose" onclick="replaceCombineIdeasOptions(event,'merge')">
                 <img src="{{=URL('static','images/merge.gif')}}" class="sideImage" />
@@ -162,14 +163,15 @@
                 <h3>Combine ideas</h3>
                 <p>Combine two ideas into a new one. Keeps the original ideas.</p>
             </li>
-        </ul>
+        </ul> -->
         <form class="ideaInput merge combine">
+            <p>...Into a new one: </p>
 
             <textarea name="combinedIdeaInput" placeholder="Write your idea in here" class="ideaInput" required maxlength="{{=validation['text_max']}}"></textarea>
 
             <div id="combinedTagInput"></div>
 
-            <input type="hidden" name="combineTypeInput">
+            <input type="hidden" name="combineTypeInput" value="combine">
             <input type="hidden" name="combinedIdeaIds">
 
             <a class="btn cornerRight" onclick="submitCombinedIdea(event)">Submit</a>

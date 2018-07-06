@@ -467,7 +467,7 @@ var submitCombinedIdea = function(event){
 
 			// Reset other views and reset check timer
 			VIEWS.solutionSpaceView.load();
-			VIEWS.versioningView.load();
+			// VIEWS.versioningView.load();
 			ENV.lastCheck = new Date().getTime();
 			// Close overlay
 			closeOverlay();
@@ -581,14 +581,14 @@ var editIdeaSetup = function(params){
 
 var combineIdeasSetup = function(params){
 	var popup = $('#combineIdeas');
-	popup.removeClass('chosen');
+	// popup.removeClass('chosen');
 	var template = $(Mustache.render(TEMPLATES['combineIdeaPopupTemplate']));
 	if (popup.is(':empty')){ // Only load the html the first time
 		popup.html(template);
 	}
 	// Hide and show elements
-	$('.merge,.combine', popup).hide();
-	$('.choose', popup).show();
+	// $('.merge,.combine', popup).hide();
+	// $('.choose', popup).show();
 	// Add the idea text to the blocks
 	ids = []
 	tags = []
@@ -608,27 +608,27 @@ var combineIdeasSetup = function(params){
 		$('#combineIdeas input[name=combineTypeInput]').val('');
 		$('#combineIdeas input[name=ideaIds]').val('');
 		// Switch back options panel
-		replaceCombineIdeasOptions(undefined, 'back');
+		// replaceCombineIdeasOptions(undefined, 'back');
 		closeOverlay();
 	});
 }
 
-var replaceCombineIdeasOptions = function(event, type){
-	var popup = $('#combineIdeas');
-	if(type == 'back'){
-		popup.removeClass('chosen');
-		$('.merge,.combine', popup).filter(':not(.choose)').hide('fast');
-		$('.choose', popup).show('fast');
-	} else {
-		popup.addClass('chosen');
-		$('.merge,.combine,.choose', popup).filter(':not(.'+type+')').hide('fast', function(){
-			$('.' + type, popup).show('fast');
-		});
-		// Sets the text in the paragraph
-		$('#combineIdeas textarea').attr('placeholder','Write your ' + type + 'd' + ' idea here');
-		$('#combineIdeas input[name=combineTypeInput]').val(type);
-	}
-};
+// var replaceCombineIdeasOptions = function(event, type){
+// 	var popup = $('#combineIdeas');
+// 	if(type == 'back'){
+// 		popup.removeClass('chosen');
+// 		$('.merge,.combine', popup).filter(':not(.choose)').hide('fast');
+// 		$('.choose', popup).show('fast');
+// 	} else {
+// 		popup.addClass('chosen');
+// 		$('.merge,.combine,.choose', popup).filter(':not(.'+type+')').hide('fast', function(){
+// 			$('.' + type, popup).show('fast');
+// 		});
+// 		// Sets the text in the paragraph
+// 		$('#combineIdeas textarea').attr('placeholder','Write your ' + type + 'd' + ' idea here');
+// 		$('#combineIdeas input[name=combineTypeInput]').val(type);
+// 	}
+// };
 
 var tagsViewSetup = function(params){
 	var templateParams = {
