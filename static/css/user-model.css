@@ -2,7 +2,6 @@ body {
     background: #3AAAFC;
     background: linear-gradient(#437BF0, #3AAAFC) fixed;
     padding: 20px;
-    color: white;
 }
 
     body > div {

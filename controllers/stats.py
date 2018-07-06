@@ -7,6 +7,7 @@ import csv
 from collections import defaultdict
 
 def index():
+    __check_auth()
     problems = db(db.problem.id > 0).select()
     users_per_problem = dict()
     regenerated = True if request.vars.regenerated else False
@@ -14,7 +15,15 @@ def index():
         users_per_problem[p.id] = __get_users_in_problem(p.id)
     return dict(problems=problems, users_per_problem=users_per_problem, regenerated=regenerated)
 
+def stats_login():
+    return dict()
+
+def log_out():
+    session.stats_login = False
+    redirect(URL('stats', 'index'))
+
 def usermodel():
+    __check_auth()
     user_id = request.vars['user']
     problem_id = request.vars['problem']
     if not user_id or not problem_id:
@@ -46,6 +55,7 @@ def usermodel():
         logs=logs)
 
 def organize_tags():
+    __check_auth()
     problem_id = long(request.vars['problem'])
     problem = db(db.problem.id == problem_id).select().first()
     tags = db(db.tag.problem == problem_id).select()
@@ -56,6 +66,7 @@ def organize_tags():
     return dict(problem=problem, tags=tags, counts=counts)
 
 def update_tags():
+    __check_auth()
     print('update tags')
     problem_id = long(request.vars['problem'])
     tags = json.loads(request.vars['tags'])
@@ -70,6 +81,7 @@ def update_tags():
     # redirect(URL('stats','index?problem=' + problem_id))
 
 def regenerate_models():
+    __check_auth()
     # Delete all models
     users = db(db.user_model.id > 0).select()
     for u in users:
@@ -96,6 +108,7 @@ def regenerate_models():
     redirect(URL('stats','index'))
 
 def download_data():
+    __check_auth()
     problem_id = long(request.vars['problem'])
     users = __get_users_in_problem(problem_id)
     # Get data
@@ -104,6 +117,7 @@ def download_data():
     return __prepare_csv_response(fields, records, filename, problem_id)
 
 def download_logs():
+    __check_auth()
     problem_id = long(request.vars['problem'])
     users = __get_users_in_problem(problem_id)
     users_ids = [u.idea.userId for u in users]
@@ -131,6 +145,7 @@ def download_logs():
     return __prepare_csv_response(fields, records, filename, problem_id)
 
 def download_ideas():
+    __check_auth()
     problem_id = long(request.vars['problem'])
     fields = [
         'user',
@@ -227,3 +242,11 @@ def __get_users_in_problem(problem_id, blacklist=[]):
         (db.idea.userId == db.user_info.id) &
         (~db.idea.userId.belongs(blacklist))
     ).select(db.idea.userId, db.user_info.userId, distinct=True)
+
+def __check_auth():
+    pwd = request.vars['pwd']
+    print(STATS_PWD)
+    if not (session.stats_login or pwd == STATS_PWD): # if not logged in or password not the correct
+        redirect(URL('stats','stats_login'))
+    else:
+        session.stats_login = True

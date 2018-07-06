@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>User model - CrowdMuse</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Concert+One|Lato" rel="stylesheet">
+    <link rel="stylesheet" href="{{=URL('static','css/core/bootstrap.min.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/core/web2py-bootstrap3.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/core/system.compiled.css')}}"/>
+    <link rel="stylesheet" href="{{=URL('static','css/user-model.css')}}"/>
+    <link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
+
+    {{include 'web2py_ajax.html'}}
+    <script src="{{=URL('static','js/d3.min.js')}}"></script>
+    <script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
+    <script src="{{=URL('static','js/web2py-bootstrap3.js')}}"></script>
+</head>
+<body>
+    <h2>Login</h2>
+    <form action="{{=URL('stats', 'index')}}" method="POST">
+        <input type="password" name="pwd">
+        <input type="submit" value="Go">
+    </form>
+</body>
+</html>

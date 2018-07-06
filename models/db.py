@@ -93,6 +93,8 @@ SHORT_STRING_MAX = myconf.take('db.short_string_max')
 MIGRATE = True
 FAKE_MIGRATE = False
 
+STATS_PWD = myconf.take('stats.pwd')
+
 # Random variable for default user model condition
 SECURE = SystemRandom()
 
