@@ -422,9 +422,8 @@ var submitRefinedIdea = function(event){
 			var _id = JSON.parse(data).id;
 			var _idea = idea;
 			var _tags = tags;
-			// Add new idea to UI and remove older
+			// Add new idea to UI
 			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
-			VIEWS.ideasView.closeIdea(originalId);
 			// Reset other views and reset check timer
 			VIEWS.solutionSpaceView.load();
 			VIEWS.versioningView.load();
