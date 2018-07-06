@@ -124,7 +124,7 @@ $(function(){
 			onclose: function(){
 				// Reload other views
 				VIEWS.solutionSpaceView.load();
-				VIEWS.versioningView.load();
+				// VIEWS.versioningView.load();
 			}
 		},
 		secondTutorialSteps
@@ -272,7 +272,7 @@ $(function(){
 			data: {timestamp: ENV.lastCheck},
 			success: function(needsUpdate){
 				if (needsUpdate.toLowerCase() === 'true') {
-					VIEWS.versioningView.setNeedsUpdate(true);
+					// VIEWS.versioningView.setNeedsUpdate(true);
 					VIEWS.solutionSpaceView.setNeedsUpdate(true);
 				}
 				ENV.lastCheck = new Date().getTime();
@@ -403,7 +403,7 @@ var submitNewIdea = function(event){
 			$('#newIdeaTagPicker').tagPicker('teardown');
 			// Reset other views and reset check timer
 			VIEWS.solutionSpaceView.load();
-			VIEWS.versioningView.load();
+			// VIEWS.versioningView.load();
 			ENV.lastCheck = new Date().getTime();
 		}, function(data){
 			// Remove loading
@@ -426,7 +426,7 @@ var submitRefinedIdea = function(event){
 			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
 			// Reset other views and reset check timer
 			VIEWS.solutionSpaceView.load();
-			VIEWS.versioningView.load();
+			// VIEWS.versioningView.load();
 			ENV.lastCheck = new Date().getTime();
 			// Close overlay
 			closeOverlay();
@@ -604,7 +604,7 @@ var combineIdeasSetup = function(params){
 	EVENTS.popOverClose.push(function(){
 		// Empty fields
 		$('#combineIdeas textarea').val('');
-		$('#combineIdeas input[name=combineTypeInput]').val('');
+		// $('#combineIdeas input[name=combineTypeInput]').val('');
 		$('#combineIdeas input[name=ideaIds]').val('');
 		// Switch back options panel
 		// replaceCombineIdeasOptions(undefined, 'back');
