@@ -9,7 +9,7 @@ var config = {
         type: 'row',
         content:[{
             type: 'column',
-            width: 69,
+            width: 66,
             content: [{
                 id: 'ideaViewer',
                 type: 'component',
