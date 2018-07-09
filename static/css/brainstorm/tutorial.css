@@ -37,6 +37,10 @@
         margin: 0 auto;
         border-radius: 5px;
     }
+
+    #tutorialPopUp img.half {
+        width: 50%;
+    }
     
     #tutorialPopUp img.small {
         width: 100px;
