@@ -6,6 +6,8 @@ import cStringIO
 import csv
 from collections import defaultdict
 
+CONDITIONS = dict(control=1,subtle=2,overt=3,all=4)
+
 def index():
     __check_auth()
     problems = db(db.problem.id > 0).select()
@@ -17,6 +19,20 @@ def index():
 
 def stats_login():
     return dict()
+
+def reset_conditions():
+    __check_auth()
+    conditions = db(db.sessionCondition.id > 0).select()
+    # clear all conditions
+    db(db.sessionCondition.id > 0).delete()
+    # Insert the correct ones
+    for k,v in CONDITIONS.items():
+        db.sessionCondition.insert(
+            conditionNumber=v,
+            conditionName=k,
+            conditionCount=0
+        )
+    redirect(URL('stats', 'index'))
 
 def log_out():
     session.stats_login = False

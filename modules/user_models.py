@@ -4,6 +4,7 @@ import heapq
 import numpy
 import datetime
 import collab_filter
+import util
 from collections import Counter
 from operator import itemgetter
 from gluon import current, settings
@@ -39,7 +40,7 @@ class UserModel(object):
             if db_user_model:
                 condition = db_user_model.user_condition
             else:
-                condition = SystemRandom().choice(CONDITIONS.values())
+                condition = -1
             self.user_condition = condition
             self.last_cat = None
             self.count_pair = 0
@@ -56,6 +57,9 @@ class UserModel(object):
     def update(self, new_categories):
         ''' new_categories is an array. It's length can be 1 or 2'''
         db = current.db
+        # Assign condition if this is the first idea
+        if self.user_condition == -1:
+            self.user_condition = util.get_available_conditions().conditionNumber
         # Update timestamp
         self.timestamp = datetime.datetime.now()
         # Update entire model
