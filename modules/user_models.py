@@ -48,8 +48,6 @@ class UserModel(object):
             self.category_switch_ratio = None
             self.transition_graph = TransitionGraph()
             self.category_matrix = CategoryMatrix()
-            # Log
-            current.log_action(user_id, problem_id, 'create_user_model', {'condition':self.user_condition})
         # Add a reference to the user model
         self.transition_graph.user_model = self
         self.category_matrix.user_model = self
@@ -60,6 +58,8 @@ class UserModel(object):
         # Assign condition if this is the first idea
         if self.user_condition == -1:
             self.user_condition = util.get_available_conditions().conditionNumber
+            # Log
+            current.log_action(self.user, self.problem, 'create_user_model', {'condition':self.user_condition})
         # Update timestamp
         self.timestamp = datetime.datetime.now()
         # Update entire model
@@ -106,16 +106,36 @@ class UserModel(object):
         Returns a list of categories to be used for the inspiration.
         If there are none (or the condition doesn't employ adaptive inspirations), return empty list. 
         '''
+        db = current.db
         categories = []
         if self.last_cat and self.has_adaptive_inspirations(): # Check if the user has ideated before, or if conditions should be adaptive
+            # Get adjacent and inferred categories
             next_categories = self.transition_graph.get_next_categories(n)
-            for i in range(n):
-                if random.random() > self.category_switch_ratio: 
-                    # stay in the same category
-                    # if len(self.last_cat) > 1, we randomly choose from the current categories
-                    categories.append(random.choice(self.last_cat)) 
-                else:
-                    categories.append(next_categories.pop(0))
+            inferred_categories = collab_filter.get_inferred_categories(self.user, self.problem, db)
+            # Populate categories array
+
+            # 1. Current category
+            current_cat = random.choice(self.last_cat)
+            categories.append(current_cat)            
+            # 2. Most likely adjacent category
+            adjacent = next_categories.pop(0)
+            if adjacent:
+                categories.append(adjacent)
+            # 3. Most likely inferred category
+            inferred = inferred_categories.pop(0)
+            if inferred:
+                categories.append(inferred[0])
+            
+            # DEPRECATED:   the code below would randomly select either 
+            #               a current category or an adjacent category.
+            #               TODO Remove it in the future.
+            # for i in range(n):
+            #     if random.random() > self.category_switch_ratio: 
+            #         # stay in the same category
+            #         # if len(self.last_cat) > 1, we randomly choose from the current categories
+            #         categories.append(random.choice(self.last_cat)) 
+            #     else:
+            #         categories.append(next_categories.pop(0))
         # Log
         current.log_action(self.user, self.problem, 'get_inspiration_categories', {'tags': categories})
         return categories
