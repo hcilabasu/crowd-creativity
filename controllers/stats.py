@@ -83,12 +83,8 @@ def organize_tags():
 
 def update_tags():
     __check_auth()
-    print('update tags')
     problem_id = long(request.vars['problem'])
     tags = json.loads(request.vars['tags'])
-    print(tags)
-    for t in tags:
-        print(t)
     
     # Redirect back
     return 0
@@ -137,7 +133,6 @@ def download_logs():
     problem_id = long(request.vars['problem'])
     users = __get_users_in_problem(problem_id)
     users_ids = [u.idea.userId for u in users]
-    print(users_ids)
     # Get data
     fields = [
         'actionName',
@@ -261,7 +256,6 @@ def __get_users_in_problem(problem_id, blacklist=[]):
 
 def __check_auth():
     pwd = request.vars['pwd']
-    print(STATS_PWD)
     if not (session.stats_login or pwd == STATS_PWD): # if not logged in or password not the correct
         redirect(URL('stats','stats_login'))
     else:

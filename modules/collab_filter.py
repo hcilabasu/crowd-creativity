@@ -4,12 +4,11 @@ from operator import itemgetter
 from collections import defaultdict
 
 def find_n_nearest(reference_user, user_models, n):
-    print('')
     # Initialize variables
-    reference = reference_user.category_matrix.get_standardized_categories()
+    reference_tags = reference_user.category_matrix.get_standardized_categories()
     user_item = []
     user_map = dict()
-    tags = []
+    # tags = []
     similarities = []
     # Calculate similarities
     '''
@@ -26,20 +25,15 @@ def find_n_nearest(reference_user, user_models, n):
     }
     tags = [t1, t2, t3, ...]
     '''
-    for i, um in enumerate(user_models):
-        user_map[i] = um # Update user_map
-        user_tags = dict()
-        std_tags = um.category_matrix.get_standardized_categories()
-        for k in std_tags.keys():
-            if k not in tags: # Add tag to tag master list
-                tags.append(k) # Update tags
-        user_item.append(std_tags)
-        # Find nearest neighbours to reference model
-        similarities.append(calculate_similarity(reference, std_tags))
+    # Calculate similarity
+    for i, um in enumerate(user_models): # Iterate through the user models to calculate their similarity with the reference
+        user_map[i] = um # Update user_map. The user_map maps models to the iteration index (e.g. if the first user id is 54, usar_map[0] == 54)
+        std_tags = um.category_matrix.get_standardized_categories() # Gets the standardized list of categories for this user
+        similarities.append(calculate_similarity(reference_tags, std_tags)) # Calculate similarity between this user and reference model
     # Merge and sort lists by similarity
     merge_lists = [(i, sim) for i,sim in enumerate(similarities)]
-    merge_lists = sorted(merge_lists, key=itemgetter(1), reverse=False)
-    # Prepare and return results
+    merge_lists = sorted(merge_lists, key=itemgetter(1), reverse=True)
+    # Prepare and return n results
     nearest = [(user_map[u[0]], u[1]) for u in merge_lists][0:n]
     return nearest
 
@@ -53,12 +47,12 @@ def infer_categories(reference_user, nearest_users, exclude_existing=False):
     '''
     categories = defaultdict(list)
     reference_categories = reference_user.category_matrix.get_standardized_categories()
-    for nn in nearest_users:
-        nn_categories = nn[0].category_matrix.get_standardized_categories()
-        for c in nn_categories.keys():
-            if (exclude_existing and c not in reference_categories.keys()) or not exclude_existing:
-                categories[c].append(nn_categories[c])
-    results = sorted([(k, numpy.mean(v)) for k,v in categories.items()], key=itemgetter(1), reverse=True)
+    for nn in nearest_users: # For each nearest neighbor...
+        nn_categories = nn[0].category_matrix.get_standardized_categories() # ... get their categories...
+        for c in nn_categories.keys(): # ... and for each category...
+            if (exclude_existing and c not in reference_categories.keys()) or not exclude_existing: #... if it is not in the reference model (that is, the reference model hasn't visited it)
+                categories[c].append(nn_categories[c])  #... then add the the list of categories
+    results = sorted([(k, numpy.sum(v)) for k,v in categories.items()], key=itemgetter(1), reverse=True)
     return results
 
 def get_inferred_categories(user_id, problem_id, db):
@@ -81,7 +75,7 @@ def get_inferred_categories(user_id, problem_id, db):
 
 def calculate_similarity(model1, model2):
     '''
-    model1 and model 2 = dict(
+    model1 and model2 = dict(
         t1: n, 
         t2: n, 
         ...
@@ -90,7 +84,8 @@ def calculate_similarity(model1, model2):
     dists = []
     for k in model1.keys():
         if k in model2:
-            dists.append(abs(model1[k] - model2[k]))
+            dists.append(1)
     # TODO Find a better function for similarity
-    sim = numpy.mean(dists)
+    sim = numpy.sum(dists).item()
+    # print('Sim: %s for model1: %s and model 2: %s' % (str(sim), str(model1.keys()), str(model2.keys())))
     return sim

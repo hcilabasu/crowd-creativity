@@ -355,15 +355,19 @@ class CategoryMatrix(ModelRepresentation):
         return most_frequent
 
     def get_standardized_categories(self):
+        '''
+        Gets a list of the user's categories standardized by some method (e.g. z score)
+        '''
         values = [self.model[k] for k in self.model.keys()]
         avg = numpy.mean(values)
         sdev = numpy.std(values)
         std_cats = dict()
         for k in self.model.keys():
-            if sdev != 0:
-                std_cats[k] = (self.model[k] - avg) / sdev
-            else:
-                std_cats[k] = self.model[k]
+            std_cats[k] = 1 # TODO normalize by largest value (e.g. largest value = 5, smallest 1)
+            # if sdev != 0:
+            #     std_cats[k] = (self.model[k] - avg) / sdev
+            # else:
+            #     std_cats[k] = self.model[k]
         return std_cats
 
     def format_standardized_json(self):
