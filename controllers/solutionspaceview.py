@@ -63,14 +63,16 @@ def get_solution_space():
         if n > max_n:
             max_n = n
     tags = tags[:SOLUTION_SPACE_MAX_TAGS]
+
     # since another user may have added another tag, and since "tags" holds ALL tags, we need to remove those that are not in "ideas"
+    final_tags = []
     for t in tags:
-        if t not in all_tags:
-            tags.remove(t)
+        if t in all_tags:
+            final_tags.append(t)
 
     # Create minimap overview and generate outcome dict
-    overview = __generate_birdseye_solutionspace(tags, connections, max_n=max_n)
-    outcome = json.dumps(dict(tags=tags, connections=connections, max_n=max_n, overview=overview))
+    overview = __generate_birdseye_solutionspace(final_tags, connections, max_n=max_n)
+    outcome = json.dumps(dict(tags=final_tags, connections=connections, max_n=max_n, overview=overview))
     
     # Update cache
     # key = (db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)
