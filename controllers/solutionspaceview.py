@@ -41,15 +41,18 @@ def get_solution_space():
     ideas = db((db.idea.id == db.tag_idea.idea) & 
         (db.tag.id == db.tag_idea.tag) &
         (db.idea.dateAdded >= timestamp) &
+        (db.idea.problem == problem_id) & 
         ((db.idea.pool == True) | (db.idea.userId == user_id))
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
     
     # extract tags
+    all_tags = []
     for idea in ideas:
         idea_tags = list()
         for tag in idea.idea.tag_idea.select():
             tag = tag.tag.tag.lower()
             idea_tags.append(tag)
+            all_tags.append(tag)
         idea_tags.sort() # this contains a sorted array of tags for idea
         # insert into data structure
         key = '|'.join(idea_tags)
@@ -60,18 +63,22 @@ def get_solution_space():
         if n > max_n:
             max_n = n
     tags = tags[:SOLUTION_SPACE_MAX_TAGS]
+    # since another user may have added another tag, and since "tags" holds ALL tags, we need to remove those that are not in "ideas"
+    for t in tags:
+        if t not in all_tags:
+            tags.remove(t)
 
     # Create minimap overview and generate outcome dict
     overview = __generate_birdseye_solutionspace(tags, connections, max_n=max_n)
     outcome = json.dumps(dict(tags=tags, connections=connections, max_n=max_n, overview=overview))
     
     # Update cache
-    key = (db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)
-    db.visualization_cache.update_or_insert(key,
-        problem=problem_id,
-        type=cache_type,
-        cache=outcome,
-        timestamp=datetime.datetime.now())
+    # key = (db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)
+    # db.visualization_cache.update_or_insert(key,
+    #     problem=problem_id,
+    #     type=cache_type,
+    #     cache=outcome,
+    #     timestamp=datetime.datetime.now())
     
     # Log
     log_action(user_id, problem_id, 'get_solution_space', {'cache': (cache != None)})

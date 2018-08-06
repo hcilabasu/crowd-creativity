@@ -265,20 +265,21 @@ $(function(){
 
 	// Start periodically checking for updates
 	ENV.lastCheck = new Date().getTime();
-	window.setInterval(function(){
-		$.ajax({
-			method: 'GET',
-			url: URL.checkUpdates,
-			data: {timestamp: ENV.lastCheck},
-			success: function(needsUpdate){
-				if (needsUpdate.toLowerCase() === 'true') {
-					// VIEWS.versioningView.setNeedsUpdate(true);
-					VIEWS.solutionSpaceView.setNeedsUpdate(true);
-				}
-				ENV.lastCheck = new Date().getTime();
-			}
-		})
-	}, 10000);
+	// TODO temporarily stop checking for updates (for the studies)
+	// window.setInterval(function(){
+	// 	$.ajax({
+	// 		method: 'GET',
+	// 		url: URL.checkUpdates,
+	// 		data: {timestamp: ENV.lastCheck},
+	// 		success: function(needsUpdate){
+	// 			if (needsUpdate.toLowerCase() === 'true') {
+	// 				// VIEWS.versioningView.setNeedsUpdate(true);
+	// 				VIEWS.solutionSpaceView.setNeedsUpdate(true);
+	// 			}
+	// 			ENV.lastCheck = new Date().getTime();
+	// 		}
+	// 	})
+	// }, 10000);
 
 	// Setup expanded problem description button 
 	var problemContainer = $('#problem');
