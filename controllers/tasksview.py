@@ -78,6 +78,7 @@ def __get_tasks(user_id, problem_id):
         (db.task.owner != user_id) & 
         (db.task.idea == db.idea.id) &
         (db.task.problem == problem_id) &
+        (db.task.pool == True) & 
         ((db.task.idea == db.tag_idea.idea) &
         (db.tag_idea.tag == db.tag.id)))
     # Retrieve all tasks except: owned by user, completed by user, type not in task_types

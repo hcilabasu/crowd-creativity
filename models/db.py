@@ -182,6 +182,7 @@ db.define_table('task',
     Field('completed', 'boolean', default=False),
     Field('completed_by', 'reference user_info'),
     Field('completed_timestamp', 'datetime'),
+    Field('pool', 'boolean'), # Should match the idea itself
     Field('options', 'text', length=DATA_MAX),
     Field('answer', 'text', length=DATA_MAX),
     migrate=MIGRATE,

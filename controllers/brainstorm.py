@@ -15,7 +15,7 @@ from collections import defaultdict
 from string import punctuation
 
 NUKE_KEY = 'blastoise'
-ADD_TO_POOL = True
+ADD_TO_POOL = False
 TASKS_PER_IDEA = 4 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 
 def index():
@@ -101,7 +101,7 @@ def add_idea():
         #         source_idea.update_record()
         idea = dict(id=idea_id, idea=idea, tags=tags)
         # Insert tasks
-        __insert_tasks_for_idea(idea, user_id, problem_id)
+        __insert_tasks_for_idea(idea, user_id, problem_id, ADD_TO_POOL)
         # Update user model
         __update_user_model(user_id, problem_id, tags)
         # Log
@@ -153,12 +153,12 @@ def __create_new_user(user_name):
     session.user_id = user_id
     return user_id
 
-def __insert_tasks_for_idea(idea, user_id, problem_id):
+def __insert_tasks_for_idea(idea, user_id, problem_id, add_to_pool):
     for i in range(0,TASKS_PER_IDEA):
         # insert selectBest types. Categorize tasks will be inserted when these are completed
         # microtask.TagSuggestionTask(idea=idea['id'], problem=problem_id)     
         # Insert combination tasks
-        microtask.RatingTask(idea=idea['id'], problem=problem_id)
+        microtask.RatingTask(idea=idea['id'], problem=problem_id, pool=add_to_pool)
 
 def __clean_tag(tag):
     tag = tag.replace(' ', '') # remove spaces

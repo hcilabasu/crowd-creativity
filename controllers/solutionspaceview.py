@@ -26,7 +26,8 @@ def get_solution_space():
     max_n = 0
 
     # Retrieve latest cache
-    cache = db((db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)).select().first()
+    # TODO Cache is temporarily disabled since I change the handling of an idea's pool flag to run the studies. That means each user will have their own cache.
+    cache = None #db((db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)).select().first()
     if cache:
         json_cache = json.loads(cache.cache)
         connections = json_cache['connections']
@@ -39,7 +40,8 @@ def get_solution_space():
     # get ideas with respective tags
     ideas = db((db.idea.id == db.tag_idea.idea) & 
         (db.tag.id == db.tag_idea.tag) &
-        (db.idea.dateAdded >= timestamp)
+        (db.idea.dateAdded >= timestamp) &
+        ((db.idea.pool == True) | (db.idea.userId == user_id))
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
     
     # extract tags

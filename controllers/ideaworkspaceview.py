@@ -22,7 +22,8 @@ def get_ideas():
     # Build query
     query = (db.idea.id == db.tag_idea.idea) & \
         (db.tag.id == db.tag_idea.tag) & \
-        (db.idea.problem == problem_id)
+        (db.idea.problem == problem_id) & \
+        ((db.idea.pool == True) | (db.idea.userId == user_id)) # constrain the pool of ideas only to those flagged as pool or to the user's own ideas
     if current_only:
         log_info['current_only'] = True
         query = query & (db.idea.replacedBy == None)

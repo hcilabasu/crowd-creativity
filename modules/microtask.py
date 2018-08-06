@@ -17,7 +17,7 @@ If you want to add a new task type, follow the following steps:
 
 # Classes
 class Task:
-    def __init__(self, id=None, idea=None, tags=[], task=None, options=None, problem=None):
+    def __init__(self, id=None, idea=None, tags=[], task=None, options=None, problem=None, pool=True):
         # Get the db object
         db = current.db
         # Set parameters
@@ -27,6 +27,7 @@ class Task:
         self.task = task
         self.options = options
         self.problem = problem
+        self.pool = pool
         if id: # If the task id was provided, load it
             # TODO implement lazy loading
             # TODO throw error if task not found
@@ -34,6 +35,7 @@ class Task:
             self.id = self.task.id
             self.idea = self.task.idea
             self.options = self.task.options
+            self.pool = self.task.pool
         elif self.idea: # If the idea id was provided, add a new task
             # Get idea owner
             owner_id = db(db.idea.id == idea).select(db.idea.userId).first().userId
@@ -44,6 +46,7 @@ class Task:
                 tags=tags,
                 problem=problem,
                 owner=owner_id,
+                pool=pool,
                 options=options)
 
     def __str__(self):
@@ -54,6 +57,7 @@ class Task:
         out += '- Completed_by:  %s\n' % str(self.task.completed_by)
         out += '- Completed_ts:  %s\n' % str(self.task.completed_timestamp)
         out += '- Answer:        %s\n' % str(self.task.answer)
+        out += '- Pool:        %s\n' % str(self.task.pool)
         return out
 
     def task_type(self):
