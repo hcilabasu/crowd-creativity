@@ -136,7 +136,7 @@ def get_all_tags():
         (db.tag.id == db.tag_idea.tag) &
         (db.idea.problem == problem_id) & 
         ((db.idea.pool == True) | (db.idea.userId == user_id))
-    ).select(db.tag.tag, orderby=~db.idea.id, groupby=db.tag.id)
+    ).select(db.tag.tag, orderby=db.tag.tag, groupby=db.tag.id)
     tags = [t.tag for t in tags]
     response.headers['Content-Type'] = 'text/json'
     return json.dumps(tags) 
