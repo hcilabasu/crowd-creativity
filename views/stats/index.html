@@ -40,11 +40,22 @@
                 <a href="{{=URL('stats', 'organize_tags?problem=' + str(p.id))}}">Organize tags</a>
             </div>
         </div>
-        <ul class="contributors">
-            {{for u in users_per_problem[p.id]:}}
-                <li><a href="{{=URL('stats','usermodel?problem='+str(p.id)+'&user='+str(u.idea.userId))}}">{{=u.user_info.userId}}</a></li>
-            {{pass}}
-        </ul>
+        <table class="contributors">
+            <thead>
+                <tr>
+                    <th>#</th><th>ID</th><th>Initial Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{for i,u in enumerate(users_per_problem[p.id]):}}
+                <tr>
+                    <td>{{=i}}</td>
+                    <td><a href="{{=URL('stats','usermodel?problem='+str(p.id)+'&user='+str(u.idea.userId))}}">{{=u.user_info.userId}}</td> 
+                    <td>{{=u.user_info.initialLogin}}</td>
+                </tr>
+                {{pass}}
+            </tbody>
+        </table>
     {{pass}}
     </div>
 </body>

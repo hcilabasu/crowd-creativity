@@ -116,7 +116,7 @@ db.define_table('problem',
 
 db.define_table('user_info',
     Field('userId', 'string', length=SHORT_STRING_MAX),
-    Field('userCondition', 'integer'),
+    Field('userCondition', 'integer'), # Deprecated in favor of the user model condition
     Field('initialLogin', 'datetime'),
     migrate=MIGRATE,
     fake_migrate=FAKE_MIGRATE)

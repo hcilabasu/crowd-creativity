@@ -126,10 +126,6 @@ def check_updates():
         return False
 
 def get_all_tags():
-    # problem_id = util.get_problem_id(request)
-    # tags = db((db.tag.id > 0) & (db.tag.problem == problem_id)).select(db.tag.tag, orderby=db.tag.tag)
-    
-
     user_id = session.user_id
     problem_id = util.get_problem_id(request)
     tags = db((db.idea.id == db.tag_idea.idea) & 

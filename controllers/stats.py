@@ -252,7 +252,7 @@ def __get_users_in_problem(problem_id, blacklist=[]):
         (db.idea.problem == problem_id) & 
         (db.idea.userId == db.user_info.id) &
         (~db.idea.userId.belongs(blacklist))
-    ).select(db.idea.userId, db.user_info.userId, distinct=True)
+    ).select(db.idea.userId, db.user_info.userId, db.user_info.initialLogin, distinct=True)
 
 def __check_auth():
     pwd = request.vars['pwd']
