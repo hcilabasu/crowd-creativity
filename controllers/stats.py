@@ -81,6 +81,12 @@ def organize_tags():
         counts[t.id] = db(db.tag_idea.tag == t.id).count()
     return dict(problem=problem, tags=tags, counts=counts)
 
+def get_ideas_by_tag():
+    tag_id = long(request.vars['id'])
+    ideas = db((db.tag_idea.tag == tag_id) &
+        (db.idea.id == db.tag_idea.idea)).select()
+    return ideas.as_json()
+
 def update_tags():
     __check_auth()
     problem_id = long(request.vars['problem'])

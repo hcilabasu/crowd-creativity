@@ -147,6 +147,20 @@ table {
     position: relative;
 }
 
+.tag span {
+    cursor: pointer;
+}
+
+#ideas-display {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 400px;
+    color: white;
+    list-style-type: decimal;
+}
+
+
 .organize-tags li > a.promote,
 .organize-tags li > a.demote {
     position: absolute;

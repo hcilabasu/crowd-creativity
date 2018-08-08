@@ -26,7 +26,7 @@
 
     <ul class="organize-tags">
         {{for t in tags:}}
-            <li data-id="{{=t.id}}" class="{{='demoted' if t.replacedBy else ''}}">
+            <li data-id="{{=t.id}}" class="tag {{='demoted' if t.replacedBy else ''}}">
                 <span>{{=t.tag}} ({{=counts[t.id]}})</span>
                 <a class="promote">&lt;</a>
                 <a class="demote">&gt;</a>
@@ -38,6 +38,9 @@
     </ul>
     <p>
     </p>
+
+    <ol id="ideas-display">
+    </ol>
 
     <form method="POST" action="{{=URL('stats','update_tags')}}">
         <input type="hidden" id="tagsInput" name="tags"/>
@@ -89,6 +92,24 @@
                 });
                 // TODO implement submission
                 $('#tagsInput').val(JSON.stringify(tags));
+            });
+
+            $('.tag span').click(function(){
+                var tagId = $(this).closest('li').data('id');
+                $.ajax({
+                    method: 'GET',
+                    url: '{{=URL("stats", "get_ideas_by_tag")}}',
+                    data: {id:tagId},
+                    success: function(data){
+                        var ideas = JSON.parse(data);
+                        var container = $('#ideas-display');
+                        container.empty();
+                        for (let i = 0; i < ideas.length; i++) {
+                            const idea = ideas[i].idea.idea;
+                            container.append($('<li>'+idea+'</li>'));                       
+                        }
+                    }
+                });
             });
 
         });
