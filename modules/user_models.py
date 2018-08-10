@@ -56,8 +56,9 @@ class UserModel(object):
         ''' new_categories is an array. It's length can be 1 or 2'''
         db = current.db
         # Assign condition if this is the first idea
-        if self.user_condition == -1:
+        if self.last_cat == None:
             self.user_condition = util.get_available_conditions().conditionNumber
+            self.count_pair = -1 # count_pair should be 0 after first idea
             # Log
             current.log_action(self.user, self.problem, 'create_user_model', {'condition':self.user_condition})
         # Update timestamp
@@ -68,7 +69,7 @@ class UserModel(object):
         self.transition_graph.update(new_categories)
         self.category_matrix.update(new_categories)
         # Check if there was a transition
-        if Counter(self.last_cat) != Counter(new_categories):
+        if self.last_cat != None and (Counter(self.last_cat) != Counter(new_categories)):
             self.count_transition_pairs += 1
         self.last_cat = new_categories
         query = ((db.user_model.user == self.user) & (db.user_model.problem == self.problem))

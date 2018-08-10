@@ -33,7 +33,7 @@
             <h2>Basic stats</h2>
 
             <ul class="underlined">
-                <li><strong>Number of ideas</strong> {{=model.count_pair + 1}} </li>
+                <li><strong>Number of ideas</strong> {{=model.get_num_ideas()}} </li>
                 <li>
                     <strong>Category switching ratio</strong> 
                     {{if model.count_pair > 0:}} 
