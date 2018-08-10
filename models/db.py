@@ -153,6 +153,7 @@ db.define_table('tag',
 db.define_table('tag_idea',
     Field('tag', 'reference tag'),
     Field('idea', 'reference idea'),
+    Field('replaced_tag', 'reference tag'),
     migrate=MIGRATE,
     fake_migrate=FAKE_MIGRATE)
 

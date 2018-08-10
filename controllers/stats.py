@@ -91,37 +91,61 @@ def update_tags():
     __check_auth()
     problem_id = long(request.vars['problem'])
     tags = json.loads(request.vars['tags'])
-    
+    print('')
+    print('')
+    print('Update tags...')
+    print(tags)
+    for t in tags:
+        tag = t['tag']
+        parent = t['parent'] if 'parent' in t else None
+        # Get tag from DB
+        db_tag = db(db.tag.id == tag).select().first()
+        if 'parent' in t:
+            # Tag is demoted. Now we check to see if it has the right parent.
+            # If it does, do nothing. If it doesn't, replace the parent.
+            if db_tag.replacedBy != parent:
+                # Tag is demoted but has the wrong parent. Update in DB
+                print('DEMOTE '),
+                __change_parent(db_tag, parent)
+        else:
+            # Tag
+            if db_tag.replacedBy != None:
+                print('PROMOTE '),
+                # Tag was demoted in DB, but not anymore. Promote it. 
+                __change_parent(db_tag, None)
+    # Regenerate models
+    __regenerate_models()
     # Redirect back
-    return 0
-    # TODO Ideally we would now redirect back to the page, 
-    # but for some reason this is returning a 400 bad request error.
-    # redirect(URL('stats','index?problem=' + problem_id))
+    url = 'organize_tags?problem=%d' % problem_id
+    redirect(URL('stats', url))
+
+def __change_parent(db_tag, parent_id):
+    print('Tag: %s, Replaced By: %s, new parent: %s' % (str(db_tag.id), str(db_tag.replacedBy), str(parent_id)))
+    has_parent = db_tag.replacedBy != None
+    ''' Changes the parent of the tag in the DB. If parent_id == None, removes parent'''
+    # Change actual tag
+    db_tag.replacedBy = parent_id
+    db_tag.update_record()
+    # Change tag in tag_idea table
+    query = (db.tag_idea.replaced_tag == db_tag.id) if has_parent else (db.tag_idea.tag == db_tag.id)
+    tag_ideas = db(query).select()
+    print('Found %d tags' % len(tag_ideas))
+    for t in tag_ideas:
+        if parent_id == None:
+            print('parent_id == None')
+            # Reset tag to no parent
+            t.tag = t.replaced_tag
+            t.replaced_tag = None
+        else:
+            # Add parent
+            t.tag = parent_id
+            t.replaced_tag = db_tag.id
+        t.update_record()
 
 def regenerate_models():
     __check_auth()
     # Delete all models
-    users = db(db.user_model.id > 0).select()
-    for u in users:
-        u.last_cat = None
-        u.count_pair = 0
-        u.count_transition_pairs = 0
-        u.transition_graph = '[]'
-        u.category_matrix = '{}'
-        u.update_record()
-    # Get all ideas
-    ideas = db(db.idea.id > 0).select()
-    # For each idea, get tags and update model
-    for i in ideas:
-        # Get tags
-        tags = db((db.tag_idea.idea == i.id) & (db.tag.id == db.tag_idea.tag)).select(db.tag.tag, groupby=db.tag_idea.id)
-        tags = [t.tag for t in tags]
-        # Get contextual info
-        problem_id = i.problem
-        user_id = i.userId
-        # Get model and update it
-        model = user_models.UserModel(user_id, problem_id)
-        model.update(tags)
+    __regenerate_models()
     # Send back to stats
     redirect(URL('stats','index'))
 
@@ -194,6 +218,29 @@ def download_ideas():
     # Return
     filename = 'ideas_%d_%s.csv' % (problem_id, datetime.date.today())
     return __prepare_csv_response(fields, records, filename, problem_id)
+
+def __regenerate_models():
+    users = db(db.user_model.id > 0).select()
+    for u in users:
+        u.last_cat = None
+        u.count_pair = 0
+        u.count_transition_pairs = 0
+        u.transition_graph = '[]'
+        u.category_matrix = '{}'
+        u.update_record()
+    # Get all ideas
+    ideas = db(db.idea.id > 0).select()
+    # For each idea, get tags and update model
+    for i in ideas:
+        # Get tags
+        tags = db((db.tag_idea.idea == i.id) & (db.tag.id == db.tag_idea.tag)).select(db.tag.tag, groupby=db.tag_idea.id)
+        tags = [t.tag for t in tags]
+        # Get contextual info
+        problem_id = i.problem
+        user_id = i.userId
+        # Get model and update it
+        model = user_models.UserModel(user_id, problem_id)
+        model.update(tags)
 
 def __prepare_csv_response(fields, records, filename, problem_id):
     # Create file

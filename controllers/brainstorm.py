@@ -144,8 +144,9 @@ def __insert_tags_for_idea(tags, idea_id, problem_id):
     for tag in tags:
         tag = __clean_tag(tag)
         tag_id = __insert_or_retrieve_tag_id(tag, problem_id)
+        print(tag_id)
         # Inserting relationships
-        db.tag_idea.insert(tag=tag_id, idea=idea_id)
+        db.tag_idea.insert(tag=tag_id[0], idea=idea_id, replaced_tag=tag_id[1])
 
 def __create_new_user(user_name):
     session.user_name = user_name
@@ -172,11 +173,18 @@ def __clean_tag(tag):
     return tag
 
 def __insert_or_retrieve_tag_id(tag, problem_id):
-    tagResult = db((db.tag.tag == tag) & (db.tag.problem == problem_id)).select(db.tag.id)
+    ''' 
+    Returns a tuple with the id of the tag in position 0, 
+    and the id of the original tag if it's been replaced (through the tag manager).
+    If the tag has not been replaced, position 1 will hold None.
+    '''
+    tagResult = db((db.tag.tag == tag) & (db.tag.problem == problem_id)).select()
     if tagResult:
-        return tagResult[0].id
+        if tagResult[0].replacedBy != None:
+            return (tagResult[0].replacedBy, tagResult[0].id)
+        return (tagResult[0].id, None)
     else:
-        return db.tag.insert(tag=tag, problem=problem_id)
+        return (db.tag.insert(tag=tag, problem=problem_id), None)
 
 def __update_user_model(user_id, problem_id, tags):
     model = user_models.UserModel(user_id, problem_id)
