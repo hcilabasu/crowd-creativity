@@ -265,6 +265,7 @@ def __get_data(problem_id):
         'condition',
         'num_ideas',
         'num_inspirations',
+        'num_clicks_sp',
         'breadth',
         'depth_avg',
         'depth_max',
@@ -275,16 +276,26 @@ def __get_data(problem_id):
     records = []
     for u in users:
         model = user_models.UserModel(u.idea.userId, problem_id)
+        # Get the number of inspiration requests
         num_inspirations = db(
             (db.action_log.problem == problem_id) & 
             (db.action_log.userId == u.idea.userId) &
             (db.action_log.actionName == 'get_available_tasks')).count()
+        
+        # Get the number of clicks on a solution space cell
+        num_clicks_sp = db(
+            (db.action_log.problem == problem_id) & 
+            (db.action_log.userId == u.idea.userId) &
+            (db.action_log.actionName == 'get_ideas')).select().find(lambda r : 'tags' in r.extraInfo)
+        
+        # Create record
         user_record = [
             problem_id,
             u.idea.userId,
             model.user_condition,
             model.get_num_ideas(),
             num_inspirations,
+            len(num_clicks_sp),
             model.get_breadth(),
             model.get_depth_avg(),
             model.get_depth_max(),

@@ -133,16 +133,16 @@
         <table id="logs">
             <thead>
                 <tr>
-                    <th>Action</th>
                     <th>Timestamp</th>
+                    <th>Action</th>
                     <th>More info</th>
                 </tr>
             </thead>
             <tbody>
                 {{for l in logs:}}
                     <tr class="{{=l.actionName}}">
-                        <td>{{=l.actionName}}</td>
                         <td>{{=l.dateAdded}}</td>
+                        <td>{{=l.actionName}}</td>
                         <td>{{=l.extraInfo}}</td>
                     </tr>
                 {{pass}}
