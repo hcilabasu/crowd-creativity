@@ -56,7 +56,7 @@ def infer_categories(reference_user, nearest_users, exclude_existing=False):
         for c in nn_categories.keys(): # ... and for each category...
             if (exclude_existing and c not in reference_categories.keys()) or not exclude_existing: #... if it is not in the reference model (that is, the reference model hasn't visited it)
                 categories[c].append(nn_categories[c])  #... then add the the list of categories
-    results = sorted([(k, numpy.sum(v)) for k,v in categories.items()], key=itemgetter(1), reverse=True)
+    results = sorted([(k, numpy.average(v)) for k,v in categories.items()], key=itemgetter(1), reverse=True)
     return results
 
 def get_inferred_categories(user_id, problem_id, db):
