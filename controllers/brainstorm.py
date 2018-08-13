@@ -17,6 +17,9 @@ from string import punctuation
 NUKE_KEY = 'blastoise'
 ADD_TO_POOL = False
 TASKS_PER_IDEA = 4 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
+DEBUG = False
+if settings['is_development']:
+    DEBUG = True # Allow debugging options
 
 def index():
     user_id = session.user_id
@@ -137,6 +140,59 @@ def get_all_tags():
     response.headers['Content-Type'] = 'text/json'
     return json.dumps(tags) 
 
+def reset_problem():
+    if not DEBUG:
+        return 'Not debug'
+    url_id = request.vars['url']
+    if not url_id:
+        return 'Inform URL ID'
+    if not hasattr(testproblems, url_id):
+        return 'Not a test problem'
+    # Delete problem in database
+    db_problem = db(db.problem.url_id == url_id).delete()
+    # Create problem
+    problem_id = db.problem.insert(
+        title = url_id,
+        description = url_id,
+        url_id = url_id,
+        public = True)
+    # Get test problem data
+    tag_sequences = getattr(testproblems, url_id)
+    # create users
+    users = dict()
+    for i in range(len(tag_sequences)):
+        # Create users name
+        user_name = 'testuser' + str(i)
+        # check if user already exists
+        db_user = db(db.user_info.userId == user_name).select().first()
+        if not db_user:
+            user_id = db.user_info.insert(
+                userId=user_name,
+                userCondition=0,
+                initialLogin=datetime.datetime.now())
+        else:
+            user_id = db_user.id
+        # Keep track of the DB id for each testuser
+        users[i] = user_id
+    # insert ideas
+    for i, user_tags in enumerate(tag_sequences): # Iterates over each row (user) in the test problem
+        for tags in user_tags: # Iterates over each tag list for a given user
+            idea_id = db.idea.insert(
+                userId=users[i],
+                idea=str(tags),
+                dateAdded=datetime.datetime.now(), 
+                userCondition=0, 
+                problem=problem_id,
+                ratings=0, 
+                pool=True,
+                origin='original',
+                sources=[])
+            __insert_tags_for_idea(tags, idea_id, problem_id)
+            __update_user_model(users[i], problem_id, tags)
+            # Insert tasks
+            idea = dict(id=idea_id, idea=str(tags), tags=tags)
+            __insert_tasks_for_idea(idea, users[i], problem_id, True)
+    return 'Problem reset!'
 
 
 ### PRIVATE FUNCTIONS

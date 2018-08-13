@@ -123,7 +123,7 @@ def update_tags():
                 # Tag was demoted in DB, but not anymore. Promote it. 
                 __change_parent(db_tag, None)
     # Regenerate models
-    __regenerate_models()
+    # __regenerate_models()
     # Redirect back
     url = 'organize_tags?problem=%d' % problem_id
     redirect(URL('stats', url))
