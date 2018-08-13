@@ -26,11 +26,18 @@
 
     <ul class="organize-tags">
         {{for t in tags:}}
-            <li data-id="{{=t.id}}" class="tag {{='demoted' if t.replacedBy else ''}}">
-                <span>{{=t.tag}} ({{=counts[t.id]}})</span>
+            <li data-id="{{=tags[t]['id']}}" class="tag">
+                <span>{{=tags[t]['tag']}} ({{=counts[tags[t]['id']]}})</span>
                 <a class="promote">&lt;</a>
                 <a class="demote">&gt;</a>
             </li>
+            {{for c in tags[t]['children']:}}
+                <li data-id="{{=c['id']}}" class="tag demoted">
+                    <span>{{=c['tag']}} ({{=counts[c['id']]}})</span>
+                <a class="promote">&lt;</a>
+                <a class="demote">&gt;</a>
+                </li>
+            {{pass}}
         {{pass}}
         <li class="new">
             <a class="btn" id="createNew">Create new tag</a>

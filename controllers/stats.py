@@ -74,11 +74,20 @@ def organize_tags():
     __check_auth()
     problem_id = long(request.vars['problem'])
     problem = db(db.problem.id == problem_id).select().first()
-    tags = db(db.tag.problem == problem_id).select()
-    # Get counts for each tag
+    tags = db(db.tag.problem == problem_id).select(orderby=db.tag.replacedBy)
+    # Get counts for each tag and create structure
     counts = defaultdict(int)
+    structure = dict()
     for t in tags:
-        counts[t.id] = db(db.tag_idea.tag == t.id).count()
+        # Get counts
+        counts[t.id] = db((db.tag_idea.tag == t.id) | (db.tag_idea.replaced_tag == t.id)).count()
+        # Add to structure
+        tag = dict(id=t.id, tag=t.tag, children=[])
+        if not t.replacedBy:
+            structure[t.id] = tag
+        else:
+            structure[t.replacedBy]['children'].append(tag)
+    tags = structure
     return dict(problem=problem, tags=tags, counts=counts)
 
 def get_ideas_by_tag():
