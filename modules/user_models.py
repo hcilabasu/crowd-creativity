@@ -123,8 +123,8 @@ class UserModel(object):
             if adjacent:
                 categories.append(adjacent)
             # 3. Most likely inferred category
-            inferred = inferred_categories.pop(0)
-            if inferred:
+            if inferred_categories:
+                inferred = inferred_categories.pop(0)
                 categories.append(inferred[0])
             
             # DEPRECATED:   the code below would randomly select either 
@@ -359,12 +359,12 @@ class CategoryMatrix(ModelRepresentation):
         '''
         Gets a list of the user's categories standardized by some method (e.g. z score)
         '''
-        values = [self.model[k] for k in self.model.keys()]
-        avg = numpy.mean(values)
-        sdev = numpy.std(values)
+        # values = [self.model[k] for k in self.model.keys()]
+        # avg = numpy.mean(values)
+        # sdev = numpy.std(values)
         std_cats = dict()
         for k in self.model.keys():
-            std_cats[k] = 1 # TODO normalize by largest value (e.g. largest value = 5, smallest 1)
+            std_cats[k] = self.model[k] # TODO normalize by largest value (e.g. largest value = 5, smallest 1)
             # if sdev != 0:
             #     std_cats[k] = (self.model[k] - avg) / sdev
             # else:

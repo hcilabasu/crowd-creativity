@@ -56,7 +56,7 @@ def usermodel():
     models = []
     for u in all_users:
         models.append(user_models.UserModel(u.idea.userId, problem_id))
-    nearest_neighbors = collab_filter.find_n_nearest(user_model, models, 5)
+    nearest_neighbors = collab_filter.find_n_nearest(user_model, models, 5, db)
     # Infer categories from nearest neighbors
     inferred = collab_filter.infer_categories(user_model, nearest_neighbors, True)
     # Get logs

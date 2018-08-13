@@ -2,12 +2,14 @@ import numpy
 import user_models
 from operator import itemgetter
 from collections import defaultdict
+import scipy.stats as stats
 
-def find_n_nearest(reference_user, user_models, n):
+def find_n_nearest(reference_user, user_models, n, db):
     # Initialize variables
     reference_tags = reference_user.category_matrix.get_standardized_categories()
     user_item = []
     user_map = dict()
+    problem_id = reference_user.problem
     # tags = []
     similarities = []
     # Calculate similarities
@@ -25,11 +27,13 @@ def find_n_nearest(reference_user, user_models, n):
     }
     tags = [t1, t2, t3, ...]
     '''
+    all_tags = db((db.tag.problem == problem_id) & (db.tag.replacedBy == None)).select(db.tag.tag) # TODO
+    all_tags = [t.tag for t in all_tags]
     # Calculate similarity
     for i, um in enumerate(user_models): # Iterate through the user models to calculate their similarity with the reference
         user_map[i] = um # Update user_map. The user_map maps models to the iteration index (e.g. if the first user id is 54, usar_map[0] == 54)
         std_tags = um.category_matrix.get_standardized_categories() # Gets the standardized list of categories for this user
-        similarities.append(calculate_similarity(reference_tags, std_tags)) # Calculate similarity between this user and reference model
+        similarities.append(calculate_similarity(reference_tags, std_tags, all_tags)) # Calculate similarity between this user and reference model
     # Merge and sort lists by similarity
     merge_lists = [(i, sim) for i,sim in enumerate(similarities)]
     merge_lists = sorted(merge_lists, key=itemgetter(1), reverse=True)
@@ -68,12 +72,12 @@ def get_inferred_categories(user_id, problem_id, db):
     models = []
     for u in all_users:
         models.append(user_models.UserModel(u.idea.userId, problem_id))
-    nearest_neighbors = find_n_nearest(user_model, models, 5)
+    nearest_neighbors = find_n_nearest(user_model, models, 5, db)
     # Infer categories from nearest neighbors
     inferred = infer_categories(user_model, nearest_neighbors, True)
     return inferred
 
-def calculate_similarity(model1, model2):
+def calculate_similarity(model1, model2, all_tags):
     '''
     model1 and model2 = dict(
         t1: n, 
@@ -81,11 +85,13 @@ def calculate_similarity(model1, model2):
         ...
     )
     '''
-    dists = []
-    for k in model1.keys():
-        if k in model2:
-            dists.append(1)
-    # TODO Find a better function for similarity
-    sim = numpy.sum(dists).item()
-    # print('Sim: %s for model1: %s and model 2: %s' % (str(sim), str(model1.keys()), str(model2.keys())))
-    return sim
+    # Create arrays, since dicts don't guarantee order
+    m1 = []
+    m2 = []
+    get_val = lambda d,k: d[k] if k in d else 0 
+    for k in all_tags:
+        m1.append(get_val(model1, k))
+        m2.append(get_val(model2, k))
+    sim = stats.pearsonr(m1,m2)
+    print(sim)
+    return sim[0]
