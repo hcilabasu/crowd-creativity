@@ -87,7 +87,7 @@ def organize_tags():
             structure[t.id] = tag
         else:
             structure[t.replacedBy]['children'].append(tag)
-    tags = structure
+    tags = sorted([v for k,v in structure.items()], key=lambda tag : tag['tag'])
     return dict(problem=problem, tags=tags, counts=counts)
 
 def get_ideas_by_tag():
@@ -136,7 +136,7 @@ def __change_parent(db_tag, parent_id):
     db_tag.replacedBy = parent_id
     db_tag.update_record()
     # Change tag in tag_idea table
-    query = (db.tag_idea.replaced_tag == db_tag.id) if has_parent else (db.tag_idea.tag == db_tag.id)
+    query = (db.tag_idea.replaced_tag == db_tag.id) if has_parent else ((db.tag_idea.tag == db_tag.id) & (db.tag_idea.replaced_tag == None))
     tag_ideas = db(query).select()
     print('Found %d tags' % len(tag_ideas))
     for t in tag_ideas:

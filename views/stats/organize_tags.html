@@ -26,12 +26,12 @@
 
     <ul class="organize-tags">
         {{for t in tags:}}
-            <li data-id="{{=tags[t]['id']}}" class="tag">
-                <span>{{=tags[t]['tag']}} ({{=counts[tags[t]['id']]}})</span>
+            <li data-id="{{=t['id']}}" class="tag">
+                <span>{{=t['tag']}} ({{=counts[t['id']]}})</span>
                 <a class="promote">&lt;</a>
                 <a class="demote">&gt;</a>
             </li>
-            {{for c in tags[t]['children']:}}
+            {{for c in t['children']:}}
                 <li data-id="{{=c['id']}}" class="tag demoted">
                     <span>{{=c['tag']}} ({{=counts[c['id']]}})</span>
                 <a class="promote">&lt;</a>
