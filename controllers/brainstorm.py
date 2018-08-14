@@ -94,7 +94,7 @@ def add_idea():
             origin=origin,
             sources=sources)
         # Inserting tags
-        __insert_tags_for_idea(tags, idea_id, problem_id)
+        inserted_tags = __insert_tags_for_idea(tags, idea_id, problem_id)
         # If idea was merged, update replacedBy on the original ideas
         # if origin == 'merge' or origin == 'refinement':
         #     for source in sources:
@@ -102,11 +102,11 @@ def add_idea():
         #         source_idea.replacedBy = idea_ide).select().first()
         #         source_idea.replacedBy = idea_id
         #         source_idea.update_record()
-        idea = dict(id=idea_id, idea=idea, tags=tags)
+        idea = dict(id=idea_id, idea=idea, tags=inserted_tags)
         # Insert tasks
         __insert_tasks_for_idea(idea, user_id, problem_id, ADD_TO_POOL)
         # Update user model
-        __update_user_model(user_id, problem_id, tags)
+        __update_user_model(user_id, problem_id, inserted_tags)
         # Log
         log_action(user_id, problem_id, "add_idea", idea)
     return json.dumps(dict(id=idea_id))
@@ -209,12 +209,16 @@ def reset_problem():
 
 ### PRIVATE FUNCTIONS
 def __insert_tags_for_idea(tags, idea_id, problem_id):
+    inserted_tags = []
     for tag in tags:
         tag = __clean_tag(tag)
         tag_id = __insert_or_retrieve_tag_id(tag, problem_id)
         print(tag_id)
         # Inserting relationships
         db.tag_idea.insert(tag=tag_id[0], idea=idea_id, replaced_tag=tag_id[1])
+        tag_name = db(db.tag.id == tag_id[0]).select().first().tag # This is necessary since the tag the user inserted may have been replaced by another
+        inserted_tags.append(tag_name)
+    return inserted_tags
 
 def __create_new_user(user_name):
     session.user_name = user_name
