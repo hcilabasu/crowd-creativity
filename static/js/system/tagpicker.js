@@ -10,6 +10,7 @@ External dependencies:
 $.fn.tagPicker = function(action, params){
 
 	var topContainer = this; // This is the container on which the plugin was called on
+	var serverCheck = undefined;
 
 	/*
 	Fetches the tags through AJAX and adds them to the tagslist
@@ -125,8 +126,35 @@ $.fn.tagPicker = function(action, params){
 	}
 
 	/*
+	Checks for extra info on the tag on the server side (e.g. if the tag has been replaced by another).
+	*/
+	var checkExtraInfo = function(tag, placeholder){
+		var timer = 500;
+		window.clearTimeout(serverCheck); // Clear any previous timeouts
+		// Call check function with 'timer' delay
+		serverCheck = window.setTimeout(function(){
+			$.ajax({
+				method: 'GET',
+				url: URL.checkTag,
+				data: {tag:tag},
+				success: function(data){
+					if(data.replacedBy){
+						var replacedBy = data.replacedBy;
+						$('.mergedTag', placeholder)
+							.text('('+replacedBy+')')
+							.attr('title','The tag you chose has been replaced by the tag "'+replacedBy+'". When you add the idea, it will be classified under "'+replacedBy+'"');
+					} else {
+						$('.mergedTag', placeholder).text('').attr('title','');
+					}
+				}
+			});
+		}, timer);
+	}
+
+	/*
 	This function responds to a change in the tags hidden input.
 	It reflects that change in both the placeholders and the text inputs.
+	It also checks extra info on the tag
 	*/
 	var tagChange = function(e, topContainer){
 		var input = $(e.target);
@@ -145,6 +173,8 @@ $.fn.tagPicker = function(action, params){
 			placeholder.removeClass('empty');
 			// Add tag to input
 			tagInput.val(tag).change();
+			// Check extra info on tag
+			checkExtraInfo(tag, placeholder);
 		}
 		// Clear the remaining ones
 		for (let j = i; j < i + deltaTagsPlaceholders; j++) {

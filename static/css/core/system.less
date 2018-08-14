@@ -1651,6 +1651,7 @@ textarea.ideaInput + div {
     border-radius: 10px !important;
     border: none !important;
     box-shadow: 0 0 5px rgba(0,0,0,0.2) !important;
+    z-index: 10001 !important;
 }
 
 /* Tag picker */
@@ -1730,6 +1731,11 @@ textarea.ideaInput + div {
             font-weight: bolder;
             opacity: 1;
             font-family: "Arial Black"
+        }
+
+        .mergedTag {
+            font-weight: bolder;
+            text-decoration: underline;
         }
 
         &::after {

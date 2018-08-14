@@ -140,6 +140,18 @@ def get_all_tags():
     response.headers['Content-Type'] = 'text/json'
     return json.dumps(tags) 
 
+def check_tag():
+    problem_id = util.get_problem_id(request)
+    tag = request.vars['tag']
+    # Check if the tag has been replaced by another tag
+    tag = db((db.tag.tag == tag) & (db.tag.problem == problem_id)).select().first()
+    replacedBy = None
+    if tag and tag.replacedBy:
+        replacedBy = db(db.tag.id == tag.replacedBy).select().first().tag
+    # Send response
+    response.headers['Content-Type'] = 'text/json'
+    return json.dumps(dict(replacedBy=replacedBy))
+
 def reset_problem():
     if not DEBUG:
         return 'Not debug'
