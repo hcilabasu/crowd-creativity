@@ -100,28 +100,23 @@ def update_tags():
     __check_auth()
     problem_id = long(request.vars['problem'])
     tags = json.loads(request.vars['tags'])
-    print('')
-    print('')
-    print('Update tags...')
-    print(tags)
     for t in tags:
-        tag = t['tag']
-        parent = t['parent'] if 'parent' in t else None
-        # Get tag from DB
-        db_tag = db(db.tag.id == tag).select().first()
-        if 'parent' in t:
-            # Tag is demoted. Now we check to see if it has the right parent.
-            # If it does, do nothing. If it doesn't, replace the parent.
-            if db_tag.replacedBy != parent:
-                # Tag is demoted but has the wrong parent. Update in DB
-                print('DEMOTE '),
-                __change_parent(db_tag, parent)
-        else:
-            # Tag
-            if db_tag.replacedBy != None:
-                print('PROMOTE '),
-                # Tag was demoted in DB, but not anymore. Promote it. 
-                __change_parent(db_tag, None)
+        if 'tag' in t:
+            tag = t['tag']
+            parent = t['parent'] if 'parent' in t else None
+            # Get tag from DB
+            db_tag = db(db.tag.id == tag).select().first()
+            if 'parent' in t:
+                # Tag is demoted. Now we check to see if it has the right parent.
+                # If it does, do nothing. If it doesn't, replace the parent.
+                if db_tag.replacedBy != parent:
+                    # Tag is demoted but has the wrong parent. Update in DB
+                    __change_parent(db_tag, parent)
+            else:
+                # Tag
+                if db_tag.replacedBy != None:
+                    # Tag was demoted in DB, but not anymore. Promote it. 
+                    __change_parent(db_tag, None)
     # Regenerate models
     __regenerate_models()
     # Redirect back
@@ -129,7 +124,6 @@ def update_tags():
     redirect(URL('stats', url))
 
 def __change_parent(db_tag, parent_id):
-    print('Tag: %s, Replaced By: %s, new parent: %s' % (str(db_tag.id), str(db_tag.replacedBy), str(parent_id)))
     has_parent = db_tag.replacedBy != None
     ''' Changes the parent of the tag in the DB. If parent_id == None, removes parent'''
     # Change actual tag
@@ -138,10 +132,8 @@ def __change_parent(db_tag, parent_id):
     # Change tag in tag_idea table
     query = (db.tag_idea.replaced_tag == db_tag.id) if has_parent else ((db.tag_idea.tag == db_tag.id) & (db.tag_idea.replaced_tag == None))
     tag_ideas = db(query).select()
-    print('Found %d tags' % len(tag_ideas))
     for t in tag_ideas:
         if parent_id == None:
-            print('parent_id == None')
             # Reset tag to no parent
             t.tag = t.replaced_tag
             t.replaced_tag = None
@@ -271,6 +263,7 @@ def __get_data(problem_id):
     fields = [
         'problem_id',
         'user_id',
+        'public_id',
         'condition',
         'num_ideas',
         'num_inspirations',
@@ -284,6 +277,7 @@ def __get_data(problem_id):
     # TODO get data
     records = []
     for u in users:
+        public_id = db(db.user_info.id == u.idea.userId).select(db.user_info.userId).first().userId
         model = user_models.UserModel(u.idea.userId, problem_id)
         # Get the number of inspiration requests
         num_inspirations = db(
@@ -301,6 +295,7 @@ def __get_data(problem_id):
         user_record = [
             problem_id,
             u.idea.userId,
+            public_id,
             model.user_condition,
             model.get_num_ideas(),
             num_inspirations,
