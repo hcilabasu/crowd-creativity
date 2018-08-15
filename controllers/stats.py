@@ -264,6 +264,7 @@ def __get_data(problem_id):
         'problem_id',
         'user_id',
         'public_id',
+        'initial_login',
         'condition',
         'num_ideas',
         'num_inspirations',
@@ -277,7 +278,9 @@ def __get_data(problem_id):
     # TODO get data
     records = []
     for u in users:
-        public_id = db(db.user_info.id == u.idea.userId).select(db.user_info.userId).first().userId
+        user = db(db.user_info.id == u.idea.userId).select().first()
+        public_id = user.userId
+        initial_login = user.initialLogin
         model = user_models.UserModel(u.idea.userId, problem_id)
         # Get the number of inspiration requests
         num_inspirations = db(
@@ -296,6 +299,7 @@ def __get_data(problem_id):
             problem_id,
             u.idea.userId,
             public_id,
+            initial_login,
             model.user_condition,
             model.get_num_ideas(),
             num_inspirations,
