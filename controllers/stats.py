@@ -271,7 +271,7 @@ def __get_data(problem_id):
         'breadth',
         'depth_avg',
         'depth_max',
-        'category_switch_ratio'
+        'category_switch_ratio',
         'model_url',
         ]
     # TODO get data
