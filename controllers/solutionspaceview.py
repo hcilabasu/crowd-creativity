@@ -83,7 +83,7 @@ def get_solution_space():
     #     timestamp=datetime.datetime.now())
     
     # Log
-    log_action(user_id, problem_id, 'get_solution_space', {'cache': (cache != None)})
+    log_action(user_id, problem_id, 'get_solution_space', {'cache': (cache != None), 'tags': final_tags})
     
     return outcome
 

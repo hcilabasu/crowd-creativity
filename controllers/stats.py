@@ -1,12 +1,17 @@
+# -*- coding: utf-8 -*-
+
 import user_models
 import collab_filter
 import json
 import datetime
 import cStringIO
 import csv
+import numpy
+import re
 from collections import defaultdict
 
 CONDITIONS = dict(control=1,subtle=2,overt=3,all=4)
+SESSION_DURATION = 15 # IN MINUTES
 
 def index():
     __check_auth()
@@ -220,6 +225,30 @@ def download_ideas():
     filename = 'ideas_%d_%s.csv' % (problem_id, datetime.date.today())
     return __prepare_csv_response(fields, records, filename, problem_id)
 
+def download_events():
+    __check_auth()
+    problem_id = long(request.vars['problem'])
+    fields = [
+        'condition',
+        'user',
+        'event',
+        'time_delta', # time, in seconds, from wich the event happened 
+        'seconds', # time, in seconds, from wich the event happened
+        'extra_info', # e.g. the actual idea
+        'breadth' # total breadh up to this event
+    ]
+    users = __get_users_in_problem(problem_id)
+    records = []
+    for u in users:
+        user = db(db.user_info.id == u.idea.userId).select().first()
+        model = db((db.user_model.user == user.id) & (db.user_model.problem == problem_id)).select().first()
+        condition = model.user_condition
+        events = __get_events_per_user(user, problem_id, condition)
+        records.extend(events)
+    # Prepare response
+    filename = 'events_%d_%s.csv' % (problem_id, datetime.date.today())
+    return __prepare_csv_response(fields, records, filename, problem_id)
+
 def __regenerate_models():
     users = db(db.user_model.id > 0).select()
     for u in users:
@@ -251,7 +280,15 @@ def __prepare_csv_response(fields, records, filename, problem_id):
     csv_file.writerow(fields)
     # Write fields
     for r in records:
-        csv_file.writerow(r)
+        updated_row = []
+        for c in r:
+            try:
+                u_c = unicode(c)
+                u_c = unicodedata.normalize('NFKD', u_c).encode('ascii','ignore')
+                updated_row.append(u_c)
+            except Exception:
+                updated_row.append(c)
+        csv_file.writerow(updated_row)
     # Prepare response
     response.headers['Content-Type']='application/vnd.ms-excel'
     response.headers['Content-Disposition']='attachment; filename=%s' % filename
@@ -267,11 +304,18 @@ def __get_data(problem_id):
         'initial_login',
         'condition',
         'num_ideas',
+        'num_refined',
+        'num_combined',
         'num_inspirations',
         'num_clicks_sp',
         'breadth',
         'depth_avg',
         'depth_max',
+        'breadth_1',
+        'breadth_2',
+        'avg_click_i',
+        'sp_fulfill',
+        'insp_fulfill',
         'category_switch_ratio',
         'model_url',
         ]
@@ -293,7 +337,22 @@ def __get_data(problem_id):
             (db.action_log.problem == problem_id) & 
             (db.action_log.userId == u.idea.userId) &
             (db.action_log.actionName == 'get_ideas')).select().find(lambda r : 'tags' in r.extraInfo)
-        
+
+        # Get the number of refined and combined ideas
+        refined = db(
+            (db.idea.problem == problem_id) & 
+            (db.idea.userId == u.idea.userId) &
+            (db.idea.origin == 'refinement')).count()
+        combined = db(
+            (db.idea.problem == problem_id) & 
+            (db.idea.userId == u.idea.userId) &
+            (db.idea.origin == 'combine')).count()
+            
+        breadth_1, breadth_2 = __get_breadth_per_half(user, problem_id)
+
+        # Get fulfillment and related metrics
+        fulfill = __get_fulfillment_metrics(user, problem_id)
+
         # Create record
         user_record = [
             problem_id,
@@ -302,11 +361,18 @@ def __get_data(problem_id):
             initial_login,
             model.user_condition,
             model.get_num_ideas(),
+            refined,
+            combined,
             num_inspirations,
             len(num_clicks_sp),
             model.get_breadth(),
             model.get_depth_avg(),
             model.get_depth_max(),
+            breadth_1, 
+            breadth_2, 
+            fulfill['avg_click_i'],
+            fulfill['sp_fulfill'],
+            fulfill['insp_fulfill'],
             model.category_switch_ratio,
             'http://' + request.env.http_host + URL('stats','usermodel?problem=%d&user=%d' % (problem_id, u.idea.userId)),
         ]
@@ -315,11 +381,153 @@ def __get_data(problem_id):
 
     return fields, records
 
-'''
-Returns a list of all users who contributed in a problem.
-blacklist: list of ids of users to be excluded from this list
-'''
+def __get_fulfillment_metrics(user, problem_id):
+    avg_click_i = []
+    ss_fulfill = []
+    insp_fulfill = []
+    last_ss_cats = []
+    last_insp_cats = []
+    last_tags_cats = [] # Last tags viewd by the user in the ss
+    # Get user logs that we're interested in
+    logs = db((db.action_log.userId == user.id) & (db.action_log.problem == problem_id)).select()
+    for l in logs:
+        extra_info = json.loads(l.extraInfo)
+        if l.actionName == 'get_available_tasks':
+            pass
+            # # Update insp info
+            # tags = []
+            # for task in extra_info['tasks']:
+            #     tags.append(task['tag']['tag'])
+            # last_insp_cats = __update_tags(tags, problem_id)
+            # insp_fulfill.append(0)
+        elif l.actionName == 'get_ordered_tags':
+            # get last ss order
+            tags = extra_info['tags']
+            last_ss_cats = __exclude_nonpool_tags(tags, problem_id, user)
+        elif l.actionName == 'get_ideas' and '"tags":' in l.extraInfo:
+            tags = extra_info['tags'], problem_id
+            # Update ss info
+            last_tags_cats = tags
+            ss_fulfill.append(0)
+            # Update click information
+            # Get the index of the click
+            for t in tags:
+                if t in last_ss_cats:
+                    avg_click_i.append(last_ss_cats.index(t))
+        elif l.actionName == 'add_idea':
+            # Check against last
+            tags = extra_info['tags'], problem_id
+            for t in tags:
+                if t in last_tags_cats: # if this tag is in the last ss tags
+                    ss_fulfill[len(ss_fulfill)-1] += 1
+                # if t in last_insp_cats: # if this tag is in the last insp tags
+                #     insp_fulfill[len(insp_fulfill)-1] += 1
+
+    # Prepare return dictionary
+    fulfill = dict()
+    fulfill['avg_click_i'] = numpy.average(avg_click_i)
+    fulfill['sp_fulfill'] = numpy.average(ss_fulfill)
+    fulfill['insp_fulfill'] = numpy.average(insp_fulfill)
+    return fulfill
+
+def __get_events_per_user(user, problem_id, condition):
+    ''' Generate a list of events with timestamps based on the initial login time '''
+    half_time = (SESSION_DURATION / 2) * 60 # Half time threshold in seconds (i.e. any idea after this threshold from the start_time is considered 2nd half)
+    # Get starting time
+    start_time = user.initialLogin
+    # Get all ideas
+    logs = db((db.action_log.userId == user.id) & (db.action_log.problem == problem_id)).select()
+    events = []
+    breadth = set()
+    for l in logs:
+        time = l.dateAdded
+        time_delta = (time - start_time)#.total_seconds()
+        action_name = l.actionName
+        extra_info = ''
+        if action_name == 'get_ideas' and 'tags' in l.extraInfo:
+            # This was a click in the solution_space
+            action_name = 'click_sp'
+        elif action_name == 'add_idea':
+            tags = __update_tags(json.loads(l.extraInfo)['tags'], problem_id)
+            breadth.update(tags)
+            extra_info = json.loads(l.extraInfo)['idea']
+        event = [
+            condition,
+            user.id,
+            action_name,
+            time,
+            time_delta,
+            extra_info,
+            len(breadth)
+        ]
+        events.append(event)
+    return events
+
+def __get_breadth_per_half(user, problem_id):
+    ''' Gets measures of breadth separately for first and second half for a given user '''
+    breadth_1 = set()
+    breadth_2 = set()
+    half_time = (SESSION_DURATION / 2) * 60 # Half time threshold in seconds (i.e. any idea after this threshold from the start_time is considered 2nd half)
+    # Get starting time
+    start_time = user.initialLogin
+    # Get all ideas
+    ideas_added = db((db.action_log.userId == user.id) & (db.action_log.problem == problem_id) & (db.action_log.actionName == 'add_idea')).select()
+    for i in ideas_added:
+        time = i.dateAdded
+        tags = __update_tags(json.loads(i.extraInfo)['tags'], problem_id)
+        time_delta = (time - start_time).total_seconds()
+        if time_delta > half_time: # Check if the time difference is greater than threshold
+            breadth_2.update(tags) # it is greater. Idea belongs to second half.
+        else:
+            breadth_1.update(tags) # It is not. Belongs in first half.
+    return len(breadth_1), len(breadth_2)
+
+def __exclude_nonpool_tags(tags, problem_id, user):
+    '''
+    Goes over a list of tags and removes any tags that should not be visible to a given user
+    i.e. excludes non-pool ideas' tags (by users other than user)
+    '''
+    # Get all tags
+    # This is highly inneficient :(
+    all_tags_ids = db(
+        (db.tag_idea.idea == db.idea.id) & 
+        (db.idea.problem == problem_id) &
+        ((db.idea.pool == True) | (db.idea.userId == user.id))
+    ).select(db.tag_idea.tag)
+    all_tags_ids = [t.tag for t in all_tags_ids]
+    all_tags = db(db.tag.id.belongs(all_tags_ids)).select()
+    all_tags = [t.tag for t in all_tags]
+    # Exclude
+    final_tags = []
+    for t in tags:
+        if t in all_tags:
+            final_tags.append(t)
+    return final_tags
+
+def __update_tags(tags, problem_id):
+    ''' 
+    This function checks if a list of tags has been update (through the tag manager). 
+    Returns a list of tags with the most up to date version.
+    '''
+    updated = []
+    for t in tags:
+        updated_tag = db((db.tag.tag == t) & (db.tag.problem == problem_id) & (db.tag.replacedBy != None)).select().first()
+        if updated_tag:
+            # Tag has been updated. Get the replacement.
+            replacement = db(db.tag.id == updated_tag.replacedBy).select().first().tag
+            if replacement not in updated: # Prevent duplicates
+                updated.append(replacement)
+        else:
+            # Tag is not updated
+            if t not in updated: # Prevent duplicates
+                updated.append(t)
+    return updated
+
 def __get_users_in_problem(problem_id, blacklist=[]):
+    '''
+    Returns a list of all users who contributed in a problem.
+    blacklist: list of ids of users to be excluded from this list
+    '''
     return db(
         (db.idea.problem == problem_id) & 
         (db.idea.userId == db.user_info.id) &
