@@ -45,7 +45,7 @@
                 </li>
                 <li><strong>Current category</strong> {{=model.last_cat}} </li>
                 <li>
-                    <strong>Adjacent categories:</strong> {{=', '.join(model.transition_graph.get_adjacent(model.last_cat))}}
+                    <strong>Adjacent categories:</strong> {{=adjacent}}
                 </li>
             </ul>
         </div>    
@@ -55,10 +55,10 @@
 
             <ul class="underlined">
                 <li>
-                    <strong>Next inspiration categories: </strong>{{=', '.join(model.get_inspiration_categories(3))}}
+                    <strong>Next inspiration categories: </strong>{{=inspiration_cats}}
                 </li>
                 <li>
-                    <strong>Views ordering: </strong>{{=', '.join(model.get_ordered_tags())}}
+                    <strong>Views ordering: </strong>{{=ordered_tags}}
                 </li>
                 <!-- <li class="vertical-align">
                     <strong>Inferred categories:</strong>

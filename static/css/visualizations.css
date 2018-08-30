@@ -1,0 +1,365 @@
+
+/* Versioning view */
+#versioningContainer {
+    overflow: hidden;
+	height: 100%;
+	font-size: 0.8em;
+	position: relative;
+}
+
+.loading #versioningContainer {
+	background: white;
+}
+
+	#versioningContainer .header {
+		width: 100%;
+		z-index: 20;
+		text-align: center;
+		background: url(../images/versioning-bg.png) repeat-y;
+		background-position: 0 0;
+		background-size: 55px;
+	}
+
+	.empty #versioningContainer .header,
+	.loading #versioningContainer .header{
+		display: none;
+	}
+
+	#versioningContainer h3 {
+		font-size: 12px;
+		font-weight: normal;
+		display: inline-block;
+		text-align: center;
+		margin-top: 10px;
+	}
+	#versioningContainer h3:first-child {
+		width: 50px;
+		float: left;
+	}
+	#versioningContainer h3:last-child {
+		width: 60px;
+		padding-left: 5px;
+	}
+
+#versioningContainer .legend {
+	position: absolute;
+	bottom: 65px;
+	right: 25px;
+	box-shadow: 0 0 5px rgba(0,0,0,0.2);
+	border: solid 1px #CCC;
+	border-radius: 10px;
+	padding: 5px;	
+	z-index: 20;
+	background: rgba(255,255,255,0.8);
+	display: block;
+}
+
+.loading #versioningContainer .legend,
+.empty #versioningContainer .legend {
+	display: none;
+}
+
+	#versioningContainer .legend ul {
+		margin: 0;
+	}
+	#versioningContainer .legend li {
+		padding: 5px;
+	}
+	
+	#versioningContainer .legend li span {
+		display: inline-block;
+		background: blue;
+		height: 4px;
+		width: 15px;
+		margin-right: 10px;
+	}
+
+	#versioningContainer .legend li.refinement span {
+		background-color: #70AD47;
+	}
+	#versioningContainer .legend li.combine span {
+		background-color: #4472C4;
+	}
+	#versioningContainer .legend li.merge span {
+		background-color: #DF6464;
+	}
+
+.treeView {
+	visibility: visible;
+	display: block;
+	position: absolute;
+	height: calc(100% - 41px);
+	width: 100%;	
+	overflow: scroll;
+	z-index: 15;
+}
+
+.smallIdea {
+	display: inline-block;
+	height: 25px;
+	width: 25px;
+	background: #FFDE78;
+	border-radius: 5px;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	left: 10px;
+	transition: width 0.2s, height 0.2s, transform 0.2s;
+	z-index: 10;
+	cursor: pointer;
+}
+
+.smallIdea.hover,
+.smallIdea:hover {
+	background: #FCBD65;
+	height: 30px;
+	width: 30px;
+	transform: translate(-2.5px, -50%);
+	transition: width 0.2s, height 0.2s, transform 0.2s;
+	box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.node {
+	display: table;
+	width: auto;
+	position: relative;
+	padding: 0;
+	padding-left: 55px;
+	height: 50px;
+}
+
+	.node > .line {
+		height: 4px;
+		width: 50px;
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 5;
+	}
+
+	.node.refinement > .line {background-color: #70AD47;}
+	.node.combine > .line {background-color: #4472C4;}
+	.node.merge > .line {background-color: #DF6464;}
+
+.treeView > .node {
+	background: url(../images/versioning-bg.png) repeat-y;
+	background-position: 0 0;
+	background-size: 55px;
+}
+
+.treeView > .fade {
+	background: url(../images/versioning-fade.png) repeat-y;
+	background-position: top left;
+	background-size: 55px;
+	height: 35px;
+	width: 55px;
+	opacity: 1;
+}
+
+.node > .children {
+	float: right;
+}
+
+.children > .node {
+	display: table;
+}
+
+.node:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+
+/* SOLUTION SPACE */
+#solutionSpaceContainer {
+	position: relative;
+	overflow: scroll;
+	min-width: 100%;
+}
+
+
+#solutionSpaceHeader {
+	background: #DCF0FF;
+	white-space: nowrap;
+	min-width: 100%;
+	padding-left: 40px;
+	padding-right: 40px;
+	height: 40px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 4;
+	border-bottom: solid 2px white;
+	font-size: 0.8em;
+}
+
+#solutionSpaceLeftColumn {
+	background: #DCF0FF;
+	width: 40px;
+	position: absolute;
+	left: 0;
+	top: 40px;
+	z-index: 3;
+	border-right: solid 2px white;
+	font-size: 0.8em;
+	
+}
+
+#solutionSpaceRightColumn {
+	background: #DCF0FF;
+	width: 40px;
+	position: absolute;
+	right: 0;
+	top: 40px;
+	z-index: 3;
+	min-height: 100%;
+}
+
+#spaceContainer {
+	position: absolute;
+	top: 40px;
+	left: 40px;
+	z-index: 2;
+	margin-bottom: 40px;
+	padding-right: 40px;
+}
+
+.spCell {
+	width: 40px;
+	height: 40px;
+	border: solid 2px white;
+	display: block;
+	line-height: 40px;
+	text-align: center;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+#spaceContainer .spCell {
+	position: absolute;
+	border-left: none;
+	border-top: none;
+}
+
+.spCell > span {
+	width: 100%;
+	height: 100%;
+	display: inline-block;
+}
+
+.spRow {
+	display: block;
+	width: 100%;
+	height: 40px;
+	clear: left;
+	overflow: none;
+	white-space: nowrap;
+	border-bottom: solid 1px white;
+}
+
+.spRow:hover {
+	background: rgb(90, 182, 253);
+}
+
+.spRow > .spCell {
+	border: none;
+	border-right: solid 2px white;
+	border-bottom: solid 2px white;
+}
+
+#solutionSpaceHeader .spCell {
+	border-top: none;
+	border-bottom: none;
+	border-left: none;
+	display: inline-block;
+}
+
+#solutionSpaceHeader .spCell:first-child {
+	border-left: solid 2px white;
+	margin-left: -2px;
+	width: 42px;
+}
+
+#solutionSpace .spCell:last-child {
+	border:none;
+}
+
+#solutionSpaceLeftColumn .spCell > span,
+#solutionSpaceHeader .spCell > span {
+	display: inline-block;
+	transform: rotate(-45deg)
+}
+
+#solutionSpaceLeftColumn .spCell,
+#solutionSpaceRightColumn .spCell {
+	border-left: none;
+	border-right: none;
+	border-top: none;
+}
+
+#solutionSpaceLeftColumn .spCell:first-child {
+	border-top: none;
+}
+
+#spaceContainer .spCell {
+	display: inline-block !important;
+	transition: background 0.5s;
+}
+
+.cellHover span {
+	background: rgb(79, 176, 250) !important;
+	transition: background 0.5s;
+}
+
+.headerCell {
+	transition: background 0.5s, color 0.5s;
+}
+
+.cellHover.headerCell {
+	background: rgb(21, 103, 167) !important;
+	font-weight: bolder;
+	color: white;
+	transition: background 0.5s, color 0.5s;
+}
+
+	.cellHover.headerCell span {
+		background: transparent !important;
+	}
+
+#miniMap {
+	display: none;
+	width: 100px;
+	height: 100px;
+	background: white;
+	box-shadow: 0 0 5px rgba(0,0,0,0.2);
+	position: absolute;
+	bottom: 25px;
+	right: 25px;
+	z-index: 50;
+	border: solid 1px #CCC;
+	padding: 0 1px 1px 0;
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+#miniMap > #pan {
+	box-sizing: border-box;
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	background: rgba(58,170,252,0.3);
+	cursor: all-scroll;
+}
+
+#spaceContainer .highlightedCell span {
+    background: blue !important;
+    transition: background 0.7s;
+}
+
+/* Empty views */
+.empty #solutionSpaceContainer,
+.empty #versioningContainer {
+	background: #EEE url(../images/noideas.png) center center no-repeat;
+	background-size: 200px;
+}

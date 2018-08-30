@@ -73,7 +73,21 @@ def usermodel():
         nearest_neighbors=nearest_neighbors, 
         inferred=inferred,
         inferred_json=json.dumps(inferred),
-        logs=logs)
+        logs=logs,
+        adjacent=', '.join(__handle_unicode(user_model.transition_graph.get_adjacent(user_model.last_cat))),
+        inspiration_cats=', '.join(__handle_unicode(user_model.get_inspiration_categories(3))),
+        ordered_tags=', '.join(__handle_unicode(user_model.get_ordered_tags())))
+
+def __handle_unicode(l):
+    new = []
+    for v in l:
+        try:
+            u_c = unicode(v)
+            u_c = unicodedata.normalize('NFKD', u_c).encode('ascii','ignore')
+            new.append(str(u_c))
+        except Exception:
+            new.append(str(v))
+    return new
 
 def organize_tags():
     __check_auth()
