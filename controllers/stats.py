@@ -8,6 +8,7 @@ import cStringIO
 import csv
 import numpy
 import re
+import unicodedata
 from collections import defaultdict
 
 CONDITIONS = dict(control=1,subtle=2,overt=3,all=4)
@@ -298,10 +299,10 @@ def __prepare_csv_response(fields, records, filename, problem_id):
         for c in r:
             try:
                 u_c = unicode(c)
-                u_c = unicodedata.normalize('NFKD', u_c).encode('ascii','ignore')
+                u_c = str(unicodedata.normalize('NFKD', u_c).encode('ascii','ignore'))
                 updated_row.append(u_c)
             except Exception:
-                updated_row.append(c)
+                updated_row.append(str(c))
         csv_file.writerow(updated_row)
     # Prepare response
     response.headers['Content-Type']='application/vnd.ms-excel'
@@ -458,6 +459,7 @@ def __get_events_per_user(user, problem_id, condition):
         time_delta = (time - start_time)#.total_seconds()
         action_name = l.actionName
         extra_info = ''
+        inspiration_tags = None
         if action_name == 'get_ideas' and 'tags' in l.extraInfo:
             # This was a click in the solution_space
             action_name = 'click_sp'
@@ -465,6 +467,14 @@ def __get_events_per_user(user, problem_id, condition):
             tags = __update_tags(json.loads(l.extraInfo)['tags'], problem_id)
             breadth.update(tags)
             extra_info = json.loads(l.extraInfo)['idea']
+        elif action_name == 'get_inspiration_categories':
+            inspiration_tags = json.loads(l.extraInfo)['tags']
+            extra_info = json.dumps(inspiration_tags)
+        elif action_name == 'get_available_tasks':
+            # TODO Order by inspiration_tags
+            # Clean out tags
+            ideas = [{'idea':t['idea']['idea'], 'tag':t['tag']['tag']} for t in json.loads(l.extraInfo)['tasks']]
+            extra_info = json.dumps(ideas)
         event = [
             condition,
             user.id,

@@ -135,5 +135,6 @@ class TagMergeTask(Task):
         print('Next step Category MERGE Task')
 
 class RatingTask(Task):
-    def next_step(self):
-        print('Next step Rating Task')
+    def next_step(self): # add more tasks when all current ones are completed
+        RatingTask(idea=self.task.idea, problem=self.problem, pool=True)
+        

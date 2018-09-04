@@ -33,7 +33,7 @@ def submit_task():
     # Instantiate class
     module = __import__('microtask')
     class_ = getattr(module, task_type)
-    task = class_(id=task_id)
+    task = class_(id=task_id, problem=problem_id)
     task.complete(user_id, answer)
     # Log
     log_action(user_id, problem_id, 'submit_task', {'task_type': task_type, 'answer': answer})
@@ -49,6 +49,19 @@ def reset_tasks():
             t.answer = ''
             t.update_record()
 
+def add_one_task():
+    ''' 
+    Adds one duplicate for every pool == True task in the problem passed in the request 
+    ONLY WORKS FOR RATING TASK AT THE MOMENT
+    '''
+    microtask = __import__('microtask')
+    problem = request.vars['problem']
+    if not problem:
+        return 'Must pass a problem'
+    tasks = db((db.task.problem == problem) & (db.task.task_type == 'RatingTask') & (db.task.pool == True)).select(groupby=db.task.idea)
+    for t in tasks:
+        microtask.RatingTask(idea=t.idea, problem=t.problem, pool=True)
+    return 'Added %d tasks!' % len(tasks)
 
 # Private functions
 def __get_tasks(user_id, problem_id):
@@ -70,7 +83,7 @@ def __get_tasks(user_id, problem_id):
     retrieve_tasks = lambda task_type: [row.idea for row in db((db.task.completed_by == user_id) & (db.task.task_type == task_type) & (db.task.problem == problem_id)).select(db.task.idea)]
     for t in task_types:
         completed_tasks[t] = retrieve_tasks(t) # retrieve completed tasks for type t
-        query = ((db.task.task_type == t) & ~db.task.idea.belongs(completed_tasks[t])) # build query to ignore completed tasks
+        query = ((db.task.task_type == t) & ~db.task.idea.belongs(completed_tasks[t])) # build query to ignore completed tasks of task type t
         completed_query = (completed_query) | query if completed_query != None else query # append to completed query
     
     # all_query holds the query to retrieve all non-completed tasks that do not belong to the current user
