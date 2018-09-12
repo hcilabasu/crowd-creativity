@@ -137,6 +137,7 @@ $(function(){
 		{
 			onclose: function(){
 				setupStudySession();
+				log('end_tutorial');
 			},
 			forceCompletion: true
 		},
@@ -306,6 +307,8 @@ var setupStudySession = function(){
 			$('#concludeSession').fadeIn(500);
 			localStorage[sessionConcludedStorage] = true;
 			concludeSession();
+			// Send ajax request to log on server
+			log('end_study');
 		});
 	};
 	if(localStorage[sessionConcludedStorage] === 'true'){
@@ -313,6 +316,14 @@ var setupStudySession = function(){
 	} else {
 		UTIL.setTimer($('#studyTimer'), conclude, ENV.studyIdeationTime * 60, false);
 	}
+}
+
+var log = function(action, data){
+	$.ajax({
+		method: 'GET',
+		url: URL.log,
+		data: {action:action, data:data}
+	});
 }
 
 var concludeSession = function(){

@@ -206,6 +206,14 @@ def reset_problem():
             __insert_tasks_for_idea(idea, users[i], problem_id, True)
     return 'Problem reset!'
 
+def log():
+    user_id = session.user_id
+    problem_id = util.get_problem_id(request)
+    action = request.vars['action']
+    if action:
+        data = request.vars['data']
+        # Log
+        log_action(user_id, problem_id, action, data)
 
 ### PRIVATE FUNCTIONS
 def __insert_tags_for_idea(tags, idea_id, problem_id):

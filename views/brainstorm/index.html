@@ -25,7 +25,8 @@
 
 	<script>
 		// Set up globals
-	    var URL = { // URLs
+		var URL = { // URLs
+			log: "{{=URL('brainstorm','log',request.args(0))}}",
 	    	addIdea: "{{=URL('brainstorm','add_idea',request.args(0))}}",
 			getTags: "{{=URL('brainstorm','get_tags',request.args(0))}}",
 			getAllTags: "{{=URL('brainstorm','get_all_tags',request.args(0))}}",

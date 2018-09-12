@@ -123,6 +123,7 @@ class UserModel(object):
             if adjacent:
                 categories.append(adjacent)
             # 3. Most likely inferred category
+            inferred = None
             if inferred_categories:
                 inferred = inferred_categories.pop(0)
                 categories.append(inferred[0])
@@ -138,7 +139,13 @@ class UserModel(object):
             #     else:
             #         categories.append(next_categories.pop(0))
         # Log
-        current.log_action(self.user, self.problem, 'get_inspiration_categories', {'tags': categories})
+        current.log_action(self.user, self.problem, 'get_inspiration_categories', {
+            'tags': categories, 
+            'current': current_cat,
+            'adjacent': adjacent,
+            'inferred': inferred,
+            'all_inferred': inferred_categories
+        })
         return categories
     
     def get_ordered_tags(self):
