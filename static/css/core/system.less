@@ -4,6 +4,8 @@
 @ideaColorLighter: #ffe1b7;
 @ideaColorFavorite: #FDC4BB;
 @ideaColorDarkerFavorite: #e09d93;
+@ideaColorInspiration: #b4dcff;
+@ideaColorDarkerInspiration: #81c4ff;
 @blue: #3CA0FA;
 @lightBlue: #DCF0FF;
 @darkBlue: #3a80d1;
@@ -894,19 +896,27 @@ textarea.ideaInput + div {
         }
     }
 
-    &.favorite {
-        background: @ideaColorFavorite url(../../images/heart.png) no-repeat;
+    .differentBlock(@color, @colorDarker, @iconUrl){
+        background: @color url(@iconUrl) no-repeat;
         background-position: right 5px top 5px;
         background-size: 15px;
         
         span.fade {
-            background: @ideaColorDarkerFavorite;
-            box-shadow: 0 0px 40px 20px @ideaColorDarkerFavorite;
+            background: @colorDarker;
+            box-shadow: 0 0px 40px 20px @colorDarker;
         }
     
         &:hover {
-            background-color: @ideaColorFavorite;
+            background-color: @color;
         }
+    }
+
+    &.inspiration {
+        .differentBlock(@ideaColorInspiration, @ideaColorDarkerInspiration, '../../images/lightbulb-black.png');
+    }
+
+    &.favorite {
+        .differentBlock(@ideaColorFavorite, @ideaColorDarkerFavorite, '../../images/heart.png');
 
         .favoriteBtn { 
             background-image: url(../../images/heart-red.png);
@@ -915,23 +925,28 @@ textarea.ideaInput + div {
             transition: all 0.4s;
         }
     }
+    
 }
 
 .ui-droppable-active {
 
     .ideaBlockContainer{
-        box-shadow: inset 0 0 0 4px @ideaColorDarker !important;
+        box-shadow: inset 0 0 0 4px rgba(0,0,0,0.5) !important;
     }
 
     .popOut {
         display: none;
     }
+
+    .fade {
+        display: none;
+    }
 }
 
 .ideaDragHandle {
-    box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.4);
     z-index: 9999;
-    background: #FFDE78 !important; /* For browsers that do not support gradients */
+    background: rgba(255,255,255,0.8) !important; /* For browsers that do not support gradients */
     color: black !important;
     width: @ideaBlockWidth !important;
     height: @ideaBlockHeight !important;
@@ -947,7 +962,15 @@ textarea.ideaInput + div {
     animation: none;
 
     .ideaBlockContainer {
-        background: @ideaColorDarker;
+        background-color: @ideaColorDarker;
+
+        &.favorite {
+            background-color: @ideaColorDarkerFavorite;
+        }
+
+        &.inspiration {
+            background-color: @ideaColorDarkerInspiration;
+        }
     }
 }
 
@@ -962,6 +985,10 @@ textarea.ideaInput + div {
 
     & .favorite.ideaBlockContainer {
         background-color: @ideaColorDarkerFavorite !important;
+    }
+
+    & .inspiration.ideaBlockContainer {
+        background-color: @ideaColorDarkerInspiration !important;
     }
 }
 

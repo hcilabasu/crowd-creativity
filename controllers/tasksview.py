@@ -30,6 +30,7 @@ def submit_task():
     answer = request.vars['answer']
     task_id = request.vars['id']
     task_type = request.vars['type']
+    last = True if request.vars['last'] else False
     # Instantiate class
     module = __import__('microtask')
     class_ = getattr(module, task_type)
@@ -37,7 +38,7 @@ def submit_task():
     task.complete(user_id, answer)
     # Log
     log_action(user_id, problem_id, 'submit_task', {'task_type': task_type, 'answer': answer})
-    return str(task)
+    return json.dumps(dict(last=True))
 
 def reset_tasks():
     if request.vars['pwd'] == 'blastoise':
@@ -91,7 +92,7 @@ def __get_tasks(user_id, problem_id):
         (db.task.owner != user_id) & 
         (db.task.idea == db.idea.id) &
         (db.task.problem == problem_id) &
-        (db.task.pool == True) & 
+        (db.idea.pool == True) & 
         ((db.task.idea == db.tag_idea.idea) &
         (db.tag_idea.tag == db.tag.id)))
     # Retrieve all tasks except: owned by user, completed by user, type not in task_types

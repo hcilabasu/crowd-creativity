@@ -1,6 +1,6 @@
 <script id="ideaBlockTemplate" type="text/x-tmpl-mustache">
     <div class="ideaBlock id[[id]]" id="id[[id]]">
-        <div class="ideaBlockContainer id[[id]] [[favorite]]" style="position:absolute; top: 0; left: 0;">
+        <div class="ideaBlockContainer id[[id]] [[favorite]] [[inspiration]]" style="position:absolute; top: 0; left: 0;">
             <div class="ideaBlockHeader">Drag to combine</div>
             <div class="ideaBlockText">
                 [[idea]]
@@ -62,6 +62,10 @@
         <p>
             Answering those questions can help you get more inspired, while helping us to organize the ideas better
         </p>
+        <img src='{{=URL('static','images/insp-tut4.png')}}' />
+        <p>
+            When you submit the tasks, the ideas will appear in blue in the workspace so you can always refer back to them.
+        </p>        
         <p><a id="finishInspirationTutorial">Got it!</a></p>
     </div>
     <div class="tasksPanel">

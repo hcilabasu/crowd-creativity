@@ -14,12 +14,14 @@ class Idea {
         var addedBy = idea.userId === ENV.userId ? 'you' : 'someone else';
         // Load template
         var isFavorite = idea.favorite ? 'favorite' : '';
+        var isInspiration = idea.inspiration ? 'inspiration' : ''
         var ideaParameters = {
             id:idea.id, 
             addedBy:addedBy, 
             idea:idea.idea, 
             tags:idea.tags, 
             favorite:isFavorite, 
+            inspiration:isInspiration,
             closeable: false /* params['closeable']*/,
             editable: params['editable']
         };

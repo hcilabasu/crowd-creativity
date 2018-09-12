@@ -38,25 +38,36 @@ def get_ideas():
         log_info['strict'] = strict
         query = query & (db.tag.tag.belongs(tags))
     
-    # Get user favorites
+    # Get inspiration ideas
+    clean_insps = __get_inspiration_ideas(user_id, problem_id)
+    insps_ids = [i['id'] for i in clean_insps]
+
     # Get ideas
     ideas = db(query).select(orderby=db.idea.dateAdded, groupby=db.idea.id)
     clean_ideas = [
         dict(id=i.idea.id,
             userId=i.idea.userId, 
             idea=i.idea.idea, 
+            date_added=i.idea.dateAdded,
             tags=[tag.tag.tag for tag in i.idea.tag_idea.select()],
-            favorite=True if i.idea.id in favorites else False
+            favorite=True if i.idea.id in favorites else False,
+            inspiration=True if i.idea.id in insps_ids else False
         ) for i in ideas]
     if tags and strict:
         check_tags = set(tags)
         clean_ideas = [i for i in clean_ideas if set(i['tags']) == check_tags]
     
+    # Only add them to the set of ideas if user is seeing own ideas
+    if added_by and int(added_by) == user_id:
+        clean_ideas.extend(clean_insps)
+        clean_ideas.sort(key=lambda i: i['date_added'])
+
     # Log
+    log_info['all_ideas'] = json.dumps(clean_ideas, default=str)
     log_info['num_ideas'] = len(ideas)
     log_action(user_id, problem_id, "get_ideas", log_info)
 
-    return json.dumps(clean_ideas)
+    return json.dumps(clean_ideas, default=str)
 
 def add_to_favorites():
     idea = request.vars['id']
@@ -99,3 +110,26 @@ def get_idea_by_id():
 def __get_favorites(user_id):
     favorites_rows = db(db.favorite.user_info == user_id).select(db.favorite.idea)
     return [i.idea for i in favorites_rows]
+
+# def test_insp():
+#     user_id = session.user_id
+#     problem_id = util.get_problem_id(request)
+#     return json.dumps(__get_inspiration_ideas(user_id, problem_id), default=str)
+
+def __get_inspiration_ideas(user_id, problem_id):
+    completed_tasks = db(
+        (db.task.completed_by == user_id) & 
+        (db.task.problem == problem_id) &
+        (db.idea.id == db.task.idea) &
+        (db.idea.id == db.tag_idea.idea) &
+        (db.tag.id == db.tag_idea.tag)
+    ).select(orderby=db.task.completed_timestamp, groupby=db.idea.id)
+    insp_ideas = [dict(id=i.idea.id,
+        userId=i.idea.userId, 
+        idea=i.idea.idea, 
+        date_added=i.task.completed_timestamp,
+        tags=[tag.tag.tag for tag in i.idea.tag_idea.select()],
+        favorite=False,
+        inspiration=True
+    ) for i in completed_tasks]
+    return insp_ideas

@@ -894,34 +894,44 @@ var taskTypeProcessor = function(type, form, task){
 
 var submitInspirationTask = function(event){
 	var forms = $('#inspirationPanel form');
-	var lastForm = $('#inspirationPanel form').last();
+	var lastForm = forms.last();
 	if(lastForm.valid()){
+		var numForms = forms.length;
 		$.each(forms, function(i, form){
+			lastTask = (numForms == i+1) ? true : false;
 			// Validate last form. All others have been validated on move
-				// Get data
-				var id = $('[name=taskId]', form).val();
-				var type = $('[name=taskType]', form).val();
-				var answer = taskTypeProcessor(type, form).post();
-				var data = {
-					id:id,
-					type:type,
-					answer:answer
-				};
-				// Submit
-				var _this = this;
-				$.ajax({
-					type: "POST",
-					url: URL.submitTask,
-					data: data,
-					success: function(data){
+			// Get data
+			var id = $('[name=taskId]', form).val();
+			var type = $('[name=taskType]', form).val();
+			var answer = taskTypeProcessor(type, form).post();
+			var data = {
+				id:id,
+				type:type,
+				answer:answer
+			};
+			// Submit
+			var _this = this;
+			var _lastTask = lastTask;
+			$.ajax({
+				type: "POST",
+				url: URL.submitTask,
+				data: data,
+				success: function(data){
+					if(_lastTask){
+						var dataObj = JSON.parse(data);
+						// Reload idea viewer
+						VIEWS.ideasView.load();
+						// Notify and close overlay
 						$.web2py.flash('Your tasks have been submitted!', 'ok');
 						// Close overlay
 						closeOverlay();
-					},
-					error: function(){
-						$.web2py.flash('Something went wrong!', 'error');
+
 					}
-				});
+				},
+				error: function(){
+					$.web2py.flash('Something went wrong!', 'error');
+				}
+			});
 		});
 	}
 	
