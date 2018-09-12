@@ -466,14 +466,15 @@ def __get_events_per_user(user, problem_id, condition):
         elif action_name == 'add_idea':
             tags = __update_tags(json.loads(l.extraInfo)['tags'], problem_id)
             breadth.update(tags)
-            extra_info = json.loads(l.extraInfo)['idea']
+            idea = json.loads(l.extraInfo)
+            extra_info = json.dumps({'idea':idea['idea'], 'id':idea['id']})
         elif action_name == 'get_inspiration_categories':
             inspiration_tags = json.loads(l.extraInfo)['tags']
             extra_info = json.dumps(inspiration_tags)
         elif action_name == 'get_available_tasks':
             # TODO Order by inspiration_tags
             # Clean out tags
-            ideas = [{'idea':t['idea']['idea'], 'tag':t['tag']['tag']} for t in json.loads(l.extraInfo)['tasks']]
+            ideas = [{'idea':t['idea']['idea'], 'idea_id':t['idea']['id'], 'tag':t['tag']['tag']} for t in json.loads(l.extraInfo)['tasks']]
             extra_info = json.dumps(ideas)
         event = [
             condition,
