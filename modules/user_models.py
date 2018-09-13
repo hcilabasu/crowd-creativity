@@ -109,6 +109,10 @@ class UserModel(object):
         '''
         db = current.db
         categories = []
+        inferred_categories = []
+        current_cat = None
+        adjacent = None
+        inferred = None
         if self.last_cat and self.has_adaptive_inspirations(): # Check if the user has ideated before, or if conditions should be adaptive
             # Get adjacent and inferred categories
             next_categories = self.transition_graph.get_next_categories(n)
@@ -123,8 +127,7 @@ class UserModel(object):
             if adjacent:
                 categories.append(adjacent)
             # 3. Most likely inferred category
-            inferred = None
-            if inferred_categories:
+            if len(inferred_categories) > 0:
                 inferred = inferred_categories.pop(0)
                 categories.append(inferred[0])
             
