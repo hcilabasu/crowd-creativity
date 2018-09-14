@@ -152,7 +152,7 @@ class UserModel(object):
             'inferred': inferred,
             'all_inferred': inferred_categories
         })
-        return categories
+        return categories, [i[0] for i in inferred_categories]
     
     def get_ordered_tags(self):
         ''' Returns a list of all the tags in the current problem, ordered by usefulness to current user '''

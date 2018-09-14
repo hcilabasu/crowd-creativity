@@ -68,7 +68,7 @@ def add_one_task():
 def __get_tasks(user_id, problem_id):
     # Get tags
     model = user_models.UserModel(user_id, problem_id)
-    inspiration_categories = model.get_inspiration_categories(NUM_TASKS)
+    inspiration_categories, all_inferred = model.get_inspiration_categories(NUM_TASKS)
 
     # These are the task types that will be retrieved
     task_types = [

@@ -221,7 +221,6 @@ def __insert_tags_for_idea(tags, idea_id, problem_id):
     for tag in tags:
         tag = __clean_tag(tag)
         tag_id = __insert_or_retrieve_tag_id(tag, problem_id)
-        print(tag_id)
         # Inserting relationships
         db.tag_idea.insert(tag=tag_id[0], idea=idea_id, replaced_tag=tag_id[1])
         tag_name = db(db.tag.id == tag_id[0]).select().first().tag # This is necessary since the tag the user inserted may have been replaced by another
