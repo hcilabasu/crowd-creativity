@@ -106,7 +106,6 @@ def login_as():
         else:
             user_id = __create_new_user(user_name)
         # Set session attributes
-        print('Setting session %s and id %d' % (user_name, user_id))
         session.user_name = user_name
         session.user_id = user_id
     redirect(URL('default', 'index'))

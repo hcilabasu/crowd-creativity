@@ -93,5 +93,4 @@ def calculate_similarity(model1, model2, all_tags):
         m1.append(get_val(model1, k))
         m2.append(get_val(model2, k))
     sim = stats.pearsonr(m1,m2)
-    print(sim)
     return sim[0]

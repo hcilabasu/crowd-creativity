@@ -10,7 +10,6 @@ def log_action(user_id, problem_id, action_name, extra_info=dict()):
     * action_name: the name of the action
     * extra_info: a dictionary with extra info. Will be stored as a JSON string
     '''
-    print("Logging " + action_name)
     extra_info = json.dumps(extra_info)
     db.action_log.insert(
         userId=user_id, 

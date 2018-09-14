@@ -74,7 +74,6 @@ class Task:
     def complete(self, user_id, answer):
         ''' Completes a task based  '''
         # Complete on database
-        print('microtask complete...')
         self.task.completed = True
         self.task.completed_by = user_id # TODO throw exception if user_id == None
         self.task.completed_timestamp = datetime.datetime.now()
@@ -99,7 +98,8 @@ class Task:
 
     # Abstract methods--must be implemented by subclasses
     # This method is called whenever all added tasks of a given type are completed
-    def next_step(self): print('Run generic next_step...')
+    def next_step(self): 
+        pass
 
 class TagSuggestionTask(Task):
     # How many tasks are added
@@ -110,7 +110,6 @@ class TagSuggestionTask(Task):
         The TagSuggestionTask is the first type of categorization task in the pipeline.
         When it's complete, deploy the validation tasks.
         '''
-        print('Run TagSuggestionTask next_step()')
         if self.is_completed():
             db = current.db
             # Get options from all tasks
@@ -118,21 +117,18 @@ class TagSuggestionTask(Task):
             answers = set()
             for t in tasks:
                 answer = json.loads(t.answer)
-                print('Answer: ' + str(answer))
                 answers |= set(answer)
-            print('Answers: ' + str(json.dumps(list(answers))))
             # Deploy the TagValidationTask
             for i in range(0,TagValidationTask.COUNT):
-                print('creating tagvalidationtasks... ' + str(i))
                 TagValidationTask(idea=self.task.idea, options=json.dumps(list(answers)))
 
 class TagValidationTask(Task):
     def next_step(self):
-        print('Next step Category VALIDATION Task')
+        pass
 
 class TagMergeTask(Task):
     def next_step(self):
-        print('Next step Category MERGE Task')
+        pass
 
 class RatingTask(Task):
     def next_step(self): # add more tasks when all current ones are completed
