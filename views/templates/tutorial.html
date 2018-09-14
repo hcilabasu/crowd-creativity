@@ -4,6 +4,24 @@
     <p>This quick tutorial will walk you through the core parts of this system.</p>
 </script>
 
+<script id="tutorialMainActionsTemplate" type="text/x-tmpl-mustache">
+    <div class="textAndImages">
+        <h3>Adding new ideas</h3>
+        <img src='{{=URL('static','images/new-tut.png')}}' class="floatLeft" />
+        <p>This is the main way to contribute. Whenever an idea comes up, add it. <strong>Remember: there are no bad ideas in brainstorming!</strong> </p>
+
+        <h3>Refining existing ideas</h3>
+        <img src='{{=URL('static','images/refine-tut.png')}}' class="floatLeft" />
+        <p>Maybe you bumped into an idea that you were thinking of. Instead of just moving on, you can improve that idea by adding more details, correcting mistakes, etc.</p>
+
+        <h3>Combining two ideas</h3>
+        <img src='{{=URL('static','images/combine-tut.png')}}' class="floatLeft" />
+        <p>One of the most important parts of brainstorming is building on the ideas of others. CrowdMuse allows you to combine two ideas into a more creative one.</p>
+
+        <p>We'll now show you how to do each one of these.</p>
+    </div>
+</script>
+
 <script id="tutorialTopicTemplate" type="text/x-tmpl-mustache">
     <p>You are supposed to come up with ideas for the following topic:</p>
     
@@ -23,6 +41,7 @@
 
 <script id="tutorialInspirationTemplate" type="text/x-tmpl-mustache">
     <p>Whenever you need some extra inspiration, just click here. We'll chose ideas from other users and show them to you.</p>
+    <p>The ideas that were shown to you will appear in the idea workspace, so you can refine or combine them if you want.</p>
 </script>
 
 <script id="tutorialIdeaViewerTemplate" type="text/x-tmpl-mustache">
@@ -61,7 +80,7 @@
 <!-- Idea viewer expanded -->
 <script id="tutorialExpandedIdeaViewer1Template" type="text/x-tmpl-mustache">
     <p>
-        The idea workspace lets you see the ideas you created, as well as refining or combining them.
+        The idea workspace lets you see the ideas you or others have created. Whenever you add an idea, it shows up in here.
     </p>
     <p>
         <img src="{{=URL('static', 'images/load-demo-noall.gif')}}" alt="Click on the buttons to load ideas"/>
@@ -69,23 +88,27 @@
     </p>
 
     <p>
-        You can load all of your ideas, or just your favorite ideas.
+        <strong>This is where you refine or combine ideas.</strong> We'll show you how to do that now.
     </p>
 </script>
 <script id="tutorialExpandedIdeaViewer2Template" type="text/x-tmpl-mustache">
     <p>
         <img src="{{=URL('static', 'images/expand-demo.gif')}}" alt="Hover over an idea to expand it"/>
-        You can <strong>read an idea</strong> by hovering your mouse over it.
-        You can also <strong>mark it as favorite</strong> or <strong>refine it</strong> here.
+        You can <strong>refine an idea</strong> by hovering your mouse over it and clicking the refine button.
+        You can rewrite the idea to add more detail, fix things, or just make it more to your liking.
+    </p>
+    <p>
+        The goal is to make an idea more useful, improving its quality.
     </p>
 </script>
 <script id="tutorialExpandedIdeaViewer3Template" type="text/x-tmpl-mustache">
     <p>
         <img src="{{=URL('static', 'images/combine-demo.gif')}}" alt="Drag an idea onto another to combine them"/>
         You can <strong>combine</strong> two ideas by dragging one onto another.
+        Combining an idea lets you pick bits from both ideas to create a new, original idea.
     </p>
     <p>
-        Combining an idea lets you pick bits from both ideas to create a new, creative idea.
+        The goal is to create a completely original idea from two others. By as creative as you'd like!
     </p>
 </script>
 

@@ -199,8 +199,10 @@
     </p>
     <form class="editElement">
         <textarea class="ideaInput" name='refinedIdea' placeholder="Type your idea in here" required maxlength="{{=validation['text_max']}}"></textarea>
+        <p id="repeatedRefinedIdea" style="display:none">The refined idea must be different to the original one</p>
         <input type="hidden" name="tags" />
         <input type="hidden" name="originalId" />
+        <input type="hidden" name="originalText" />
     </form>
     <ul class="tags">
     </ul>

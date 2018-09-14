@@ -30,39 +30,18 @@ $(function(){
 			location: {right: 20, top: 0},
 		},
 		{
-			title: 'Idea Workspace',
+			title: 'Refining ideas',
 			highlight: '.stack_IdeaViewerView',
 			html: Mustache.render(TEMPLATES.tutorialExpandedIdeaViewer2Template),
 			location: {right: 20, top: 0},
 		},
 		{
-			title: 'Idea Workspace',
+			title: 'Combining ideas',
 			highlight: '.stack_IdeaViewerView',
 			html: Mustache.render(TEMPLATES.tutorialExpandedIdeaViewer3Template),
 			location: {right: 20, top: 0},
 		}
 	];
-
-	// var versioningViewTutorialSteps = [
-	// 	{
-	// 		title: 'History view',
-	// 		highlight: '.stack_VersioningView',
-	// 		html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView1Template),
-	// 		location: {left: 20, top: 0},
-	// 	},
-	// 	{
-	// 		title: 'History view',
-	// 		highlight: '.stack_VersioningView',
-	// 		html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView2Template),
-	// 		location: {left: 20, top: 0},
-	// 	},
-	// 	{
-	// 		title: 'History view',
-	// 		highlight: '.stack_VersioningView',
-	// 		html: Mustache.render(TEMPLATES.tutorialExpandedVersioningView3Template),
-	// 		location: {left: 20, top: 0},
-	// 	}
-	// ];
 
 	var solutionSpaceTutorialSteps = [
 		{
@@ -92,20 +71,24 @@ $(function(){
 
 		},
 		{
+			title: 'The 3 ways of adding ideas',
+			html: Mustache.render(TEMPLATES.tutorialMainActionsTemplate)
+		},
+		{
 			title: 'Add a new Idea',
 			highlight: '#newIdeaButton',
 			html: Mustache.render(TEMPLATES.tutorialAddIdeaTemplate),
 			location: {left: 'center', bottom: 20}
 		},
-		{
-			title: 'Inspiration button',
-			highlight: '#helpButton',
-			html: Mustache.render(TEMPLATES.tutorialInspirationTemplate),
-			location: {left: 'center', bottom: 20}
-		}
 	].concat(ideaWorkspaceTutorialSteps);
 
-	var secondTutorialSteps = solutionSpaceTutorialSteps;//.concat(versioningViewTutorialSteps);
+	var secondTutorialSteps = solutionSpaceTutorialSteps;
+	secondTutorialSteps.push({
+		title: 'Inspiration button',
+		highlight: '#helpButton',
+		html: Mustache.render(TEMPLATES.tutorialInspirationTemplate),
+		location: {left: 'center', bottom: 20}
+	});
 
 	/*
 		Create tutorial objects
@@ -430,19 +413,24 @@ var submitRefinedIdea = function(event){
 		var idea = $('#editIdea [name=refinedIdea]').val();
 		var tags = $('#editIdea [name=tags]').val().split(ENV.tagsDelimiter);
 		var originalId = $('#editIdea [name=originalId]').val();
-		submitIdea(idea, tags, type='refinement', [originalId], function(data){
-			var _id = JSON.parse(data).id;
-			var _idea = idea;
-			var _tags = tags;
-			// Add new idea to UI
-			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
-			// Reset other views and reset check timer
-			VIEWS.solutionSpaceView.load();
-			// VIEWS.versioningView.load();
-			ENV.lastCheck = new Date().getTime();
-			// Close overlay
-			closeOverlay();
-		});
+		var originalText = $('#editIdea [name=originalText]').val();
+		if(idea.trim() === originalText.trim()){
+			$('#repeatedRefinedIdea').show('fast');
+		} else {
+			submitIdea(idea, tags, type='refinement', [originalId], function(data){
+				var _id = JSON.parse(data).id;
+				var _idea = idea;
+				var _tags = tags;
+				// Add new idea to UI
+				VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
+				// Reset other views and reset check timer
+				VIEWS.solutionSpaceView.load();
+				// VIEWS.versioningView.load();
+				ENV.lastCheck = new Date().getTime();
+				// Close overlay
+				closeOverlay();
+			});
+		}
 	}
 };
 
@@ -548,6 +536,9 @@ var editIdeaSetup = function(params){
 	var template = $(Mustache.render(TEMPLATES['editIdeaPopupTemplate']));
 	if (popup.is(':empty')){ // Only load the html the first time
 		popup.html(template);
+	} else {
+		// Hide error message
+		$('#repeatedRefinedIdea').hide();
 	}
 	var type = 'view';
 	if(params.edit){
@@ -568,10 +559,12 @@ var editIdeaSetup = function(params){
 			var tags = $('#editIdea .tags');
 			var tagsHidden = $('#editIdea [name=tags]');
 			var originalId = $('#editIdea [name=originalId]');
+			var originalHidden = $('#editIdea [name=originalText]');
 			tags.empty();
 			// Add idea text
 			ideaText.text(data.idea);
 			ideaTextarea.val(data.idea);
+			originalHidden.val(data.idea);
 			// Add tags
 			var tagsString = data.tags.join(ENV.tagsDelimiter);
 			tagsHidden.val(tagsString);

@@ -710,6 +710,25 @@ textarea.ideaInput + div {
     float: right;
 }
 
+.floatLeft {
+    float: left;
+}
+
+.textAndImages {
+    p {
+        clear: none !important;
+    }
+
+    h3 {
+        clear: both;
+    }
+
+    img {
+        width: 30%;
+        margin-bottom: 20px;
+    }
+}
+
 .cornerRight {
     position: absolute;
     bottom: 20px;
@@ -1069,6 +1088,10 @@ textarea.ideaInput + div {
 #editIdea {
     .editElement { display:none; }
     .viewElement { display:none; }
+
+    #repeatedRefinedIdea {
+        color: @errorColor;
+    }
 
     &.edit {
         .editElement { display:inherit; }
