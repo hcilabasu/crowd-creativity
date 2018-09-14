@@ -67,7 +67,7 @@ def get_ideas():
     log_info['num_ideas'] = len(ideas)
     log_action(user_id, problem_id, "get_ideas", log_info)
 
-    return json.dumps(clean_ideas, default=str)
+    return json.dumps(dict(ideas=clean_ideas, stats=__get_stats(user_id, problem_id)), default=str)
 
 def add_to_favorites():
     idea = request.vars['id']
@@ -106,6 +106,12 @@ def get_idea_by_id():
     # Log
     log_action(user_id, util.get_problem_id(request), 'get_idea_by_id', {'idea':id})
     return json.dumps(clean_idea)
+
+def __get_stats(user_id, problem_id):
+    original = db((db.idea.userId == user_id) & (db.idea.problem == problem_id) & (db.idea.origin == 'original')).count()
+    refined = db((db.idea.userId == user_id) & (db.idea.problem == problem_id) & (db.idea.origin == 'refinement')).count()
+    combined = db((db.idea.userId == user_id) & (db.idea.problem == problem_id) & (db.idea.origin == 'combine')).count()
+    return dict(original=original, refined=refined, combined=combined)
 
 def __get_favorites(user_id):
     favorites_rows = db(db.favorite.user_info == user_id).select(db.favorite.idea)

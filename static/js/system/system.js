@@ -387,7 +387,8 @@ var submitNewIdea = function(event){
 			// Close popup
 			closeOverlay();
 			// Add to UI
-			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
+			VIEWS.ideasView.load();
+			// VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
 			// Clearing up inputs and giving feedback to the user
 			$('#addIdea textarea').val('');
 			$('#addIdea textarea').focus();
@@ -422,7 +423,8 @@ var submitRefinedIdea = function(event){
 				var _idea = idea;
 				var _tags = tags;
 				// Add new idea to UI
-				VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
+				VIEWS.ideasView.load();
+				// VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
 				// Reset other views and reset check timer
 				VIEWS.solutionSpaceView.load();
 				// VIEWS.versioningView.load();
@@ -462,7 +464,8 @@ var submitCombinedIdea = function(event){
 				}
 			}
 			// Add idea
-			VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
+			VIEWS.ideasView.load();
+			// VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags});
 
 			// Reset other views and reset check timer
 			VIEWS.solutionSpaceView.load();

@@ -79,7 +79,10 @@ class IdeaViewerView extends View {
             url: URL.getUserIdeas,
             data: {is_favorite: true},
             success: (data)=>{
-                var ideas = JSON.parse(data);
+                data = JSON.parse(data);
+                var ideas = data.ideas;
+                var stats = data.stats;
+                this.updateStats(stats);
                 this.updateIdeaCounter(ideas.length);
                 for (var i = 0; i < ideas.length; i++) {
                     this.addIdeaToDisplay(ideas[i]);
@@ -109,7 +112,10 @@ class IdeaViewerView extends View {
             url: URL.getUserIdeas,
             data: params,
             success: (data)=>{
-                var ideas = JSON.parse(data);
+                data = JSON.parse(data);
+                var ideas = data.ideas;
+                var stats = data.stats;
+                this.updateStats(stats);
                 this.updateIdeaCounter(ideas.length);
                 for (var i = 0; i < ideas.length; i++) {
                     this.addIdeaToDisplay(ideas[i]);
@@ -134,7 +140,10 @@ class IdeaViewerView extends View {
             url: URL.getUserIdeas,
             data: params,
             success: (data)=>{
-                var ideas = JSON.parse(data);
+                data = JSON.parse(data);
+                var ideas = data.ideas;
+                var stats = data.stats;
+                this.updateStats(stats);
                 this.updateIdeaCounter(ideas.length);
                 for (var i = 0; i < ideas.length; i++) {
                     this.addIdeaToDisplay(ideas[i]);
@@ -252,6 +261,27 @@ class IdeaViewerView extends View {
             });
         }
     };
+
+    updateStats(stats) {
+        var originalCounter = $('#originalCounter');
+        var refinedCounter = $('#refinedCounter');
+        var combinedCounter = $('#combinedCounter');
+
+        var toggle = function(counter, number){
+            if (number == 0){
+                counter.addClass('noIdeas');
+            } else {
+                counter.removeClass('noIdeas');
+            }
+        }
+
+        originalCounter.text(stats.original + ' original');
+        toggle(originalCounter, stats.original);
+        refinedCounter.text(stats.refined + ' refined');
+        toggle(refinedCounter, stats.refined);
+        combinedCounter.text(stats.combined + ' combined');
+        toggle(combinedCounter, stats.combined);
+    }
 
     resetView() {
         var container = $(this.container);
