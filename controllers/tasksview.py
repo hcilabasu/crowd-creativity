@@ -2,6 +2,7 @@ import json
 import datetime
 import util
 import user_models
+import random
 from collections import defaultdict
 from gluon.debug import dbg
 
@@ -20,6 +21,7 @@ def get_available_tasks():
     response.headers['Content-Type']='application/json'
     # encode json
     tasks = [json.loads(t.as_json()) for t in tasks]
+    random.shuffle(tasks)
     # Log
     log_action(user_id, problem_id, 'get_available_tasks', {'num_tasks': len(tasks), 'tasks': tasks})
     return json.dumps(tasks)

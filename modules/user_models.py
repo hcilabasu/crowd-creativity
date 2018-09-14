@@ -168,25 +168,37 @@ class UserModel(object):
             # 1: current category
             for c in self.last_cat:
                 ordered_tags.append(c)
-                tags.remove(c)
+                try:
+                    tags.remove(c)
+                except ValueError:
+                    pass
             # 2: adjacent categories
             adjacent = self.transition_graph.get_adjacent(self.last_cat)
             for t in adjacent:
                 if t not in ordered_tags: # if there's a self loop and t is the current category, it shouldn't be added
                     ordered_tags.append(t)
-                    tags.remove(t)
+                    try:
+                        tags.remove(t)
+                    except ValueError:
+                        pass
             # 3: inferred new categories (collab. filtering)
             inferred = collab_filter.get_inferred_categories(self.user, self.problem, db)
             for i in inferred:
                 if i[0] not in ordered_tags:
                     ordered_tags.append(i[0])
-                    tags.remove(i[0])
+                    try:
+                        tags.remove(i[0])
+                    except ValueError:
+                        pass
             # 4: other visited categories (ordered by quantity)
             frequent = self.category_matrix.get_most_frequent()
             for f in frequent:
                 if f not in ordered_tags:
                     ordered_tags.append(f)
-                    tags.remove(f)
+                    try:
+                        tags.remove(f)
+                    except ValueError:
+                        pass
             # Merge lists
             ordered_tags.extend(tags)
             tags = ordered_tags
