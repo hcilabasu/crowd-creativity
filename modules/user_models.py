@@ -31,6 +31,7 @@ class UserModel(object):
             # Create other properties
             self.user_condition = db_user_model.user_condition
             self.last_cat = db_user_model.last_cat
+            self.num_ideas = db_user_model.num_ideas
             self.count_pair = db_user_model.count_pair
             self.timestamp = db_user_model.timestamp
             self.count_transition_pairs = db_user_model.count_transition_pairs
@@ -43,6 +44,7 @@ class UserModel(object):
                 condition = -1
             self.user_condition = condition
             self.last_cat = None
+            self.num_ideas = 0
             self.count_pair = 0
             self.count_transition_pairs = 0
             self.category_switch_ratio = None
@@ -64,6 +66,7 @@ class UserModel(object):
         # Update timestamp
         self.timestamp = datetime.datetime.now()
         # Update entire model
+        self.num_ideas += 1
         self.count_pair += 1
         # Update matrix and graph
         self.transition_graph.update(new_categories)
@@ -91,7 +94,7 @@ class UserModel(object):
         ]
 
     def get_num_ideas(self):
-        return self.count_pair + 1
+        return self.num_ideas
 
     def get_breadth(self):
         return self.category_matrix.get_breadth()

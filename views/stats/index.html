@@ -27,7 +27,7 @@
     </div>
     <div>
     {{for p in problems:}}
-        <h2>{{=p.title}}</h2>
+        <h2 id="{{=p.url_id}}">{{=p.title}}</h2>
         <div class="actions">
             <div>
                 <h3>Data</h3>
@@ -39,6 +39,7 @@
             <div>
                 <h3>Manage</h3>
                 <a href="{{=URL('stats', 'organize_tags?problem=' + str(p.id))}}">Organize tags</a>
+                <a href="{{=URL('stats', 'upload_ideas?problem=' + str(p.id))}}">Upload ideas</a>
             </div>
         </div>
         <table class="contributors">

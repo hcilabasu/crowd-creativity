@@ -9,6 +9,8 @@ import csv
 import numpy
 import re
 import unicodedata
+import base64
+import microtask
 from collections import defaultdict
 
 CONDITIONS = dict(control=1,subtle=2,overt=3,all=4)
@@ -263,6 +265,98 @@ def download_events():
     # Prepare response
     filename = 'events_%d_%s.csv' % (problem_id, datetime.date.today())
     return __prepare_csv_response(fields, records, filename, problem_id)
+
+def upload_ideas():
+    __check_auth()
+    problem_id = long(request.vars['problem'])
+    problem = db(db.problem.id == problem_id).select().first()
+
+    # Deal with file upload
+    if 'ideas_tags' in request.vars and 'tags' in request.vars:
+        # There are files being uploaded
+        # Get file content
+        idea_tags = base64.b64decode(request.vars['ideas_tags'].split(',')[1]).split('\r\n')
+        tags = base64.b64decode(request.vars['tags'].split(',')[1]).split('\r\n')
+
+        # Build tag dict to map between db id and csv id
+        tags_map = dict()
+        tags_names = dict()
+        tags_reader = csv.reader(tags, delimiter=',')
+        tags_reader.next() # skip title
+        for r in tags_reader:
+            if(len(r) > 0):
+                tag_id = r[0]
+                tag_name = r[1]
+                # Check if tag already exists
+                db_id = db((db.tag.tag == tag_name) & (db.tag.problem == problem_id)).select(db.tag.id).first()
+                if db_id:
+                    db_id = db_id.id
+                else:
+                    db_id = db.tag.insert(tag=tag_name,problem=problem_id)
+                tags_map[tag_id] = db_id
+                tags_names[db_id] = tag_name
+        
+        # Read ideas and add them to DB
+        ideas_reader = csv.reader(idea_tags, delimiter='\t')
+        ideas_reader.next() # skip title
+        for r in ideas_reader:
+            if len(r) > 0:
+                tags = [tags_map[r[1]]]
+                if len(r[2].strip()) > 0:
+                    tags.append(tags_map[r[2]])
+                idea = r[3]
+                user = __get_user_id(problem.url_id + r[4])
+                __insert_idea(idea, tags, problem.id, user, tags_names)
+
+
+
+
+    return dict(problem=problem)
+
+def __get_user_id(name):
+    user = db(db.user_info.userId == name).select().first()
+    if user:
+        return user.id
+    else:
+        return db.user_info.insert(
+            userId=name,
+            userCondition=0,
+            initialLogin=datetime.datetime.now())
+
+def __insert_idea(idea, tags, problem_id, user_id, tag_names):
+    # Insert idea and tags
+    idea_id = db.idea.insert(
+            userId=user_id, 
+            idea=idea, 
+            dateAdded=datetime.datetime.now(), 
+            userCondition=0, 
+            problem=problem_id,
+            ratings=0, 
+            pool=True,
+            origin='original',
+            sources=[])
+    __insert_tags_for_idea(tags, idea_id, problem_id)
+    # Update user model
+    __update_user_model(user_id, problem_id, tags, tag_names)
+    # Insert tasks
+    __insert_tasks_for_idea(idea_id, user_id, problem_id, True)
+
+def __update_user_model(user_id, problem_id, tags, tag_names):
+    model = user_models.UserModel(user_id, problem_id)
+    tags_names = [tag_names[t] for t in tags]
+    model.update(tags_names)
+
+def __insert_tasks_for_idea(idea, user_id, problem_id, add_to_pool):
+    for i in range(0,4):
+        # insert selectBest types. Categorize tasks will be inserted when these are completed
+        # microtask.TagSuggestionTask(idea=idea['id'], problem=problem_id)     
+        # Insert combination tasks
+        microtask.RatingTask(idea=idea, problem=problem_id, pool=add_to_pool)
+
+def __insert_tags_for_idea(tags, idea_id, problem_id):
+    for tag in tags:
+        # Insert relationships
+        db.tag_idea.insert(tag=tag, idea=idea_id, replaced_tag=None)
 
 def __regenerate_models():
     users = db(db.user_model.id > 0).select()
