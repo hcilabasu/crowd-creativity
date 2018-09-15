@@ -363,6 +363,7 @@ def __regenerate_models():
     for u in users:
         u.last_cat = None
         u.count_pair = 0
+        u.num_ideas = 0
         u.count_transition_pairs = 0
         u.transition_graph = '[]'
         u.category_matrix = '{}'

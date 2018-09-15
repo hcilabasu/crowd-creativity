@@ -65,6 +65,7 @@ def get_inferred_categories(user_id, problem_id, db):
     '''
     user_model = user_models.UserModel(user_id, problem_id)
     all_users = db(
+        (db.idea.pool == True) &
         (db.idea.problem == problem_id) & 
         (db.idea.userId == db.user_info.id) &
         (db.idea.userId <> user_id)
