@@ -71,6 +71,8 @@ def __get_tasks(user_id, problem_id):
     # Get tags
     model = user_models.UserModel(user_id, problem_id)
     inspiration_categories, all_inferred = model.get_inspiration_categories(NUM_TASKS)
+    # Remove duplicates
+    inspiration_categories = list(set(inspiration_categories))
 
     # These are the task types that will be retrieved
     task_types = [
@@ -103,10 +105,11 @@ def __get_tasks(user_id, problem_id):
     tasks = db(all_query).select(groupby=db.tag_idea.id, having=completed_query, orderby='<random>')
     
     filtered_tasks = []
+    inferred_extended_tasks = []
     ideas_ids = []
     # Remove tasks based on recommended categories
     if len(inspiration_categories) > 0:
-        excluded = tasks.exclude(lambda row: row.tag.tag not in inspiration_categories)
+        excluded = tasks.exclude(lambda row: row.tag.tag not in inspiration_categories and row.tag.tag not in all_inferred)
         # At this point, all tasks belong to the inspiration categories, 
         # but we need to sample one from each of the categories.
         for t in tasks:
@@ -117,15 +120,25 @@ def __get_tasks(user_id, problem_id):
                 filtered_tasks.append(t)
                 inspiration_categories.remove(t.tag.tag)
                 ideas_ids.append(t.idea.id)
+            # Add to extended inferred list
+            if t.tag.tag in all_inferred and t.idea.id not in ideas_ids:
+                inferred_extended_tasks.append(t)
+                ideas_ids.append(t.idea.id)
         # Move all remaining back to the tasks variable
         tasks = excluded 
         
     # At this point, the lenght may still be < NUM_TASKS if:
     # 1. there were no inspiration categories (so len() == 0)
     # 2. there were inspiration categories, but they amounted to fewer than NUM_TASKS
+    # So the first action is to include more inferred categories in there
+    if len(filtered_tasks) < NUM_TASKS: 
+        # sort inferred_extended tasks by inferred tasks
+        inferred_extended_tasks.sort(key=lambda t: all_inferred.index(t.tag.tag))
+        filtered_tasks.extend(inferred_extended_tasks)
+    # If there are still not enough, add more
     if len(filtered_tasks) < NUM_TASKS: 
         for t in tasks:
-            if t.idea.id not in ideas_ids: # make sure there are no dupplicates
+            if t.idea.id not in ideas_ids: # make sure there are no duplicates
                 filtered_tasks.append(t)
                 ideas_ids.append(t.idea.id)
             if len(filtered_tasks) == NUM_TASKS:
@@ -139,7 +152,7 @@ def __get_tasks(user_id, problem_id):
             t.idea.favorite = False
 
     # Filter to max number of tasks and return
-    return filtered_tasks
+    return filtered_tasks[0:NUM_TASKS]
 
 def __merge_tags(tags_ideas, tag_i, tag_j):
     ''' Merges two tags, both in the dictionary (tags_ideas) as in the db '''
