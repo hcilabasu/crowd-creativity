@@ -20,29 +20,88 @@ def get_solution_space():
     user_id = session.user_id
     problem_id = util.get_problem_id(request)
     user_model = user_models.UserModel(user_id, problem_id)
-    cache_type = 'solutionspace'
     connections = dict()
     timestamp = datetime.datetime.min
     max_n = 0
 
     # Retrieve latest cache
     # TODO Cache is temporarily disabled since I change the handling of an idea's pool flag to run the studies. That means each user will have their own cache.
-    cache = None #db((db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)).select().first()
-    if cache:
-        json_cache = json.loads(cache.cache)
-        connections = json_cache['connections']
-        timestamp = cache.timestamp
-        max_n = json_cache['max_n']
+    cache = __get_cache(problem_id)
+    if not cache:
+        # If no cache, build it
+        cache = __build_cache(problem_id, user_model)
+    # Get info from cache
+    json_cache = json.loads(cache.cache)
+    connections = json_cache['connections']
+    all_tags = json_cache['tags']
+    timestamp = cache.timestamp
+    max_n = json_cache['max_n']
 
     # Get tags ordered by the user model
     tags = user_model.get_ordered_tags()
 
-    # get ideas with respective tags
+    # get user's ideas with respective tags
     ideas = db((db.idea.id == db.tag_idea.idea) & 
         (db.tag.id == db.tag_idea.tag) &
-        (db.idea.dateAdded >= timestamp) &
         (db.idea.problem == problem_id) & 
-        ((db.idea.pool == True) | (db.idea.userId == user_id))
+        (db.idea.userId == user_id)
+    ).select(orderby=~db.idea.id, groupby=db.idea.id)
+    
+    # extract tags
+    print(len(ideas))
+    for idea in ideas:
+        idea_tags = list()
+        for tag in idea.idea.tag_idea.select():
+            tag = tag.tag.tag.lower()
+            idea_tags.append(tag)
+            all_tags.append(tag)
+        idea_tags.sort() # this contains a sorted array of tags for idea
+        # insert into data structure
+        key = '|'.join(idea_tags)
+        if key not in connections.keys():
+            connections[key] = dict(tags=idea_tags, n=0)
+        n = connections[key]['n'] + 1
+        connections[key]['n'] = n
+        if n > max_n:
+            max_n = n
+    # tags = tags[:SOLUTION_SPACE_MAX_TAGS]
+
+    # since another user may have added another tag, and since "tags" holds ALL tags, we need to remove those that are not in "ideas"
+    final_tags = []
+    for t in tags:
+        if t in all_tags:
+            final_tags.append(t)
+
+    # Create minimap overview and generate outcome dict
+    overview = __generate_birdseye_solutionspace(final_tags, connections, max_n=max_n)
+    outcome = json.dumps(dict(tags=final_tags, connections=connections, max_n=max_n, overview=overview))
+
+    # Log
+    log_action(user_id, problem_id, 'get_solution_space', {'cache': (cache != None), 'tags': final_tags})
+    
+    return outcome
+
+def __get_cache(problem_id):
+    print('Getting cache...')
+    return db((db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == 'solutionspace')).select().first()
+
+def __build_cache(problem_id, user_model):
+    print('Building cache...')
+    '''
+    Builds a cache with all pool ideas
+    A lot of code duplication here, but it's the week of CHI deadline. So...
+    '''
+    connections = dict()
+    max_n = 0
+    key = (db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == 'solutionspace')
+    # Get tags ordered by the user model
+    tags = user_model.get_ordered_tags()
+
+    # get user's ideas with respective tags
+    ideas = db((db.idea.id == db.tag_idea.idea) & 
+        (db.tag.id == db.tag_idea.tag) &
+        (db.idea.problem == problem_id) & 
+        (db.idea.pool == True)
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
     
     # extract tags
@@ -62,30 +121,20 @@ def get_solution_space():
         connections[key]['n'] = n
         if n > max_n:
             max_n = n
-    tags = tags[:SOLUTION_SPACE_MAX_TAGS]
-
-    # since another user may have added another tag, and since "tags" holds ALL tags, we need to remove those that are not in "ideas"
     final_tags = []
     for t in tags:
         if t in all_tags:
             final_tags.append(t)
-
-    # Create minimap overview and generate outcome dict
+    
     overview = __generate_birdseye_solutionspace(final_tags, connections, max_n=max_n)
     outcome = json.dumps(dict(tags=final_tags, connections=connections, max_n=max_n, overview=overview))
-    
-    # Update cache
-    # key = (db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == cache_type)
-    # db.visualization_cache.update_or_insert(key,
-    #     problem=problem_id,
-    #     type=cache_type,
-    #     cache=outcome,
-    #     timestamp=datetime.datetime.now())
-    
-    # Log
-    log_action(user_id, problem_id, 'get_solution_space', {'cache': (cache != None), 'tags': final_tags})
-    
-    return outcome
+
+    db.visualization_cache.update_or_insert(key,
+        problem=problem_id,
+        type='solutionspace',
+        cache=outcome,
+        timestamp=datetime.datetime.now())
+    return __get_cache(problem_id)
 
 def get_ideas_per_tag():
     '''
