@@ -9,8 +9,10 @@ body {
     }
 
 h2 {
+    clear: left;
     color: white;
     margin-bottom: 5px;
+    margin-top: 20px;
 }
 
 ul {
@@ -134,6 +136,12 @@ table {
 .contributors {
     margin-bottom: 40px;
     clear: left;
+}
+
+.openTable {
+    display: block;
+    clear: both;
+    color: white;
 }
 
 .organize-tags li {

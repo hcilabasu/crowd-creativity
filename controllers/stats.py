@@ -11,6 +11,7 @@ import re
 import unicodedata
 import base64
 import microtask
+import random
 from collections import defaultdict
 
 CONDITIONS = dict(control=1,subtle=2,overt=3,all=4)
@@ -308,10 +309,33 @@ def upload_ideas():
                 user = __get_user_id(problem.url_id + r[4])
                 __insert_idea(idea, tags, problem.id, user, tags_names)
 
-
-
-
     return dict(problem=problem)
+
+def sample():
+    ''' 
+    Samples a percent of current pool users to be used in the pool
+    '''
+    problem_id = request.vars['problem']
+    percent = request.vars['percent']
+
+    if problem_id and percent:
+        # Get users and calculate how many need to be excluded
+        users = __get_users_in_problem(problem_id)  
+        ids = [u.user_info.id for u in users]
+        total = len(ids)
+        n_exclude = int(total * (float(percent)/100))
+        # Randomize list of users
+        random.shuffle(ids)
+        ids = ids[0:n_exclude] # Exclude users
+        # Exclude ideas from those users from pool
+        for id in ids: # Go through each user
+            ideas = db((db.idea.userId == id) & (db.idea.problem == problem_id)).select() # Retrieve all ideas
+            for idea in ideas: # Go through each idea and unselect them
+                idea.pool = False
+                idea.update_record()
+        return 'Sampled %d/%d pool users' % (n_exclude, total)
+    else:
+        return 'You must inform "problem" (problem id) and "percent" (between 1 and 100)'
 
 def __get_user_id(name):
     user = db(db.user_info.userId == name).select().first()
@@ -643,16 +667,19 @@ def __update_tags(tags, problem_id):
                 updated.append(t)
     return updated
 
-def __get_users_in_problem(problem_id, blacklist=[]):
+def __get_users_in_problem(problem_id, blacklist=[], pool=False):
     '''
     Returns a list of all users who contributed in a problem.
     blacklist: list of ids of users to be excluded from this list
+    pool: if true, will only return pool users. else, returns all users.
     '''
-    return db(
-        (db.idea.problem == problem_id) & 
+    query = ((db.idea.problem == problem_id) & 
         (db.idea.userId == db.user_info.id) &
-        (~db.idea.userId.belongs(blacklist))
-    ).select(db.idea.userId, db.user_info.userId, db.user_info.initialLogin, distinct=True)
+        (~db.idea.userId.belongs(blacklist)))
+    if pool:
+        query = query & (db.idea.pool == pool)
+        
+    return db(query).select(db.idea.userId, db.user_info.userId, db.user_info.id, db.user_info.initialLogin, distinct=True)
 
 def __check_auth():
     pwd = request.vars['pwd']
