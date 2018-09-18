@@ -411,6 +411,8 @@ var submitNewIdea = function(event){
 var submitRefinedIdea = function(event){
 	// Validate
 	if($('form.editElement').valid()){
+		// Hide button
+		$('#editIdea a.submit').hide();
 		var idea = $('#editIdea [name=refinedIdea]').val();
 		var tags = $('#editIdea [name=tags]').val().split(ENV.tagsDelimiter);
 		var originalId = $('#editIdea [name=originalId]').val();
@@ -446,6 +448,8 @@ var submitCombinedIdea = function(event){
 		}
 	});
 	if($('#combineIdeas .ideaInput').valid() & tagsValidation.valid){
+		// Hide button
+		$('#combineIdeas a.btn').hide();
 		var idea = $('#combineIdeas textarea').val();
 		var type = $('#combineIdeas input[name=combineTypeInput]').val();
 		var tags = tagsValidation.tags;
