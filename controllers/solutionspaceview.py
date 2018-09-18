@@ -48,7 +48,6 @@ def get_solution_space():
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
     
     # extract tags
-    print(len(ideas))
     for idea in ideas:
         idea_tags = list()
         for tag in idea.idea.tag_idea.select():
@@ -82,11 +81,9 @@ def get_solution_space():
     return outcome
 
 def __get_cache(problem_id):
-    print('Getting cache...')
     return db((db.visualization_cache.problem == problem_id) & (db.visualization_cache.type == 'solutionspace')).select().first()
 
 def __build_cache(problem_id, user_model):
-    print('Building cache...')
     '''
     Builds a cache with all pool ideas
     A lot of code duplication here, but it's the week of CHI deadline. So...

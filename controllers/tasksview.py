@@ -73,86 +73,52 @@ def __get_tasks(user_id, problem_id):
     inspiration_categories, all_inferred = model.get_inspiration_categories(NUM_TASKS)
     # Remove duplicates
     inspiration_categories = list(set(inspiration_categories))
+    inspiration_categories.extend(all_inferred)
+    
+    # Get idea ids that the user already has used as inspiration
+    completed_tasks = db(
+        (db.task.completed_by == user_id) & 
+        (db.task.task_type == 'RatingTask') & 
+        (db.task.problem == problem_id)).select(db.task.idea)
+    completed_tasks = [row.idea for row in completed_tasks]
+    
+    if len(inspiration_categories) < NUM_TASKS:
+        # there were not enough inspiration categories. Randomily add more
+        tags = [t.tag for t in db(db.tag.problem == problem_id).select(orderby='<random>')]
+        inspiration_categories.extend(tags)
 
-    # These are the task types that will be retrieved
-    task_types = [
-        # 'TagSuggestionTask',
-        # 'TagValidationTask',
-        'RatingTask'
-    ]
-    
-    # Build query
-    completed_tasks = dict()
-    # For each tasktype, retrieve the idea id for tasks already completed by the current user and build query to avoid them
-    completed_query = None # Holds the query to avoid all repeated tasks
-    retrieve_tasks = lambda task_type: [row.idea for row in db((db.task.completed_by == user_id) & (db.task.task_type == task_type) & (db.task.problem == problem_id)).select(db.task.idea)]
-    for t in task_types:
-        completed_tasks[t] = retrieve_tasks(t) # retrieve completed tasks for type t
-        query = ((db.task.task_type == t) & ~db.task.idea.belongs(completed_tasks[t])) # build query to ignore completed tasks of task type t
-        completed_query = (completed_query) | query if completed_query != None else query # append to completed query
-    
-    # all_query holds the query to retrieve all non-completed tasks that do not belong to the current user
-    all_query = ((db.task.completed == False) & 
-        (db.task.owner != user_id) & 
-        (db.task.idea == db.idea.id) &
-        (db.task.problem == problem_id) &
-        (db.idea.pool == True) & 
-        ((db.task.idea == db.tag_idea.idea) &
-        (db.tag_idea.tag == db.tag.id)))
-    # Retrieve all tasks except: owned by user, completed by user, type not in task_types
-    # This will have duplicates if an idea has more than one tag. One row for each tag.
-    # IMPORTANT: this will probably break when more task types are used. Maybe do one query per task_type.
-    tasks = db(all_query).select(groupby=db.tag_idea.id, having=completed_query, orderby='<random>')
-    
-    filtered_tasks = []
-    inferred_extended_tasks = []
-    ideas_ids = []
-    # Remove tasks based on recommended categories
-    if len(inspiration_categories) > 0:
-        excluded = tasks.exclude(lambda row: row.tag.tag not in inspiration_categories and row.tag.tag not in all_inferred)
-        # At this point, all tasks belong to the inspiration categories, 
-        # but we need to sample one from each of the categories.
-        for t in tasks:
-            # Append to filtered tasks if:
-            # 1. tag is in the inspiration categories list (which is reduced every time an idea is added)
-            # 2. task has not yet been added (prevent duplicates)
-            if t.tag.tag in inspiration_categories and t.idea.id not in ideas_ids:
-                filtered_tasks.append(t)
-                inspiration_categories.remove(t.tag.tag)
-                ideas_ids.append(t.idea.id)
-            # Add to extended inferred list
-            if t.tag.tag in all_inferred and t.idea.id not in ideas_ids:
-                inferred_extended_tasks.append(t)
-                ideas_ids.append(t.idea.id)
-        # Move all remaining back to the tasks variable
-        tasks = excluded 
-        
-    # At this point, the lenght may still be < NUM_TASKS if:
-    # 1. there were no inspiration categories (so len() == 0)
-    # 2. there were inspiration categories, but they amounted to fewer than NUM_TASKS
-    # So the first action is to include more inferred categories in there
-    if len(filtered_tasks) < NUM_TASKS: 
-        # sort inferred_extended tasks by inferred tasks
-        inferred_extended_tasks.sort(key=lambda t: all_inferred.index(t.tag.tag))
-        filtered_tasks.extend(inferred_extended_tasks)
-    # If there are still not enough, add more
-    if len(filtered_tasks) < NUM_TASKS: 
-        for t in tasks:
-            if t.idea.id not in ideas_ids: # make sure there are no duplicates
-                filtered_tasks.append(t)
-                ideas_ids.append(t.idea.id)
-            if len(filtered_tasks) == NUM_TASKS:
-                break
+    tasks = []
+    for t in inspiration_categories:
+        try:
+            # Get tag id
+            t_id = db((db.tag.problem == problem_id) & (db.tag.tag == t)).select(db.tag.id).first().id
+            # Get an idea id
+            if t_id:
+                idea_id = db((db.tag_idea.tag == t_id) & (~db.tag_idea.idea.belongs(completed_tasks))).select(db.tag_idea.idea, orderby='<random>').first().idea
+                if idea_id:
+                    # Get a task for this idea and add it to list
+                    task = db(
+                        (db.task.idea == idea_id) &
+                        (db.task.idea == db.idea.id) &
+                        (db.task.idea == db.tag_idea.idea) &
+                        (db.tag_idea.tag == db.tag.id)).select().first()
+                    if task:
+                        tasks.append(task)
+        except Exception:
+            pass
+        if len(tasks) == NUM_TASKS:
+            break
+
     # Add favorites
     favorites = __get_favorites(user_id)
-    for t in filtered_tasks:
+    for t in tasks:
         if t.idea.id in favorites:
             t.idea.favorite = True
         else:
             t.idea.favorite = False
 
     # Filter to max number of tasks and return
-    return filtered_tasks[0:NUM_TASKS]
+    return tasks
 
 def __merge_tags(tags_ideas, tag_i, tag_j):
     ''' Merges two tags, both in the dictionary (tags_ideas) as in the db '''

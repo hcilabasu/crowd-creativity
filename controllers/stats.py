@@ -371,7 +371,7 @@ def __update_user_model(user_id, problem_id, tags, tag_names):
     model.update(tags_names)
 
 def __insert_tasks_for_idea(idea, user_id, problem_id, add_to_pool):
-    for i in range(0,4):
+    for i in range(0,1):
         # insert selectBest types. Categorize tasks will be inserted when these are completed
         # microtask.TagSuggestionTask(idea=idea['id'], problem=problem_id)     
         # Insert combination tasks
