@@ -410,20 +410,23 @@ var submitNewIdea = function(event){
 
 var submitRefinedIdea = function(event){
 	// Validate
-	if($('form.editElement').valid()){
-		// Hide button
-		$('#editIdea a.submit').hide();
-		var idea = $('#editIdea [name=refinedIdea]').val();
-		var tags = $('#editIdea [name=tags]').val().split(ENV.tagsDelimiter);
-		var originalId = $('#editIdea [name=originalId]').val();
-		var originalText = $('#editIdea [name=originalText]').val();
-		if(idea.trim() === originalText.trim()){
-			$('#repeatedRefinedIdea').show('fast');
-		} else {
+	var idea = $('#editIdea [name=refinedIdea]').val();
+	var originalText = $('#editIdea [name=originalText]').val();
+	if(idea.trim() === originalText.trim()){
+		$('#repeatedRefinedIdea').show('fast');
+	} else {
+		if($('form.editElement').valid()){
+			// Hide button
+			$('#editIdea a.submit').hide();
+			$('#editIdea .loadingBadge').show();
+			var tags = $('#editIdea [name=tags]').val().split(ENV.tagsDelimiter);
+			var originalId = $('#editIdea [name=originalId]').val();
 			submitIdea(idea, tags, type='refinement', [originalId], function(data){
 				var _id = JSON.parse(data).id;
 				var _idea = idea;
 				var _tags = tags;
+				$('#editIdea a.submit').show();
+				$('#editIdea .loadingBadge').hide();
 				// Add new idea to UI
 				VIEWS.ideasView.load();
 				// VIEWS.ideasView.addIdeaToDisplay({idea:_idea, id:_id, tags:_tags}, true);
@@ -450,11 +453,15 @@ var submitCombinedIdea = function(event){
 	if($('#combineIdeas .ideaInput').valid() & tagsValidation.valid){
 		// Hide button
 		$('#combineIdeas a.btn').hide();
+		$('#combineIdeas .loadingBadge').show();
+
 		var idea = $('#combineIdeas textarea').val();
 		var type = $('#combineIdeas input[name=combineTypeInput]').val();
 		var tags = tagsValidation.tags;
 		var sources = JSON.parse($('#combineIdeas input[name=combinedIdeaIds]').val());
 		submitIdea(idea, tags, type, sources, function(data){
+			$('#combineIdeas a.btn').show();
+			$('#combineIdeas .loadingBadge').hide();
 			var _id = JSON.parse(data).id;
 			var _idea = idea;
 			var _type = type;
