@@ -287,7 +287,7 @@ def upload_ideas():
         for r in tags_reader:
             if(len(r) > 0):
                 tag_id = r[0]
-                tag_name = r[1]
+                tag_name = r[1].lower()
                 # Check if tag already exists
                 db_id = db((db.tag.tag == tag_name) & (db.tag.problem == problem_id)).select(db.tag.id).first()
                 if db_id:
@@ -371,7 +371,7 @@ def __update_user_model(user_id, problem_id, tags, tag_names):
     model.update(tags_names)
 
 def __insert_tasks_for_idea(idea, user_id, problem_id, add_to_pool):
-    for i in range(0,1):
+    for i in range(0,2):
         # insert selectBest types. Categorize tasks will be inserted when these are completed
         # microtask.TagSuggestionTask(idea=idea['id'], problem=problem_id)     
         # Insert combination tasks

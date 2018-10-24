@@ -94,7 +94,11 @@ def __get_tasks(user_id, problem_id):
             t_id = db((db.tag.problem == problem_id) & (db.tag.tag == t)).select(db.tag.id).first().id
             # Get an idea id
             if t_id:
-                idea_id = db((db.tag_idea.tag == t_id) & (~db.tag_idea.idea.belongs(completed_tasks))).select(db.tag_idea.idea, orderby='<random>').first().idea
+                idea_id = db(
+                    (db.tag_idea.tag == t_id) & 
+                    (~db.tag_idea.idea.belongs(completed_tasks)) &
+                    (db.tag_idea.idea == db.idea.id) &
+                    (db.idea.pool == True)).select(db.tag_idea.idea, orderby='<random>').first().idea
                 if idea_id:
                     # Get a task for this idea and add it to list
                     task = db(
