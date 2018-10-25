@@ -15,13 +15,19 @@ from collections import defaultdict
 from string import punctuation
 
 NUKE_KEY = 'blastoise'
-ADD_TO_POOL = False
+ADD_TO_POOL = True
 TASKS_PER_IDEA = 4 # For each idea that is added, add this number of tasks per kind of task per idea. This will depend on the number of users
 DEBUG = False
 if settings['is_development']:
     DEBUG = True # Allow debugging options
 
 def index():
+    # Update session id cookie to last longer
+    # response.cookies[response.session_id_name]['expires'] = 30 * (24 * 3600)
+    # response.session_cookie_expires = 30 * (24 * 3600)
+    # session.auth.expiration = auth.settings.long_expiration
+    # session.auth.remember = True
+    # Get info from session
     user_id = session.user_id
     user_name = session.user_name
     problem_title = request.args(0)

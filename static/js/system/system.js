@@ -249,21 +249,20 @@ $(function(){
 
 	// Start periodically checking for updates
 	ENV.lastCheck = new Date().getTime();
-	// TODO temporarily stop checking for updates (for the studies)
-	// window.setInterval(function(){
-	// 	$.ajax({
-	// 		method: 'GET',
-	// 		url: URL.checkUpdates,
-	// 		data: {timestamp: ENV.lastCheck},
-	// 		success: function(needsUpdate){
-	// 			if (needsUpdate.toLowerCase() === 'true') {
-	// 				// VIEWS.versioningView.setNeedsUpdate(true);
-	// 				VIEWS.solutionSpaceView.setNeedsUpdate(true);
-	// 			}
-	// 			ENV.lastCheck = new Date().getTime();
-	// 		}
-	// 	})
-	// }, 10000);
+	window.setInterval(function(){
+		$.ajax({
+			method: 'GET',
+			url: URL.checkUpdates,
+			data: {timestamp: ENV.lastCheck},
+			success: function(needsUpdate){
+				if (needsUpdate.toLowerCase() === 'true') {
+					// VIEWS.versioningView.setNeedsUpdate(true);
+					VIEWS.solutionSpaceView.setNeedsUpdate(true);
+				}
+				ENV.lastCheck = new Date().getTime();
+			}
+		})
+	}, 10000);
 
 	// Setup expanded problem description button 
 	var problemContainer = $('#problem');
@@ -781,7 +780,7 @@ var buildInspirationPanel = function(structure){
 		tasksList.show('fast');
 		prepareButtons($('#inspirationControls'), tasksList, structure.length);
 	} else {
-		$('.tasksPanel').text('No one else has added any ideas yet. Check back later! :)');
+		$('.tasksPanel').text('There are no inspiration tasks available for you. Check back later! :)');
 	}
 };
 

@@ -43,8 +43,7 @@ def get_solution_space():
     # get user's ideas with respective tags
     ideas = db((db.idea.id == db.tag_idea.idea) & 
         (db.tag.id == db.tag_idea.tag) &
-        (db.idea.problem == problem_id) & 
-        (db.idea.userId == user_id)
+        (db.idea.problem == problem_id)
     ).select(orderby=~db.idea.id, groupby=db.idea.id)
     
     # extract tags
@@ -66,9 +65,9 @@ def get_solution_space():
     # tags = tags[:SOLUTION_SPACE_MAX_TAGS]
 
     # since another user may have added another tag, and since "tags" holds ALL tags, we need to remove those that are not in "ideas"
-    final_tags = []
-    for t in tags:
-        if t in all_tags:
+    final_tags = tags # start with ordered array of tags
+    for t in all_tags: # Go over all tags
+        if t not in final_tags: # If not already in the array, add it
             final_tags.append(t)
 
     # Create minimap overview and generate outcome dict
