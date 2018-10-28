@@ -169,6 +169,7 @@ def __generate_birdseye_solutionspace(tags, connections, max_n):
             key = ti
             if ti != tj:
                 key_list = [ti, tj]
+                print(key_list)
                 key_list.sort()
                 key = '|'.join(key_list)
             # Get connection object

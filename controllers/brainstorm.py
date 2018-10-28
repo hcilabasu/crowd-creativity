@@ -139,8 +139,9 @@ def get_all_tags():
     problem_id = util.get_problem_id(request)
     tags = db((db.idea.id == db.tag_idea.idea) & 
         (db.tag.id == db.tag_idea.tag) &
+        (db.tag.replacedBy == None) &
         (db.idea.problem == problem_id) & 
-        ((db.idea.pool == True) | (db.idea.userId == user_id))
+        (db.idea.pool == True)
     ).select(db.tag.tag, orderby=db.tag.tag, groupby=db.tag.id)
     tags = [t.tag for t in tags]
     response.headers['Content-Type'] = 'text/json'

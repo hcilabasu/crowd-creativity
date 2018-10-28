@@ -207,7 +207,7 @@ $.fn.tagPicker = function(action, params){
 		// From: https://stackoverflow.com/questions/2980038/allow-text-box-only-for-letters-using-jquery
 		$('input[type=text]', topContainer).bind('keyup blur input',function(){ 
 			var node = $(this);
-			node.val(node.val().replace(/[^a-z]/g,'') ); }
+			node.val(node.val().replace(/[^a-z0-9]/g,'') ); }
 		);
 	
 		// Setup filter
